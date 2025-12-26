@@ -104,37 +104,41 @@ export function ShaderBackground({ children, className }: ShaderBackgroundProps)
         vec2 p = uv * 2.0 - 1.0;
         p.x *= u_resolution.x / u_resolution.y;
 
-        float time = u_time * 0.08;
+        float time = u_time * 0.05;
 
-        // Flowing noise patterns
-        float n1 = fbm(p * 0.5 + vec2(time * 0.2, time * 0.1));
-        float n2 = fbm(p * 0.8 + vec2(-time * 0.15, time * 0.12) + n1 * 0.2);
-        float n3 = fbm(p * 0.3 + vec2(time * 0.08, -time * 0.1) + n2 * 0.15);
+        // Cloud-like flowing noise patterns
+        float n1 = fbm(p * 0.8 + vec2(time * 0.3, time * 0.2));
+        float n2 = fbm(p * 1.2 + vec2(-time * 0.25, time * 0.15) + n1 * 0.3);
+        float n3 = fbm(p * 0.5 + vec2(time * 0.1, -time * 0.2) + n2 * 0.2);
 
         // Base dark color
-        vec3 baseColor = vec3(0.02, 0.02, 0.04);
+        vec3 baseColor = vec3(0.02, 0.02, 0.05);
 
-        // Subtle color accents - very dark, muted
-        vec3 color1 = vec3(0.08, 0.04, 0.12); // Dark purple
-        vec3 color2 = vec3(0.04, 0.06, 0.10); // Dark blue
-        vec3 color3 = vec3(0.06, 0.03, 0.08); // Dark magenta
+        // More visible cloud colors
+        vec3 cloudPurple = vec3(0.15, 0.08, 0.25);
+        vec3 cloudBlue = vec3(0.08, 0.12, 0.22);
+        vec3 cloudMagenta = vec3(0.12, 0.06, 0.18);
 
-        // Mix based on noise
-        float blend1 = smoothstep(-0.3, 0.5, n1) * 0.15;
-        float blend2 = smoothstep(-0.2, 0.6, n2) * 0.12;
-        float blend3 = smoothstep(-0.4, 0.4, n3) * 0.10;
+        // Stronger cloud blending
+        float cloud1 = smoothstep(-0.2, 0.6, n1) * 0.5;
+        float cloud2 = smoothstep(-0.1, 0.5, n2) * 0.4;
+        float cloud3 = smoothstep(-0.3, 0.4, n3) * 0.35;
 
         vec3 col = baseColor;
-        col = mix(col, color1, blend1);
-        col = mix(col, color2, blend2);
-        col = mix(col, color3, blend3);
+        col = mix(col, cloudPurple, cloud1);
+        col = mix(col, cloudBlue, cloud2);
+        col = mix(col, cloudMagenta, cloud3);
 
-        // Subtle top glow
-        float topGlow = smoothstep(0.8, -0.2, p.y) * 0.08;
-        col += vec3(0.05, 0.03, 0.08) * topGlow;
+        // Add wispy cloud highlights
+        float highlight = smoothstep(0.3, 0.8, n1 * n2) * 0.15;
+        col += vec3(0.2, 0.15, 0.3) * highlight;
 
-        // Vignette
-        float vignette = 1.0 - length(p * 0.5) * 0.3;
+        // Top glow effect
+        float topGlow = smoothstep(1.0, -0.5, p.y) * 0.12;
+        col += vec3(0.1, 0.06, 0.15) * topGlow;
+
+        // Soft vignette
+        float vignette = 1.0 - length(p * 0.4) * 0.25;
         col *= vignette;
 
         gl_FragColor = vec4(col, 1.0);
