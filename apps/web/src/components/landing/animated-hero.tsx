@@ -225,128 +225,128 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <section ref={containerRef} className="relative flex min-h-screen w-full flex-col bg-black">
+    <section ref={containerRef} className="relative flex min-h-screen w-full flex-col">
       <Lightning />
       <AnimatedGrid />
       <InteractiveOrbs />
 
-        {/* Floating model cards */}
-        <FloatingModelCard
-          name="GPT-4o"
-          provider="OpenAI"
-          providerId="openai"
-          delay={1}
-          className="left-[5%] top-[20%] hidden lg:block"
-        />
-        <FloatingModelCard
-          name="Claude 3.5"
-          provider="Anthropic"
-          providerId="anthropic"
-          delay={1.5}
-          className="right-[8%] top-[25%] hidden lg:block"
-        />
-        <FloatingModelCard
-          name="Gemini Pro"
-          provider="Google"
-          providerId="google"
-          delay={2}
-          className="left-[10%] bottom-[30%] hidden lg:block"
-        />
-        <FloatingModelCard
-          name="Llama 3"
-          provider="Meta"
-          providerId="meta"
-          delay={2.5}
-          className="right-[5%] bottom-[35%] hidden lg:block"
-        />
+      {/* Floating model cards */}
+      <FloatingModelCard
+        name="GPT-4o"
+        provider="OpenAI"
+        providerId="openai"
+        delay={1}
+        className="left-[5%] top-[20%] hidden lg:block"
+      />
+      <FloatingModelCard
+        name="Claude 3.5"
+        provider="Anthropic"
+        providerId="anthropic"
+        delay={1.5}
+        className="right-[8%] top-[25%] hidden lg:block"
+      />
+      <FloatingModelCard
+        name="Gemini Pro"
+        provider="Google"
+        providerId="google"
+        delay={2}
+        className="left-[10%] bottom-[30%] hidden lg:block"
+      />
+      <FloatingModelCard
+        name="Llama 3"
+        provider="Meta"
+        providerId="meta"
+        delay={2.5}
+        className="right-[5%] bottom-[35%] hidden lg:block"
+      />
 
-        {/* Main content with parallax */}
+      {/* Main content with parallax */}
+      <motion.div
+        className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-20"
+        style={{ y, opacity }}
+      >
         <motion.div
-          className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-20"
-          style={{ y, opacity }}
+          className="flex max-w-5xl flex-col items-center text-center"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
         >
-          <motion.div
-            className="flex max-w-5xl flex-col items-center text-center"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-          >
-            {/* Badge */}
-            {badge && (
-              <motion.div variants={itemVariants} className="mb-8">
-                {badge}
-              </motion.div>
-            )}
-
-            {/* Title with softer gradient */}
-            <motion.div variants={titleVariants} className="relative">
-              <h1 className="relative text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-                {/* Subtle glow */}
-                <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-50 blur-2xl">
-                  {title}
-                </span>
-                <span className="relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
-                  {title}
-                </span>
-              </h1>
-
-              {/* Softer underline */}
-              <motion.div
-                className="absolute -bottom-4 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-400/50 via-blue-400/50 to-indigo-400/50"
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: '60%', opacity: 1 }}
-                transition={{ delay: 1.2, duration: 1, ease: 'easeOut' }}
-              />
+          {/* Badge */}
+          {badge && (
+            <motion.div variants={itemVariants} className="mb-8">
+              {badge}
             </motion.div>
+          )}
 
-            {/* Description */}
-            <motion.p
-              variants={itemVariants}
-              className="mt-10 max-w-2xl text-lg leading-relaxed text-slate-400 sm:text-xl md:text-2xl"
-            >
-              {description}
-            </motion.p>
+          {/* Title with softer gradient */}
+          <motion.div variants={titleVariants} className="relative">
+            <h1 className="relative text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+              {/* Subtle glow */}
+              <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-50 blur-2xl">
+                {title}
+              </span>
+              <span className="relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
+                {title}
+              </span>
+            </h1>
 
-            {/* Actions */}
-            <motion.div variants={itemVariants} className="mt-12 flex flex-col gap-4 sm:flex-row">
-              {actions}
-            </motion.div>
-
-            {/* Stats */}
+            {/* Softer underline */}
             <motion.div
-              variants={itemVariants}
-              className="mt-20 flex flex-wrap justify-center gap-12 border-t border-slate-700/50 pt-10 md:gap-20"
-            >
-              <AnimatedStat value="50+" label="AI Providers" delay={1.8} />
-              <AnimatedStat value="200+" label="Models" delay={2} />
-              <AnimatedStat value="4" label="Side-by-side" delay={2.2} />
-              <AnimatedStat value="∞" label="Comparisons" delay={2.4} />
-            </motion.div>
+              className="absolute -bottom-4 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-400/50 via-blue-400/50 to-indigo-400/50"
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: '60%', opacity: 1 }}
+              transition={{ delay: 1.2, duration: 1, ease: 'easeOut' }}
+            />
           </motion.div>
-        </motion.div>
 
-        {/* Scroll indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 2.5, duration: 0.6 }}
-        >
-          <motion.div
-            className="flex flex-col items-center gap-2"
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+          {/* Description */}
+          <motion.p
+            variants={itemVariants}
+            className="mt-10 max-w-2xl text-lg leading-relaxed text-slate-400 sm:text-xl md:text-2xl"
           >
-            <span className="text-xs uppercase tracking-widest text-slate-500">Scroll</span>
-            <div className="h-10 w-6 rounded-full border border-slate-600/50 p-1">
-              <motion.div
-                className="h-2 w-full rounded-full bg-slate-400"
-                animate={{ y: [0, 16, 0] }}
-                transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
-              />
-            </div>
+            {description}
+          </motion.p>
+
+          {/* Actions */}
+          <motion.div variants={itemVariants} className="mt-12 flex flex-col gap-4 sm:flex-row">
+            {actions}
+          </motion.div>
+
+          {/* Stats */}
+          <motion.div
+            variants={itemVariants}
+            className="mt-20 flex flex-wrap justify-center gap-12 border-t border-slate-700/50 pt-10 md:gap-20"
+          >
+            <AnimatedStat value="50+" label="AI Providers" delay={1.8} />
+            <AnimatedStat value="200+" label="Models" delay={2} />
+            <AnimatedStat value="4" label="Side-by-side" delay={2.2} />
+            <AnimatedStat value="∞" label="Comparisons" delay={2.4} />
           </motion.div>
         </motion.div>
-      </section>
+      </motion.div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 2.5, duration: 0.6 }}
+      >
+        <motion.div
+          className="flex flex-col items-center gap-2"
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+        >
+          <span className="text-xs uppercase tracking-widest text-slate-500">Scroll</span>
+          <div className="h-10 w-6 rounded-full border border-slate-600/50 p-1">
+            <motion.div
+              className="h-2 w-full rounded-full bg-slate-400"
+              animate={{ y: [0, 16, 0] }}
+              transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
+            />
+          </div>
+        </motion.div>
+      </motion.div>
+    </section>
   );
 }

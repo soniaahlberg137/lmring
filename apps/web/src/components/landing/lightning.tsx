@@ -35,13 +35,13 @@ export function Lightning({ className }: LightningProps) {
       }
     `;
 
-    // Modified fragment shader - avoid center, shorter lines, more aesthetic
+    // Short lightning bolts only in corners
     const fragmentShaderSource = `
       precision mediump float;
       uniform vec2 iResolution;
       uniform float iTime;
 
-      #define OCTAVE_COUNT 8
+      #define OCTAVE_COUNT 6
 
       vec3 hsv2rgb(vec3 c) {
           vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0,4.0,2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
@@ -74,7 +74,6 @@ export function Lightning({ className }: LightningProps) {
           float b = hash12(ip + vec2(1.0, 0.0));
           float c = hash12(ip + vec2(0.0, 1.0));
           float d = hash12(ip + vec2(1.0, 1.0));
-
           vec2 t = smoothstep(0.0, 1.0, fp);
           return mix(mix(a, b, t.x), mix(c, d, t.x), t.y);
       }
@@ -91,39 +90,35 @@ export function Lightning({ className }: LightningProps) {
           return value;
       }
 
-      // Lightning bolt function - shorter, thinner
-      vec3 lightning(vec2 uv, float hue, float timeOffset, float speed, float intensity, float size, bool vertical) {
-          vec2 dir_uv = vertical ? uv : vec2(uv.y, uv.x);
+      // Short lightning bolt - very localized
+      vec3 shortLightning(vec2 uv, vec2 center, float hue, float timeOffset, float fade) {
+          vec2 localUV = uv - center;
 
-          dir_uv += 2.0 * fbm(dir_uv * size + 0.8 * (iTime + timeOffset) * speed) - 1.0;
+          // Limit range - only render near center
+          float range = length(localUV);
+          if (range > 0.4) return vec3(0.0);
 
-          float dist = abs(dir_uv.x);
-          vec3 baseColor = hsv2rgb(vec3(hue / 360.0, 0.6, 0.9));
+          float rangeFade = smoothstep(0.4, 0.15, range);
 
-          // Softer flickering
-          float flicker = hash11((iTime + timeOffset) * speed * 1.5);
-          float flickerIntensity = mix(0.015, 0.045, flicker);
+          localUV += 1.5 * fbm(localUV * 3.0 + 0.5 * (iTime + timeOffset) * 0.3) - 0.75;
 
-          vec3 col = baseColor * pow(flickerIntensity / dist, 1.0) * intensity;
+          float dist = abs(localUV.x);
+          vec3 baseColor = hsv2rgb(vec3(hue / 360.0, 0.5, 0.95));
+
+          float flicker = hash11((iTime + timeOffset) * 0.8);
+          float flickerIntensity = mix(0.008, 0.025, flicker);
+
+          vec3 col = baseColor * pow(flickerIntensity / max(dist, 0.001), 1.0) * fade * rangeFade;
           return col;
       }
 
-      // Fade in/out function
+      // Fade in/out
       float fadeInOut(float time, float duration, float offset) {
           float cycle = mod(time + offset, duration * 2.0);
           if (cycle < duration) {
-              return smoothstep(0.0, duration * 0.25, cycle) * smoothstep(duration, duration * 0.75, cycle);
-          } else {
-              return 0.0;
+              return smoothstep(0.0, duration * 0.2, cycle) * smoothstep(duration, duration * 0.8, cycle);
           }
-      }
-
-      // Center mask - creates safe zone for title
-      float centerMask(vec2 uv) {
-          // Elliptical mask in center
-          float maskX = smoothstep(0.3, 0.7, abs(uv.x));
-          float maskY = smoothstep(0.25, 0.6, abs(uv.y));
-          return max(maskX, maskY);
+          return 0.0;
       }
 
       void mainImage(out vec4 fragColor, in vec2 fragCoord) {
@@ -133,55 +128,31 @@ export function Lightning({ className }: LightningProps) {
 
           vec3 col = vec3(0.0);
 
-          // Center safe zone mask
-          float mask = centerMask(uv);
-
-          // Top-left blue lightning - shorter
-          float fade1 = fadeInOut(iTime, 5.0, 0.0);
+          // Top-left corner - blue
+          float fade1 = fadeInOut(iTime, 6.0, 0.0);
           if (fade1 > 0.01) {
-              vec2 uv1 = uv;
-              uv1.x += 1.2;
-              uv1.y += 0.6;
-              col += lightning(uv1, 210.0, 0.0, 0.4, 0.7 * fade1, 1.5, false) * mask;
+              col += shortLightning(uv, vec2(-1.4, 0.7), 220.0, 0.0, fade1 * 0.6);
           }
 
-          // Top-right gold lightning - shorter
-          float fade2 = fadeInOut(iTime, 6.0, 2.0);
+          // Top-right corner - gold
+          float fade2 = fadeInOut(iTime, 7.0, 3.0);
           if (fade2 > 0.01) {
-              vec2 uv2 = uv;
-              uv2.x -= 1.0;
-              uv2.y += 0.5;
-              col += lightning(uv2, 42.0, 1.5, 0.35, 0.65 * fade2, 1.6, true) * mask;
+              col += shortLightning(uv, vec2(1.3, 0.6), 42.0, 1.5, fade2 * 0.5);
           }
 
-          // Bottom-right blue lightning
-          float fade3 = fadeInOut(iTime, 5.5, 3.5);
+          // Bottom-right corner - blue
+          float fade3 = fadeInOut(iTime, 6.5, 4.5);
           if (fade3 > 0.01) {
-              vec2 uv3 = uv;
-              uv3.x -= 1.3;
-              uv3.y -= 0.5;
-              col += lightning(uv3, 220.0, 3.0, 0.45, 0.6 * fade3, 1.4, false) * mask;
+              col += shortLightning(uv, vec2(1.4, -0.65), 210.0, 3.0, fade3 * 0.55);
           }
 
-          // Bottom-left gold lightning
-          float fade4 = fadeInOut(iTime, 6.5, 1.5);
+          // Bottom-left corner - gold
+          float fade4 = fadeInOut(iTime, 7.5, 1.5);
           if (fade4 > 0.01) {
-              vec2 uv4 = uv;
-              uv4.x += 1.1;
-              uv4.y -= 0.6;
-              col += lightning(uv4, 38.0, 2.0, 0.38, 0.55 * fade4, 1.5, true) * mask;
+              col += shortLightning(uv, vec2(-1.3, -0.7), 38.0, 2.0, fade4 * 0.5);
           }
 
-          // Edge glow - very subtle ambient light at edges
-          float edgeGlow = (1.0 - mask) * 0.02;
-          col += vec3(0.1, 0.15, 0.25) * edgeGlow;
-
-          // Soft clamp
-          col = min(col, vec3(1.0));
-
-          // Add subtle vignette
-          float vignette = 1.0 - length(uv) * 0.3;
-          col *= vignette;
+          col = min(col, vec3(0.8));
 
           fragColor = vec4(col, 1.0);
       }
@@ -238,8 +209,7 @@ export function Lightning({ className }: LightningProps) {
       resizeCanvas();
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.uniform2f(iResolutionLocation, canvas.width, canvas.height);
-      const currentTime = performance.now();
-      gl.uniform1f(iTimeLocation, (currentTime - startTime) / 1000.0);
+      gl.uniform1f(iTimeLocation, (performance.now() - startTime) / 1000.0);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
       animationId = requestAnimationFrame(render);
     };
@@ -255,6 +225,7 @@ export function Lightning({ className }: LightningProps) {
     <canvas
       ref={canvasRef}
       className={cn('pointer-events-none absolute inset-0 h-full w-full', className)}
+      style={{ mixBlendMode: 'screen' }}
     />
   );
 }

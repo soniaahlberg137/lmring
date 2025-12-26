@@ -2,6 +2,7 @@ export { AnimatedButton, RainbowButton } from './animated-button';
 export { AnimatedFeatures } from './animated-features';
 export { AnimatedHero } from './animated-hero';
 export { AuroraBackground } from './aurora-background';
+export { ShaderBackground } from './shader-background';
 export {
   BackgroundBeams,
   Beam,
