@@ -1,5 +1,5 @@
 import { Button } from '@lmring/ui';
-import { CheckCircle, ExternalLink, Keyboard, MessageCircle, Trophy, Users } from 'lucide-react';
+import { CheckCircle, Keyboard, MessageCircle, Trophy, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getTranslations, setRequestLocale } from 'next-intl/server';

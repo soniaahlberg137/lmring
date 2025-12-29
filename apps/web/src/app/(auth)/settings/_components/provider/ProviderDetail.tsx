@@ -1096,9 +1096,16 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                           </div>
                           <div className="flex flex-col gap-0.5">
                             <div className="flex items-center gap-2">
-                              <span className="font-medium leading-tight">
-                                {model.displayName || model.id}
-                              </span>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <span className="font-medium leading-tight cursor-default">
+                                      {model.displayName || model.id}
+                                    </span>
+                                  </TooltipTrigger>
+                                  <TooltipContent>{model.id}</TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                               <button
                                 type="button"
                                 className="opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#00b96b]/10 rounded"
