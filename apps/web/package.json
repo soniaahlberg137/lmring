@@ -30,7 +30,7 @@
     "@lmring/ui": "workspace:*",
     "@lobehub/icons": "^4.0.2",
     "@lobehub/ui": "^4.3.13",
-    "@lobehub/fluent-emoji": "^4.0.0",
+    "@lobehub/fluent-emoji": "^4.0.1",
     "@logtape/logtape": "^1.3.5",
     "@sentry/nextjs": "^10.32.1",
     "@supabase/ssr": "^0.8.0",
