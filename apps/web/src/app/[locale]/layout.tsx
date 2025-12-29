@@ -6,6 +6,7 @@ import { getMessages, setRequestLocale } from 'next-intl/server';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { ThemeProvider } from '@/components/theme-provider';
+import { thinScrollbar } from '@/lib/scrollbar';
 import '@/styles/global.css';
 import '@/styles/arena.css';
 
@@ -37,8 +38,8 @@ export default async function RootLayout(props: {
   const messages = await getMessages({ locale });
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body suppressHydrationWarning>
+    <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
+      <body suppressHydrationWarning className={`min-h-screen ${thinScrollbar}`}>
         <ThemeProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <PostHogProvider>{props.children}</PostHogProvider>
