@@ -83,7 +83,7 @@ export function FluidCursor({
     if (isWebGL2) {
       getExtension('EXT_color_buffer_float');
       ext.supportLinearFiltering = Boolean(getExtension('OES_texture_float_linear'));
-      // @ts-expect-error WebGL2 constant exists at runtime
+      // WebGL2 constant exists at runtime
       ext.halfFloatTexType = (gl as WebGL2RenderingContext).HALF_FLOAT;
       ext.formatRGBA = { internalFormat: (gl as WebGL2RenderingContext).RGBA16F, format: gl.RGBA };
       ext.formatRG = {
@@ -300,7 +300,11 @@ export function FluidCursor({
     };
 
     const filtering = ext.supportLinearFiltering ? gl.LINEAR : gl.NEAREST;
-    if (!ext.formatRGBA || !ext.formatRG || !ext.formatR || !ext.halfFloatTexType) {
+    const formatRGBA = ext.formatRGBA;
+    const formatRG = ext.formatRG;
+    const formatR = ext.formatR;
+    const halfFloatTexType = ext.halfFloatTexType;
+    if (!formatRGBA || !formatRG || !formatR || !halfFloatTexType) {
       console.error('WebGL formats not supported; FluidCursor disabled.');
       return;
     }
@@ -318,45 +322,45 @@ export function FluidCursor({
       velocity = createDoubleFBO(
         sim.width,
         sim.height,
-        ext.formatRG.internalFormat,
-        ext.formatRG.format,
-        ext.halfFloatTexType,
+        formatRG.internalFormat,
+        formatRG.format,
+        halfFloatTexType,
         filtering,
       );
 
       dye = createDoubleFBO(
         dyeRes.width,
         dyeRes.height,
-        ext.formatRGBA.internalFormat,
-        ext.formatRGBA.format,
-        ext.halfFloatTexType,
+        formatRGBA.internalFormat,
+        formatRGBA.format,
+        halfFloatTexType,
         filtering,
       );
 
       divergence = createTextureFBO(
         sim.width,
         sim.height,
-        ext.formatR.internalFormat,
-        ext.formatR.format,
-        ext.halfFloatTexType,
+        formatR.internalFormat,
+        formatR.format,
+        halfFloatTexType,
         gl.NEAREST,
       );
 
       curlTex = createTextureFBO(
         sim.width,
         sim.height,
-        ext.formatR.internalFormat,
-        ext.formatR.format,
-        ext.halfFloatTexType,
+        formatR.internalFormat,
+        formatR.format,
+        halfFloatTexType,
         gl.NEAREST,
       );
 
       pressureTex = createDoubleFBO(
         sim.width,
         sim.height,
-        ext.formatR.internalFormat,
-        ext.formatR.format,
-        ext.halfFloatTexType,
+        formatR.internalFormat,
+        formatR.format,
+        halfFloatTexType,
         gl.NEAREST,
       );
     };
@@ -590,24 +594,27 @@ export function FluidCursor({
       return p.uniforms;
     };
 
+    const uLoc = (loc: WebGLUniformLocation | null | undefined): WebGLUniformLocation | null =>
+      loc ?? null;
+
     const splat = (x: number, y: number, dx: number, dy: number, color: RGB) => {
       // velocity
       let u = apply(programs.splat);
-      gl.uniform1i(u.uTarget, velocity.read.attach(0));
-      gl.uniform1f(u.aspectRatio, gl.drawingBufferWidth / gl.drawingBufferHeight);
-      gl.uniform2f(u.point, x, y);
-      gl.uniform3f(u.color, dx, dy, 0);
-      gl.uniform1f(u.radius, clampRadius(state.SPLAT_RADIUS));
+      gl.uniform1i(uLoc(u.uTarget), velocity.read.attach(0));
+      gl.uniform1f(uLoc(u.aspectRatio), gl.drawingBufferWidth / gl.drawingBufferHeight);
+      gl.uniform2f(uLoc(u.point), x, y);
+      gl.uniform3f(uLoc(u.color), dx, dy, 0);
+      gl.uniform1f(uLoc(u.radius), clampRadius(state.SPLAT_RADIUS));
       blit(velocity.write);
       velocity.swap();
 
       // dye
       u = apply(programs.splat);
-      gl.uniform1i(u.uTarget, dye.read.attach(0));
-      gl.uniform1f(u.aspectRatio, gl.drawingBufferWidth / gl.drawingBufferHeight);
-      gl.uniform2f(u.point, x, y);
-      gl.uniform3f(u.color, color.r, color.g, color.b);
-      gl.uniform1f(u.radius, clampRadius(state.SPLAT_RADIUS));
+      gl.uniform1i(uLoc(u.uTarget), dye.read.attach(0));
+      gl.uniform1f(uLoc(u.aspectRatio), gl.drawingBufferWidth / gl.drawingBufferHeight);
+      gl.uniform2f(uLoc(u.point), x, y);
+      gl.uniform3f(uLoc(u.color), color.r, color.g, color.b);
+      gl.uniform1f(uLoc(u.radius), clampRadius(state.SPLAT_RADIUS));
       blit(dye.write);
       dye.swap();
     };
@@ -743,6 +750,7 @@ export function FluidCursor({
 
     const onMouseDown = (e: MouseEvent) => {
       const p = pointers[0];
+      if (!p) return;
       const { x, y } = pointerEvent(e);
       updatePointerDown(p, -1, x, y);
       // initial splat
@@ -757,18 +765,22 @@ export function FluidCursor({
 
     const onMouseMove = (e: MouseEvent) => {
       const p = pointers[0];
+      if (!p) return;
       const { x, y } = pointerEvent(e);
       updatePointerMove(p, x, y, p.color);
     };
 
     const onMouseUp = () => {
-      updatePointerUp(pointers[0]);
+      const p = pointers[0];
+      if (!p) return;
+      updatePointerUp(p);
     };
 
     const onTouchStart = (e: TouchEvent) => {
       const t = e.targetTouches[0];
       if (!t) return;
       const p = pointers[0];
+      if (!p) return;
       const x = scaleByPixelRatio(t.clientX);
       const y = scaleByPixelRatio(t.clientY);
       updatePointerDown(p, t.identifier, x, y);
@@ -778,13 +790,16 @@ export function FluidCursor({
       const t = e.targetTouches[0];
       if (!t) return;
       const p = pointers[0];
+      if (!p) return;
       const x = scaleByPixelRatio(t.clientX);
       const y = scaleByPixelRatio(t.clientY);
       updatePointerMove(p, x, y, p.color);
     };
 
     const onTouchEnd = () => {
-      updatePointerUp(pointers[0]);
+      const p = pointers[0];
+      if (!p) return;
+      updatePointerUp(p);
     };
 
     let lastInteraction = performance.now();
@@ -840,7 +855,8 @@ export function FluidCursor({
       colorTimer += dt * state.COLOR_UPDATE_SPEED;
       if (colorTimer >= 1) {
         colorTimer = ((colorTimer % 1) + 1) % 1;
-        pointers[0].color = randomColor();
+        const p = pointers[0];
+        if (p) p.color = randomColor();
       }
 
       // splats
@@ -863,68 +879,68 @@ export function FluidCursor({
 
       // curl
       let u = apply(programs.curl);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uVelocity, velocity.read.attach(0));
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(0));
       blit(curlTex);
 
       // vorticity
       u = apply(programs.vorticity);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uVelocity, velocity.read.attach(0));
-      gl.uniform1i(u.uCurl, curlTex.attach(1));
-      gl.uniform1f(u.curl, state.CURL);
-      gl.uniform1f(u.dt, dt);
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(0));
+      gl.uniform1i(uLoc(u.uCurl), curlTex.attach(1));
+      gl.uniform1f(uLoc(u.curl), state.CURL);
+      gl.uniform1f(uLoc(u.dt), dt);
       blit(velocity.write);
       velocity.swap();
 
       // divergence
       u = apply(programs.divergence);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uVelocity, velocity.read.attach(0));
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(0));
       blit(divergence);
 
       // clear pressure
       u = apply(programs.clear);
-      gl.uniform1i(u.uTexture, pressureTex.read.attach(0));
-      gl.uniform1f(u.value, state.PRESSURE);
+      gl.uniform1i(uLoc(u.uTexture), pressureTex.read.attach(0));
+      gl.uniform1f(uLoc(u.value), state.PRESSURE);
       blit(pressureTex.write);
       pressureTex.swap();
 
       // pressure solve
       u = apply(programs.pressure);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uDivergence, divergence.attach(0));
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uDivergence), divergence.attach(0));
       for (let i = 0; i < state.PRESSURE_ITERATIONS; i += 1) {
-        gl.uniform1i(u.uPressure, pressureTex.read.attach(1));
+        gl.uniform1i(uLoc(u.uPressure), pressureTex.read.attach(1));
         blit(pressureTex.write);
         pressureTex.swap();
       }
 
       // gradient subtract
       u = apply(programs.gradSubtract);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uPressure, pressureTex.read.attach(0));
-      gl.uniform1i(u.uVelocity, velocity.read.attach(1));
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uPressure), pressureTex.read.attach(0));
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(1));
       blit(velocity.write);
       velocity.swap();
 
       // advect velocity
       u = apply(programs.advection);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uVelocity, velocity.read.attach(0));
-      gl.uniform1i(u.uSource, velocity.read.attach(0));
-      gl.uniform1f(u.dt, dt);
-      gl.uniform1f(u.dissipation, 1 - dt * state.VELOCITY_DISSIPATION);
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(0));
+      gl.uniform1i(uLoc(u.uSource), velocity.read.attach(0));
+      gl.uniform1f(uLoc(u.dt), dt);
+      gl.uniform1f(uLoc(u.dissipation), 1 - dt * state.VELOCITY_DISSIPATION);
       blit(velocity.write);
       velocity.swap();
 
       // advect dye
       u = apply(programs.advection);
-      gl.uniform2f(u.texelSize, velocity.texelSizeX, velocity.texelSizeY);
-      gl.uniform1i(u.uVelocity, velocity.read.attach(0));
-      gl.uniform1i(u.uSource, dye.read.attach(1));
-      gl.uniform1f(u.dt, dt);
-      gl.uniform1f(u.dissipation, 1 - dt * state.DENSITY_DISSIPATION);
+      gl.uniform2f(uLoc(u.texelSize), velocity.texelSizeX, velocity.texelSizeY);
+      gl.uniform1i(uLoc(u.uVelocity), velocity.read.attach(0));
+      gl.uniform1i(uLoc(u.uSource), dye.read.attach(1));
+      gl.uniform1f(uLoc(u.dt), dt);
+      gl.uniform1f(uLoc(u.dissipation), 1 - dt * state.DENSITY_DISSIPATION);
       blit(dye.write);
       dye.swap();
 
@@ -932,7 +948,7 @@ export function FluidCursor({
       gl.enable(gl.BLEND);
       gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
       u = apply(programs.display);
-      gl.uniform1i(u.uTexture, dye.read.attach(0));
+      gl.uniform1i(uLoc(u.uTexture), dye.read.attach(0));
       blit(null, false);
       gl.disable(gl.BLEND);
     };

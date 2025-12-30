@@ -191,28 +191,6 @@ function InteractiveOrbs() {
   );
 }
 
-// Stats counter - softer text
-function AnimatedStat({ value, label, delay }: { value: string; label: string; delay: number }) {
-  return (
-    <motion.div
-      className="text-center"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.6, ease: 'easeOut' }}
-    >
-      <motion.span
-        className="block text-4xl font-bold text-slate-100 md:text-5xl"
-        initial={{ scale: 0.5 }}
-        animate={{ scale: 1 }}
-        transition={{ delay: delay + 0.2, duration: 0.5, type: 'spring' }}
-      >
-        {value}
-      </motion.span>
-      <span className="mt-1 block text-sm text-slate-400">{label}</span>
-    </motion.div>
-  );
-}
-
 export function AnimatedHero({ title, description, actions, badge }: AnimatedHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
