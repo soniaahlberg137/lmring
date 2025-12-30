@@ -84,6 +84,7 @@
 @theme {
   --animate-shimmer: shimmer var(--shimmer-duration, 2s) linear infinite;
   --animate-blink: blink 1s step-end infinite;
+  --animate-gradient-xy: gradient-xy 3s ease infinite;
 
   @keyframes shimmer {
     from {
@@ -101,6 +102,18 @@
     }
     50% {
       opacity: 0;
+    }
+  }
+
+  @keyframes gradient-xy {
+    0%,
+    100% {
+      background-position: 0% 50%;
+      background-size: 200% 200%;
+    }
+    50% {
+      background-position: 100% 50%;
+      background-size: 200% 200%;
     }
   }
 }
