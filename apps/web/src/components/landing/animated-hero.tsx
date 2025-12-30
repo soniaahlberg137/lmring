@@ -229,28 +229,28 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
 
       {/* Floating model cards */}
       <FloatingModelCard
-        name="GPT-4o"
+        name="GPT-5.2"
         provider="OpenAI"
         providerId="openai"
         delay={1}
         className="left-[5%] top-[20%] hidden lg:block"
       />
       <FloatingModelCard
-        name="Claude 3.5"
+        name="Claude 4.5"
         provider="Anthropic"
         providerId="anthropic"
         delay={1.5}
         className="right-[8%] top-[25%] hidden lg:block"
       />
       <FloatingModelCard
-        name="Gemini Pro"
+        name="Gemini 3 Pro"
         provider="Google"
         providerId="google"
         delay={2}
         className="left-[10%] bottom-[30%] hidden lg:block"
       />
       <FloatingModelCard
-        name="Llama 3"
+        name="Llama 4"
         provider="Meta"
         providerId="meta"
         delay={2.5}
