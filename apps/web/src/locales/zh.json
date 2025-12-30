@@ -128,19 +128,15 @@
       "title": "系统模型",
       "description": "系统提供的默认模型。",
       "system_default": "系统默认",
-      "chat": "对话"
+      "chat": "对话",
+      "under_development": "开发中",
+      "coming_soon": "内置模型即将向所有用户开放。"
     },
     "storage": {
       "title": "高级操作",
       "import_data": "导入数据",
       "import_data_description": "从本地文件导入数据",
-      "import": "导入",
-      "clear_sessions": "清除所有会话消息",
-      "clear_sessions_description": "这将清除所有会话数据，包括助手、文件、消息、插件等。",
-      "clear_now": "立即清除",
-      "reset_settings": "重置所有设置",
-      "reset_settings_description": "将所有设置重置为默认值",
-      "reset_now": "立即重置"
+      "import": "导入"
     },
     "help": {
       "title": "帮助与支持",
@@ -148,13 +144,9 @@
       "resources": "资源",
       "how_it_works": "工作原理",
       "how_it_works_description": "了解 LMRing 的工作原理",
-      "help_center": "帮助中心",
-      "help_center_description": "浏览常见问题和指南",
       "about_us": "关于我们",
       "about_lmring": "关于 LMRing",
-      "about_lmring_description": "了解我们的使命",
-      "join_team": "加入团队",
-      "join_team_description": "查看开放职位"
+      "about_lmring_description": "了解我们的使命"
     },
     "about": {
       "title": "关于 LMRing",
@@ -163,6 +155,7 @@
       "official_website": "官方网站",
       "email_support": "邮件支持",
       "community": "社区与动态",
+      "coming_soon": "（即将推出）",
       "legal": "法律声明",
       "terms": "服务条款",
       "privacy": "隐私政策",
@@ -175,11 +168,6 @@
     "leaderboard": "排行榜",
     "history": "历史记录",
     "today": "今天",
-    "resources": "资源",
-    "about_us": "关于我们",
-    "how_it_works": "工作原理",
-    "help_center": "帮助中心",
-    "join_team": "加入团队",
     "user_menu": {
       "account": "账户",
       "theme": "主题",
@@ -343,5 +331,25 @@
       "invited_by": "邀请人",
       "active": "活跃"
     }
+  },
+  "HowItWorks": {
+    "meta_title": "工作原理 - LMRing",
+    "meta_description": "通过我们简单的 4 步流程了解 LMRing 如何帮助您并排比较 AI 模型。",
+    "hero_title": "LMRing 工作原理",
+    "hero_description": "只需 4 个简单步骤即可轻松比较 AI 模型",
+    "about_us": "关于我们",
+    "step_1_title": "配置您的模型",
+    "step_1_description": "在设置中连接您的 AI 提供商 API 密钥，并启用您想要比较的模型。LMRing 支持 60 多家提供商，包括 OpenAI、Anthropic、Google 等。",
+    "step_2_title": "提出您的问题",
+    "step_2_description": "在竞技场中输入您的提示。选择多个模型进行并排比较。所有模型同时收到相同的提示以确保公平比较。",
+    "step_3_title": "比较响应",
+    "step_3_description": "并排查看模型响应，包括响应时间、令牌使用量和质量等详细指标。为您喜欢的响应投票，帮助改进排行榜。",
+    "step_4_title": "跟踪性能",
+    "step_4_description": "查看全球排行榜，了解基于社区投票哪些模型表现最佳。查看您的对话历史记录，回顾过去的比较和见解。",
+    "cta_title": "准备好比较 AI 模型了吗？",
+    "cta_description": "立即加入 LMRing，开始比较模型，找到最适合您需求的模型。",
+    "cta_get_started": "开始使用",
+    "cta_try_arena": "试用竞技场",
+    "powered_by": "技术支持"
   }
 }

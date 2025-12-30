@@ -28,8 +28,8 @@
     "@biomejs/biome": "^2.3.10",
     "@commitlint/cli": "^20.2.0",
     "@commitlint/config-conventional": "^20.2.0",
-    "@evilmartians/lefthook": "^2.0.12",
-    "knip": "^5.77.0",
+    "@evilmartians/lefthook": "^2.0.13",
+    "knip": "^5.78.0",
     "turbo": "^2.7.2"
   },
   "packageManager": "pnpm@10.25.0"

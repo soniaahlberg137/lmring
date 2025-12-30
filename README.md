@@ -6,7 +6,7 @@ A modern Next.js application built with TypeScript, Tailwind CSS, and best pract
 
 ### Prerequisites
 
-- Node.js 20+
+- Node.js 24.11.1+
 - pnpm
 
 ### Installation
@@ -38,7 +38,7 @@ pnpm build
 
 ## Tech Stack
 
-- [Next.js 15+](https://nextjs.org) - React framework
+- [Next.js 16+](https://nextjs.org) - React framework
 - [TypeScript](https://www.typescriptlang.org) - Type safety
 - [Turborepo](https://turbo.build/repo) - Monorepo build system
 - [Tailwind CSS 4](https://tailwindcss.com) - Styling
@@ -47,5 +47,5 @@ pnpm build
 - [Playwright](https://playwright.dev) - E2E testing
 - [Supabase](https://supabase.com) - Backend and database
 - [DrizzleORM](https://orm.drizzle.team) - Database ORM
-- [Clerk](https://clerk.com) - Authentication
+- [Better-Auth](https://www.better-auth.com) - Authentication
 - [Next-js-Boilerplate](https://github.com/ixartz/Next-js-Boilerplate) - Template

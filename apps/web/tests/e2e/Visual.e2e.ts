@@ -38,8 +38,9 @@ test.describe('Visual testing', () => {
       await takeSnapshot(page, testInfo);
     });
 
-    test('should take screenshot of the French homepage', async ({ page }, testInfo) => {
-      await page.goto('/fr');
+    test('should take screenshot of the French homepage', async ({ page, context }, testInfo) => {
+      await context.setExtraHTTPHeaders({ 'x-language': 'fr' });
+      await page.goto('/');
 
       await expect(
         page.getByRole('heading', { name: 'Code de démarrage pour Next.js avec Tailwind CSS' }),

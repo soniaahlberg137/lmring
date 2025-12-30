@@ -128,19 +128,15 @@
       "title": "Modèles système",
       "description": "Modèles par défaut fournis par le système.",
       "system_default": "Par défaut système",
-      "chat": "Chat"
+      "chat": "Chat",
+      "under_development": "En développement",
+      "coming_soon": "Les modèles intégrés seront bientôt disponibles pour tout le monde."
     },
     "storage": {
       "title": "Opérations avancées",
       "import_data": "Importer des données",
       "import_data_description": "Importer des données depuis un fichier local",
-      "import": "Importer",
-      "clear_sessions": "Effacer tous les messages de session",
-      "clear_sessions_description": "Cela effacera toutes les données de session, y compris l'assistant, les fichiers, les messages, les plugins, etc.",
-      "clear_now": "Effacer maintenant",
-      "reset_settings": "Réinitialiser tous les paramètres",
-      "reset_settings_description": "Rétablir tous les paramètres aux valeurs par défaut",
-      "reset_now": "Réinitialiser maintenant"
+      "import": "Importer"
     },
     "help": {
       "title": "Aide & Support",
@@ -148,13 +144,9 @@
       "resources": "Ressources",
       "how_it_works": "Comment ça marche",
       "how_it_works_description": "Découvrez comment LMRing fonctionne",
-      "help_center": "Centre d'aide",
-      "help_center_description": "Parcourir les FAQ et guides",
       "about_us": "À propos de nous",
       "about_lmring": "À propos de LMRing",
-      "about_lmring_description": "Découvrir notre mission",
-      "join_team": "Rejoindre l'équipe",
-      "join_team_description": "Voir les postes ouverts"
+      "about_lmring_description": "Découvrir notre mission"
     },
     "about": {
       "title": "À propos de LMRing",
@@ -163,6 +155,7 @@
       "official_website": "Site officiel",
       "email_support": "Support par email",
       "community": "Communauté et Actualités",
+      "coming_soon": "(Bientôt disponible)",
       "legal": "Mentions légales",
       "terms": "Conditions d'utilisation",
       "privacy": "Politique de confidentialité",
@@ -175,11 +168,6 @@
     "leaderboard": "Classement",
     "history": "Historique",
     "today": "Aujourd'hui",
-    "resources": "Ressources",
-    "about_us": "À propos de nous",
-    "how_it_works": "Comment ça marche",
-    "help_center": "Centre d'aide",
-    "join_team": "Rejoindre l'équipe",
     "user_menu": {
       "account": "Compte",
       "theme": "Thème",
@@ -343,5 +331,25 @@
       "invited_by": "Invité par",
       "active": "actif"
     }
+  },
+  "HowItWorks": {
+    "meta_title": "Comment ça marche - LMRing",
+    "meta_description": "Découvrez comment LMRing vous aide à comparer les modèles d'IA côte à côte en 4 étapes simples.",
+    "hero_title": "Comment fonctionne LMRing",
+    "hero_description": "Comparez les modèles d'IA sans effort en 4 étapes simples",
+    "about_us": "À propos",
+    "step_1_title": "Configurez vos modèles",
+    "step_1_description": "Connectez vos clés API de fournisseurs d'IA dans les paramètres et activez les modèles que vous souhaitez comparer. LMRing prend en charge plus de 60 fournisseurs, dont OpenAI, Anthropic, Google et bien d'autres.",
+    "step_2_title": "Posez votre question",
+    "step_2_description": "Entrez votre invite dans l'Arène. Sélectionnez plusieurs modèles à comparer côte à côte. Tous les modèles reçoivent la même invite simultanément pour une comparaison équitable.",
+    "step_3_title": "Comparez les réponses",
+    "step_3_description": "Examinez les réponses des modèles côte à côte avec des métriques détaillées incluant le temps de réponse, l'utilisation des tokens et la qualité. Votez pour votre réponse préférée pour améliorer le classement.",
+    "step_4_title": "Suivez les performances",
+    "step_4_description": "Consultez le classement mondial pour voir quels modèles fonctionnent le mieux selon les votes de la communauté. Consultez votre historique de conversation pour revoir les comparaisons et insights passés.",
+    "cta_title": "Prêt à comparer les modèles d'IA ?",
+    "cta_description": "Rejoignez LMRing aujourd'hui et commencez à comparer les modèles pour trouver celui qui correspond le mieux à vos besoins.",
+    "cta_get_started": "Commencer",
+    "cta_try_arena": "Essayer l'Arène",
+    "powered_by": "Propulsé par"
   }
 }

@@ -17,6 +17,8 @@ const baseConfig: NextConfig = {
     '@lmring/i18n',
     '@lmring/env',
     '@lobehub/icons',
+    '@lobehub/ui',
+    '@lobehub/fluent-emoji',
   ],
   outputFileTracingIncludes: {
     '/': ['./migrations/**/*'],

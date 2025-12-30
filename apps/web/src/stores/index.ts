@@ -1,6 +1,13 @@
 export type { ArenaActions, ArenaState, ArenaStore } from './arena-store';
 export { ArenaStoreProvider, arenaSelectors, useArenaStore } from './arena-store';
 export type {
+  LeaderboardActions,
+  LeaderboardState,
+  LeaderboardStore,
+  ModelWithArena,
+} from './leaderboard-store';
+export { leaderboardSelectors, useLeaderboardStore } from './leaderboard-store';
+export type {
   ApiKeyRecord,
   SettingsActions,
   SettingsState,

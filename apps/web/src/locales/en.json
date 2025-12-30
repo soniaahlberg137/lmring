@@ -128,19 +128,15 @@
       "title": "System Models",
       "description": "Default models provided by the system.",
       "system_default": "System Default",
-      "chat": "Chat"
+      "chat": "Chat",
+      "under_development": "Under Development",
+      "coming_soon": "Built-in models will be available for everyone soon."
     },
     "storage": {
       "title": "Advanced Operations",
       "import_data": "Import Data",
       "import_data_description": "Import data from a local file",
-      "import": "Import",
-      "clear_sessions": "Clear All Session Messages",
-      "clear_sessions_description": "This will clear all session data, including assistant, files, messages, plugins, etc.",
-      "clear_now": "Clear Now",
-      "reset_settings": "Reset All Settings",
-      "reset_settings_description": "Reset all settings to default values",
-      "reset_now": "Reset Now"
+      "import": "Import"
     },
     "help": {
       "title": "Help & Support",
@@ -148,13 +144,9 @@
       "resources": "Resources",
       "how_it_works": "How it Works",
       "how_it_works_description": "Learn how LMRing works",
-      "help_center": "Help Center",
-      "help_center_description": "Browse FAQs and guides",
       "about_us": "About Us",
       "about_lmring": "About LMRing",
-      "about_lmring_description": "Learn about our mission",
-      "join_team": "Join the Team",
-      "join_team_description": "View open positions"
+      "about_lmring_description": "Learn about our mission"
     },
     "about": {
       "title": "About LMRing",
@@ -163,6 +155,7 @@
       "official_website": "Official Website",
       "email_support": "Email Support",
       "community": "Community and News",
+      "coming_soon": "(Coming Soon)",
       "legal": "Legal Disclaimer",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
@@ -175,11 +168,6 @@
     "leaderboard": "Leaderboard",
     "history": "History",
     "today": "Today",
-    "resources": "Resources",
-    "about_us": "About Us",
-    "how_it_works": "How it Works",
-    "help_center": "Help Center",
-    "join_team": "Join the Team",
     "user_menu": {
       "account": "Account",
       "theme": "Theme",
@@ -343,5 +331,25 @@
       "invited_by": "Invited By",
       "active": "active"
     }
+  },
+  "HowItWorks": {
+    "meta_title": "How it Works - LMRing",
+    "meta_description": "Learn how LMRing helps you compare AI models side by side with our simple 4-step process.",
+    "hero_title": "How LMRing Works",
+    "hero_description": "Compare AI models effortlessly in 4 simple steps",
+    "about_us": "About Us",
+    "step_1_title": "Configure Your Models",
+    "step_1_description": "Connect your AI provider API keys in settings and enable the models you want to compare. LMRing supports 60+ providers including OpenAI, Anthropic, Google, and more.",
+    "step_2_title": "Ask Your Question",
+    "step_2_description": "Enter your prompt in the Arena. Select multiple models to compare side-by-side. All models receive the same prompt simultaneously for fair comparison.",
+    "step_3_title": "Compare Responses",
+    "step_3_description": "Review model responses side-by-side with detailed metrics including response time, token usage, and quality. Vote for your preferred response to help improve the leaderboard.",
+    "step_4_title": "Track Performance",
+    "step_4_description": "View the global leaderboard to see which models perform best based on community votes. Check your conversation history to review past comparisons and insights.",
+    "cta_title": "Ready to Compare AI Models?",
+    "cta_description": "Join LMRing today and start comparing models to find the best fit for your needs.",
+    "cta_get_started": "Get Started",
+    "cta_try_arena": "Try Arena",
+    "powered_by": "Powered by"
   }
 }

@@ -1,20 +1,23 @@
 import { detectBot } from '@arcjet/next';
 import type { AuthUser } from '@lmring/auth';
 import { isDisabled, isPending, UserStatus } from '@lmring/auth';
-import { routing } from '@lmring/i18n';
 import type { NextFetchEvent, NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import createMiddleware from 'next-intl/middleware';
 import arcjet from '@/libs/Arcjet';
 import { auth } from '@/libs/Auth';
 import { logger } from '@/libs/Logger';
-
-const handleI18nRouting = createMiddleware(routing);
+import {
+  isSupportedLocale,
+  LANGUAGE_HEADER,
+  LANGUAGE_QUERY_PARAM,
+  resolveLocale,
+} from '@/libs/locale-utils';
 
 const PROTECTED_PATHS = ['/arena', '/account', '/settings', '/history', '/leaderboard'];
 const AUTH_PATHS = ['/sign-in', '/sign-up'];
 const ACCOUNT_DISABLED_PATH = '/account-disabled';
 const LOCALE_PREFIX_REGEX = /^\/[a-z]{2}(\/|$)/;
+const LOCALE_CAPTURE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
 function stripLocalePrefix(pathname: string): string {
   return pathname.replace(LOCALE_PREFIX_REGEX, '/');
@@ -51,7 +54,33 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
   }
 
   const { pathname } = request.nextUrl;
-  const locale = pathname.match(LOCALE_PREFIX_REGEX)?.[0]?.replace(/\//g, '') ?? '';
+  const legacyLocaleMatch = pathname.match(LOCALE_CAPTURE_REGEX);
+  const acceptLanguage = request.headers.get('accept-language');
+  const headerLocale = request.headers.get(LANGUAGE_HEADER);
+  const queryParamLocale = request.nextUrl.searchParams.get(LANGUAGE_QUERY_PARAM);
+
+  let resolvedLocale = resolveLocale({
+    headerLocale,
+    acceptLanguage,
+  });
+
+  if (isSupportedLocale(queryParamLocale)) {
+    resolvedLocale = queryParamLocale;
+  }
+
+  if (legacyLocaleMatch) {
+    const matched = legacyLocaleMatch[1];
+    if (isSupportedLocale(matched)) {
+      resolvedLocale = matched;
+      const redirectedUrl = request.nextUrl.clone();
+      redirectedUrl.pathname = stripLocalePrefix(pathname) || '/';
+      redirectedUrl.searchParams.set(LANGUAGE_QUERY_PARAM, resolvedLocale);
+      const redirectResponse = NextResponse.redirect(redirectedUrl);
+      return redirectResponse;
+    }
+  }
+
+  const normalizedPath = stripLocalePrefix(pathname);
 
   // Get session from Better-Auth
   const session = await auth.api.getSession({
@@ -69,12 +98,8 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
         pathname,
       });
 
-      const normalizedPath = stripLocalePrefix(pathname);
       if (normalizedPath !== ACCOUNT_DISABLED_PATH) {
-        const accountDisabledUrl = new URL(
-          locale ? `/${locale}${ACCOUNT_DISABLED_PATH}` : ACCOUNT_DISABLED_PATH,
-          request.url,
-        );
+        const accountDisabledUrl = new URL(ACCOUNT_DISABLED_PATH, request.url);
         return NextResponse.redirect(accountDisabledUrl);
       }
     }
@@ -85,35 +110,39 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
         pathname,
       });
 
-      const normalizedPath = stripLocalePrefix(pathname);
       if (normalizedPath !== ACCOUNT_DISABLED_PATH) {
-        const accountDisabledUrl = new URL(
-          locale ? `/${locale}${ACCOUNT_DISABLED_PATH}` : ACCOUNT_DISABLED_PATH,
-          request.url,
-        );
+        const accountDisabledUrl = new URL(ACCOUNT_DISABLED_PATH, request.url);
         return NextResponse.redirect(accountDisabledUrl);
       }
     }
 
-    const normalizedPath = stripLocalePrefix(pathname);
     if (normalizedPath === ACCOUNT_DISABLED_PATH && authUser.status === UserStatus.ACTIVE) {
-      const homeUrl = new URL(locale ? `/${locale}` : '/', request.url);
+      const homeUrl = new URL('/', request.url);
       return NextResponse.redirect(homeUrl);
     }
   }
 
   if (matchesAnyPath(pathname, PROTECTED_PATHS) && !user) {
-    const signInUrl = new URL(locale ? `/${locale}/sign-in` : '/sign-in', request.url);
-    signInUrl.searchParams.set('callbackUrl', pathname);
+    const signInUrl = new URL('/sign-in', request.url);
+    signInUrl.searchParams.set('callbackUrl', normalizedPath);
     return NextResponse.redirect(signInUrl);
   }
 
   if (matchesAnyPath(pathname, AUTH_PATHS) && user) {
-    const arenaUrl = new URL(locale ? `/${locale}/arena` : '/arena', request.url);
+    const arenaUrl = new URL('/arena', request.url);
     return NextResponse.redirect(arenaUrl);
   }
 
-  return handleI18nRouting(request);
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(LANGUAGE_HEADER, resolvedLocale);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  return response;
 }
 
 export const config = {

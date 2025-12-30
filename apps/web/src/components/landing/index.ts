@@ -9,6 +9,7 @@ export {
   GradientOrb,
   GridBackground,
 } from './backgrounds';
+export { WebGLBackground } from './cloud-lightning';
 export { FluidCursor } from './fluid-cursor';
 export { FrostedHeader } from './frosted-header';
 export {
@@ -17,7 +18,6 @@ export {
   HowItWorksSection,
   ProvidersSection,
 } from './landing-sections';
-export { WebGLBackground } from './cloud-lightning';
 export { FloatingParticles, Meteors, Sparkles } from './particles';
 export { ParticlesBackground, SparklesEffect } from './particles-background';
 export { Spotlight, SpotlightCard } from './spotlight';

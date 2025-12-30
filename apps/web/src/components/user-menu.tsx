@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@lmring/ui';
 import { LayoutDashboardIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { authClient } from '@/libs/AuthClient';
 
@@ -28,13 +28,11 @@ interface UserMenuProps {
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
   const t = useTranslations('Sidebar');
   const router = useRouter();
-  const params = useParams();
-  const locale = (params.locale as string) || 'en';
 
   const handleLogout = async () => {
     try {
       await authClient.signOut();
-      router.push(`/${locale}/sign-in`);
+      router.push('/sign-in');
     } catch (error) {
       console.error('Logout failed:', error);
     }
@@ -82,26 +80,17 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator className="bg-border/50" />
 
-        <DropdownMenuItem
-          onClick={() => router.push(`/${locale}/account`)}
-          className="apple-transition"
-        >
+        <DropdownMenuItem onClick={() => router.push('/account')} className="apple-transition">
           <UserIcon className="mr-2 h-4 w-4" />
           <span className="font-medium">{t('user_menu.account')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => router.push(`/${locale}/arena`)}
-          className="apple-transition"
-        >
+        <DropdownMenuItem onClick={() => router.push('/arena')} className="apple-transition">
           <LayoutDashboardIcon className="mr-2 h-4 w-4" />
           <span className="font-medium">{t('user_menu.arena')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          onClick={() => router.push(`/${locale}/settings`)}
-          className="apple-transition"
-        >
+        <DropdownMenuItem onClick={() => router.push('/settings')} className="apple-transition">
           <SettingsIcon className="mr-2 h-4 w-4" />
           <span className="font-medium">{t('user_menu.settings')}</span>
         </DropdownMenuItem>

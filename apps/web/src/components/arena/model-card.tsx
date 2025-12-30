@@ -160,7 +160,7 @@ export function ModelCard({
                       )}
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent>
+                  <TooltipContent side="bottom">
                     <p>Sync chat messages with other models</p>
                   </TooltipContent>
                 </Tooltip>
