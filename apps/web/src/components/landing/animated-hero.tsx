@@ -6,7 +6,6 @@ import type { MouseEvent, ReactNode } from 'react';
 import { useCallback, useRef } from 'react';
 
 import { ProviderIcon } from '../arena/provider-icon';
-import { Lightning } from './lightning';
 
 type AnimatedHeroProps = {
   title: ReactNode;
@@ -105,10 +104,10 @@ function FloatingModelCard({
 }
 
 // Animated grid lines - softer
-function AnimatedGrid() {
+function _AnimatedGrid() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <svg
+      {/* <svg
         className="absolute inset-0 h-full w-full"
         xmlns="http://www.w3.org/2000/svg"
         aria-hidden="true"
@@ -131,9 +130,9 @@ function AnimatedGrid() {
           </mask>
         </defs>
         <rect width="100%" height="100%" fill="url(#hero-grid)" mask="url(#hero-grid-mask)" />
-      </svg>
+      </svg> */}
 
-      {/* Animated vertical lines - softer indigo */}
+      {/* Animated vertical lines - softer indigo
       {[...Array(5)].map((_, i) => (
         <motion.div
           key={i}
@@ -143,7 +142,7 @@ function AnimatedGrid() {
           animate={{ opacity: 1, scaleY: 1 }}
           transition={{ delay: 0.5 + i * 0.1, duration: 1.5, ease: 'easeOut' }}
         />
-      ))}
+      ))} */}
     </div>
   );
 }
@@ -226,8 +225,6 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
 
   return (
     <section ref={containerRef} className="relative flex min-h-screen w-full flex-col">
-      <Lightning />
-      <AnimatedGrid />
       <InteractiveOrbs />
 
       {/* Floating model cards */}
@@ -313,7 +310,7 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
           </motion.div>
 
           {/* Stats */}
-          <motion.div
+          {/* <motion.div
             variants={itemVariants}
             className="mt-20 flex flex-wrap justify-center gap-12 border-t border-slate-700/50 pt-10 md:gap-20"
           >
@@ -321,7 +318,7 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
             <AnimatedStat value="200+" label="Models" delay={2} />
             <AnimatedStat value="4" label="Side-by-side" delay={2.2} />
             <AnimatedStat value="∞" label="Comparisons" delay={2.4} />
-          </motion.div>
+          </motion.div> */}
         </motion.div>
       </motion.div>
 

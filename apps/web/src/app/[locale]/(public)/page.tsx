@@ -10,7 +10,7 @@ import {
   HowItWorksSection,
   ProvidersSection,
   RainbowButton,
-  ShaderBackground,
+  WebGLBackground,
 } from '@/components/landing';
 
 type IIndexProps = {
@@ -39,8 +39,10 @@ export default async function Index(props: IIndexProps) {
   });
 
   return (
-    <ShaderBackground className="min-h-screen">
-      <div className="flex min-h-screen flex-col">
+    <div className="relative min-h-screen">
+      <WebGLBackground />
+
+      <div className="relative z-10 flex min-h-screen flex-col">
         {/* Hero Section with Aurora Background */}
         <AnimatedHero
           title={t('title')}
@@ -86,6 +88,6 @@ export default async function Index(props: IIndexProps) {
           }
         />
       </div>
-    </ShaderBackground>
+    </div>
   );
 }
