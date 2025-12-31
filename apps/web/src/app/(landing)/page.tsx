@@ -1,53 +1,92 @@
-import Link from 'next/link';
+import type { Locale } from '@lmring/i18n';
+import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { WebGLBackground } from '@/components/home/webgl-background';
-import { GradientButton } from '@/components/ui/gradient-button';
-import { getRequestLocale } from '@/libs/request-locale';
 
-export default async function LandingPage() {
-  const locale = await getRequestLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations({ locale, namespace: 'Index' });
+import {
+  AnimatedButton,
+  AnimatedHero,
+  CTASection,
+  FeaturesSection,
+  HowItWorksSection,
+  ProvidersSection,
+  RainbowButton,
+  WebGLBackground,
+} from '@/components/landing';
+
+type IIndexProps = {
+  params: Promise<{ locale: string }>;
+};
+
+export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
+  const { locale } = await props.params;
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: 'Index',
+  });
+
+  return {
+    title: t('meta_title'),
+    description: t('meta_description'),
+  };
+}
+
+export default async function Index(props: IIndexProps) {
+  const { locale } = await props.params;
+  setRequestLocale(locale as Locale);
+  const t = await getTranslations({
+    locale: locale as Locale,
+    namespace: 'Index',
+  });
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden text-white">
-      {/* Background */}
+    <div className="relative min-h-screen">
       <WebGLBackground />
 
-      {/* Content Overlay */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center p-4 text-center">
-        {/* Hero Section */}
-        <section className="flex flex-col items-center gap-8 animate-in fade-in zoom-in duration-1000 slide-in-from-bottom-10">
-          <h1 className="max-w-4xl text-5xl font-semibold tracking-tight sm:text-7xl md:text-8xl">
-            <span className="bg-gradient-to-b from-black to-gray-800 bg-clip-text text-transparent drop-shadow-2xl">
-              {t('title')}
+      <div className="relative z-10 flex min-h-screen flex-col">
+        {/* Hero Section with Aurora Background */}
+        <AnimatedHero
+          title={t('title')}
+          description={t('description')}
+          badge={
+            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
+              <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
+              AI Model Arena
             </span>
-          </h1>
+          }
+          actions={
+            <>
+              <RainbowButton href="/sign-up/">{t('get_started')}</RainbowButton>
+              <AnimatedButton href="/arena/" variant="secondary">
+                {t('view_arena')}
+              </AnimatedButton>
+            </>
+          }
+        />
 
-          <div className="max-w-2xl text-center">
-            <p className="text-2xl md:text-3xl lg:text-4xl font-normal text-black drop-shadow-md">
-              Compare AI models side by side
-            </p>
-            <p className="text-lg md:text-xl font-normal text-black mt-2 drop-shadow-md">
-              and find the best fit for your needs
-            </p>
-          </div>
+        {/* Providers Section */}
+        <ProvidersSection />
 
-          <div className="flex flex-col gap-6 sm:flex-row mt-8">
-            <Link href="/sign-up/">
-              <button
-                type="button"
-                className="h-12 px-8 rounded-lg bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 text-white font-medium transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)]"
-              >
-                {t('get_started')}
-              </button>
-            </Link>
+        {/* How It Works */}
+        <HowItWorksSection />
 
-            <Link href="/arena/">
-              <GradientButton>{t('view_arena')}</GradientButton>
-            </Link>
-          </div>
-        </section>
+        {/* Features Section */}
+        <FeaturesSection title={t('features_title')} />
+
+        {/* CTA Section */}
+        <CTASection
+          title="Ready to Compare?"
+          description="Start comparing AI models side-by-side and find the perfect fit for your use case."
+          primaryAction={
+            <RainbowButton href="/sign-up/" className="px-8 py-4 text-lg">
+              Get Started Free
+            </RainbowButton>
+          }
+          secondaryAction={
+            <AnimatedButton href="/arena/" variant="secondary" className="px-8 py-4 text-lg">
+              Try the Arena
+            </AnimatedButton>
+          }
+        />
       </div>
     </div>
   );
