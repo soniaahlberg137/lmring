@@ -103,7 +103,6 @@ function FloatingModelCard({
   );
 }
 
-
 // Glowing orbs - softer colors
 function InteractiveOrbs() {
   const mouseX = useMotionValue(0);
