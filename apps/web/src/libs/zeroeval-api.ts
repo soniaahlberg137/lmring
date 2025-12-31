@@ -22,12 +22,13 @@ const ALL_ARENA_NAMES = ['chat-arena', ...CODE_ARENA_KEYS] as const;
 
 // Arena names for each category
 export const CATEGORY_ARENA_NAMES = {
-  llm: ALL_ARENA_NAMES,
+  text: ALL_ARENA_NAMES,
   vision: ALL_ARENA_NAMES,
   'image-generation': ['text-to-image', 'image-to-image'] as const,
   'video-generation': ['text-to-video', 'image-to-video', 'video-editing'] as const,
   'text-to-speech': ['text-to-speech'] as const,
   'speech-to-text': ['speech-to-text'] as const,
+  all: ALL_ARENA_NAMES,
 } as const;
 
 // ============================================================================
@@ -183,12 +184,9 @@ export interface ModelsAllParams {
 // ============================================================================
 
 export type LeaderboardCategory =
-  | 'llm'
-  | 'vision'
-  | 'image-generation'
-  | 'video-generation'
-  | 'text-to-speech'
-  | 'speech-to-text';
+  // TODO: Re-enable when text interface price adjustment is correct
+  // | 'text'
+  'vision' | 'image-generation' | 'video-generation' | 'text-to-speech' | 'speech-to-text' | 'all';
 
 export interface CategoryConfig {
   id: LeaderboardCategory;
@@ -208,10 +206,10 @@ export interface MetricConfig {
 
 export const CATEGORY_CONFIGS: CategoryConfig[] = [
   {
-    id: 'llm',
-    label: 'LLM',
-    icon: 'MessageSquare',
-    apiParams: { model_type: 'llm' },
+    id: 'all',
+    label: 'All',
+    icon: 'LayoutGrid',
+    apiParams: {},
     metrics: [
       {
         id: 'gpqa',
@@ -517,9 +515,16 @@ export async function getModelsAll(params?: ModelsAllParams): Promise<ZeroEvalMo
 
 /**
  * Get all models with full benchmark scores
+ * @param justCanonicals - If true, returns only canonical models. Defaults to true.
  */
-export async function getModelsFull(): Promise<ZeroEvalModelFull[]> {
-  return fetchWithRetry<ZeroEvalModelFull[]>(`${ZEROEVAL_BASE_URL}/models/full`);
+export async function getModelsFull(justCanonicals = true): Promise<ZeroEvalModelFull[]> {
+  const params = new URLSearchParams();
+  if (!justCanonicals) {
+    params.set('justCanonicals', 'false');
+  }
+  const queryString = params.toString();
+  const url = `${ZEROEVAL_BASE_URL}/models/full${queryString ? `?${queryString}` : ''}`;
+  return fetchWithRetry<ZeroEvalModelFull[]>(url);
 }
 
 /**

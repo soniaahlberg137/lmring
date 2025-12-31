@@ -49,7 +49,7 @@ export default function LeaderboardPage() {
   const [loading, setLoading] = useState(true);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [category, setCategory] = useState<LeaderboardCategory>('llm');
+  const [category, setCategory] = useState<LeaderboardCategory>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [sortConfig, setSortConfig] = useState<SortConfig>({
     field: 'gpqa_score',
@@ -91,8 +91,28 @@ export default function LeaderboardPage() {
 
         let fetchedModels: ModelWithArena[];
 
-        if (currentCategory === 'llm' || currentCategory === 'vision') {
-          const models = await getModelsFull();
+        if (currentCategory === 'vision') {
+          // VISION category: Show canonical models only
+          const models = await getModelsFull(true);
+          const modelIds = models.map((m) => m.model_id);
+          let arenaData: Awaited<ReturnType<typeof getArenaScores>> = {};
+          try {
+            arenaData = await getArenaScores(modelIds);
+          } catch {
+            console.warn('Failed to fetch arena scores, continuing without them');
+          }
+
+          fetchedModels = models.map((model) => {
+            const arenaScores = arenaData[model.model_id];
+            return {
+              ...model,
+              code_arena_score: arenaScores ? calculateCodeArenaScore(arenaScores) : null,
+              chat_arena_score: arenaScores ? calculateChatArenaScore(arenaScores) : null,
+              arena_raw_scores: arenaScores || null,
+            };
+          });
+        } else if (currentCategory === 'all') {
+          const models = await getModelsFull(false);
           const modelIds = models.map((m) => m.model_id);
           let arenaData: Awaited<ReturnType<typeof getArenaScores>> = {};
           try {
