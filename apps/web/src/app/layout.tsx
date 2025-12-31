@@ -5,6 +5,7 @@ import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
 import { getRequestLocale } from '@/libs/request-locale';
+import { thinScrollbar } from '@/libs/scrollbar';
 import { LanguageProvider } from '@/providers/language-provider';
 import '@/styles/global.css';
 import '@/styles/arena.css';
@@ -24,8 +25,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const messages = await loadLocaleMessages(locale);
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body suppressHydrationWarning>
+    <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
+      <body suppressHydrationWarning className={`min-h-screen ${thinScrollbar}`}>
         <LanguageProvider initialLanguage={locale} initialMessages={messages}>
           <ThemeProvider>
             <PostHogProvider>{props.children}</PostHogProvider>
