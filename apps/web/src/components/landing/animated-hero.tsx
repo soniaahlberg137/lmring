@@ -103,49 +103,6 @@ function FloatingModelCard({
   );
 }
 
-// Animated grid lines - softer
-function _AnimatedGrid() {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      {/* <svg
-        className="absolute inset-0 h-full w-full"
-        xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern id="hero-grid" width="80" height="80" patternUnits="userSpaceOnUse">
-            <path
-              d="M 80 0 L 0 0 0 80"
-              fill="none"
-              stroke="rgba(148,163,184,0.06)"
-              strokeWidth="1"
-            />
-          </pattern>
-          <radialGradient id="hero-grid-fade" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="white" stopOpacity="1" />
-            <stop offset="70%" stopColor="white" stopOpacity="0" />
-          </radialGradient>
-          <mask id="hero-grid-mask">
-            <rect width="100%" height="100%" fill="url(#hero-grid-fade)" />
-          </mask>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#hero-grid)" mask="url(#hero-grid-mask)" />
-      </svg> */}
-
-      {/* Animated vertical lines - softer indigo
-      {[...Array(5)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute top-0 h-full w-px bg-gradient-to-b from-transparent via-indigo-400/15 to-transparent"
-          style={{ left: `${20 + i * 15}%` }}
-          initial={{ opacity: 0, scaleY: 0 }}
-          animate={{ opacity: 1, scaleY: 1 }}
-          transition={{ delay: 0.5 + i * 0.1, duration: 1.5, ease: 'easeOut' }}
-        />
-      ))} */}
-    </div>
-  );
-}
 
 // Glowing orbs - softer colors
 function InteractiveOrbs() {

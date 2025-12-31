@@ -18,8 +18,6 @@ export {
   HowItWorksSection,
   ProvidersSection,
 } from './landing-sections';
-export { FloatingParticles, Meteors, Sparkles } from './particles';
-export { ParticlesBackground, SparklesEffect } from './particles-background';
 export { Spotlight, SpotlightCard } from './spotlight';
 export {
   HighlightText,

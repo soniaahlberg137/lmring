@@ -3,7 +3,7 @@ import { setRequestLocale } from 'next-intl/server';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { ThemeProvider } from '@/components/theme-provider';
-import { thinScrollbar } from '@/lib/scrollbar';
+import { thinScrollbar } from '@/libs/scrollbar';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
 import { getRequestLocale } from '@/libs/request-locale';
 import { LanguageProvider } from '@/providers/language-provider';
