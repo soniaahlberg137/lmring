@@ -1,7 +1,8 @@
 'use client';
 
-import { Card, CardContent } from '@lmring/ui';
+import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
 import { motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -59,6 +60,7 @@ export default function LeaderboardPage() {
   const [yAxisMetric, setYAxisMetric] = useState<string>('gpqa');
   const [page, setPage] = useState(1);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [methodologyOpen, setMethodologyOpen] = useState(false);
 
   const categoryConfig = useMemo(() => {
     const config = CATEGORY_CONFIGS.find((c) => c.id === category);
@@ -359,9 +361,132 @@ export default function LeaderboardPage() {
               )}
             </div>
 
+            {/* Methodology Section */}
+            <Collapsible open={methodologyOpen} onOpenChange={setMethodologyOpen} className="mt-8">
+              <CollapsibleTrigger className="flex items-center justify-between w-full py-3 px-4 text-left hover:bg-muted/50 rounded-lg transition-colors">
+                <div>
+                  <h2 className="text-lg font-semibold">{t('methodology.title')}</h2>
+                  <p className="text-sm text-muted-foreground">{t('methodology.subtitle')}</p>
+                </div>
+                <ChevronDown
+                  className={`h-5 w-5 text-muted-foreground transition-transform ${methodologyOpen ? 'rotate-180' : ''}`}
+                />
+              </CollapsibleTrigger>
+
+              <CollapsibleContent className="px-4 py-6 space-y-6">
+                {/* Infrastructure Section */}
+                <section>
+                  <h3 className="text-base font-semibold mb-2">
+                    {t('methodology.infrastructure.title')}
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {t('methodology.infrastructure.description')}
+                  </p>
+                </section>
+
+                {/* Ranking System Section */}
+                <section>
+                  <h3 className="text-base font-semibold mb-2">{t('methodology.ranking.title')}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+                    {t('methodology.ranking.description')}
+                  </p>
+
+                  {/* Initial State */}
+                  <div className="ml-4 mb-3">
+                    <h4 className="text-sm font-medium mb-1">
+                      {t('methodology.ranking.initial_state.title')}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {t('methodology.ranking.initial_state.description')}
+                    </p>
+                  </div>
+
+                  {/* Rating Updates */}
+                  <div className="ml-4 mb-3">
+                    <h4 className="text-sm font-medium mb-1">
+                      {t('methodology.ranking.rating_updates.title')}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {t('methodology.ranking.rating_updates.description')}
+                    </p>
+                  </div>
+
+                  {/* Leaderboard Ranking */}
+                  <div className="ml-4">
+                    <h4 className="text-sm font-medium mb-1">
+                      {t('methodology.ranking.leaderboard_ranking.title')}
+                    </h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {t('methodology.ranking.leaderboard_ranking.description')}
+                    </p>
+                  </div>
+                </section>
+
+                {/* Parameters Section */}
+                <section>
+                  <h3 className="text-base font-semibold mb-3">
+                    {t('methodology.parameters.title')}
+                  </h3>
+                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* μ (mu) */}
+                    <div className="flex flex-col">
+                      <dt className="text-sm font-medium mb-1">
+                        {t('methodology.parameters.mu.label')}
+                      </dt>
+                      <dd className="text-sm text-muted-foreground">
+                        {t('methodology.parameters.mu.description')}
+                      </dd>
+                      <dd className="text-xs text-muted-foreground mt-1">
+                        Default: {t('methodology.parameters.mu.default')}
+                      </dd>
+                    </div>
+
+                    {/* σ (sigma) */}
+                    <div className="flex flex-col">
+                      <dt className="text-sm font-medium mb-1">
+                        {t('methodology.parameters.sigma.label')}
+                      </dt>
+                      <dd className="text-sm text-muted-foreground">
+                        {t('methodology.parameters.sigma.description')}
+                      </dd>
+                      <dd className="text-xs text-muted-foreground mt-1">
+                        Default: {t('methodology.parameters.sigma.default')}
+                      </dd>
+                    </div>
+
+                    {/* β (beta) */}
+                    <div className="flex flex-col">
+                      <dt className="text-sm font-medium mb-1">
+                        {t('methodology.parameters.beta.label')}
+                      </dt>
+                      <dd className="text-sm text-muted-foreground">
+                        {t('methodology.parameters.beta.description')}
+                      </dd>
+                      <dd className="text-xs text-muted-foreground mt-1">
+                        Default: {t('methodology.parameters.beta.default')}
+                      </dd>
+                    </div>
+
+                    {/* τ (tau) */}
+                    <div className="flex flex-col">
+                      <dt className="text-sm font-medium mb-1">
+                        {t('methodology.parameters.tau.label')}
+                      </dt>
+                      <dd className="text-sm text-muted-foreground">
+                        {t('methodology.parameters.tau.description')}
+                      </dd>
+                      <dd className="text-xs text-muted-foreground mt-1">
+                        Default: {t('methodology.parameters.tau.default')}
+                      </dd>
+                    </div>
+                  </dl>
+                </section>
+              </CollapsibleContent>
+            </Collapsible>
+
             <div className="mt-6 pt-4 border-t border-border text-center">
               <p className="text-xs text-muted-foreground">
-                Data sourced from{' '}
+                {t('data_source')}{' '}
                 <a
                   href="https://github.com/WildEval/ZeroEval"
                   target="_blank"

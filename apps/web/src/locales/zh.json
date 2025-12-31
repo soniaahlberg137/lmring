@@ -297,7 +297,55 @@
   },
   "Leaderboard": {
     "title": "排行榜",
-    "elo_score": "ELO 分数"
+    "elo_score": "ELO 分数",
+    "data_source": "数据来源于",
+    "methodology": {
+      "title": "方法论",
+      "subtitle": "我们如何通过系统化比较评估和排名 AI 模型",
+      "infrastructure": {
+        "title": "基础设施",
+        "description": "所有模型比较都通过 ZeroEval Gateway API 进行，这是一个统一的接口，可标准化跨提供商访问 AI 模型。该网关通过统一处理身份验证、速率限制和响应格式来确保一致的评估。"
+      },
+      "ranking": {
+        "title": "排名系统",
+        "description": "我们使用 TrueSkill，这是微软研究院为竞技游戏平台开发的贝叶斯排名系统。TrueSkill 通过一对一比较估计每个模型的技能 (μ) 和不确定性 (σ)，并在每次比赛后更新评级。",
+        "initial_state": {
+          "title": "初始状态",
+          "description": "每个模型开始时 μ = 25.0 和 σ = 8.33，代表中性技能估计和高不确定性。"
+        },
+        "rating_updates": {
+          "title": "评级更新",
+          "description": "每次比较后，获胜者获得评级分数，失败者失去分数。变化幅度取决于竞争者之间的技能差异。随着模型参与更多比赛，不确定性会降低。"
+        },
+        "leaderboard_ranking": {
+          "title": "排行榜排名",
+          "description": "模型按保守评级 (μ - 3σ) 排名，这有利于对其技能有更高信心的模型。这确保了具有良好记录的模型排名高于高不确定性的模型。"
+        }
+      },
+      "parameters": {
+        "title": "参数",
+        "mu": {
+          "label": "μ (mu)",
+          "description": "平均技能估计",
+          "default": "25.0"
+        },
+        "sigma": {
+          "label": "σ (sigma)",
+          "description": "技能不确定性",
+          "default": "8.33"
+        },
+        "beta": {
+          "label": "β (beta)",
+          "description": "性能方差",
+          "default": "4.16"
+        },
+        "tau": {
+          "label": "τ (tau)",
+          "description": "技能动态因子",
+          "default": "0.083"
+        }
+      }
+    }
   },
   "Account": {
     "title": "账户",

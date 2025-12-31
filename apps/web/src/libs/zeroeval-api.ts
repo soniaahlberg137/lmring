@@ -6,7 +6,7 @@
 
 const ZEROEVAL_BASE_URL = '/api/zeroeval';
 
-// Arena names for Code Arena calculation (excludes chat-arena and tonejs)
+// Arena names for Code Arena calculation (includes all code-related arenas)
 const CODE_ARENA_KEYS = [
   'text-to-website',
   'threejs',
@@ -14,10 +14,11 @@ const CODE_ARENA_KEYS = [
   'p5-animation',
   'text-to-svg',
   'dataviz',
+  'tonejs',
 ] as const;
 
 // All arena names for LLM API request
-const ALL_ARENA_NAMES = ['chat-arena', ...CODE_ARENA_KEYS, 'tonejs'] as const;
+const ALL_ARENA_NAMES = ['chat-arena', ...CODE_ARENA_KEYS] as const;
 
 // Arena names for each category
 export const CATEGORY_ARENA_NAMES = {
@@ -581,7 +582,8 @@ export async function getArenaScoresForCategory(
 
 /**
  * Calculate Code Arena score (display value)
- * Code Arena = average of 6 code-related arena scores × 100
+ * Code Arena = average of 7 code-related arena scores × 100
+ * Includes: text-to-website, threejs, text-to-game, p5-animation, text-to-svg, dataviz, tonejs
  */
 export function calculateCodeArenaScore(arenaScores: ArenaScores): number | null {
   const scores = CODE_ARENA_KEYS.map((key) => arenaScores[key]).filter(

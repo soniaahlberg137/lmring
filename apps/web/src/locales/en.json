@@ -297,7 +297,55 @@
   },
   "Leaderboard": {
     "title": "Leaderboard",
-    "elo_score": "ELO Score"
+    "elo_score": "ELO Score",
+    "data_source": "Data sourced from",
+    "methodology": {
+      "title": "Methodology",
+      "subtitle": "How we evaluate and rank AI models through systematic comparison",
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "All model comparisons are conducted through the ZeroEval Gateway API, a unified interface that standardizes access to AI models across providers. The gateway ensures consistent evaluation by handling authentication, rate limiting, and response formatting uniformly."
+      },
+      "ranking": {
+        "title": "Ranking System",
+        "description": "We use TrueSkill, a Bayesian ranking system developed by Microsoft Research for competitive gaming platforms. TrueSkill estimates each model's skill (μ) and uncertainty (σ) through head-to-head comparisons, updating ratings after each match.",
+        "initial_state": {
+          "title": "Initial State",
+          "description": "Each model begins with μ = 25.0 and σ = 8.33, representing a neutral skill estimate with high uncertainty."
+        },
+        "rating_updates": {
+          "title": "Rating Updates",
+          "description": "After each comparison, winners gain rating points while losers lose points. The magnitude of change depends on the skill difference between competitors. Uncertainty decreases as models participate in more matches."
+        },
+        "leaderboard_ranking": {
+          "title": "Leaderboard Ranking",
+          "description": "Models are ranked by conservative rating (μ - 3σ), which favors models with higher confidence in their skill. This ensures that models with proven track records rank above those with high uncertainty."
+        }
+      },
+      "parameters": {
+        "title": "Parameters",
+        "mu": {
+          "label": "μ (mu)",
+          "description": "Mean skill estimate",
+          "default": "25.0"
+        },
+        "sigma": {
+          "label": "σ (sigma)",
+          "description": "Skill uncertainty",
+          "default": "8.33"
+        },
+        "beta": {
+          "label": "β (beta)",
+          "description": "Performance variance",
+          "default": "4.16"
+        },
+        "tau": {
+          "label": "τ (tau)",
+          "description": "Skill dynamics factor",
+          "default": "0.083"
+        }
+      }
+    }
   },
   "Account": {
     "title": "Account",

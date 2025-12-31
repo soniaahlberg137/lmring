@@ -297,7 +297,55 @@
   },
   "Leaderboard": {
     "title": "Classement des modèles",
-    "elo_score": "Score ELO"
+    "elo_score": "Score ELO",
+    "data_source": "Données provenant de",
+    "methodology": {
+      "title": "Méthodologie",
+      "subtitle": "Comment nous évaluons et classons les modèles d'IA par comparaison systématique",
+      "infrastructure": {
+        "title": "Infrastructure",
+        "description": "Toutes les comparaisons de modèles sont effectuées via l'API ZeroEval Gateway, une interface unifiée qui standardise l'accès aux modèles d'IA à travers les fournisseurs. La passerelle garantit une évaluation cohérente en gérant uniformément l'authentification, la limitation du débit et le formatage des réponses."
+      },
+      "ranking": {
+        "title": "Système de classement",
+        "description": "Nous utilisons TrueSkill, un système de classement bayésien développé par Microsoft Research pour les plateformes de jeu compétitif. TrueSkill estime la compétence (μ) et l'incertitude (σ) de chaque modèle par des comparaisons en tête-à-tête, mettant à jour les notes après chaque match.",
+        "initial_state": {
+          "title": "État initial",
+          "description": "Chaque modèle commence avec μ = 25,0 et σ = 8,33, représentant une estimation de compétence neutre avec une forte incertitude."
+        },
+        "rating_updates": {
+          "title": "Mises à jour des notes",
+          "description": "Après chaque comparaison, les gagnants gagnent des points de classement tandis que les perdants en perdent. L'ampleur du changement dépend de la différence de compétence entre les concurrents. L'incertitude diminue à mesure que les modèles participent à plus de matchs."
+        },
+        "leaderboard_ranking": {
+          "title": "Classement du tableau",
+          "description": "Les modèles sont classés selon la note conservatrice (μ - 3σ), qui favorise les modèles avec une confiance plus élevée dans leur compétence. Cela garantit que les modèles avec des antécédents éprouvés se classent au-dessus de ceux avec une forte incertitude."
+        }
+      },
+      "parameters": {
+        "title": "Paramètres",
+        "mu": {
+          "label": "μ (mu)",
+          "description": "Estimation moyenne de la compétence",
+          "default": "25,0"
+        },
+        "sigma": {
+          "label": "σ (sigma)",
+          "description": "Incertitude de la compétence",
+          "default": "8,33"
+        },
+        "beta": {
+          "label": "β (bêta)",
+          "description": "Variance de performance",
+          "default": "4,16"
+        },
+        "tau": {
+          "label": "τ (tau)",
+          "description": "Facteur de dynamique de compétence",
+          "default": "0,083"
+        }
+      }
+    }
   },
   "Account": {
     "title": "Compte",
