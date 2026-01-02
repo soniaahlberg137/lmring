@@ -24,12 +24,12 @@ import {
   MailIcon,
   UserIcon,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
 import { useSession } from '@/libs/AuthClient';
 
 export default function AccountPage() {
-  const t = useTranslations('Account');
+  const t = useTranslations();
   const [saved, setSaved] = React.useState(false);
   const { data: session, isPending, error } = useSession();
 
@@ -39,7 +39,7 @@ export default function AccountPage() {
       <div className="p-6 flex items-center justify-center min-h-screen">
         <div className="flex flex-col items-center gap-4">
           <LoaderIcon className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">{t('loading')}</p>
+          <p className="text-muted-foreground">{t('Account.loading')}</p>
         </div>
       </div>
     );
@@ -51,7 +51,7 @@ export default function AccountPage() {
       <div className="p-6 flex items-center justify-center min-h-screen">
         <Card className="max-w-md">
           <CardContent className="p-6">
-            <p className="text-destructive">{t('error')}</p>
+            <p className="text-destructive">{t('Account.error')}</p>
           </CardContent>
         </Card>
       </div>
@@ -98,15 +98,15 @@ export default function AccountPage() {
       >
         <div className="flex items-center gap-3 mb-6">
           <UserIcon className="h-8 w-8 text-primary" />
-          <h1 className="text-3xl font-bold text-foreground">{t('title')}</h1>
+          <h1 className="text-3xl font-bold text-foreground">{t('Account.title')}</h1>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Profile Card */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>{t('profile.title')}</CardTitle>
-              <CardDescription>{t('profile.description')}</CardDescription>
+              <CardTitle>{t('Account.profile_title')}</CardTitle>
+              <CardDescription>{t('Account.profile_description')}</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex items-center gap-4">
@@ -123,23 +123,23 @@ export default function AccountPage() {
                   </button>
                 </div>
                 <div>
-                  <h3 className="font-semibold">{user.name || t('no_name')}</h3>
+                  <h3 className="font-semibold">{user.name || t('Account.no_name')}</h3>
                   <p className="text-sm text-muted-foreground">{user.email}</p>
                 </div>
               </div>
 
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor="name">{t('profile.full_name')}</Label>
+                  <Label htmlFor="name">{t('Account.profile_full_name')}</Label>
                   <Input
                     id="name"
                     defaultValue={user.name || ''}
-                    placeholder={t('profile.full_name_placeholder')}
+                    placeholder={t('Account.profile_full_name_placeholder')}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="email">{t('profile.email')}</Label>
+                  <Label htmlFor="email">{t('Account.profile_email')}</Label>
                   <div className="relative">
                     <MailIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input id="email" defaultValue={user.email} className="pl-10" disabled />
@@ -147,11 +147,11 @@ export default function AccountPage() {
                 </div>
 
                 <div className="space-y-2 md:col-span-2">
-                  <Label htmlFor="bio">{t('profile.bio')}</Label>
+                  <Label htmlFor="bio">{t('Account.profile_bio')}</Label>
                   <textarea
                     id="bio"
                     className="w-full min-h-[100px] px-3 py-2 text-sm rounded-lg border border-input bg-transparent shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                    placeholder={t('profile.bio_placeholder')}
+                    placeholder={t('Account.profile_bio_placeholder')}
                   />
                 </div>
               </div>
@@ -161,10 +161,10 @@ export default function AccountPage() {
                   {saved ? (
                     <>
                       <CheckIcon className="h-4 w-4" />
-                      {t('profile.saved')}
+                      {t('Account.profile_saved')}
                     </>
                   ) : (
-                    t('profile.save')
+                    t('Account.profile_save')
                   )}
                 </Button>
               </div>
@@ -178,19 +178,19 @@ export default function AccountPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCardIcon className="h-5 w-5" />
-                  {t('subscription.title')}
+                  {t('Account.subscription_title')}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
-                    {t('subscription.current_plan')}
+                    {t('Account.subscription_current_plan')}
                   </span>
-                  <Badge>{t('subscription.free')}</Badge>
+                  <Badge>{t('Account.subscription_free')}</Badge>
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{t('subscription.api_requests')}</span>
+                    <span className="text-muted-foreground">{t('Account.subscription_api_requests')}</span>
                     <span className="font-medium">0 / 1,000</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
@@ -200,11 +200,11 @@ export default function AccountPage() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    {t('subscription.monthly_limit', { percent: 0 })}
+                    {t('Account.subscription_monthly_limit', { percent: 0 })}
                   </p>
                 </div>
                 <Button variant="outline" className="w-full">
-                  {t('subscription.upgrade')}
+                  {t('Account.subscription_upgrade')}
                 </Button>
               </CardContent>
             </Card>
@@ -212,32 +212,32 @@ export default function AccountPage() {
             {/* Account Info Card */}
             <Card>
               <CardHeader>
-                <CardTitle>{t('details.title')}</CardTitle>
+                <CardTitle>{t('Account.details_title')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground flex items-center gap-2">
                     <CalendarIcon className="h-4 w-4" />
-                    {t('details.member_since')}
+                    {t('Account.details_member_since')}
                   </span>
                   <span className="text-sm font-medium">{joinedDate}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('details.account_id')}</span>
+                  <span className="text-sm text-muted-foreground">{t('Account.details_account_id')}</span>
                   <span className="text-xs font-mono">{user.id.slice(0, 12)}...</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('details.status')}</span>
+                  <span className="text-sm text-muted-foreground">{t('Account.details_status')}</span>
                   <Badge
                     variant={user.status === 'active' ? 'default' : 'secondary'}
                     className="capitalize"
                   >
-                    {user.status || t('details.active')}
+                    {user.status || t('Account.details_active')}
                   </Badge>
                 </div>
                 {user.inviterId && (
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('details.invited_by')}</span>
+                    <span className="text-sm text-muted-foreground">{t('Account.details_invited_by')}</span>
                     <span className="text-xs font-mono">{user.inviterId.slice(0, 8)}...</span>
                   </div>
                 )}

@@ -54,7 +54,7 @@ import {
   WrenchIcon,
   ZapIcon,
 } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/use-translations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { AddModelDialog } from './AddModelDialog';
@@ -95,7 +95,7 @@ interface ProviderDetailProps {
 type CheckStatus = 'idle' | 'checking' | 'success' | 'error';
 
 export function ProviderDetail({ provider, onToggle, onSave, onDelete }: ProviderDetailProps) {
-  const t = useTranslations('Provider');
+  const t = useTranslations();
   const [apiKey, setApiKey] = useState('');
   const [proxyUrl, setProxyUrl] = useState('');
   const [showKey, setShowKey] = useState(false);
@@ -889,7 +889,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
       <div className="space-y-6">
         <div className="space-y-3">
-          <Label htmlFor="api-key">{t('detail.api_key')}</Label>
+          <Label htmlFor="api-key">{t('Provider.detail_api_key')}</Label>
           <div className="relative">
             <Input
               id="api-key"
@@ -907,8 +907,8 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
               autoComplete="off"
               placeholder={
                 hasExistingApiKey
-                  ? t('detail.api_key_saved_placeholder')
-                  : t('detail.api_key_placeholder')
+                  ? t('Provider.detail_api_key_saved_placeholder')
+                  : t('Provider.detail_api_key_placeholder')
               }
               className="pr-10 h-9"
             />
@@ -928,12 +928,12 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
             </button>
           </div>
           {hasExistingApiKey && !apiKey && (
-            <p className="text-xs text-muted-foreground">{t('detail.api_key_stored_hint')}</p>
+            <p className="text-xs text-muted-foreground">{t('Provider.detail_api_key_stored_hint')}</p>
           )}
         </div>
 
         <div className="space-y-3">
-          <Label htmlFor="proxy-url">{t('detail.api_proxy_url')}</Label>
+          <Label htmlFor="proxy-url">{t('Provider.detail_api_proxy_url')}</Label>
           <Input
             id="proxy-url"
             value={proxyUrl}
@@ -944,7 +944,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
         </div>
 
         <div className="space-y-3">
-          <Label>{t('detail.connectivity_check')}</Label>
+          <Label>{t('Provider.detail_connectivity_check')}</Label>
           <div className="flex gap-3 w-full items-start">
             <Popover open={connectivityCheckOpen} onOpenChange={setConnectivityCheckOpen}>
               <PopoverTrigger asChild>
@@ -963,7 +963,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                     </div>
                   ) : (
                     <span className="text-muted-foreground">
-                      {t('detail.select_model_to_check')}
+                      {t('Provider.detail_select_model_to_check')}
                     </span>
                   )}
                   <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -971,7 +971,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
               </PopoverTrigger>
               <PopoverContent className="w-[400px] p-0" align="start">
                 <Command>
-                  <CommandInput placeholder={t('detail.search_models')} />
+                  <CommandInput placeholder={t('Provider.detail_search_models')} />
                   <CommandList className="max-h-[300px]">
                     <CommandEmpty>No models found.</CommandEmpty>
                     <CommandGroup>
@@ -1004,10 +1004,10 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
               {checkStatus === 'checking' ? (
                 <>
                   <Loader2Icon className="h-4 w-4 animate-spin" />
-                  {t('detail.checking')}
+                  {t('Provider.detail_checking')}
                 </>
               ) : (
-                t('detail.check')
+                t('Provider.detail_check')
               )}
             </Button>
           </div>
@@ -1016,7 +1016,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
           <div className="flex items-center justify-center gap-2 text-[0.8rem] text-muted-foreground pt-2">
             <LockIcon className="h-3 w-3" />
-            <span>{t('detail.encryption_hint')}</span>
+            <span>{t('Provider.detail_encryption_hint')}</span>
           </div>
         </div>
       </div>
@@ -1024,9 +1024,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
       <div className="space-y-4 pt-2">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
-            <h3 className="text-lg font-medium leading-none">{t('detail.model_list')}</h3>
+            <h3 className="text-lg font-medium leading-none">{t('Provider.detail_model_list')}</h3>
             <p className="text-sm text-muted-foreground">
-              {t('detail.models_available', {
+              {t('Provider.detail_models_available', {
                 count: models.length,
                 categories: sortedModelTypes.length,
               })}
@@ -1036,7 +1036,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
             <div className="relative flex-1 md:w-64">
               <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t('detail.search_models_placeholder')}
+                placeholder={t('Provider.detail_search_models_placeholder')}
                 className="pl-9 h-9"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -1154,7 +1154,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
           </Tabs>
         ) : (
           <div className="p-8 text-center border rounded-lg border-dashed text-muted-foreground">
-            {t('detail.no_models_found')}
+            {t('Provider.detail_no_models_found')}
           </div>
         )}
       </div>
@@ -1162,12 +1162,12 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
       <AlertDialog open={!!modelToDelete} onOpenChange={(open) => !open && setModelToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('delete_model_dialog.title')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('delete_model_dialog.description')}</AlertDialogDescription>
+            <AlertDialogTitle>{t('Provider.delete_model_dialog_title')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('Provider.delete_model_dialog_description')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setModelToDelete(null)}>
-              {t('delete_model_dialog.cancel')}
+              {t('Provider.delete_model_dialog_cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -1176,7 +1176,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                 setModelToDelete(null);
               }}
             >
-              {t('delete_model_dialog.delete')}
+              {t('Provider.delete_model_dialog_delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1186,22 +1186,22 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('delete_provider_dialog.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('Provider.delete_provider_dialog_title')}</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="text-sm text-muted-foreground">
-                {t('delete_provider_dialog.description', { name: provider.name })}
+                {t('Provider.delete_provider_dialog_description', { name: provider.name })}
                 <ul className="list-disc list-inside mt-2 space-y-1">
-                  <li>{t('delete_provider_dialog.item_api_key')}</li>
-                  <li>{t('delete_provider_dialog.item_model_settings')}</li>
-                  <li>{t('delete_provider_dialog.item_custom_models')}</li>
+                  <li>{t('Provider.delete_provider_dialog_item_api_key')}</li>
+                  <li>{t('Provider.delete_provider_dialog_item_model_settings')}</li>
+                  <li>{t('Provider.delete_provider_dialog_item_custom_models')}</li>
                 </ul>
-                <p className="mt-2">{t('delete_provider_dialog.cannot_undo')}</p>
+                <p className="mt-2">{t('Provider.delete_provider_dialog_cannot_undo')}</p>
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>
-              {t('delete_provider_dialog.cancel')}
+              {t('Provider.delete_provider_dialog_cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
@@ -1211,10 +1211,10 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
               {isDeleting ? (
                 <>
                   <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                  {t('delete_provider_dialog.deleting')}
+                  {t('Provider.delete_provider_dialog_deleting')}
                 </>
               ) : (
-                t('delete_provider_dialog.delete')
+                t('Provider.delete_provider_dialog_delete')
               )}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -1225,14 +1225,14 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
       <AlertDialog open={showApiKeyWarning} onOpenChange={setShowApiKeyWarning}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('api_key_required_dialog.title')}</AlertDialogTitle>
+            <AlertDialogTitle>{t('Provider.api_key_required_dialog_title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('api_key_required_dialog.description')}
+              {t('Provider.api_key_required_dialog_description')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setShowApiKeyWarning(false)}>
-              {t('api_key_required_dialog.ok')}
+              {t('Provider.api_key_required_dialog_ok')}
             </AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>

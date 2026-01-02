@@ -18,7 +18,7 @@ import {
 } from '@lmring/ui';
 import { Anthropic, Azure, Google, OpenAI } from '@lobehub/icons';
 import { BoxIcon, Loader2Icon, PlusIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/use-translations';
 import { useState } from 'react';
 import type { Provider } from './types';
 
@@ -27,7 +27,7 @@ interface AddProviderDialogProps {
 }
 
 export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
-  const t = useTranslations('Provider');
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [providerType, setProviderType] = useState('');
@@ -117,18 +117,18 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
         onClick={() => setOpen(true)}
       >
         <PlusIcon className="h-4 w-4" />
-        <span>{t('add_provider')}</span>
+        <span>{t('Provider.add_provider')}</span>
       </Button>
 
       <Dialog open={open} onOpenChange={handleOpenChange}>
         <DialogContent open={open} className="sm:max-w-[425px]">
           <form onSubmit={handleSubmit}>
             <DialogHeader>
-              <DialogTitle>{t('add_provider_dialog.title')}</DialogTitle>
+              <DialogTitle>{t('Provider.add_provider_dialog_title')}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="name">{t('add_provider_dialog.provider_name')}</Label>
+                <Label htmlFor="name">{t('Provider.add_provider_dialog_provider_name')}</Label>
                 <Input
                   id="name"
                   name="name"
@@ -140,7 +140,7 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="providerType">{t('add_provider_dialog.provider_type')}</Label>
+                <Label htmlFor="providerType">{t('Provider.add_provider_dialog_provider_type')}</Label>
                 <Select
                   name="providerType"
                   value={providerType}
@@ -148,7 +148,7 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
                   disabled={isSubmitting}
                 >
                   <SelectTrigger id="providerType">
-                    <SelectValue placeholder={t('add_provider_dialog.select_provider_type')} />
+                    <SelectValue placeholder={t('Provider.add_provider_dialog_select_provider_type')} />
                   </SelectTrigger>
                   <SelectContent>
                     {PROVIDER_OPTIONS.map((option) => (
@@ -168,16 +168,16 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
                 onClick={() => handleOpenChange(false)}
                 disabled={isSubmitting}
               >
-                {t('add_provider_dialog.cancel')}
+                {t('Provider.add_provider_dialog_cancel')}
               </Button>
               <Button type="submit" disabled={!name || !providerType || isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
-                    {t('add_provider_dialog.adding')}
+                    {t('Provider.add_provider_dialog_adding')}
                   </>
                 ) : (
-                  t('add_provider_dialog.ok')
+                  t('Provider.add_provider_dialog_ok')
                 )}
               </Button>
             </DialogFooter>

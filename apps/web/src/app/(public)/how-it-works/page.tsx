@@ -10,12 +10,11 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
   const t = await getTranslations({
     locale,
-    namespace: 'HowItWorks',
   });
 
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title: t('HowItWorks.meta_title'),
+    description: t('HowItWorks.meta_description'),
   };
 }
 
@@ -24,33 +23,32 @@ export default async function HowItWorksPage() {
   setRequestLocale(locale);
   const t = await getTranslations({
     locale,
-    namespace: 'HowItWorks',
   });
 
   const steps = [
     {
       number: 1,
       icon: Keyboard,
-      title: t('step_1_title'),
-      description: t('step_1_description'),
+      title: t('HowItWorks.step_1_title'),
+      description: t('HowItWorks.step_1_description'),
     },
     {
       number: 2,
       icon: MessageCircle,
-      title: t('step_2_title'),
-      description: t('step_2_description'),
+      title: t('HowItWorks.step_2_title'),
+      description: t('HowItWorks.step_2_description'),
     },
     {
       number: 3,
       icon: CheckCircle,
-      title: t('step_3_title'),
-      description: t('step_3_description'),
+      title: t('HowItWorks.step_3_title'),
+      description: t('HowItWorks.step_3_description'),
     },
     {
       number: 4,
       icon: Trophy,
-      title: t('step_4_title'),
-      description: t('step_4_description'),
+      title: t('HowItWorks.step_4_title'),
+      description: t('HowItWorks.step_4_description'),
     },
   ];
 
@@ -59,9 +57,9 @@ export default async function HowItWorksPage() {
       {/* Hero Section */}
       <section className="relative flex flex-col items-center justify-center bg-background px-4 py-20 text-center">
         <h1 className="max-w-4xl text-3xl font-normal tracking-tight text-foreground sm:text-4xl md:text-5xl">
-          {t('hero_title')}
+          {t('HowItWorks.hero_title')}
         </h1>
-        <p className="mt-6 max-w-2xl text-xl text-muted-foreground">{t('hero_description')}</p>
+        <p className="mt-6 max-w-2xl text-xl text-muted-foreground">{t('HowItWorks.hero_description')}</p>
         <div className="mt-10">
           <a
             href="https://github.com/llm-ring/lmring"
@@ -70,7 +68,7 @@ export default async function HowItWorksPage() {
             className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
           >
             <Users className="h-4 w-4" />
-            {t('about_us')}
+            {t('HowItWorks.about_us')}
           </a>
         </div>
       </section>
@@ -108,17 +106,17 @@ export default async function HowItWorksPage() {
       {/* CTA Section */}
       <section className="container mx-auto px-4 pb-24">
         <div className="rounded-xl border bg-card p-12 text-center shadow-sm">
-          <h2 className="mb-4 text-2xl font-bold text-foreground">{t('cta_title')}</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">{t('cta_description')}</p>
+          <h2 className="mb-4 text-2xl font-bold text-foreground">{t('HowItWorks.cta_title')}</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">{t('HowItWorks.cta_description')}</p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/sign-up/">
               <Button size="lg" className="w-full sm:w-auto">
-                {t('cta_get_started')}
+                {t('HowItWorks.cta_get_started')}
               </Button>
             </Link>
             <Link href="/arena/">
               <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                {t('cta_try_arena')}
+                {t('HowItWorks.cta_try_arena')}
               </Button>
             </Link>
           </div>

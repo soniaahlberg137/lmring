@@ -13,7 +13,7 @@ import {
 } from '@lmring/ui';
 import { LayoutDashboardIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/use-translations';
 import { authClient } from '@/libs/AuthClient';
 
 interface UserMenuProps {
@@ -26,7 +26,7 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
-  const t = useTranslations('Sidebar');
+  const t = useTranslations();
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -82,17 +82,17 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
 
         <DropdownMenuItem onClick={() => router.push('/account')} className="apple-transition">
           <UserIcon className="mr-2 h-4 w-4" />
-          <span className="font-medium">{t('user_menu.account')}</span>
+          <span className="font-medium">{t('Sidebar.user_menu_account')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => router.push('/arena')} className="apple-transition">
           <LayoutDashboardIcon className="mr-2 h-4 w-4" />
-          <span className="font-medium">{t('user_menu.arena')}</span>
+          <span className="font-medium">{t('Sidebar.user_menu_arena')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => router.push('/settings')} className="apple-transition">
           <SettingsIcon className="mr-2 h-4 w-4" />
-          <span className="font-medium">{t('user_menu.settings')}</span>
+          <span className="font-medium">{t('Sidebar.user_menu_settings')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator className="bg-border/50" />
@@ -102,7 +102,7 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
           className="text-destructive focus:text-destructive cursor-pointer apple-transition"
         >
           <LogOutIcon className="mr-2 h-4 w-4" />
-          <span className="font-medium">{t('user_menu.logout')}</span>
+          <span className="font-medium">{t('Sidebar.user_menu_logout')}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

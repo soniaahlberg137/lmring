@@ -21,12 +21,11 @@ export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
   const { locale } = await props.params;
   const t = await getTranslations({
     locale: locale as Locale,
-    namespace: 'Index',
   });
 
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title: t('Index.meta_title'),
+    description: t('Index.meta_description'),
   };
 }
 
@@ -35,7 +34,6 @@ export default async function Index(props: IIndexProps) {
   setRequestLocale(locale as Locale);
   const t = await getTranslations({
     locale: locale as Locale,
-    namespace: 'Index',
   });
 
   return (
@@ -45,8 +43,8 @@ export default async function Index(props: IIndexProps) {
       <div className="relative z-10 flex min-h-screen flex-col">
         {/* Hero Section with Aurora Background */}
         <AnimatedHero
-          title={t('title')}
-          description={t('description')}
+          title={t('Index.title')}
+          description={t('Index.description')}
           badge={
             <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
               <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
@@ -55,9 +53,9 @@ export default async function Index(props: IIndexProps) {
           }
           actions={
             <>
-              <RainbowButton href="/sign-up/">{t('get_started')}</RainbowButton>
+              <RainbowButton href="/sign-up/">{t('Index.get_started')}</RainbowButton>
               <AnimatedButton href="/arena/" variant="secondary">
-                {t('view_arena')}
+                {t('Index.view_arena')}
               </AnimatedButton>
             </>
           }
@@ -70,7 +68,7 @@ export default async function Index(props: IIndexProps) {
         <HowItWorksSection />
 
         {/* Features Section */}
-        <FeaturesSection title={t('features_title')} />
+        <FeaturesSection title={t('Index.features_title')} />
 
         {/* CTA Section */}
         <CTASection
