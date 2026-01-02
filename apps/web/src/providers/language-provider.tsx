@@ -1,8 +1,7 @@
 'use client';
 
 import type { Locale } from '@lmring/i18n';
-import type { Messages } from 'next-intl';
-import { NextIntlClientProvider } from 'next-intl';
+import { I18nProvider } from '@lmring/i18n/client';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
 import { LANGUAGE_QUERY_PARAM } from '@/libs/locale-utils';
@@ -18,7 +17,7 @@ const LANGUAGE_SW_MESSAGE = 'SET_LANGUAGE';
 interface LanguageProviderProps {
   children: ReactNode;
   initialLanguage: Locale;
-  initialMessages: Messages;
+  initialMessages: Record<string, string>;
 }
 
 function notifyServiceWorker(language: Locale) {
@@ -84,17 +83,17 @@ function LanguageServiceWorkerBridge() {
   return null;
 }
 
-function DynamicIntlProvider({
+function DynamicI18nProvider({
   children,
   initialLanguage,
   initialMessages,
 }: {
   children: ReactNode;
   initialLanguage: Locale;
-  initialMessages: Messages;
+  initialMessages: Record<string, string>;
 }) {
   const language = useLanguageStore(languageSelectors.language);
-  const [messages, setMessages] = useState<Messages>(initialMessages);
+  const [messages, setMessages] = useState<Record<string, string>>(initialMessages);
   const [currentLocale, setCurrentLocale] = useState<Locale>(initialLanguage);
 
   useEffect(() => {
@@ -122,14 +121,9 @@ function DynamicIntlProvider({
   }, [language, currentLocale]);
 
   return (
-    <NextIntlClientProvider
-      key={currentLocale}
-      locale={currentLocale}
-      messages={messages}
-      timeZone="UTC"
-    >
+    <I18nProvider key={currentLocale} locale={currentLocale} messages={messages}>
       {children}
-    </NextIntlClientProvider>
+    </I18nProvider>
   );
 }
 
@@ -141,9 +135,9 @@ export function LanguageProvider({
   return (
     <LanguageStoreProvider initialLanguage={initialLanguage}>
       <LanguageServiceWorkerBridge />
-      <DynamicIntlProvider initialLanguage={initialLanguage} initialMessages={initialMessages}>
+      <DynamicI18nProvider initialLanguage={initialLanguage} initialMessages={initialMessages}>
         {children}
-      </DynamicIntlProvider>
+      </DynamicI18nProvider>
     </LanguageStoreProvider>
   );
 }

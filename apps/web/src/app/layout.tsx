@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { setRequestLocale } from 'next-intl/server';
 import { Toaster } from 'sonner';
 import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -21,7 +20,6 @@ export const metadata: Metadata = {
 
 export default async function RootLayout(props: { children: React.ReactNode }) {
   const locale = await getRequestLocale();
-  setRequestLocale(locale);
   const messages = await loadLocaleMessages(locale);
 
   return (

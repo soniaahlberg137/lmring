@@ -12,10 +12,9 @@ import {
 } from '@lmring/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
-
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import { useTranslations } from '@/hooks/use-translations';
 import type { ModelOption } from '@/types/arena';
 
 interface ModelSelectorTriggerProps {

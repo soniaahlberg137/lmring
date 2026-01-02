@@ -24,8 +24,8 @@ import {
   MailIcon,
   UserIcon,
 } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import { useSession } from '@/libs/AuthClient';
 
 export default function AccountPage() {
@@ -190,7 +190,9 @@ export default function AccountPage() {
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-muted-foreground">{t('Account.subscription_api_requests')}</span>
+                    <span className="text-muted-foreground">
+                      {t('Account.subscription_api_requests')}
+                    </span>
                     <span className="font-medium">0 / 1,000</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
@@ -223,11 +225,15 @@ export default function AccountPage() {
                   <span className="text-sm font-medium">{joinedDate}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('Account.details_account_id')}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('Account.details_account_id')}
+                  </span>
                   <span className="text-xs font-mono">{user.id.slice(0, 12)}...</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">{t('Account.details_status')}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {t('Account.details_status')}
+                  </span>
                   <Badge
                     variant={user.status === 'active' ? 'default' : 'secondary'}
                     className="capitalize"
@@ -237,7 +243,9 @@ export default function AccountPage() {
                 </div>
                 {user.inviterId && (
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('Account.details_invited_by')}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {t('Account.details_invited_by')}
+                    </span>
                     <span className="text-xs font-mono">{user.inviterId.slice(0, 8)}...</span>
                   </div>
                 )}

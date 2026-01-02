@@ -18,8 +18,8 @@ import {
 } from '@lmring/ui';
 import { Anthropic, Azure, Google, OpenAI } from '@lobehub/icons';
 import { BoxIcon, Loader2Icon, PlusIcon } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import type { Provider } from './types';
 
 interface AddProviderDialogProps {
@@ -140,7 +140,9 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="providerType">{t('Provider.add_provider_dialog_provider_type')}</Label>
+                <Label htmlFor="providerType">
+                  {t('Provider.add_provider_dialog_provider_type')}
+                </Label>
                 <Select
                   name="providerType"
                   value={providerType}
@@ -148,7 +150,9 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
                   disabled={isSubmitting}
                 >
                   <SelectTrigger id="providerType">
-                    <SelectValue placeholder={t('Provider.add_provider_dialog_select_provider_type')} />
+                    <SelectValue
+                      placeholder={t('Provider.add_provider_dialog_select_provider_type')}
+                    />
                   </SelectTrigger>
                   <SelectContent>
                     {PROVIDER_OPTIONS.map((option) => (

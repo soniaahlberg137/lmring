@@ -1,8 +1,8 @@
 import { getModelsForProvider } from '@lmring/model-depot/models';
 import { ALL_PROVIDER_METADATA, type ProviderMetadata } from '@lmring/model-depot/providers';
 import type { DefaultModelListItem } from '@lmring/model-depot/types';
-import { useTranslations } from '@/hooks/use-translations';
 import { useMemo } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 export interface ProviderWithDescription extends ProviderMetadata {
   description: string;

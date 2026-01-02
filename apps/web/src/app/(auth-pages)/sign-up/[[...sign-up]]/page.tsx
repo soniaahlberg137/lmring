@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AuthFormWrapper } from '@/components/auth';
 import { getRequestLocale } from '@/libs/request-locale';
+import { getServerTranslations } from '@/libs/server-translations';
 
 type ISignUpPageProps = {
   searchParams: Promise<{ callbackUrl?: string }>;
@@ -10,9 +10,7 @@ type ISignUpPageProps = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const t = await getTranslations({
-    locale,
-  });
+  const t = await getServerTranslations(locale);
 
   return {
     title: t('SignUp.meta_title'),
@@ -23,10 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function SignUpPage(props: ISignUpPageProps) {
   const { callbackUrl } = await props.searchParams;
   const locale = await getRequestLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-  });
+  const t = await getServerTranslations(locale);
 
   return (
     <div className="w-full max-w-md space-y-8">

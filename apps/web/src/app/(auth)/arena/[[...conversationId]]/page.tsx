@@ -4,7 +4,6 @@ import { Button, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/u
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ModelCard } from '@/components/arena/model-card';
@@ -17,6 +16,7 @@ import {
 } from '@/components/arena/prompt-input';
 import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
+import { useTranslations } from '@/hooks/use-translations';
 import {
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
@@ -1074,7 +1074,7 @@ export default function ArenaPage() {
               <XIcon className="size-5" />
             </Button>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea key="maximized-scroll" className="flex-1">
             <div className="max-w-4xl mx-auto p-8 pb-20">
               <ResponseViewer content={maximizedContent} isStreaming={false} />
             </div>

@@ -18,11 +18,11 @@ import {
 import { motion } from 'framer-motion';
 import { CalendarIcon, ClockIcon, MessageSquareIcon, Share2Icon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { type ConversationData, useConversation } from '@/hooks/use-conversation';
+import { useTranslations } from '@/hooks/use-translations';
 
 export default function HistoryPage() {
   const t = useTranslations();
@@ -253,7 +253,9 @@ export default function HistoryPage() {
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('History.delete_dialog_title')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('History.delete_dialog_description')}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {t('History.delete_dialog_description')}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setConversationToDelete(null)}>

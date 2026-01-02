@@ -54,9 +54,9 @@ import {
   WrenchIcon,
   ZapIcon,
 } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslations } from '@/hooks/use-translations';
 import { AddModelDialog } from './AddModelDialog';
 import { EditModelDialog } from './EditModelDialog';
 import type { ConnectionCheckResponse, Provider, SaveApiKeyResponse } from './types';
@@ -928,7 +928,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
             </button>
           </div>
           {hasExistingApiKey && !apiKey && (
-            <p className="text-xs text-muted-foreground">{t('Provider.detail_api_key_stored_hint')}</p>
+            <p className="text-xs text-muted-foreground">
+              {t('Provider.detail_api_key_stored_hint')}
+            </p>
           )}
         </div>
 
@@ -1163,7 +1165,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t('Provider.delete_model_dialog_title')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('Provider.delete_model_dialog_description')}</AlertDialogDescription>
+            <AlertDialogDescription>
+              {t('Provider.delete_model_dialog_description')}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setModelToDelete(null)}>

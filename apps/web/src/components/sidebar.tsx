@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from '@/hooks/use-translations';
 import * as React from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } from '@/stores';
 import { UserMenu } from './user-menu';
 

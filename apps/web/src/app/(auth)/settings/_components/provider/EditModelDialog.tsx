@@ -32,8 +32,8 @@ import {
   Loader2Icon,
   WrenchIcon,
 } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface EditModelDialogProps {
   open: boolean;
@@ -332,7 +332,9 @@ export function EditModelDialog({
 
                 {/* Output Price */}
                 <div className="flex items-center justify-between gap-4">
-                  <Label htmlFor="output-price">{t('Provider.edit_model_dialog_output_price')}</Label>
+                  <Label htmlFor="output-price">
+                    {t('Provider.edit_model_dialog_output_price')}
+                  </Label>
                   <div className="flex items-center gap-2">
                     <Input
                       id="output-price"

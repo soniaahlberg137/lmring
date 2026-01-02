@@ -1,7 +1,7 @@
 import { Input, ProviderSidebarSkeleton, Separator } from '@lmring/ui';
 import { BoxIcon, SearchIcon } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import { AddProviderDialog } from './AddProviderDialog';
 import { ProviderDetail } from './ProviderDetail';
 import { ProviderGrid } from './ProviderGrid';

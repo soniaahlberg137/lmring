@@ -1,6 +1,5 @@
-import type { Locale } from '@lmring/i18n';
+import { isValidLocale, type Locale } from '@lmring/i18n';
 import type { Metadata } from 'next';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import {
   AnimatedButton,
@@ -12,6 +11,7 @@ import {
   RainbowButton,
   WebGLBackground,
 } from '@/components/landing';
+import { getServerTranslations } from '@/libs/server-translations';
 
 type IIndexProps = {
   params: Promise<{ locale: string }>;
@@ -19,9 +19,8 @@ type IIndexProps = {
 
 export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
   const { locale } = await props.params;
-  const t = await getTranslations({
-    locale: locale as Locale,
-  });
+  const validLocale: Locale = isValidLocale(locale) ? locale : 'en';
+  const t = await getServerTranslations(validLocale);
 
   return {
     title: t('Index.meta_title'),
@@ -31,17 +30,14 @@ export async function generateMetadata(props: IIndexProps): Promise<Metadata> {
 
 export default async function Index(props: IIndexProps) {
   const { locale } = await props.params;
-  setRequestLocale(locale as Locale);
-  const t = await getTranslations({
-    locale: locale as Locale,
-  });
+  const validLocale: Locale = isValidLocale(locale) ? locale : 'en';
+  const t = await getServerTranslations(validLocale);
 
   return (
     <div className="relative min-h-screen">
       <WebGLBackground />
 
       <div className="relative z-10 flex min-h-screen flex-col">
-        {/* Hero Section with Aurora Background */}
         <AnimatedHero
           title={t('Index.title')}
           description={t('Index.description')}
@@ -61,16 +57,10 @@ export default async function Index(props: IIndexProps) {
           }
         />
 
-        {/* Providers Section */}
         <ProvidersSection />
-
-        {/* How It Works */}
         <HowItWorksSection />
-
-        {/* Features Section */}
         <FeaturesSection title={t('Index.features_title')} />
 
-        {/* CTA Section */}
         <CTASection
           title="Ready to Compare?"
           description="Start comparing AI models side-by-side and find the perfect fit for your use case."

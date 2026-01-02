@@ -3,7 +3,6 @@
 import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
 import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CategoryTabs,
@@ -18,6 +17,7 @@ import {
   type ViewMode,
   ViewToggle,
 } from '@/components/leaderboard';
+import { useTranslations } from '@/hooks/use-translations';
 import {
   CATEGORY_CONFIGS,
   calculateCategoryArenaScores,
@@ -386,7 +386,9 @@ export default function LeaderboardPage() {
               <CollapsibleTrigger className="flex items-center justify-between w-full py-3 px-4 text-left hover:bg-muted/50 rounded-lg transition-colors">
                 <div>
                   <h2 className="text-lg font-semibold">{t('Leaderboard.methodology_title')}</h2>
-                  <p className="text-sm text-muted-foreground">{t('Leaderboard.methodology_subtitle')}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {t('Leaderboard.methodology_subtitle')}
+                  </p>
                 </div>
                 <ChevronDown
                   className={`h-5 w-5 text-muted-foreground transition-transform ${methodologyOpen ? 'rotate-180' : ''}`}
@@ -406,7 +408,9 @@ export default function LeaderboardPage() {
 
                 {/* Ranking System Section */}
                 <section>
-                  <h3 className="text-base font-semibold mb-2">{t('Leaderboard.methodology_ranking_title')}</h3>
+                  <h3 className="text-base font-semibold mb-2">
+                    {t('Leaderboard.methodology_ranking_title')}
+                  </h3>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                     {t('Leaderboard.methodology_ranking_description')}
                   </p>

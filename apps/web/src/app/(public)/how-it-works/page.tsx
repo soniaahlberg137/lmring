@@ -2,15 +2,13 @@ import { Button } from '@lmring/ui';
 import { CheckCircle, Keyboard, MessageCircle, Trophy, Users } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 
 import { getRequestLocale } from '@/libs/request-locale';
+import { getServerTranslations } from '@/libs/server-translations';
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const t = await getTranslations({
-    locale,
-  });
+  const t = await getServerTranslations(locale);
 
   return {
     title: t('HowItWorks.meta_title'),
@@ -20,10 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function HowItWorksPage() {
   const locale = await getRequestLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-  });
+  const t = await getServerTranslations(locale);
 
   const steps = [
     {
@@ -54,12 +49,13 @@ export default async function HowItWorksPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      {/* Hero Section */}
       <section className="relative flex flex-col items-center justify-center bg-background px-4 py-20 text-center">
         <h1 className="max-w-4xl text-3xl font-normal tracking-tight text-foreground sm:text-4xl md:text-5xl">
           {t('HowItWorks.hero_title')}
         </h1>
-        <p className="mt-6 max-w-2xl text-xl text-muted-foreground">{t('HowItWorks.hero_description')}</p>
+        <p className="mt-6 max-w-2xl text-xl text-muted-foreground">
+          {t('HowItWorks.hero_description')}
+        </p>
         <div className="mt-10">
           <a
             href="https://github.com/llm-ring/lmring"
@@ -73,26 +69,22 @@ export default async function HowItWorksPage() {
         </div>
       </section>
 
-      {/* Steps Section */}
       <section className="container mx-auto px-4 py-12 sm:py-16">
         <div className="mx-auto max-w-3xl">
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
               <div key={step.number} className="relative flex gap-8">
-                {/* Connecting line (except for last item) */}
                 {index < steps.length - 1 && (
                   <div className="absolute left-8 top-20 h-full w-0.5 bg-border" />
                 )}
 
-                {/* Icon circle */}
                 <div className="flex-none">
                   <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
                     <Icon className="h-8 w-8 text-gray-600 dark:text-gray-400" />
                   </div>
                 </div>
 
-                {/* Content */}
                 <div className="flex-1 pb-16">
                   <h3 className="mb-3 text-2xl font-semibold">{step.title}</h3>
                   <p className="text-lg text-muted-foreground">{step.description}</p>
@@ -103,11 +95,12 @@ export default async function HowItWorksPage() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="container mx-auto px-4 pb-24">
         <div className="rounded-xl border bg-card p-12 text-center shadow-sm">
           <h2 className="mb-4 text-2xl font-bold text-foreground">{t('HowItWorks.cta_title')}</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">{t('HowItWorks.cta_description')}</p>
+          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">
+            {t('HowItWorks.cta_description')}
+          </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/sign-up/">
               <Button size="lg" className="w-full sm:w-auto">

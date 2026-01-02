@@ -86,10 +86,10 @@ import {
   TwitterIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from '@/hooks/use-translations';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
+import { useTranslations } from '@/hooks/use-translations';
 import { isSupportedLocale } from '@/libs/locale-utils';
 import { maskApiKey } from '@/libs/validation';
 import { languageSelectors, useLanguageStore } from '@/stores/language-store';
@@ -380,19 +380,33 @@ export default function SettingsPage() {
           <p className="text-xs text-muted-foreground mt-1">{t('Settings.description')}</p>
         </div>
         <div className="px-3 space-y-1">
-          {renderSidebarItem('general', t('Settings.tabs_general'), <Settings2Icon className="h-4 w-4" />)}
-          {renderSidebarItem('provider', t('Settings.tabs_provider'), <BotIcon className="h-4 w-4" />)}
+          {renderSidebarItem(
+            'general',
+            t('Settings.tabs_general'),
+            <Settings2Icon className="h-4 w-4" />,
+          )}
+          {renderSidebarItem(
+            'provider',
+            t('Settings.tabs_provider'),
+            <BotIcon className="h-4 w-4" />,
+          )}
           {renderSidebarItem(
             'system-model',
             t('Settings.tabs_system_model'),
             <BoxIcon className="h-4 w-4" />,
           )}
-          {renderSidebarItem('storage', t('Settings.tabs_storage'), <DatabaseIcon className="h-4 w-4" />)}
+          {renderSidebarItem(
+            'storage',
+            t('Settings.tabs_storage'),
+            <DatabaseIcon className="h-4 w-4" />,
+          )}
           {renderSidebarItem('help', t('Settings.tabs_help'), <LifeBuoyIcon className="h-4 w-4" />)}
           {renderSidebarItem('about', t('Settings.tabs_about'), <InfoIcon className="h-4 w-4" />)}
         </div>
         <div className="mt-auto p-4">
-          <div className="text-xs text-muted-foreground">{t('Settings.powered_by', { name: 'LMRing' })}</div>
+          <div className="text-xs text-muted-foreground">
+            {t('Settings.powered_by', { name: 'LMRing' })}
+          </div>
         </div>
       </div>
 
@@ -527,7 +541,9 @@ export default function SettingsPage() {
                     className="space-y-6"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('Settings.system_model_title')}</h2>
+                      <h2 className="text-lg font-medium mb-1">
+                        {t('Settings.system_model_title')}
+                      </h2>
                       <p className="text-sm text-muted-foreground">
                         {t('Settings.system_model_description')}
                       </p>
@@ -589,7 +605,9 @@ export default function SettingsPage() {
                   >
                     <div>
                       <h2 className="text-lg font-medium mb-1">{t('Settings.help_title')}</h2>
-                      <p className="text-sm text-muted-foreground">{t('Settings.help_description')}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {t('Settings.help_description')}
+                      </p>
                     </div>
 
                     <div className="space-y-6">
@@ -726,7 +744,8 @@ export default function SettingsPage() {
                             className="w-full justify-start gap-2"
                             disabled
                           >
-                            <TwitterIcon className="h-4 w-4" /> X / Twitter {t('Settings.about_coming_soon')}
+                            <TwitterIcon className="h-4 w-4" /> X / Twitter{' '}
+                            {t('Settings.about_coming_soon')}
                           </Button>
                         </div>
                       </div>

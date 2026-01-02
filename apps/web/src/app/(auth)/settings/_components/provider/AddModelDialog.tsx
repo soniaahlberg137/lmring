@@ -11,8 +11,8 @@ import {
   Label,
 } from '@lmring/ui';
 import { PlusIcon } from 'lucide-react';
-import { useTranslations } from '@/hooks/use-translations';
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface AddModelDialogProps {
   onAdd: (model: { id: string; name: string }) => void;
