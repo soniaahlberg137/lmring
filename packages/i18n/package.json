@@ -13,7 +13,7 @@
   },
   "scripts": {},
   "dependencies": {
-    "next-intl": "^4.6.1"
+    "next-intl": "^4.7.0"
   },
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
