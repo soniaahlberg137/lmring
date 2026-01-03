@@ -1,6 +1,6 @@
 'use client';
 
-import type { Locale } from '@lmring/i18n';
+import { I18nConfig, type Locale } from '@lmring/i18n';
 import { I18nProvider } from '@lmring/i18n/client';
 import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
@@ -95,9 +95,15 @@ function DynamicI18nProvider({
   const language = useLanguageStore(languageSelectors.language);
   const [messages, setMessages] = useState<Record<string, string>>(initialMessages);
   const [currentLocale, setCurrentLocale] = useState<Locale>(initialLanguage);
+  const failedLocalesRef = useRef<Set<Locale>>(new Set());
 
   useEffect(() => {
     if (language === currentLocale) {
+      return;
+    }
+
+    // Skip if this locale has already failed to load
+    if (failedLocalesRef.current.has(language)) {
       return;
     }
 
@@ -108,11 +114,35 @@ function DynamicI18nProvider({
         if (cancelled) {
           return;
         }
+        // Clear from failed set on successful load
+        failedLocalesRef.current.delete(language);
         setMessages(loadedMessages);
         setCurrentLocale(language);
       })
       .catch((error) => {
-        console.error('Failed to load locale messages', error);
+        console.error('Failed to load locale messages for', language, error);
+
+        if (cancelled) {
+          return;
+        }
+
+        // Mark this locale as failed to prevent retry loops
+        failedLocalesRef.current.add(language);
+
+        // Fallback to default locale if not already on it
+        if (currentLocale !== I18nConfig.defaultLocale) {
+          loadLocaleMessages(I18nConfig.defaultLocale)
+            .then((fallbackMessages) => {
+              if (cancelled) {
+                return;
+              }
+              setMessages(fallbackMessages);
+              setCurrentLocale(I18nConfig.defaultLocale);
+            })
+            .catch((fallbackError) => {
+              console.error('Failed to load fallback locale messages', fallbackError);
+            });
+        }
       });
 
     return () => {
