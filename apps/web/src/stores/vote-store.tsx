@@ -210,7 +210,7 @@ export const useVoteStore = create<VoteStore>()(
       },
 
       submitVote: async (params) => {
-        const { setSubmitting, setVote, setHoveredVote } = get();
+        const { setSubmitting, setVote, setHoveredVote, loadVoteForMessage } = get();
         setSubmitting(true);
         setHoveredVote(null);
 
@@ -220,6 +220,12 @@ export const useVoteStore = create<VoteStore>()(
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(params),
           });
+
+          // Handle duplicate vote - reload existing vote
+          if (response.status === 409) {
+            const existingVote = await loadVoteForMessage(params.messageId);
+            return existingVote;
+          }
 
           if (!response.ok) {
             throw new Error('Failed to submit vote');

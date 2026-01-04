@@ -10,11 +10,18 @@ export interface ConversationModel {
   providerName: string;
 }
 
+export interface VoteResult {
+  modelName: string;
+  providerName: string;
+  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
+}
+
 export interface VoteInfo {
   hasVotes: boolean;
   winnerModel?: string;
   winnerProvider?: string;
   voteType?: 'winner' | 'tie' | 'all_bad';
+  voteResults?: VoteResult[];
 }
 
 export interface ConversationMessage {

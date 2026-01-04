@@ -142,10 +142,7 @@ export function ModelCard({
   const cardClasses = cn(
     'h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden transition-all duration-200',
     voteStateBorderStyles[effectiveVoteState],
-    isVotable &&
-      !voteState &&
-      voteState === 'none' &&
-      'cursor-pointer hover:ring-2 hover:ring-amber-500/50',
+    isVotable && voteState === 'none' && 'cursor-pointer hover:ring-2 hover:ring-amber-500/50',
   );
 
   const handleCardClick = () => {

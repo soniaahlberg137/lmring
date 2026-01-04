@@ -174,6 +174,7 @@ export default function ArenaPage() {
   const [maximizedContent, setMaximizedContent] = React.useState<string | null>(null);
   const [conversationLoaded, setConversationLoaded] = React.useState(false);
   const [conversationError, setConversationError] = React.useState<string | null>(null);
+  const [voteLoadingComplete, setVoteLoadingComplete] = React.useState(false);
 
   const [votingContext, setVotingContext] = React.useState<{
     messageId: string;
@@ -203,9 +204,11 @@ export default function ArenaPage() {
         }
         setConversationLoaded(false);
         setConversationError(null);
+        setVoteLoadingComplete(false);
       } else if (conversationId !== storedConversationId) {
         setConversationLoaded(false);
         setConversationError(null);
+        setVoteLoadingComplete(false);
       }
     }
   }, [
@@ -1049,12 +1052,12 @@ export default function ArenaPage() {
 
   const getHoverStateForComparison = React.useCallback(
     (comparisonId: string): 'winner' | 'loser' | 'tie' | 'all_bad' | null => {
-      if (!lastUserMessageId || !hoveredVote || hoveredVote.messageId !== lastUserMessageId) {
+      const dbMessageId = votingContext?.messageId;
+      if (!dbMessageId || !hoveredVote || hoveredVote.messageId !== dbMessageId) {
         return null;
       }
 
-      const dbMessageId = votingContext?.messageId;
-      if (dbMessageId && getVote(dbMessageId)) {
+      if (getVote(dbMessageId)) {
         return null;
       }
 
@@ -1070,7 +1073,7 @@ export default function ArenaPage() {
 
       return hoveredVote.voteType;
     },
-    [lastUserMessageId, hoveredVote, modelResponses, votingContext, getVote],
+    [hoveredVote, modelResponses, votingContext, getVote],
   );
 
   const handleVoteCardClick = React.useCallback(
@@ -1169,16 +1172,32 @@ export default function ArenaPage() {
 
   React.useEffect(() => {
     const loadVotes = async () => {
-      if (!conversationLoaded) return;
+      if (!conversationId) {
+        if (isVotingAvailable && storedConversationId) {
+          await fetchVotingContext();
+        }
+        setVoteLoadingComplete(true);
+        return;
+      }
+
+      if (!conversationLoaded && !isVotingAvailable) return;
 
       const context = await fetchVotingContext();
       if (context) {
-        loadVoteForMessage(context.messageId);
+        await loadVoteForMessage(context.messageId);
       }
+      setVoteLoadingComplete(true);
     };
 
     loadVotes();
-  }, [conversationLoaded, fetchVotingContext, loadVoteForMessage]);
+  }, [
+    conversationId,
+    conversationLoaded,
+    isVotingAvailable,
+    storedConversationId,
+    fetchVotingContext,
+    loadVoteForMessage,
+  ]);
 
   React.useEffect(() => {
     return () => {
@@ -1213,13 +1232,15 @@ export default function ArenaPage() {
     );
   }
 
-  if (
-    !initialized ||
-    (conversationId &&
-      !conversationLoaded &&
-      storedConversationId !== conversationId &&
-      !isCreatingConversation)
-  ) {
+  const isLoadingConversation =
+    conversationId &&
+    !conversationLoaded &&
+    storedConversationId !== conversationId &&
+    !isCreatingConversation;
+
+  const isLoadingVotes = conversationId && conversationLoaded && !voteLoadingComplete;
+
+  if (!initialized || isLoadingConversation || isLoadingVotes) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">
         <div className="flex-1 overflow-hidden">
@@ -1312,10 +1333,10 @@ export default function ArenaPage() {
 
       <div className="border-t bg-background/95 backdrop-blur-sm flex-shrink-0">
         <div className="p-4 space-y-4">
-          {isVotingAvailable && lastUserMessageId && modelResponses.length >= 2 && (
+          {isVotingAvailable && votingContext && votingContext.modelResponses.length >= 2 && (
             <VoteBar
-              messageId={lastUserMessageId}
-              modelResponses={modelResponses}
+              messageId={votingContext.messageId}
+              modelResponses={votingContext.modelResponses}
               comparisonType="text"
             />
           )}

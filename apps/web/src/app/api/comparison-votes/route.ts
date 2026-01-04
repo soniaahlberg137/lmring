@@ -161,12 +161,15 @@ export async function POST(request: Request) {
       .where(and(eq(comparisonVotes.userId, userId), eq(comparisonVotes.messageId, body.messageId)))
       .limit(1);
 
-    // If vote exists, delete old results first
+    // If vote exists, reject with 409 Conflict
     if (existingVote) {
-      await db
-        .delete(comparisonVoteResults)
-        .where(eq(comparisonVoteResults.comparisonVoteId, existingVote.id));
-      await db.delete(comparisonVotes).where(eq(comparisonVotes.id, existingVote.id));
+      return NextResponse.json(
+        {
+          error: 'Vote already exists for this message',
+          code: 'VOTE_ALREADY_EXISTS',
+        },
+        { status: 409 },
+      );
     }
 
     // Create new comparison vote
@@ -238,7 +241,7 @@ export async function POST(request: Request) {
           })),
         },
       },
-      { status: existingVote ? 200 : 201 },
+      { status: 201 },
     );
   } catch (error) {
     logError('Create comparison vote error', error);

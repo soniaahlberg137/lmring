@@ -11,11 +11,18 @@ import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { conversationSchema } from '@/libs/validation';
 
+interface VoteResult {
+  modelName: string;
+  providerName: string;
+  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
+}
+
 interface VoteInfo {
   hasVotes: boolean;
   winnerModel?: string;
   winnerProvider?: string;
   voteType?: 'winner' | 'tie' | 'all_bad';
+  voteResults?: VoteResult[];
 }
 
 interface ConversationWithExtras {
@@ -146,26 +153,32 @@ export async function GET(request: Request) {
           ),
         );
 
-      // Process votes - get the most recent vote per conversation with winner info
       const votesMap = new Map<string, VoteInfo>();
       for (const vote of votesData) {
         if (!votesMap.has(vote.conversationId)) {
-          votesMap.set(vote.conversationId, { hasVotes: true });
+          votesMap.set(vote.conversationId, { hasVotes: true, voteResults: [] });
         }
         const voteInfo = votesMap.get(vote.conversationId);
-        if (voteInfo && vote.outcome === 'winner') {
-          voteInfo.winnerModel = vote.modelName;
-          voteInfo.winnerProvider = vote.providerName;
-          voteInfo.voteType = 'winner';
-        } else if (voteInfo && vote.outcome === 'tie' && !voteInfo.winnerModel) {
-          voteInfo.voteType = 'tie';
-        } else if (
-          voteInfo &&
-          vote.outcome === 'all_bad' &&
-          !voteInfo.winnerModel &&
-          voteInfo.voteType !== 'tie'
-        ) {
-          voteInfo.voteType = 'all_bad';
+        if (voteInfo) {
+          voteInfo.voteResults?.push({
+            modelName: vote.modelName ?? '',
+            providerName: vote.providerName ?? '',
+            outcome: vote.outcome as VoteResult['outcome'],
+          });
+
+          if (vote.outcome === 'winner') {
+            voteInfo.winnerModel = vote.modelName;
+            voteInfo.winnerProvider = vote.providerName;
+            voteInfo.voteType = 'winner';
+          } else if (vote.outcome === 'tie' && !voteInfo.winnerModel) {
+            voteInfo.voteType = 'tie';
+          } else if (
+            vote.outcome === 'all_bad' &&
+            !voteInfo.winnerModel &&
+            voteInfo.voteType !== 'tie'
+          ) {
+            voteInfo.voteType = 'all_bad';
+          }
         }
       }
 
