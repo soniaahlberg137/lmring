@@ -89,6 +89,7 @@ build-archive.log
 .local/
 settings.local.json
 .kiro/
+.claude/
 .agent/
 .mcp.json
 CLAUDE.local.md
