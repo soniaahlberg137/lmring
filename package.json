@@ -22,14 +22,17 @@
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
     "db:studio": "turbo run db:studio",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "commitlint": "commitlint --edit",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.10",
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
-    "@evilmartians/lefthook": "^2.0.13",
-    "knip": "^5.78.0",
+    "@commitlint/cli": "^20.3.0",
+    "@commitlint/config-conventional": "^20.3.0",
+    "husky": "^9.1.7",
+    "knip": "^5.79.0",
+    "lint-staged": "^16.2.7",
     "turbo": "^2.7.2"
   },
   "packageManager": "pnpm@10.25.0"
