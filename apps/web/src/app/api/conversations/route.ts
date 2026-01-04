@@ -1,9 +1,22 @@
 import { and, asc, db, desc, eq, inArray } from '@lmring/database';
-import { conversations, messages, modelResponses } from '@lmring/database/schema';
+import {
+  comparisonVoteResults,
+  comparisonVotes,
+  conversations,
+  messages,
+  modelResponses,
+} from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { conversationSchema } from '@/libs/validation';
+
+interface VoteInfo {
+  hasVotes: boolean;
+  winnerModel?: string;
+  winnerProvider?: string;
+  voteType?: 'winner' | 'tie' | 'all_bad';
+}
 
 interface ConversationWithExtras {
   id: string;
@@ -13,6 +26,7 @@ interface ConversationWithExtras {
   updatedAt: Date;
   firstMessage?: string;
   models?: Array<{ modelName: string; providerName: string }>;
+  voteInfo?: VoteInfo;
 }
 
 export async function GET(request: Request) {
@@ -33,6 +47,7 @@ export async function GET(request: Request) {
     const offset = Number.isNaN(parsedOffset) || parsedOffset < 0 ? 0 : parsedOffset;
     const withFirstMessage = searchParams.get('withFirstMessage') === 'true';
     const withModels = searchParams.get('withModels') === 'true';
+    const withVotes = searchParams.get('withVotes') === 'true';
 
     const userConversations = await db
       .select()
@@ -42,7 +57,7 @@ export async function GET(request: Request) {
       .limit(limit)
       .offset(offset);
 
-    if (!withFirstMessage && !withModels) {
+    if (!withFirstMessage && !withModels && !withVotes) {
       return NextResponse.json({ conversations: userConversations }, { status: 200 });
     }
 
@@ -105,6 +120,57 @@ export async function GET(request: Request) {
 
       for (const conv of result) {
         conv.models = modelsMap.get(conv.id) || [];
+      }
+    }
+
+    if (withVotes) {
+      // Get all votes for messages in these conversations
+      const votesData = await db
+        .select({
+          conversationId: messages.conversationId,
+          voteId: comparisonVotes.id,
+          outcome: comparisonVoteResults.outcome,
+          modelName: comparisonVoteResults.modelName,
+          providerName: comparisonVoteResults.providerName,
+        })
+        .from(comparisonVotes)
+        .innerJoin(messages, eq(comparisonVotes.messageId, messages.id))
+        .innerJoin(
+          comparisonVoteResults,
+          eq(comparisonVoteResults.comparisonVoteId, comparisonVotes.id),
+        )
+        .where(
+          and(
+            inArray(messages.conversationId, conversationIds),
+            eq(comparisonVotes.userId, userId),
+          ),
+        );
+
+      // Process votes - get the most recent vote per conversation with winner info
+      const votesMap = new Map<string, VoteInfo>();
+      for (const vote of votesData) {
+        if (!votesMap.has(vote.conversationId)) {
+          votesMap.set(vote.conversationId, { hasVotes: true });
+        }
+        const voteInfo = votesMap.get(vote.conversationId);
+        if (voteInfo && vote.outcome === 'winner') {
+          voteInfo.winnerModel = vote.modelName;
+          voteInfo.winnerProvider = vote.providerName;
+          voteInfo.voteType = 'winner';
+        } else if (voteInfo && vote.outcome === 'tie' && !voteInfo.winnerModel) {
+          voteInfo.voteType = 'tie';
+        } else if (
+          voteInfo &&
+          vote.outcome === 'all_bad' &&
+          !voteInfo.winnerModel &&
+          voteInfo.voteType !== 'tie'
+        ) {
+          voteInfo.voteType = 'all_bad';
+        }
+      }
+
+      for (const conv of result) {
+        conv.voteInfo = votesMap.get(conv.id) || { hasVotes: false };
       }
     }
 

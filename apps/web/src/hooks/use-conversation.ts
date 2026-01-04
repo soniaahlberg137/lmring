@@ -10,6 +10,13 @@ export interface ConversationModel {
   providerName: string;
 }
 
+export interface VoteInfo {
+  hasVotes: boolean;
+  winnerModel?: string;
+  winnerProvider?: string;
+  voteType?: 'winner' | 'tie' | 'all_bad';
+}
+
 export interface ConversationMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -37,6 +44,7 @@ export interface ConversationData {
   updatedAt: string;
   firstMessage?: string;
   models?: ConversationModel[];
+  voteInfo?: VoteInfo;
 }
 
 export interface FullConversationData {
@@ -235,7 +243,7 @@ export function useConversation() {
 
       try {
         const response = await fetch(
-          `/api/conversations?limit=${limit}&offset=${offset}&withFirstMessage=true&withModels=true`,
+          `/api/conversations?limit=${limit}&offset=${offset}&withFirstMessage=true&withModels=true&withVotes=true`,
         );
 
         if (!response.ok) {

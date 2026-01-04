@@ -31,6 +31,21 @@ export const configSourceEnum = pgEnum('config_source', ['manual', 'cherry-studi
 export const roleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
 export const voteTypeEnum = pgEnum('vote_type', ['like', 'neutral', 'dislike']);
 export const userRoleEnum = pgEnum('user_role', ['admin', 'user']);
+
+// Comparison voting enums
+export const comparisonTypeEnum = pgEnum('comparison_type', [
+  'text',
+  'image_gen',
+  'video_gen',
+  'tts',
+  'stt',
+]);
+export const voteOutcomeEnum = pgEnum('vote_outcome', [
+  'winner',
+  'loser',
+  'tie',
+  'all_bad',
+]);
 export const userStatusEnum = pgEnum('user_status', ['active', 'disabled', 'pending']);
 
 // Users table (managed by Better-Auth)
@@ -277,7 +292,7 @@ export const userVotes = pgTable(
   ],
 );
 
-// Model rankings
+// Model rankings (legacy - kept for backward compatibility)
 export const modelRankings = pgTable(
   'model_rankings',
   {
@@ -295,6 +310,83 @@ export const modelRankings = pgTable(
     unique('model_rankings_model_provider_unique').on(
       table.modelName,
       table.providerName,
+    ),
+  ],
+);
+
+// Comparison votes - Main voting record for model comparisons
+export const comparisonVotes = pgTable(
+  'comparison_votes',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    messageId: uuid('message_id')
+      .references(() => messages.id, { onDelete: 'cascade' })
+      .notNull(),
+    comparisonType: comparisonTypeEnum('comparison_type').notNull(),
+    votedAt: timestamp('voted_at', { withTimezone: true }).defaultNow().notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('comparison_votes_user_id_idx').on(table.userId),
+    index('comparison_votes_message_id_idx').on(table.messageId),
+    unique('comparison_votes_user_message_unique').on(table.userId, table.messageId),
+  ],
+);
+
+// Comparison vote results - Individual model outcomes for each comparison
+export const comparisonVoteResults = pgTable(
+  'comparison_vote_results',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    comparisonVoteId: uuid('comparison_vote_id')
+      .references(() => comparisonVotes.id, { onDelete: 'cascade' })
+      .notNull(),
+    modelResponseId: uuid('model_response_id')
+      .references(() => modelResponses.id, { onDelete: 'cascade' })
+      .notNull(),
+    modelName: text('model_name').notNull(),
+    providerName: text('provider_name').notNull(),
+    outcome: voteOutcomeEnum('outcome').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('comparison_vote_results_vote_id_idx').on(table.comparisonVoteId),
+    index('comparison_vote_results_model_response_id_idx').on(table.modelResponseId),
+    unique('comparison_vote_results_vote_response_unique').on(
+      table.comparisonVoteId,
+      table.modelResponseId,
+    ),
+  ],
+);
+
+// Model comparison stats - Aggregated statistics for leaderboard
+export const modelComparisonStats = pgTable(
+  'model_comparison_stats',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    modelName: text('model_name').notNull(),
+    providerName: text('provider_name').notNull(),
+    comparisonType: comparisonTypeEnum('comparison_type').notNull(),
+    totalComparisons: integer('total_comparisons').default(0).notNull(),
+    wins: integer('wins').default(0).notNull(),
+    losses: integer('losses').default(0).notNull(),
+    ties: integer('ties').default(0).notNull(),
+    allBadCount: integer('all_bad_count').default(0).notNull(),
+    eloRating: real('elo_rating').default(1500).notNull(),
+    winRate: real('win_rate').default(0).notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('model_comparison_stats_elo_idx').on(table.eloRating),
+    index('model_comparison_stats_type_idx').on(table.comparisonType),
+    unique('model_comparison_stats_unique').on(
+      table.modelName,
+      table.providerName,
+      table.comparisonType,
     ),
   ],
 );
@@ -414,6 +506,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   modelOverrides: many(userModelOverrides),
   conversations: many(conversations),
   votes: many(userVotes),
+  comparisonVotes: many(comparisonVotes),
   files: many(files),
   sessions: many(session),
   accounts: many(account),
@@ -485,6 +578,7 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
   }),
   modelResponses: many(modelResponses),
   votes: many(userVotes),
+  comparisonVotes: many(comparisonVotes),
 }));
 
 export const modelResponsesRelations = relations(modelResponses, ({ one, many }) => ({
@@ -493,6 +587,7 @@ export const modelResponsesRelations = relations(modelResponses, ({ one, many })
     references: [messages.id],
   }),
   votes: many(userVotes),
+  comparisonVoteResults: many(comparisonVoteResults),
 }));
 
 export const userVotesRelations = relations(userVotes, ({ one }) => ({
@@ -506,6 +601,29 @@ export const userVotesRelations = relations(userVotes, ({ one }) => ({
   }),
   modelResponse: one(modelResponses, {
     fields: [userVotes.modelResponseId],
+    references: [modelResponses.id],
+  }),
+}));
+
+export const comparisonVotesRelations = relations(comparisonVotes, ({ one, many }) => ({
+  user: one(users, {
+    fields: [comparisonVotes.userId],
+    references: [users.id],
+  }),
+  message: one(messages, {
+    fields: [comparisonVotes.messageId],
+    references: [messages.id],
+  }),
+  results: many(comparisonVoteResults),
+}));
+
+export const comparisonVoteResultsRelations = relations(comparisonVoteResults, ({ one }) => ({
+  comparisonVote: one(comparisonVotes, {
+    fields: [comparisonVoteResults.comparisonVoteId],
+    references: [comparisonVotes.id],
+  }),
+  modelResponse: one(modelResponses, {
+    fields: [comparisonVoteResults.modelResponseId],
     references: [modelResponses.id],
   }),
 }));
@@ -564,3 +682,13 @@ export type UserCustomModel = typeof userCustomModels.$inferSelect;
 export type NewUserCustomModel = typeof userCustomModels.$inferInsert;
 export type UserModelOverride = typeof userModelOverrides.$inferSelect;
 export type NewUserModelOverride = typeof userModelOverrides.$inferInsert;
+export type ComparisonVote = typeof comparisonVotes.$inferSelect;
+export type NewComparisonVote = typeof comparisonVotes.$inferInsert;
+export type ComparisonVoteResult = typeof comparisonVoteResults.$inferSelect;
+export type NewComparisonVoteResult = typeof comparisonVoteResults.$inferInsert;
+export type ModelComparisonStat = typeof modelComparisonStats.$inferSelect;
+export type NewModelComparisonStat = typeof modelComparisonStats.$inferInsert;
+
+// Enum value types
+export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
+export type VoteOutcome = (typeof voteOutcomeEnum.enumValues)[number];

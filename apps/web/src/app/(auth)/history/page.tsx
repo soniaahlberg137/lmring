@@ -16,7 +16,16 @@ import {
   ConversationCardSkeleton,
 } from '@lmring/ui';
 import { motion } from 'framer-motion';
-import { CalendarIcon, ClockIcon, MessageSquareIcon, Share2Icon, Trash2Icon } from 'lucide-react';
+import {
+  CalendarIcon,
+  CheckIcon,
+  ClockIcon,
+  EqualIcon,
+  MessageSquareIcon,
+  Share2Icon,
+  Trash2Icon,
+  XIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import * as React from 'react';
 import { toast } from 'sonner';
@@ -235,6 +244,41 @@ export default function HistoryPage() {
                               <span>{model.modelName}</span>
                             </Badge>
                           ))}
+                          {conversation.voteInfo?.hasVotes && (
+                            <Badge
+                              variant="outline"
+                              className={`flex items-center gap-1.5 text-xs py-1 px-2 ${
+                                conversation.voteInfo.voteType === 'winner'
+                                  ? 'border-amber-500/50 text-amber-600'
+                                  : conversation.voteInfo.voteType === 'tie'
+                                    ? 'border-green-500/50 text-green-600'
+                                    : 'border-red-500/50 text-red-600'
+                              }`}
+                            >
+                              {conversation.voteInfo.voteType === 'winner' && (
+                                <>
+                                  <CheckIcon className="h-3 w-3" />
+                                  <span>
+                                    {t('History.vote_winner', {
+                                      model: conversation.voteInfo.winnerModel,
+                                    })}
+                                  </span>
+                                </>
+                              )}
+                              {conversation.voteInfo.voteType === 'tie' && (
+                                <>
+                                  <EqualIcon className="h-3 w-3" />
+                                  <span>{t('History.vote_tie')}</span>
+                                </>
+                              )}
+                              {conversation.voteInfo.voteType === 'all_bad' && (
+                                <>
+                                  <XIcon className="h-3 w-3" />
+                                  <span>{t('History.vote_all_bad')}</span>
+                                </>
+                              )}
+                            </Badge>
+                          )}
                         </div>
                       )}
                     </div>

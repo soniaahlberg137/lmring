@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  cn,
   Label,
   Popover,
   PopoverContent,
@@ -15,7 +16,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@lmring/ui';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -23,8 +24,7 @@ import {
   MoreHorizontalIcon,
   PlusIcon,
   SlidersHorizontalIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
+  ThumbsUp,
   ToggleLeftIcon,
   ToggleRightIcon,
   Trash2Icon,
@@ -36,6 +36,8 @@ import { ProviderIcon } from '@/components/arena/provider-icon';
 import type { ModelConfig, ModelOption } from '@/types/arena';
 import type { PendingResponse, WorkflowMessage, WorkflowStatus } from '@/types/workflow';
 import { ChatList } from './chat/chat-list';
+
+export type VoteState = 'none' | 'winner' | 'loser' | 'tie' | 'all_bad';
 
 interface ModelCardProps {
   modelId?: string;
@@ -52,6 +54,10 @@ interface ModelCardProps {
   index?: number;
   canMoveLeft?: boolean;
   canMoveRight?: boolean;
+  // Vote state props
+  voteState?: VoteState;
+  hoverState?: 'winner' | 'loser' | 'tie' | 'all_bad' | null;
+  isVotable?: boolean;
   onModelSelect?: (modelId: string) => void;
   onSyncToggle?: (synced: boolean) => void;
   onConfigChange?: (config: ModelConfig) => void;
@@ -61,8 +67,9 @@ interface ModelCardProps {
   onMoveLeft?: () => void;
   onMoveRight?: () => void;
   onAddCard?: () => void;
-  onThumbsUp?: () => void;
-  onThumbsDown?: () => void;
+  onVoteClick?: () => void;
+  onVoteHover?: () => void;
+  onVoteHoverLeave?: () => void;
   onRetry?: (messageId: string) => void;
   onMaximize?: (content: string) => void;
 }
@@ -87,6 +94,9 @@ export function ModelCard({
   index = 0,
   canMoveLeft = false,
   canMoveRight = false,
+  voteState = 'none',
+  hoverState = null,
+  isVotable = false,
   onModelSelect,
   onSyncToggle,
   onConfigChange,
@@ -96,14 +106,16 @@ export function ModelCard({
   onMoveLeft,
   onMoveRight,
   onAddCard,
-  onThumbsUp,
-  onThumbsDown,
+  onVoteClick,
+  onVoteHover,
+  onVoteHoverLeave,
   onRetry,
   onMaximize,
 }: ModelCardProps) {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [modelSelectorOpen, setModelSelectorOpen] = React.useState(false);
+  const [showVoteAnimation, setShowVoteAnimation] = React.useState(false);
 
   const selectedModel = models.find((m) => m.id === modelId);
 
@@ -114,6 +126,46 @@ export function ModelCard({
   };
 
   const hasContent = (messages && messages.length > 0) || !!pendingResponse || !!response;
+
+  // Determine the effective vote state (actual vote or hover preview)
+  const effectiveVoteState = hoverState || voteState;
+
+  // Vote state border styles
+  const voteStateBorderStyles: Record<string, string> = {
+    winner: 'ring-2 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    loser: 'opacity-60',
+    tie: 'ring-2 ring-green-500 border-green-500 shadow-green-500/20',
+    all_bad: 'ring-2 ring-red-500 border-red-500 shadow-red-500/20',
+    none: '',
+  };
+
+  const cardClasses = cn(
+    'h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden transition-all duration-200',
+    voteStateBorderStyles[effectiveVoteState],
+    isVotable &&
+      !voteState &&
+      voteState === 'none' &&
+      'cursor-pointer hover:ring-2 hover:ring-amber-500/50',
+  );
+
+  const handleCardClick = () => {
+    if (isVotable && voteState === 'none' && onVoteClick) {
+      setShowVoteAnimation(true);
+      onVoteClick();
+    }
+  };
+
+  const handleCardMouseEnter = () => {
+    if (isVotable && voteState === 'none' && onVoteHover) {
+      onVoteHover();
+    }
+  };
+
+  const handleCardMouseLeave = () => {
+    if (isVotable && onVoteHoverLeave) {
+      onVoteHoverLeave();
+    }
+  };
 
   return (
     <motion.div
@@ -126,7 +178,32 @@ export function ModelCard({
       }}
       className="w-full h-full"
     >
-      <Card className="h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden">
+      <Card
+        className={cardClasses}
+        onClick={handleCardClick}
+        onMouseEnter={handleCardMouseEnter}
+        onMouseLeave={handleCardMouseLeave}
+      >
+        {/* Vote celebration animation */}
+        <AnimatePresence>
+          {showVoteAnimation && (
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1.2 }}
+              exit={{ opacity: 0, scale: 2 }}
+              transition={{
+                duration: 0.6,
+                type: 'spring',
+                bounce: 0.4,
+              }}
+              onAnimationComplete={() => setShowVoteAnimation(false)}
+            >
+              <ThumbsUp className="h-16 w-16 text-amber-500 drop-shadow-lg" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <CardHeader className="pb-3 flex-shrink-0 space-y-0">
           <div className="flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
@@ -438,29 +515,6 @@ export function ModelCard({
                 placeholder="Type a custom prompt for this model..."
                 className="w-full px-3 py-2 text-sm rounded-lg border border-border/50 bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all"
               />
-            </div>
-          )}
-
-          {hasContent && !isLoading && (
-            <div className="flex items-center justify-between pt-4 border-t flex-shrink-0">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={onThumbsUp}
-                  className="p-2 rounded-lg hover:bg-accent transition-colors hover-lift button-press"
-                  aria-label="Thumbs up"
-                >
-                  <ThumbsUpIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={onThumbsDown}
-                  className="p-2 rounded-lg hover:bg-accent transition-colors hover-lift button-press"
-                  aria-label="Thumbs down"
-                >
-                  <ThumbsDownIcon className="h-4 w-4" />
-                </button>
-              </div>
             </div>
           )}
         </CardContent>

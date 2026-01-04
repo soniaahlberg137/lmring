@@ -1,5 +1,6 @@
 'use client';
 
+import type { ComparisonType } from '@lmring/database';
 import { Button, cn, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
@@ -14,6 +15,7 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/arena/prompt-input';
+import { VoteBar } from '@/components/arena/vote-bar';
 import { CARD_MIN_WIDTH, MAX_COMPARISON_CARDS } from '@/constants/arena';
 import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
@@ -27,6 +29,7 @@ import {
   settingsSelectors,
   useArenaStore,
   useSettingsStore,
+  useVoteStore,
   useWorkflowStore,
   workflowSelectors,
 } from '@/stores';
@@ -95,6 +98,14 @@ export default function ArenaPage() {
   const workflowOrder = useWorkflowStore(workflowSelectors.workflowOrder);
   const setIsCreatingConversation = useWorkflowStore((state) => state.setIsCreatingConversation);
 
+  const getVote = useVoteStore((state) => state.getVote);
+  const hoveredVote = useVoteStore((state) => state.hoveredVote);
+  const setHoveredVote = useVoteStore((state) => state.setHoveredVote);
+  const submitVote = useVoteStore((state) => state.submitVote);
+  const loadVoteForMessage = useVoteStore((state) => state.loadVoteForMessage);
+  const clearAllVotes = useVoteStore((state) => state.clearAllVotes);
+  const isVoteSubmitting = useVoteStore((state) => state.isSubmitting);
+
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
     string | undefined
   >(conversationId);
@@ -130,11 +141,9 @@ export default function ArenaPage() {
         tokensUsed?: number,
         responseTimeMs?: number,
       ) => {
-        // Find the displayPosition by looking up the workflowId in comparisonWorkflowMap
         let displayPosition = 0;
         for (const [comparisonId, wfId] of comparisonWorkflowMap.current.entries()) {
           if (wfId === workflowId) {
-            // Find the index of this comparison in the comparisons array
             const index = comparisons.findIndex((c) => c.id === comparisonId);
             if (index >= 0) {
               displayPosition = index;
@@ -166,6 +175,11 @@ export default function ArenaPage() {
   const [conversationLoaded, setConversationLoaded] = React.useState(false);
   const [conversationError, setConversationError] = React.useState<string | null>(null);
 
+  const [votingContext, setVotingContext] = React.useState<{
+    messageId: string;
+    modelResponses: Array<{ id: string; modelName: string; providerName: string }>;
+  } | null>(null);
+
   React.useEffect(() => {
     if (!apiKeysLoaded) {
       loadApiKeys();
@@ -182,7 +196,6 @@ export default function ArenaPage() {
       }
 
       if (!conversationId) {
-        // Always reset when navigating to new chat, regardless of storedConversationId
         resetConversation();
         comparisonWorkflowMap.current.clear();
         if (availableModels.length > 0) {
@@ -207,8 +220,6 @@ export default function ArenaPage() {
   ]);
 
   React.useEffect(() => {
-    // When "New Chat" resets the workflow store without a route param change,
-    // make sure we don't keep "conversationLoaded" or old workflow mappings around.
     if (storedConversationId !== null) return;
 
     if (comparisonWorkflowMap.current.size > 0) {
@@ -223,7 +234,6 @@ export default function ArenaPage() {
     return savedApiKeys.some((k) => k.enabled);
   }, [savedApiKeys]);
 
-  // Fetch enabled and custom models with caching
   React.useEffect(() => {
     const fetchEnabledModels = async () => {
       if (!apiKeysLoaded) return;
@@ -408,7 +418,6 @@ export default function ArenaPage() {
 
           if (shouldInclude) {
             const modelId = `${provider.id}:${model.id}`;
-            // Apply model override if exists
             const override = providerOverrides?.get(model.id);
             const displayName = override?.displayName || model.displayName || model.id;
             const inputPrice = override?.inputPrice ?? model.pricing?.input;
@@ -544,8 +553,6 @@ export default function ArenaPage() {
             for (const response of message.responses) {
               const fullModelId = `${response.providerName}:${response.modelName}`;
               if (!modelKeyMap.has(fullModelId)) {
-                // Always add the model to the map, even if keyId is missing
-                // This ensures card count matches original conversation
                 const keyId = getKeyIdForModel(fullModelId) || '';
                 modelKeyMap.set(fullModelId, { modelId: fullModelId, keyId });
               }
@@ -607,8 +614,6 @@ export default function ArenaPage() {
   );
 
   React.useEffect(() => {
-    // Only sync workflows -> comparisons when viewing an existing conversation route.
-    // In "New Chat" mode, workflows are created lazily per-card and should not dictate card count.
     if (!conversationId || !storedConversationId || storedConversationId !== conversationId) {
       return;
     }
@@ -616,7 +621,6 @@ export default function ArenaPage() {
       return;
     }
 
-    // Use workflowOrder for consistent ordering if available, otherwise fall back to entries
     const orderedWorkflows =
       workflowOrder.length > 0
         ? workflowOrder
@@ -627,11 +631,6 @@ export default function ArenaPage() {
             .filter((entry): entry is [string, ArenaWorkflow] => entry !== null)
         : Array.from(workflows.entries());
 
-    // Check if comparisons need to be synced with workflows
-    // This happens when:
-    // 1. Length mismatch
-    // 2. ModelId mismatch (comparisons have default models, workflows have loaded models)
-    // 3. ComparisonWorkflowMap is stale (pointing to old workflow IDs from previous conversation)
     const needsSync =
       orderedWorkflows.length !== comparisons.length ||
       orderedWorkflows.some(([workflowId, wf], index) => {
@@ -684,7 +683,6 @@ export default function ArenaPage() {
     setComparisons,
   ]);
 
-  // Handle re-entry to the same conversation (e.g., navigating from History to the same conversation)
   React.useEffect(() => {
     if (
       conversationId &&
@@ -703,11 +701,6 @@ export default function ArenaPage() {
               .filter((entry): entry is [string, ArenaWorkflow] => entry !== null)
           : Array.from(workflows.entries());
 
-      // Check if comparisons need to be synced with workflows
-      // This happens when:
-      // 1. Length mismatch
-      // 2. ModelId mismatch
-      // 3. ComparisonWorkflowMap is stale (pointing to old workflow IDs)
       const needsSync =
         orderedWorkflows.length !== comparisons.length ||
         orderedWorkflows.some(([workflowId, wf], index) => {
@@ -823,7 +816,6 @@ export default function ArenaPage() {
       const shouldUpdateUrl =
         !!convId &&
         currentWindowPath.replace(/\/$/, '') === basePath &&
-        // avoid navigating if we're already on a conversation route
         basePath.endsWith('/arena');
       if (shouldUpdateUrl) {
         window.history.replaceState(null, '', `${basePath}/${convId}`);
@@ -942,6 +934,252 @@ export default function ArenaPage() {
     setMaximizedContent(content);
   }, []);
 
+  const fetchVotingContext = React.useCallback(async () => {
+    const effectiveConversationId = conversationId || storedConversationId;
+    if (!effectiveConversationId) return null;
+
+    try {
+      const response = await fetch(`/api/conversations/${effectiveConversationId}/full`);
+      if (!response.ok) return null;
+
+      const data = (await response.json()) as {
+        messages: Array<{
+          id: string;
+          role: string;
+          responses?: Array<{ id: string; modelName: string; providerName: string }>;
+        }>;
+      };
+
+      const userMessages = data.messages.filter((m) => m.role === 'user');
+      const lastUserMessage = userMessages[userMessages.length - 1];
+      if (!lastUserMessage) return null;
+
+      const context = {
+        messageId: lastUserMessage.id,
+        modelResponses: lastUserMessage.responses || [],
+      };
+
+      setVotingContext(context);
+      return context;
+    } catch {
+      return null;
+    }
+  }, [conversationId, storedConversationId]);
+
+  const lastUserMessageId = React.useMemo(() => {
+    for (const comparison of comparisons) {
+      const workflow = getWorkflowForComparison(comparison.id);
+      if (workflow?.messages?.length) {
+        const userMessages = workflow.messages.filter((m) => m.role === 'user');
+        const lastUserMsg = userMessages[userMessages.length - 1];
+        if (lastUserMsg?.id) {
+          return lastUserMsg.id;
+        }
+      }
+    }
+    return null;
+  }, [comparisons, getWorkflowForComparison]);
+
+  const modelResponses = React.useMemo(() => {
+    const responses: Array<{
+      id: string;
+      modelName: string;
+      providerName: string;
+      comparisonId: string;
+    }> = [];
+
+    for (const comparison of comparisons) {
+      const workflow = getWorkflowForComparison(comparison.id);
+      if (workflow?.messages?.length) {
+        const assistantMessages = workflow.messages.filter((m) => m.role === 'assistant');
+        const lastAssistantMsg = assistantMessages[assistantMessages.length - 1];
+        if (lastAssistantMsg?.id && comparison.modelId) {
+          const [providerName, ...modelParts] = comparison.modelId.split(':');
+          const modelName = modelParts.join(':');
+          responses.push({
+            id: lastAssistantMsg.id,
+            modelName,
+            providerName: providerName ?? '',
+            comparisonId: comparison.id,
+          });
+        }
+      }
+    }
+
+    return responses;
+  }, [comparisons, getWorkflowForComparison]);
+
+  const isVotingAvailable = React.useMemo(() => {
+    const syncedComparisons = comparisons.filter((c) => c.synced);
+    if (syncedComparisons.length < 2) return false;
+
+    const allCompleted = syncedComparisons.every((comparison) => {
+      const workflow = getWorkflowForComparison(comparison.id);
+      return (
+        workflow?.status === 'completed' && workflow?.messages?.some((m) => m.role === 'assistant')
+      );
+    });
+
+    return allCompleted && !!lastUserMessageId;
+  }, [comparisons, getWorkflowForComparison, lastUserMessageId]);
+
+  const getVoteStateForComparison = React.useCallback(
+    (comparisonId: string): 'none' | 'winner' | 'loser' | 'tie' | 'all_bad' => {
+      const dbMessageId = votingContext?.messageId;
+      if (!dbMessageId) return 'none';
+
+      const vote = getVote(dbMessageId);
+      if (!vote) return 'none';
+
+      const comparison = comparisons.find((c) => c.id === comparisonId);
+      if (!comparison?.modelId) return 'none';
+
+      const [providerName, ...modelParts] = comparison.modelId.split(':');
+      const modelName = modelParts.join(':');
+
+      const result = vote.results.find(
+        (r) => r.modelName === modelName && r.providerName === providerName,
+      );
+      if (!result) return 'none';
+
+      return result.outcome as 'winner' | 'loser' | 'tie' | 'all_bad';
+    },
+    [votingContext, getVote, comparisons],
+  );
+
+  const getHoverStateForComparison = React.useCallback(
+    (comparisonId: string): 'winner' | 'loser' | 'tie' | 'all_bad' | null => {
+      if (!lastUserMessageId || !hoveredVote || hoveredVote.messageId !== lastUserMessageId) {
+        return null;
+      }
+
+      const dbMessageId = votingContext?.messageId;
+      if (dbMessageId && getVote(dbMessageId)) {
+        return null;
+      }
+
+      const modelResponse = modelResponses.find((r) => r.comparisonId === comparisonId);
+      if (!modelResponse) return null;
+
+      const participantIds = modelResponses.map((r) => r.id);
+      if (!participantIds.includes(modelResponse.id)) return null;
+
+      if (hoveredVote.voteType === 'winner') {
+        return modelResponse.id === hoveredVote.winnerId ? 'winner' : 'loser';
+      }
+
+      return hoveredVote.voteType;
+    },
+    [lastUserMessageId, hoveredVote, modelResponses, votingContext, getVote],
+  );
+
+  const handleVoteCardClick = React.useCallback(
+    async (comparisonId: string) => {
+      if (!isVotingAvailable || isVoteSubmitting) return;
+
+      let context = votingContext;
+      if (!context) {
+        context = await fetchVotingContext();
+        if (!context) {
+          toast.error(t('Arena.vote_failed'));
+          return;
+        }
+      }
+
+      const existingVote = getVote(context.messageId);
+      if (existingVote) return;
+
+      const comparison = comparisons.find((c) => c.id === comparisonId);
+      if (!comparison?.modelId) return;
+
+      const [providerName, ...modelParts] = comparison.modelId.split(':');
+      const modelName = modelParts.join(':');
+
+      const dbResponse = context.modelResponses.find(
+        (r) => r.modelName === modelName && r.providerName === providerName,
+      );
+      if (!dbResponse) return;
+
+      const participantIds = context.modelResponses.map((r) => r.id);
+      const comparisonType: ComparisonType = 'text';
+
+      const result = await submitVote({
+        messageId: context.messageId,
+        voteType: 'winner',
+        winnerId: dbResponse.id,
+        comparisonType,
+        participantIds,
+      });
+
+      if (result) {
+        toast.success(t('Arena.vote_success'));
+      } else {
+        toast.error(t('Arena.vote_failed'));
+      }
+    },
+    [
+      isVotingAvailable,
+      isVoteSubmitting,
+      votingContext,
+      fetchVotingContext,
+      getVote,
+      comparisons,
+      submitVote,
+      t,
+    ],
+  );
+
+  const handleVoteCardHover = React.useCallback(
+    (comparisonId: string) => {
+      if (!lastUserMessageId || !isVotingAvailable || isVoteSubmitting) return;
+
+      const dbMessageId = votingContext?.messageId;
+      if (dbMessageId && getVote(dbMessageId)) return;
+
+      const modelResponse = modelResponses.find((r) => r.comparisonId === comparisonId);
+      if (!modelResponse) return;
+
+      setHoveredVote({
+        messageId: lastUserMessageId,
+        voteType: 'winner',
+        winnerId: modelResponse.id,
+      });
+    },
+    [
+      lastUserMessageId,
+      isVotingAvailable,
+      isVoteSubmitting,
+      votingContext,
+      getVote,
+      modelResponses,
+      setHoveredVote,
+    ],
+  );
+
+  const handleVoteCardHoverLeave = React.useCallback(() => {
+    setHoveredVote(null);
+  }, [setHoveredVote]);
+
+  React.useEffect(() => {
+    if (!conversationId) {
+      clearAllVotes();
+      setVotingContext(null);
+    }
+  }, [conversationId, clearAllVotes]);
+
+  React.useEffect(() => {
+    const loadVotes = async () => {
+      if (!conversationLoaded) return;
+
+      const context = await fetchVotingContext();
+      if (context) {
+        loadVoteForMessage(context.messageId);
+      }
+    };
+
+    loadVotes();
+  }, [conversationLoaded, fetchVotingContext, loadVoteForMessage]);
+
   React.useEffect(() => {
     return () => {
       cancelAllWorkflows();
@@ -949,21 +1187,17 @@ export default function ArenaPage() {
   }, [cancelAllWorkflows]);
 
   const getCardStyles = React.useCallback((cardCount: number): React.CSSProperties => {
-    // Single card: constrained width, centered
     if (cardCount === 1) {
       return {
-        width: '80%', // 80% viewport width
-        minWidth: `${CARD_MIN_WIDTH}px`, // 320px minimum
-        // maxWidth constraint removed
+        width: '80%',
+        minWidth: `${CARD_MIN_WIDTH}px`,
         flexShrink: 0,
       };
     }
 
-    // Two+ cards: flex-grow to fill space equally
     return {
-      flex: '1 1 0%', // Grow equally
-      minWidth: `${CARD_MIN_WIDTH}px`, // 320px minimum
-      // maxWidth constraint removed to allow filling space
+      flex: '1 1 0%',
+      minWidth: `${CARD_MIN_WIDTH}px`,
       width: 'auto',
     };
   }, []);
@@ -1020,6 +1254,11 @@ export default function ArenaPage() {
                 workflow?.pendingResponse?.content || lastAssistantMessage?.content || '';
               const isLoading = workflow?.status === 'running';
 
+              const voteState = getVoteStateForComparison(comparison.id);
+              const hoverState = getHoverStateForComparison(comparison.id);
+              const hasVoted = voteState !== 'none';
+              const isVotable = isVotingAvailable && !hasVoted && comparison.synced;
+
               return (
                 <motion.div
                   key={comparison.id}
@@ -1042,6 +1281,9 @@ export default function ArenaPage() {
                     index={index}
                     canMoveLeft={index > 0}
                     canMoveRight={index < comparisons.length - 1}
+                    voteState={voteState}
+                    hoverState={hoverState}
+                    isVotable={isVotable}
                     onModelSelect={(modelId) => handleModelSelect(index, modelId)}
                     onSyncToggle={(synced) => handleSyncToggle(index, synced)}
                     onConfigChange={(config) => handleConfigChange(index, config)}
@@ -1055,10 +1297,11 @@ export default function ArenaPage() {
                         ? addComparison
                         : undefined
                     }
-                    onThumbsUp={() => {}}
-                    onThumbsDown={() => {}}
                     onRetry={(messageId) => handleRetry(comparison.id, messageId)}
                     onMaximize={handleMaximize}
+                    onVoteClick={() => handleVoteCardClick(comparison.id)}
+                    onVoteHover={() => handleVoteCardHover(comparison.id)}
+                    onVoteHoverLeave={handleVoteCardHoverLeave}
                   />
                 </motion.div>
               );
@@ -1069,6 +1312,13 @@ export default function ArenaPage() {
 
       <div className="border-t bg-background/95 backdrop-blur-sm flex-shrink-0">
         <div className="p-4 space-y-4">
+          {isVotingAvailable && lastUserMessageId && modelResponses.length >= 2 && (
+            <VoteBar
+              messageId={lastUserMessageId}
+              modelResponses={modelResponses}
+              comparisonType="text"
+            />
+          )}
           <PromptInput
             value={workflowGlobalPrompt}
             onChange={setWorkflowGlobalPrompt}
