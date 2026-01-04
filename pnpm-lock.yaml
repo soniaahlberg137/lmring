@@ -375,7 +375,7 @@ importers:
   packages/i18n:
     dependencies:
       i18next:
-        specifier: ^25.6.0
+        specifier: ^25.7.3
         version: 25.7.3(typescript@5.9.3)
       i18next-resources-to-backend:
         specifier: ^1.2.1
