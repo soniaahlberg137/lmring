@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
+import { Button, cn, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -14,6 +14,7 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/arena/prompt-input';
+import { CARD_MIN_WIDTH, MAX_COMPARISON_CARDS } from '@/constants/arena';
 import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
@@ -947,6 +948,26 @@ export default function ArenaPage() {
     };
   }, [cancelAllWorkflows]);
 
+  const getCardStyles = React.useCallback((cardCount: number): React.CSSProperties => {
+    // Single card: constrained width, centered
+    if (cardCount === 1) {
+      return {
+        width: '80%', // 80% viewport width
+        minWidth: `${CARD_MIN_WIDTH}px`, // 320px minimum
+        // maxWidth constraint removed
+        flexShrink: 0,
+      };
+    }
+
+    // Two+ cards: flex-grow to fill space equally
+    return {
+      flex: '1 1 0%', // Grow equally
+      minWidth: `${CARD_MIN_WIDTH}px`, // 320px minimum
+      // maxWidth constraint removed to allow filling space
+      width: 'auto',
+    };
+  }, []);
+
   if (conversationError) {
     return (
       <div className="flex items-center justify-center h-full bg-background">
@@ -967,16 +988,15 @@ export default function ArenaPage() {
   ) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">
-        <div className="flex-1 overflow-hidden p-4">
-          <div
-            className="h-full gap-4 overflow-hidden"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
-              gridTemplateRows: '1fr',
-            }}
-          >
-            <ModelCardSkeleton count={2} />
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full overflow-x-auto overflow-y-hidden custom-scrollbar p-4">
+            <div className="h-full flex gap-4" style={{ minWidth: 'fit-content' }}>
+              {[0, 1].map((index) => (
+                <div key={index} style={getCardStyles(2)}>
+                  <ModelCardSkeleton />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -985,66 +1005,65 @@ export default function ArenaPage() {
 
   return (
     <div className="flex flex-col h-full bg-background overflow-hidden">
-      <div className="flex-1 overflow-hidden p-4">
-        <div
-          className="h-full gap-4 overflow-hidden"
-          style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${comparisons.length}, 1fr)`,
-            gridTemplateRows: '1fr',
-          }}
-        >
-          {comparisons.map((comparison, index) => {
-            const workflow = getWorkflowForComparison(comparison.id);
-            const lastAssistantMessage = workflow?.messages
-              .filter((m) => m.role === 'assistant')
-              .pop();
-            const response =
-              workflow?.pendingResponse?.content || lastAssistantMessage?.content || '';
-            const isLoading = workflow?.status === 'running';
+      <div className="flex-1 overflow-hidden">
+        <div className="h-full overflow-x-auto overflow-y-hidden custom-scrollbar p-4">
+          <div
+            className={cn('h-full flex gap-4', comparisons.length === 1 && 'justify-center')}
+            style={comparisons.length >= 3 ? { minWidth: 'fit-content' } : undefined}
+          >
+            {comparisons.map((comparison, index) => {
+              const workflow = getWorkflowForComparison(comparison.id);
+              const lastAssistantMessage = workflow?.messages
+                .filter((m) => m.role === 'assistant')
+                .pop();
+              const response =
+                workflow?.pendingResponse?.content || lastAssistantMessage?.content || '';
+              const isLoading = workflow?.status === 'running';
 
-            return (
-              <motion.div
-                key={comparison.id}
-                layout
-                className="h-full min-h-0 min-w-0 overflow-hidden"
-              >
-                <ModelCard
-                  modelId={comparison.modelId}
-                  models={displayModels}
-                  messages={workflow?.messages}
-                  pendingResponse={workflow?.pendingResponse}
-                  response={response}
-                  isLoading={isLoading}
-                  status={workflow?.status}
-                  error={workflow?.error}
-                  synced={comparison.synced}
-                  customPrompt={comparison.customPrompt}
-                  config={comparison.config}
-                  index={index}
-                  canMoveLeft={index > 0}
-                  canMoveRight={index < comparisons.length - 1}
-                  onModelSelect={(modelId) => handleModelSelect(index, modelId)}
-                  onSyncToggle={(synced) => handleSyncToggle(index, synced)}
-                  onConfigChange={(config) => handleConfigChange(index, config)}
-                  onCustomPromptChange={(prompt) => handleCustomPromptChange(index, prompt)}
-                  onClear={() => handleClear(index)}
-                  onDelete={() => handleDelete(index)}
-                  onMoveLeft={() => moveLeft(index)}
-                  onMoveRight={() => moveRight(index)}
-                  onAddCard={
-                    index === comparisons.length - 1 && comparisons.length < 4
-                      ? addComparison
-                      : undefined
-                  }
-                  onThumbsUp={() => {}}
-                  onThumbsDown={() => {}}
-                  onRetry={(messageId) => handleRetry(comparison.id, messageId)}
-                  onMaximize={handleMaximize}
-                />
-              </motion.div>
-            );
-          })}
+              return (
+                <motion.div
+                  key={comparison.id}
+                  layout
+                  className="h-full"
+                  style={getCardStyles(comparisons.length)}
+                >
+                  <ModelCard
+                    modelId={comparison.modelId}
+                    models={displayModels}
+                    messages={workflow?.messages}
+                    pendingResponse={workflow?.pendingResponse}
+                    response={response}
+                    isLoading={isLoading}
+                    status={workflow?.status}
+                    error={workflow?.error}
+                    synced={comparison.synced}
+                    customPrompt={comparison.customPrompt}
+                    config={comparison.config}
+                    index={index}
+                    canMoveLeft={index > 0}
+                    canMoveRight={index < comparisons.length - 1}
+                    onModelSelect={(modelId) => handleModelSelect(index, modelId)}
+                    onSyncToggle={(synced) => handleSyncToggle(index, synced)}
+                    onConfigChange={(config) => handleConfigChange(index, config)}
+                    onCustomPromptChange={(prompt) => handleCustomPromptChange(index, prompt)}
+                    onClear={() => handleClear(index)}
+                    onDelete={() => handleDelete(index)}
+                    onMoveLeft={() => moveLeft(index)}
+                    onMoveRight={() => moveRight(index)}
+                    onAddCard={
+                      index === comparisons.length - 1 && comparisons.length < MAX_COMPARISON_CARDS
+                        ? addComparison
+                        : undefined
+                    }
+                    onThumbsUp={() => {}}
+                    onThumbsDown={() => {}}
+                    onRetry={(messageId) => handleRetry(comparison.id, messageId)}
+                    onMaximize={handleMaximize}
+                  />
+                </motion.div>
+              );
+            })}
+          </div>
         </div>
       </div>
 

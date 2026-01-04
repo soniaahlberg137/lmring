@@ -20,7 +20,6 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   EraserIcon,
-  ExternalLinkIcon,
   MoreHorizontalIcon,
   PlusIcon,
   SlidersHorizontalIcon,
@@ -411,17 +410,6 @@ export function ModelCard({
                     )}
                   </div>
                 )}
-
-                <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      className="hover:text-foreground transition-colors flex items-center gap-1"
-                    >
-                      Model Page <ExternalLinkIcon className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           ) : (
