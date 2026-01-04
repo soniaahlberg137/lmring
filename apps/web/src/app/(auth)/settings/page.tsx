@@ -86,10 +86,10 @@ import {
   TwitterIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
+import { useTranslations } from '@/hooks/use-translations';
 import { isSupportedLocale } from '@/libs/locale-utils';
 import { maskApiKey } from '@/libs/validation';
 import { languageSelectors, useLanguageStore } from '@/stores/language-store';
@@ -166,7 +166,7 @@ const LANGUAGE_NAMES: Record<Locale, string> = {
 
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
-  const t = useTranslations('Settings');
+  const t = useTranslations();
   const [mounted, setMounted] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<Tab>('general');
   const [telemetryEnabled, setTelemetryEnabled] = React.useState(false);
@@ -376,23 +376,37 @@ export default function SettingsPage() {
     <div className="h-full flex bg-background overflow-hidden">
       <div className="w-64 flex-none border-r border-border bg-muted/40 flex flex-col">
         <div className="p-4 pb-2">
-          <h1 className="text-2xl font-bold">{t('title')}</h1>
-          <p className="text-xs text-muted-foreground mt-1">{t('description')}</p>
+          <h1 className="text-2xl font-bold">{t('Settings.title')}</h1>
+          <p className="text-xs text-muted-foreground mt-1">{t('Settings.description')}</p>
         </div>
         <div className="px-3 space-y-1">
-          {renderSidebarItem('general', t('tabs.general'), <Settings2Icon className="h-4 w-4" />)}
-          {renderSidebarItem('provider', t('tabs.provider'), <BotIcon className="h-4 w-4" />)}
+          {renderSidebarItem(
+            'general',
+            t('Settings.tabs_general'),
+            <Settings2Icon className="h-4 w-4" />,
+          )}
+          {renderSidebarItem(
+            'provider',
+            t('Settings.tabs_provider'),
+            <BotIcon className="h-4 w-4" />,
+          )}
           {renderSidebarItem(
             'system-model',
-            t('tabs.system_model'),
+            t('Settings.tabs_system_model'),
             <BoxIcon className="h-4 w-4" />,
           )}
-          {renderSidebarItem('storage', t('tabs.storage'), <DatabaseIcon className="h-4 w-4" />)}
-          {renderSidebarItem('help', t('tabs.help'), <LifeBuoyIcon className="h-4 w-4" />)}
-          {renderSidebarItem('about', t('tabs.about'), <InfoIcon className="h-4 w-4" />)}
+          {renderSidebarItem(
+            'storage',
+            t('Settings.tabs_storage'),
+            <DatabaseIcon className="h-4 w-4" />,
+          )}
+          {renderSidebarItem('help', t('Settings.tabs_help'), <LifeBuoyIcon className="h-4 w-4" />)}
+          {renderSidebarItem('about', t('Settings.tabs_about'), <InfoIcon className="h-4 w-4" />)}
         </div>
         <div className="mt-auto p-4">
-          <div className="text-xs text-muted-foreground">{t('powered_by', { name: 'LMRing' })}</div>
+          <div className="text-xs text-muted-foreground">
+            {t('Settings.powered_by', { name: 'LMRing' })}
+          </div>
         </div>
       </div>
 
@@ -420,12 +434,12 @@ export default function SettingsPage() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('general.title')}</h2>
+                      <h2 className="text-lg font-medium mb-1">{t('Settings.general_title')}</h2>
                     </div>
 
                     <div className="space-y-6">
                       <div className="space-y-4">
-                        <Label className="text-base">{t('general.theme')}</Label>
+                        <Label className="text-base">{t('Settings.general_theme')}</Label>
                         <div className="grid grid-cols-3 gap-4 max-w-md">
                           <button
                             type="button"
@@ -444,7 +458,7 @@ export default function SettingsPage() {
                             </div>
                             <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
                               <span className="text-muted-foreground">☀</span>{' '}
-                              {t('general.theme_light')}
+                              {t('Settings.general_theme_light')}
                             </div>
                           </button>
                           <button
@@ -464,7 +478,7 @@ export default function SettingsPage() {
                             </div>
                             <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
                               <span className="text-muted-foreground">🌙</span>{' '}
-                              {t('general.theme_dark')}
+                              {t('Settings.general_theme_dark')}
                             </div>
                           </button>
                           <button
@@ -488,14 +502,14 @@ export default function SettingsPage() {
                             </div>
                             <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
                               <span className="text-muted-foreground">💻</span>{' '}
-                              {t('general.theme_auto')}
+                              {t('Settings.general_theme_auto')}
                             </div>
                           </button>
                         </div>
                       </div>
 
                       <div className="space-y-4">
-                        <Label className="text-base">{t('general.language')}</Label>
+                        <Label className="text-base">{t('Settings.general_language')}</Label>
                         <div className="max-w-md">
                           <Select value={locale} onValueChange={handleLanguageChange}>
                             <SelectTrigger className="w-full">
@@ -527,9 +541,11 @@ export default function SettingsPage() {
                     className="space-y-6"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('system_model.title')}</h2>
+                      <h2 className="text-lg font-medium mb-1">
+                        {t('Settings.system_model_title')}
+                      </h2>
                       <p className="text-sm text-muted-foreground">
-                        {t('system_model.description')}
+                        {t('Settings.system_model_description')}
                       </p>
                     </div>
 
@@ -539,10 +555,10 @@ export default function SettingsPage() {
                           <InfoIcon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
                         </div>
                         <h3 className="text-lg font-semibold mb-2">
-                          {t('system_model.under_development')}
+                          {t('Settings.system_model_under_development')}
                         </h3>
                         <p className="text-sm text-muted-foreground max-w-md">
-                          {t('system_model.coming_soon')}
+                          {t('Settings.system_model_coming_soon')}
                         </p>
                       </CardContent>
                     </Card>
@@ -559,19 +575,19 @@ export default function SettingsPage() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('storage.title')}</h2>
+                      <h2 className="text-lg font-medium mb-1">{t('Settings.storage_title')}</h2>
                     </div>
 
                     <div className="space-y-6">
                       <div className="flex items-center justify-between py-4 border-b">
                         <div className="space-y-0.5">
-                          <div className="font-medium">{t('storage.import_data')}</div>
+                          <div className="font-medium">{t('Settings.storage_import_data')}</div>
                           <div className="text-sm text-muted-foreground">
-                            {t('storage.import_data_description')}
+                            {t('Settings.storage_import_data_description')}
                           </div>
                         </div>
                         <Button variant="outline" className="gap-2">
-                          <DatabaseIcon className="h-4 w-4" /> {t('storage.import')}
+                          <DatabaseIcon className="h-4 w-4" /> {t('Settings.storage_import')}
                         </Button>
                       </div>
                     </div>
@@ -588,14 +604,16 @@ export default function SettingsPage() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('help.title')}</h2>
-                      <p className="text-sm text-muted-foreground">{t('help.description')}</p>
+                      <h2 className="text-lg font-medium mb-1">{t('Settings.help_title')}</h2>
+                      <p className="text-sm text-muted-foreground">
+                        {t('Settings.help_description')}
+                      </p>
                     </div>
 
                     <div className="space-y-6">
                       <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t('help.resources')}
+                          {t('Settings.help_resources')}
                         </h3>
                         <div className="grid gap-4">
                           <Link href="/how-it-works" target="_blank" rel="noopener noreferrer">
@@ -603,9 +621,9 @@ export default function SettingsPage() {
                               <CardContent className="p-4 flex items-center gap-4">
                                 <HelpCircleIcon className="h-8 w-8 text-primary" />
                                 <div>
-                                  <h4 className="font-medium">{t('help.how_it_works')}</h4>
+                                  <h4 className="font-medium">{t('Settings.help_how_it_works')}</h4>
                                   <p className="text-sm text-muted-foreground">
-                                    {t('help.how_it_works_description')}
+                                    {t('Settings.help_how_it_works_description')}
                                   </p>
                                 </div>
                                 <ExternalLinkIcon className="h-4 w-4 ml-auto text-muted-foreground" />
@@ -617,7 +635,7 @@ export default function SettingsPage() {
 
                       <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t('help.about_us')}
+                          {t('Settings.help_about_us')}
                         </h3>
                         <div className="grid gap-4">
                           <a
@@ -629,9 +647,9 @@ export default function SettingsPage() {
                               <CardContent className="p-4 flex items-center gap-4">
                                 <InfoIcon className="h-8 w-8 text-primary" />
                                 <div>
-                                  <h4 className="font-medium">{t('help.about_lmring')}</h4>
+                                  <h4 className="font-medium">{t('Settings.help_about_lmring')}</h4>
                                   <p className="text-sm text-muted-foreground">
-                                    {t('help.about_lmring_description')}
+                                    {t('Settings.help_about_lmring_description')}
                                   </p>
                                 </div>
                                 <ExternalLinkIcon className="h-4 w-4 ml-auto text-muted-foreground" />
@@ -654,7 +672,7 @@ export default function SettingsPage() {
                     className="space-y-8"
                   >
                     <div>
-                      <h2 className="text-lg font-medium mb-1">{t('about.title')}</h2>
+                      <h2 className="text-lg font-medium mb-1">{t('Settings.about_title')}</h2>
                     </div>
 
                     <div className="space-y-8">
@@ -668,13 +686,13 @@ export default function SettingsPage() {
                           target="_blank"
                           rel="noopener noreferrer"
                         >
-                          <Button variant="outline">{t('about.changelog')}</Button>
+                          <Button variant="outline">{t('Settings.about_changelog')}</Button>
                         </a>
                       </div>
 
                       <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t('about.contact_us')}
+                          {t('Settings.about_contact_us')}
                         </h3>
                         <div className="space-y-2">
                           <a
@@ -683,7 +701,7 @@ export default function SettingsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"
                           >
-                            <GlobeIcon className="h-4 w-4" /> {t('about.official_website')}{' '}
+                            <GlobeIcon className="h-4 w-4" /> {t('Settings.about_official_website')}{' '}
                             <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                           <a
@@ -692,7 +710,7 @@ export default function SettingsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"
                           >
-                            <GithubIcon className="h-4 w-4" /> {t('about.contact_us')}{' '}
+                            <GithubIcon className="h-4 w-4" /> {t('Settings.about_contact_us')}{' '}
                             <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                         </div>
@@ -700,7 +718,7 @@ export default function SettingsPage() {
 
                       <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t('about.community')}
+                          {t('Settings.about_community')}
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                           <a
@@ -719,21 +737,22 @@ export default function SettingsPage() {
                             disabled
                           >
                             <div className="h-4 w-4 bg-indigo-500 rounded-full" /> Discord{' '}
-                            {t('about.coming_soon')}
+                            {t('Settings.about_coming_soon')}
                           </Button>
                           <Button
                             variant="secondary"
                             className="w-full justify-start gap-2"
                             disabled
                           >
-                            <TwitterIcon className="h-4 w-4" /> X / Twitter {t('about.coming_soon')}
+                            <TwitterIcon className="h-4 w-4" /> X / Twitter{' '}
+                            {t('Settings.about_coming_soon')}
                           </Button>
                         </div>
                       </div>
 
                       <div className="space-y-4">
                         <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                          {t('about.legal')}
+                          {t('Settings.about_legal')}
                         </h3>
                         <div className="space-y-2">
                           <a
@@ -742,7 +761,7 @@ export default function SettingsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"
                           >
-                            {t('about.terms')} <ExternalLinkIcon className="h-3 w-3" />
+                            {t('Settings.about_terms')} <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                           <a
                             href="https://github.com/llm-ring/lmring/blob/main/PRIVACY.md"
@@ -750,7 +769,7 @@ export default function SettingsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"
                           >
-                            {t('about.privacy')} <ExternalLinkIcon className="h-3 w-3" />
+                            {t('Settings.about_privacy')} <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                         </div>
                       </div>
@@ -759,9 +778,9 @@ export default function SettingsPage() {
 
                       <div className="flex items-center justify-between">
                         <div className="space-y-0.5">
-                          <div className="font-medium">{t('about.telemetry')}</div>
+                          <div className="font-medium">{t('Settings.about_telemetry')}</div>
                           <div className="text-sm text-muted-foreground">
-                            {t('about.telemetry_description')}
+                            {t('Settings.about_telemetry_description')}
                           </div>
                         </div>
                         <Switch checked={telemetryEnabled} onCheckedChange={setTelemetryEnabled} />

@@ -15,8 +15,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import * as React from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } from '@/stores';
 import { UserMenu } from './user-menu';
 
@@ -61,7 +61,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ user }: SidebarProps) {
-  const t = useTranslations('Sidebar');
+  const t = useTranslations();
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
@@ -228,7 +228,7 @@ export function Sidebar({ user }: SidebarProps) {
                       transition={{ duration: 0.2 }}
                       className="text-sm font-medium whitespace-nowrap overflow-hidden"
                     >
-                      {t(item.titleKey)}
+                      {t(`Sidebar.${item.titleKey}`)}
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -245,7 +245,7 @@ export function Sidebar({ user }: SidebarProps) {
         {!collapsed && (
           <div className="mt-4">
             <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {t('today')}
+              {t('Sidebar.today')}
             </div>
             <ScrollArea className="max-h-[300px]">
               {!conversationsLoaded ? (

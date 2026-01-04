@@ -1,21 +1,14 @@
 import { headers } from 'next/headers';
-import { setRequestLocale } from 'next-intl/server';
 
 import { FrostedHeader } from '@/components/landing';
 import { UserMenu } from '@/components/user-menu';
 import { auth } from '@/libs/Auth';
-import { getRequestLocale } from '@/libs/request-locale';
 
 export default async function PublicLayout(props: { children: React.ReactNode }) {
-  const locale = await getRequestLocale();
-  setRequestLocale(locale);
-
-  // Check if user is logged in
   const session = await auth.api.getSession({
     headers: await headers(),
   });
 
-  // Prepare user data if logged in
   const userData = session?.user
     ? {
         name: session.user.name || undefined,

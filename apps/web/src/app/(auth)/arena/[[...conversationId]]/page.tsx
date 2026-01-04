@@ -4,7 +4,6 @@ import { Button, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/u
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ModelCard } from '@/components/arena/model-card';
@@ -17,6 +16,7 @@ import {
 } from '@/components/arena/prompt-input';
 import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
+import { useTranslations } from '@/hooks/use-translations';
 import {
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
@@ -40,7 +40,7 @@ export default function ArenaPage() {
   const conversationId = conversationIdParam?.[0];
 
   const router = useRouter();
-  const t = useTranslations('Arena');
+  const t = useTranslations();
   const providerMetadata = useProviderMetadata();
 
   const { loadConversation, saveMessage, saveModelResponse, createConversation } =
@@ -765,10 +765,10 @@ export default function ArenaPage() {
     const isNewConversationSubmit = !storedConversationId;
 
     if (!hasConfiguredProviders) {
-      toast.warning(t('configure_api_keys_title'), {
-        description: t('configure_api_keys_description'),
+      toast.warning(t('Arena.configure_api_keys_title'), {
+        description: t('Arena.configure_api_keys_description'),
         action: {
-          label: t('go_to_settings'),
+          label: t('Arena.go_to_settings'),
           onClick: () => router.push('/settings?tab=provider'),
         },
       });
@@ -779,15 +779,15 @@ export default function ArenaPage() {
 
     const missingModelCards = syncedComparisons.filter((comp) => !comp.modelId);
     if (missingModelCards.length > 0) {
-      toast.warning(t('select_model_for_all_cards_title'), {
-        description: t('select_model_for_all_cards_description'),
+      toast.warning(t('Arena.select_model_for_all_cards_title'), {
+        description: t('Arena.select_model_for_all_cards_description'),
       });
       return;
     }
 
     if (syncedComparisons.length === 0) {
-      toast.warning(t('select_model_title'), {
-        description: t('select_model_description'),
+      toast.warning(t('Arena.select_model_title'), {
+        description: t('Arena.select_model_description'),
       });
       return;
     }
@@ -804,10 +804,10 @@ export default function ArenaPage() {
     }
 
     if (missingKeys.length > 0) {
-      toast.error(t('missing_api_key_title'), {
-        description: t('missing_api_key_description', { providers: missingKeys.join(', ') }),
+      toast.error(t('Arena.missing_api_key_title'), {
+        description: t('Arena.missing_api_key_description', { providers: missingKeys.join(', ') }),
         action: {
-          label: t('go_to_settings'),
+          label: t('Arena.go_to_settings'),
           onClick: () => router.push('/settings?tab=provider'),
         },
       });
@@ -1058,7 +1058,7 @@ export default function ArenaPage() {
             isLoading={isAnyRunning}
             className="border-input"
           >
-            <PromptInputTextarea placeholder={t('prompt_placeholder')} />
+            <PromptInputTextarea placeholder={t('Arena.prompt_placeholder')} />
             <PromptInputFooter>
               <PromptInputActions />
               <PromptInputSubmit />
@@ -1074,7 +1074,7 @@ export default function ArenaPage() {
               <XIcon className="size-5" />
             </Button>
           </div>
-          <ScrollArea className="flex-1">
+          <ScrollArea key="maximized-scroll" className="flex-1">
             <div className="max-w-4xl mx-auto p-8 pb-20">
               <ResponseViewer content={maximizedContent} isStreaming={false} />
             </div>

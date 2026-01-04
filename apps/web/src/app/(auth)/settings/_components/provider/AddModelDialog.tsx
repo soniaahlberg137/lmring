@@ -11,15 +11,15 @@ import {
   Label,
 } from '@lmring/ui';
 import { PlusIcon } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface AddModelDialogProps {
   onAdd: (model: { id: string; name: string }) => void;
 }
 
 export function AddModelDialog({ onAdd }: AddModelDialogProps) {
-  const t = useTranslations('Provider');
+  const t = useTranslations();
   const [open, setOpen] = useState(false);
   const [modelId, setModelId] = useState('');
   const [modelName, setModelName] = useState('');
@@ -51,7 +51,7 @@ export function AddModelDialog({ onAdd }: AddModelDialogProps) {
         variant="outline"
         size="icon"
         className="h-9 w-9"
-        title={t('add_model_dialog.title')}
+        title={t('Provider.add_model_dialog_title')}
         onClick={() => setOpen(true)}
       >
         <PlusIcon className="h-4 w-4" />
@@ -61,12 +61,12 @@ export function AddModelDialog({ onAdd }: AddModelDialogProps) {
         <DialogContent open={open} className="sm:max-w-[425px]">
           <form onSubmit={handleSubmit}>
             <DialogHeader>
-              <DialogTitle>{t('add_model_dialog.title')}</DialogTitle>
+              <DialogTitle>{t('Provider.add_model_dialog_title')}</DialogTitle>
             </DialogHeader>
             <div className="grid gap-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="modelId">
-                  {t('add_model_dialog.model_id')} <span className="text-red-500">*</span>
+                  {t('Provider.add_model_dialog_model_id')} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="modelId"
@@ -77,7 +77,7 @@ export function AddModelDialog({ onAdd }: AddModelDialogProps) {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="modelName">{t('add_model_dialog.model_name')}</Label>
+                <Label htmlFor="modelName">{t('Provider.add_model_dialog_model_name')}</Label>
                 <Input
                   id="modelName"
                   value={modelName}
@@ -88,10 +88,10 @@ export function AddModelDialog({ onAdd }: AddModelDialogProps) {
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => handleOpenChange(false)}>
-                {t('add_model_dialog.cancel')}
+                {t('Provider.add_model_dialog_cancel')}
               </Button>
               <Button type="submit" disabled={!modelId}>
-                {t('add_model_dialog.ok')}
+                {t('Provider.add_model_dialog_ok')}
               </Button>
             </DialogFooter>
           </form>

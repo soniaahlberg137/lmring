@@ -2,7 +2,7 @@
 
 import { cn, ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@lmring/ui';
 import { motion } from 'framer-motion';
-import { useTranslations } from 'next-intl';
+import { useTranslations } from '@/hooks/use-translations';
 
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -29,7 +29,7 @@ export const BaseTemplate = (props: {
   children: React.ReactNode;
   showSidebar?: boolean;
 }) => {
-  const t = useTranslations('BaseTemplate');
+  const t = useTranslations();
   const showSidebar = props.showSidebar ?? true;
 
   return (
@@ -60,7 +60,7 @@ export const BaseTemplate = (props: {
               <h1 className="text-lg font-semibold tracking-tight text-slate-100">
                 {AppConfig.name}
               </h1>
-              <p className="text-xs text-slate-400">{t('description')}</p>
+              <p className="text-xs text-slate-400">{t('BaseTemplate.description')}</p>
             </div>
           </div>
           <nav>
