@@ -26,7 +26,6 @@ export function ChatList({
   onRetry,
   onMaximize,
 }: ChatListProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: scroll on content change
@@ -45,7 +44,7 @@ export function ChatList({
   const lastAssistantIndex = filteredMessages.findLastIndex((m) => m.role === 'assistant');
 
   return (
-    <ScrollArea className="h-full" ref={scrollRef}>
+    <ScrollArea className="h-full">
       <div className="flex flex-col gap-4 pb-4 pt-4 px-2">
         {filteredMessages.map((message, index) => (
           <Message

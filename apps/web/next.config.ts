@@ -1,7 +1,6 @@
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
-import createNextIntlPlugin from 'next-intl/plugin';
 import '@lmring/env/config';
 import { env } from '@lmring/env';
 
@@ -25,7 +24,7 @@ const baseConfig: NextConfig = {
   },
 };
 
-let configWithPlugins = createNextIntlPlugin('./src/libs/I18n.ts')(baseConfig);
+let configWithPlugins: NextConfig = baseConfig;
 
 if (env.ANALYZE === 'true') {
   configWithPlugins = withBundleAnalyzer()(configWithPlugins);

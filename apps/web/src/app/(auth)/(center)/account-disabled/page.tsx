@@ -1,7 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { setRequestLocale } from 'next-intl/server';
-import { getRequestLocale } from '@/libs/request-locale';
 
 export const metadata: Metadata = {
   title: 'Account Disabled',
@@ -9,9 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default async function AccountDisabledPage() {
-  const locale = await getRequestLocale();
-  setRequestLocale(locale);
-
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
