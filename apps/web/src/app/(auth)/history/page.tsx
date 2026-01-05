@@ -21,7 +21,7 @@ import Link from 'next/link';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
-import { type ConversationData, useConversation } from '@/hooks/use-conversation';
+import { type ConversationData, useConversation, type VoteResult } from '@/hooks/use-conversation';
 import { useTranslations } from '@/hooks/use-translations';
 
 export default function HistoryPage() {
@@ -221,20 +221,44 @@ export default function HistoryPage() {
 
                       {conversation.models && conversation.models.length > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
-                          {conversation.models.map((model, modelIndex) => (
-                            <Badge
-                              key={`${model.providerName}-${model.modelName}-${modelIndex}`}
-                              variant="secondary"
-                              className="flex items-center gap-1.5 text-xs py-1 px-2"
-                            >
-                              <ProviderIcon
-                                providerId={model.providerName.toLowerCase()}
-                                size={14}
-                                type="avatar"
-                              />
-                              <span>{model.modelName}</span>
-                            </Badge>
-                          ))}
+                          {conversation.models.map((model, modelIndex) => {
+                            const voteResult = conversation.voteInfo?.voteResults?.find(
+                              (r: VoteResult) =>
+                                r.modelName === model.modelName &&
+                                r.providerName === model.providerName,
+                            );
+
+                            const getColorClass = () => {
+                              if (!voteResult) return '';
+                              switch (voteResult.outcome) {
+                                case 'winner':
+                                  return 'border-amber-500/50 text-amber-600 bg-amber-500/10';
+                                case 'loser':
+                                  return '';
+                                case 'tie':
+                                  return 'border-green-500/50 text-green-600 bg-green-500/10';
+                                case 'all_bad':
+                                  return 'border-red-500/50 text-red-600 bg-red-500/10';
+                                default:
+                                  return '';
+                              }
+                            };
+
+                            return (
+                              <Badge
+                                key={`${model.providerName}-${model.modelName}-${modelIndex}`}
+                                variant={voteResult ? 'outline' : 'secondary'}
+                                className={`flex items-center gap-1.5 text-xs py-1 px-2 ${getColorClass()}`}
+                              >
+                                <ProviderIcon
+                                  providerId={model.providerName.toLowerCase()}
+                                  size={14}
+                                  type="avatar"
+                                />
+                                <span>{model.modelName}</span>
+                              </Badge>
+                            );
+                          })}
                         </div>
                       )}
                     </div>

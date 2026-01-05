@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { MAX_COMPARISON_CARDS } from '@/constants/arena';
 import {
   DEFAULT_MODEL_CONFIG,
   type ModelComparison,
@@ -119,7 +120,7 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
 
         addComparison: () => {
           const state = get();
-          if (state.comparisons.length >= 4) return;
+          if (state.comparisons.length >= MAX_COMPARISON_CARDS) return;
 
           const newModelId = state.availableModels[0]?.id || '';
 

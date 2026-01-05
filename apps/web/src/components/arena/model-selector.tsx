@@ -20,7 +20,7 @@ import type { ModelOption } from '@/types/arena';
 interface ModelSelectorTriggerProps {
   models: ModelOption[];
   selectedModel?: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   onRemove?: () => void;
   placeholder?: string;
   disabled?: boolean;

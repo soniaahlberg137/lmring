@@ -122,7 +122,12 @@ export async function POST(request: Request) {
         .where(eq(userVotes.id, existing.id))
         .returning();
 
-      await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+      // Update ranking (gracefully handles failures)
+      try {
+        await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+      } catch (rankingError) {
+        logError('Failed to update model ranking', rankingError);
+      }
 
       return NextResponse.json({ vote: updated }, { status: 200 });
     }
@@ -137,7 +142,12 @@ export async function POST(request: Request) {
       })
       .returning();
 
-    await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+    // Update ranking (can fail gracefully - rankings can be recalculated)
+    try {
+      await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+    } catch (rankingError) {
+      logError('Failed to update model ranking', rankingError);
+    }
 
     return NextResponse.json({ vote: newVote }, { status: 201 });
   } catch (error) {
@@ -212,8 +222,13 @@ export async function DELETE(request: Request) {
 
     await db.delete(userVotes).where(eq(userVotes.id, voteId));
 
+    // Update ranking (can fail gracefully - rankings can be recalculated)
     if (modelResponse) {
-      await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+      try {
+        await updateModelRanking(modelResponse.modelName, modelResponse.providerName);
+      } catch (rankingError) {
+        logError('Failed to update model ranking after delete', rankingError);
+      }
     }
 
     return NextResponse.json({ message: 'Vote deleted successfully' }, { status: 200 });

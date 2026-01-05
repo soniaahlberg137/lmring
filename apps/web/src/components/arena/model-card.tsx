@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  cn,
   Label,
   Popover,
   PopoverContent,
@@ -15,17 +16,15 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@lmring/ui';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
   EraserIcon,
-  ExternalLinkIcon,
   MoreHorizontalIcon,
   PlusIcon,
   SlidersHorizontalIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
+  ThumbsUp,
   ToggleLeftIcon,
   ToggleRightIcon,
   Trash2Icon,
@@ -37,6 +36,8 @@ import { ProviderIcon } from '@/components/arena/provider-icon';
 import type { ModelConfig, ModelOption } from '@/types/arena';
 import type { PendingResponse, WorkflowMessage, WorkflowStatus } from '@/types/workflow';
 import { ChatList } from './chat/chat-list';
+
+export type VoteState = 'none' | 'winner' | 'loser' | 'tie' | 'all_bad';
 
 interface ModelCardProps {
   modelId?: string;
@@ -53,6 +54,10 @@ interface ModelCardProps {
   index?: number;
   canMoveLeft?: boolean;
   canMoveRight?: boolean;
+  // Vote state props
+  voteState?: VoteState;
+  hoverState?: 'winner' | 'loser' | 'tie' | 'all_bad' | null;
+  isVotable?: boolean;
   onModelSelect?: (modelId: string) => void;
   onSyncToggle?: (synced: boolean) => void;
   onConfigChange?: (config: ModelConfig) => void;
@@ -62,8 +67,9 @@ interface ModelCardProps {
   onMoveLeft?: () => void;
   onMoveRight?: () => void;
   onAddCard?: () => void;
-  onThumbsUp?: () => void;
-  onThumbsDown?: () => void;
+  onVoteClick?: () => void;
+  onVoteHover?: () => void;
+  onVoteHoverLeave?: () => void;
   onRetry?: (messageId: string) => void;
   onMaximize?: (content: string) => void;
 }
@@ -88,6 +94,9 @@ export function ModelCard({
   index = 0,
   canMoveLeft = false,
   canMoveRight = false,
+  voteState = 'none',
+  hoverState = null,
+  isVotable = false,
   onModelSelect,
   onSyncToggle,
   onConfigChange,
@@ -97,14 +106,16 @@ export function ModelCard({
   onMoveLeft,
   onMoveRight,
   onAddCard,
-  onThumbsUp,
-  onThumbsDown,
+  onVoteClick,
+  onVoteHover,
+  onVoteHoverLeave,
   onRetry,
   onMaximize,
 }: ModelCardProps) {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [modelSelectorOpen, setModelSelectorOpen] = React.useState(false);
+  const [showVoteAnimation, setShowVoteAnimation] = React.useState(false);
 
   const selectedModel = models.find((m) => m.id === modelId);
 
@@ -115,6 +126,47 @@ export function ModelCard({
   };
 
   const hasContent = (messages && messages.length > 0) || !!pendingResponse || !!response;
+
+  const effectiveVoteState = hoverState || voteState;
+
+  const voteStateBorderStyles: Record<string, string> = {
+    winner: 'ring-1 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    loser: '',
+    tie: 'ring-1 ring-green-500 border-green-500 shadow-green-500/20',
+    all_bad: 'ring-1 ring-red-500 border-red-500 shadow-red-500/20',
+    none: '',
+  };
+
+  const cardClasses = cn(
+    'h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden transition-all duration-200',
+    voteStateBorderStyles[effectiveVoteState],
+    isVotable && voteState === 'none' && 'cursor-pointer hover:ring-1 hover:ring-amber-500/50',
+  );
+
+  const handleCardClick = () => {
+    if (isVotable && voteState === 'none' && onVoteClick) {
+      setShowVoteAnimation(true);
+      onVoteClick();
+    }
+  };
+
+  const handleCardMouseEnter = () => {
+    if (isVotable && voteState === 'none' && onVoteHover) {
+      onVoteHover();
+    }
+  };
+
+  const handleCardMouseLeave = () => {
+    if (isVotable && onVoteHoverLeave) {
+      onVoteHoverLeave();
+    }
+  };
+
+  // Helper to prevent click events from bubbling to card (triggering vote)
+  const handleInteractiveClick = (e: React.MouseEvent, callback?: () => void) => {
+    e.stopPropagation();
+    callback?.();
+  };
 
   return (
     <motion.div
@@ -127,14 +179,38 @@ export function ModelCard({
       }}
       className="w-full h-full"
     >
-      <Card className="h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden">
+      <Card
+        className={cardClasses}
+        onClick={handleCardClick}
+        onMouseEnter={handleCardMouseEnter}
+        onMouseLeave={handleCardMouseLeave}
+      >
+        <AnimatePresence>
+          {showVoteAnimation && (
+            <motion.div
+              className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 1, scale: 1.2 }}
+              exit={{ opacity: 0, scale: 2 }}
+              transition={{
+                duration: 0.6,
+                type: 'spring',
+                bounce: 0.4,
+              }}
+              onAnimationComplete={() => setShowVoteAnimation(false)}
+            >
+              <ThumbsUp className="h-16 w-16 text-amber-500 drop-shadow-lg" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <CardHeader className="pb-3 flex-shrink-0 space-y-0">
           <div className="flex items-center gap-2">
             <div className="relative flex-1 min-w-0">
               <ModelSelectorTrigger
                 models={models}
                 selectedModel={selectedModel?.id}
-                onClick={() => setModelSelectorOpen(true)}
+                onClick={(e) => handleInteractiveClick(e, () => setModelSelectorOpen(true))}
               />
             </div>
 
@@ -147,7 +223,7 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift text-muted-foreground hover:text-foreground"
-                        onClick={() => onSyncToggle?.(!synced)}
+                        onClick={(e) => handleInteractiveClick(e, () => onSyncToggle?.(!synced))}
                       >
                         {synced ? (
                           <ToggleRightIcon className="h-4 w-4" />
@@ -169,7 +245,12 @@ export function ModelCard({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover-lift">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 hover-lift"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <SlidersHorizontalIcon className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
@@ -286,7 +367,7 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift"
-                        onClick={onAddCard}
+                        onClick={(e) => handleInteractiveClick(e, onAddCard)}
                       >
                         <PlusIcon className="h-4 w-4" />
                       </Button>
@@ -304,7 +385,9 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift"
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        onClick={(e) =>
+                          handleInteractiveClick(e, () => setDropdownOpen(!dropdownOpen))
+                        }
                       >
                         <MoreHorizontalIcon className="h-4 w-4" />
                       </Button>
@@ -319,7 +402,7 @@ export function ModelCard({
                       <button
                         type="button"
                         className="fixed inset-0 z-10"
-                        onClick={() => setDropdownOpen(false)}
+                        onClick={(e) => handleInteractiveClick(e, () => setDropdownOpen(false))}
                         onKeyDown={(e) => e.key === 'Escape' && setDropdownOpen(false)}
                         aria-label="Close dropdown menu"
                       />
@@ -327,10 +410,12 @@ export function ModelCard({
                         {onClear && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onClear();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onClear();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <EraserIcon className="h-4 w-4" />
@@ -340,10 +425,12 @@ export function ModelCard({
                         {canMoveLeft && onMoveLeft && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onMoveLeft();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onMoveLeft();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <ArrowLeftIcon className="h-4 w-4" />
@@ -353,10 +440,12 @@ export function ModelCard({
                         {canMoveRight && onMoveRight && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onMoveRight();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onMoveRight();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <ArrowRightIcon className="h-4 w-4" />
@@ -366,10 +455,12 @@ export function ModelCard({
                         {onDelete && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onDelete();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onDelete();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left text-destructive"
                           >
                             <Trash2Icon className="h-4 w-4" />
@@ -411,17 +502,6 @@ export function ModelCard({
                     )}
                   </div>
                 )}
-
-                <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t">
-                  <div className="flex gap-4">
-                    <button
-                      type="button"
-                      className="hover:text-foreground transition-colors flex items-center gap-1"
-                    >
-                      Model Page <ExternalLinkIcon className="h-3 w-3" />
-                    </button>
-                  </div>
-                </div>
               </div>
             </div>
           ) : (
@@ -447,32 +527,10 @@ export function ModelCard({
                 type="text"
                 value={customPrompt}
                 onChange={(e) => onCustomPromptChange?.(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
                 placeholder="Type a custom prompt for this model..."
                 className="w-full px-3 py-2 text-sm rounded-lg border border-border/50 bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all"
               />
-            </div>
-          )}
-
-          {hasContent && !isLoading && (
-            <div className="flex items-center justify-between pt-4 border-t flex-shrink-0">
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={onThumbsUp}
-                  className="p-2 rounded-lg hover:bg-accent transition-colors hover-lift button-press"
-                  aria-label="Thumbs up"
-                >
-                  <ThumbsUpIcon className="h-4 w-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={onThumbsDown}
-                  className="p-2 rounded-lg hover:bg-accent transition-colors hover-lift button-press"
-                  aria-label="Thumbs down"
-                >
-                  <ThumbsDownIcon className="h-4 w-4" />
-                </button>
-              </div>
             </div>
           )}
         </CardContent>
