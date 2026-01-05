@@ -1,3 +1,5 @@
+import { inArray } from '@lmring/database';
+import { comparisonVotes } from '@lmring/database/schema';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/conversations/[id]/share/route';
 import { GET } from '@/app/api/shared/[token]/route';
@@ -371,6 +373,9 @@ describe('Share and Shared Results API', () => {
       expect(data.messages).toBeDefined();
       expect(Array.isArray(data.messages)).toBe(true);
       expect(data.messages).toHaveLength(2);
+
+      // Verify inArray is called with correct message IDs for vote retrieval
+      expect(inArray).toHaveBeenCalledWith(comparisonVotes.messageId, ['msg-1', 'msg-2']);
     });
 
     it('should not require authentication for shared links', async () => {

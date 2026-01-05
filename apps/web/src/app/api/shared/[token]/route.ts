@@ -10,17 +10,7 @@ import {
 } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { logError } from '@/libs/error-logging';
-
-interface VoteResult {
-  modelName: string;
-  providerName: string;
-  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
-}
-
-interface VoteInfo {
-  voteType?: 'winner' | 'tie' | 'all_bad';
-  voteResults?: VoteResult[];
-}
+import type { VoteInfo } from '@/types/vote';
 
 interface MessageWithResponses {
   id: string;

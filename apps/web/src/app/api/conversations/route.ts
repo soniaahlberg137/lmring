@@ -10,20 +10,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { conversationSchema } from '@/libs/validation';
-
-interface VoteResult {
-  modelName: string;
-  providerName: string;
-  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
-}
-
-interface VoteInfo {
-  hasVotes: boolean;
-  winnerModel?: string;
-  winnerProvider?: string;
-  voteType?: 'winner' | 'tie' | 'all_bad';
-  voteResults?: VoteResult[];
-}
+import type { VoteInfoExtended, VoteResult } from '@/types/vote';
 
 interface ConversationWithExtras {
   id: string;
@@ -33,7 +20,7 @@ interface ConversationWithExtras {
   updatedAt: Date;
   firstMessage?: string;
   models?: Array<{ modelName: string; providerName: string }>;
-  voteInfo?: VoteInfo;
+  voteInfo?: VoteInfoExtended;
 }
 
 export async function GET(request: Request) {
@@ -153,7 +140,7 @@ export async function GET(request: Request) {
           ),
         );
 
-      const votesMap = new Map<string, VoteInfo>();
+      const votesMap = new Map<string, VoteInfoExtended>();
       for (const vote of votesData) {
         if (!votesMap.has(vote.conversationId)) {
           votesMap.set(vote.conversationId, { hasVotes: true, voteResults: [] });

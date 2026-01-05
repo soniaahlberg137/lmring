@@ -1,6 +1,9 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import type { VoteInfoExtended } from '@/types/vote';
+
+export type { VoteInfoExtended as VoteInfo, VoteResult } from '@/types/vote';
 
 /**
  * Types for conversation management
@@ -8,20 +11,6 @@ import { useCallback, useState } from 'react';
 export interface ConversationModel {
   modelName: string;
   providerName: string;
-}
-
-export interface VoteResult {
-  modelName: string;
-  providerName: string;
-  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
-}
-
-export interface VoteInfo {
-  hasVotes: boolean;
-  winnerModel?: string;
-  winnerProvider?: string;
-  voteType?: 'winner' | 'tie' | 'all_bad';
-  voteResults?: VoteResult[];
 }
 
 export interface ConversationMessage {
@@ -51,7 +40,7 @@ export interface ConversationData {
   updatedAt: string;
   firstMessage?: string;
   models?: ConversationModel[];
-  voteInfo?: VoteInfo;
+  voteInfo?: VoteInfoExtended;
 }
 
 export interface FullConversationData {

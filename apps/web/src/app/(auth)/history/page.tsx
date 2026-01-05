@@ -21,7 +21,7 @@ import Link from 'next/link';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
-import { type ConversationData, useConversation } from '@/hooks/use-conversation';
+import { type ConversationData, useConversation, type VoteResult } from '@/hooks/use-conversation';
 import { useTranslations } from '@/hooks/use-translations';
 
 export default function HistoryPage() {
@@ -223,7 +223,7 @@ export default function HistoryPage() {
                         <div className="flex items-center gap-2 flex-wrap">
                           {conversation.models.map((model, modelIndex) => {
                             const voteResult = conversation.voteInfo?.voteResults?.find(
-                              (r) =>
+                              (r: VoteResult) =>
                                 r.modelName === model.modelName &&
                                 r.providerName === model.providerName,
                             );

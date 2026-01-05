@@ -19,18 +19,8 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import * as React from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import type { VoteInfo } from '@/types/vote';
 import { AppConfig } from '@/utils/AppConfig';
-
-interface VoteResult {
-  modelName: string;
-  providerName: string;
-  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
-}
-
-interface VoteInfo {
-  voteType?: 'winner' | 'tie' | 'all_bad';
-  voteResults?: VoteResult[];
-}
 
 interface ModelResponse {
   id: string;
@@ -286,7 +276,7 @@ export default function SharedConversationPage() {
     }
   }
 
-  const latestVoteInfo = conversationTurns.find((turn) => turn.voteInfo)?.voteInfo;
+  const latestVoteInfo = conversationTurns.findLast((turn) => turn.voteInfo)?.voteInfo;
 
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
