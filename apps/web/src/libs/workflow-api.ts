@@ -1,16 +1,10 @@
-/**
- * Workflow API client for single workflow stream operations
- */
+import type {
+  WorkflowImageAttachment,
+  WorkflowMetrics,
+  WorkflowStreamEvent,
+  WorkflowStreamRequest,
+} from '@/types/workflow';
 
-import type { WorkflowMetrics, WorkflowStreamEvent, WorkflowStreamRequest } from '@/types/workflow';
-
-/**
- * Stream a single workflow execution
- *
- * @param request - The workflow stream request
- * @param signal - Optional AbortSignal for cancellation
- * @yields WorkflowStreamEvent - Stream events (ttft, chunk, complete, error)
- */
 export async function* streamWorkflow(
   request: WorkflowStreamRequest,
   signal?: AbortSignal,
@@ -30,7 +24,7 @@ export async function* streamWorkflow(
       const errorData = await response.json();
       errorMessage = errorData.error || errorMessage;
     } catch {
-      // ignore parse errors
+      // ignore
     }
 
     yield {
@@ -89,12 +83,6 @@ export async function* streamWorkflow(
   }
 }
 
-/**
- * Helper to build a WorkflowStreamRequest from workflow state
- *
- * Note: modelId may include provider prefix (e.g., "openai:gpt-4").
- * This function extracts just the model name for the API.
- */
 export function buildWorkflowStreamRequest(
   workflowId: string,
   modelId: string,
@@ -107,6 +95,7 @@ export function buildWorkflowStreamRequest(
     frequencyPenalty?: number;
     presencePenalty?: number;
   },
+  attachments?: WorkflowImageAttachment[],
 ): WorkflowStreamRequest {
   const modelName = modelId.includes(':') ? modelId.split(':').slice(1).join(':') : modelId;
 
@@ -116,12 +105,10 @@ export function buildWorkflowStreamRequest(
     keyId,
     messages,
     config,
+    ...(attachments && attachments.length > 0 && { attachments }),
   };
 }
 
-/**
- * Parse metrics from a complete event
- */
 export function parseWorkflowMetrics(event: WorkflowStreamEvent): WorkflowMetrics | undefined {
   if (event.type === 'complete' && event.metrics) {
     return event.metrics;

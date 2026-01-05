@@ -1,4 +1,4 @@
-import { streamText } from '@lmring/ai-hub';
+import { type ModelMessage, streamText } from '@lmring/ai-hub';
 import { detectReasoningByModelId, getModel } from '@lmring/model-depot';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
     }
 
     const body = validationResult.data;
-    const { workflowId, modelId, keyId, messages, config } = body;
+    const { workflowId, modelId, keyId, messages, config, attachments } = body;
 
     const keyMap = await fetchUserApiKeys([keyId], session.user.id);
     const keyData = keyMap.get(keyId);
@@ -155,12 +155,35 @@ export async function POST(request: Request) {
         let firstTokenTime: number | undefined;
 
         try {
-          const result = streamText({
-            model: provider.languageModel(modelId),
-            messages: messages.map((m) => ({
+          // Format messages, adding image attachments to the last user message if present
+          const formattedMessages: ModelMessage[] = messages.map((m, index) => {
+            const isLastUserMessage =
+              index === messages.length - 1 && m.role === 'user' && attachments?.length;
+
+            if (isLastUserMessage) {
+              // Include images with the last user message as multimodal content
+              return {
+                role: 'user' as const,
+                content: [
+                  ...attachments.map((att) => ({
+                    type: 'image' as const,
+                    image: att.data, // base64 data URL
+                  })),
+                  { type: 'text' as const, text: m.content },
+                ],
+              };
+            }
+
+            // For all other messages, return as-is
+            return {
               role: m.role,
               content: m.content,
-            })),
+            };
+          });
+
+          const result = streamText({
+            model: provider.languageModel(modelId),
+            messages: formattedMessages,
             ...(canUseTemperature && { temperature: config.temperature }),
             // Skip maxOutputTokens when using custom proxy URL (some proxies don't support it)
             ...(!keyData.proxyUrl && config.maxTokens && { maxOutputTokens: config.maxTokens }),

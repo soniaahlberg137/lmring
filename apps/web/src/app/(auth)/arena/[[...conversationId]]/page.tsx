@@ -15,6 +15,11 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/arena/prompt-input';
+import {
+  ImagePreviews,
+  ModeChip,
+  PromptInputFeatureButtons,
+} from '@/components/arena/prompt-input-features';
 import { VoteBar } from '@/components/arena/vote-bar';
 import { CARD_MIN_WIDTH, MAX_COMPARISON_CARDS } from '@/constants/arena';
 import { useConversation } from '@/hooks/use-conversation';
@@ -36,7 +41,10 @@ import {
 import type { LoadedConversation } from '@/stores/workflow-store';
 import type { ModelComparison, ModelOption } from '@/types/arena';
 import { DEFAULT_MODEL_CONFIG } from '@/types/arena';
-import type { ArenaWorkflow } from '@/types/workflow';
+import type { InputMode, UploadedImage } from '@/types/input-mode';
+import { INPUT_MODE_ABILITY_MAP } from '@/types/input-mode';
+import type { ArenaWorkflow, WorkflowImageAttachment } from '@/types/workflow';
+import { fileToDataUrl } from '@/utils/file-utils';
 
 export default function ArenaPage() {
   const params = useParams();
@@ -105,6 +113,11 @@ export default function ArenaPage() {
   const loadVoteForMessage = useVoteStore((state) => state.loadVoteForMessage);
   const clearAllVotes = useVoteStore((state) => state.clearAllVotes);
   const isVoteSubmitting = useVoteStore((state) => state.isSubmitting);
+
+  // Input mode state for filtering models
+  const [inputMode, setInputMode] = React.useState<InputMode>('default');
+  // Uploaded images state for submission
+  const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
 
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
     string | undefined
@@ -426,6 +439,12 @@ export default function ArenaPage() {
             const inputPrice = override?.inputPrice ?? model.pricing?.input;
             const outputPrice = override?.outputPrice ?? model.pricing?.output;
 
+            // Merge abilities from model definition and override
+            const abilities = {
+              ...model.abilities,
+              ...override?.abilities,
+            };
+
             models.push({
               id: modelId,
               name: displayName,
@@ -440,6 +459,7 @@ export default function ArenaPage() {
               type: 'pro',
               isNew: false,
               isCustom: false,
+              abilities,
             });
             addedModelIds.add(modelId);
           }
@@ -515,6 +535,26 @@ export default function ArenaPage() {
   }, [computedModels, initialized, initializeComparisons]);
 
   const displayModels = availableModels.length > 0 ? availableModels : computedModels;
+
+  // Filter models based on input mode
+  const filteredDisplayModels = React.useMemo(() => {
+    if (inputMode === 'default') {
+      return displayModels;
+    }
+
+    const abilityKey = INPUT_MODE_ABILITY_MAP[inputMode as keyof typeof INPUT_MODE_ABILITY_MAP];
+    if (!abilityKey) {
+      return displayModels;
+    }
+
+    return displayModels.filter((model) => model.abilities?.[abilityKey] === true);
+  }, [displayModels, inputMode]);
+
+  // Handle input mode change
+  const handleInputModeChange = React.useCallback((mode: InputMode, images: UploadedImage[]) => {
+    setInputMode(mode);
+    setUploadedImages(images);
+  }, []);
 
   const getKeyIdForModel = React.useCallback(
     (modelId: string): string | undefined => {
@@ -811,7 +851,26 @@ export default function ArenaPage() {
       return;
     }
 
-    await startAllSyncedWorkflows();
+    // Convert uploaded images to attachments
+    let attachments: WorkflowImageAttachment[] | undefined;
+    if (uploadedImages.length > 0) {
+      try {
+        attachments = await Promise.all(
+          uploadedImages.map(async (img) => ({
+            type: 'image' as const,
+            data: await fileToDataUrl(img.file),
+            mediaType: img.file.type,
+            filename: img.filename,
+          })),
+        );
+      } catch (error) {
+        console.error('Failed to convert images:', error);
+        toast.error(t('Arena.image_conversion_error'));
+        return;
+      }
+    }
+
+    await startAllSyncedWorkflows(attachments);
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -825,6 +884,9 @@ export default function ArenaPage() {
       }
     }
     setWorkflowGlobalPrompt('');
+    // Clear uploaded images after successful submission
+    setUploadedImages([]);
+    setInputMode('default');
   }, [
     workflowGlobalPrompt,
     comparisons,
@@ -836,6 +898,7 @@ export default function ArenaPage() {
     router,
     t,
     setWorkflowGlobalPrompt,
+    uploadedImages,
   ]);
 
   const handleModelSelect = React.useCallback(
@@ -1289,7 +1352,7 @@ export default function ArenaPage() {
                 >
                   <ModelCard
                     modelId={comparison.modelId}
-                    models={displayModels}
+                    models={filteredDisplayModels}
                     messages={workflow?.messages}
                     pendingResponse={workflow?.pendingResponse}
                     response={response}
@@ -1346,11 +1409,16 @@ export default function ArenaPage() {
             onSubmit={handleSubmit}
             onStop={cancelAllWorkflows}
             isLoading={isAnyRunning}
+            onModeChange={handleInputModeChange}
             className="border-input"
           >
+            <ImagePreviews />
             <PromptInputTextarea placeholder={t('Arena.prompt_placeholder')} />
             <PromptInputFooter>
-              <PromptInputActions />
+              <PromptInputActions>
+                <PromptInputFeatureButtons />
+                <ModeChip />
+              </PromptInputActions>
               <PromptInputSubmit />
             </PromptInputFooter>
           </PromptInput>

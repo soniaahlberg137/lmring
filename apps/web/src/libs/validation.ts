@@ -50,7 +50,6 @@ export const voteSchema = z.object({
   voteType: z.enum(['like', 'dislike', 'neutral']),
 });
 
-// Comparison vote schema for the new voting system
 export const comparisonVoteSchema = z
   .object({
     messageId: z.uuid('Invalid message ID'),
@@ -128,7 +127,6 @@ export const customModelSchema = z.object({
   displayName: z.string().max(200).optional(),
 });
 
-// Schema for model abilities
 export const modelAbilitiesSchema = z.object({
   files: z.boolean().optional(),
   functionCall: z.boolean().optional(),
@@ -140,7 +138,6 @@ export const modelAbilitiesSchema = z.object({
   vision: z.boolean().optional(),
 });
 
-// Schema for creating/updating model override (for default models)
 export const modelOverrideSchema = z.object({
   modelId: z.string().min(1).max(200),
   displayName: z.string().max(200).optional(),
@@ -152,7 +149,6 @@ export const modelOverrideSchema = z.object({
   outputPrice: z.number().min(0).max(1000).optional(),
 });
 
-// Schema for updating custom model (full update)
 export const customModelUpdateSchema = z.object({
   displayName: z.string().max(200).optional(),
   groupName: z.string().max(100).optional(),
@@ -174,10 +170,13 @@ export const shareSchema = z.object({
   expiresInDays: z.number().int().min(1).max(365).optional(),
 });
 
-/**
- * Schema for single workflow stream request
- * Used by /api/workflow/stream endpoint
- */
+export const imageAttachmentSchema = z.object({
+  type: z.literal('image'),
+  data: z.string().min(1),
+  mediaType: z.string().min(1).max(100),
+  filename: z.string().max(255).optional(),
+});
+
 export const workflowStreamSchema = z.object({
   workflowId: z.uuid('Invalid workflow ID'),
   modelId: z
@@ -204,6 +203,7 @@ export const workflowStreamSchema = z.object({
     frequencyPenalty: z.number().min(-2).max(2).optional(),
     presencePenalty: z.number().min(-2).max(2).optional(),
   }),
+  attachments: z.array(imageAttachmentSchema).max(10).optional(),
 });
 
 export type ConversationInput = z.infer<typeof conversationSchema>;
@@ -218,6 +218,7 @@ export type ModelEnableInput = z.infer<typeof modelEnableSchema>;
 export type CustomModelInput = z.infer<typeof customModelSchema>;
 export type UserPreferencesInput = z.infer<typeof userPreferencesSchema>;
 export type ShareInput = z.infer<typeof shareSchema>;
+export type ImageAttachmentInput = z.infer<typeof imageAttachmentSchema>;
 export type WorkflowStreamInput = z.infer<typeof workflowStreamSchema>;
 export type ModelAbilitiesInput = z.infer<typeof modelAbilitiesSchema>;
 export type ModelOverrideInput = z.infer<typeof modelOverrideSchema>;

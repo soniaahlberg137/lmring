@@ -22,7 +22,6 @@ const openaiChatModels: ChatModelCard[] = [
     enabled: true,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,
@@ -62,7 +61,6 @@ const openaiChatModels: ChatModelCard[] = [
     maxOutput: 128_000,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,
@@ -83,7 +81,6 @@ const openaiChatModels: ChatModelCard[] = [
     maxOutput: 128_000,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,

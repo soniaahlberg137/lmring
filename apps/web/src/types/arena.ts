@@ -1,6 +1,4 @@
-/**
- * Shared types for Arena components
- */
+import type { ModelAbilities } from '@lmring/model-depot';
 
 export interface ModelOption {
   id: string;
@@ -17,6 +15,7 @@ export interface ModelOption {
   isNew?: boolean;
   isCustom?: boolean;
   default?: boolean;
+  abilities?: ModelAbilities;
 }
 
 export interface ModelConfig {

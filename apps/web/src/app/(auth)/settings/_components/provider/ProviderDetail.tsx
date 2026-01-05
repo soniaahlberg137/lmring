@@ -41,6 +41,7 @@ import {
   ChevronsUpDownIcon,
   EyeIcon,
   EyeOffIcon,
+  Globe,
   ImageIcon,
   Loader2Icon,
   LockIcon,
@@ -48,7 +49,7 @@ import {
   MicIcon,
   PencilIcon,
   RadioIcon,
-  SearchIcon,
+  Search,
   Trash2Icon,
   VolumeIcon,
   WrenchIcon,
@@ -815,7 +816,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
           {abilities.search && (
             <Tooltip>
               <TooltipTrigger>
-                <SearchIcon className={cn(iconSize, 'text-blue-500')} />
+                <Globe className={cn(iconSize, 'text-blue-500')} />
               </TooltipTrigger>
               <TooltipContent>Online Search</TooltipContent>
             </Tooltip>
@@ -1036,7 +1037,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
           </div>
           <div className="flex items-center gap-2 w-full md:w-auto">
             <div className="relative flex-1 md:w-64">
-              <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder={t('Provider.detail_search_models_placeholder')}
                 className="pl-9 h-9"
