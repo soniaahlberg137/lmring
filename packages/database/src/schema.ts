@@ -29,7 +29,6 @@ export interface ModelAbilitiesJson {
 // Enums
 export const configSourceEnum = pgEnum('config_source', ['manual', 'cherry-studio', 'newapi']);
 export const roleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
-export const voteTypeEnum = pgEnum('vote_type', ['like', 'neutral', 'dislike']);
 export const userRoleEnum = pgEnum('user_role', ['admin', 'user']);
 
 // Comparison voting enums
@@ -266,54 +265,6 @@ export const modelResponses = pgTable(
   ],
 );
 
-// User votes
-export const userVotes = pgTable(
-  'user_votes',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: uuid('user_id')
-      .references(() => users.id, { onDelete: 'cascade' })
-      .notNull(),
-    messageId: uuid('message_id')
-      .references(() => messages.id, { onDelete: 'cascade' })
-      .notNull(),
-    modelResponseId: uuid('model_response_id')
-      .references(() => modelResponses.id, { onDelete: 'cascade' })
-      .notNull(),
-    voteType: voteTypeEnum('vote_type').notNull(),
-    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [
-    index('user_votes_user_id_idx').on(table.userId),
-    index('user_votes_message_id_idx').on(table.messageId),
-    index('user_votes_model_response_id_idx').on(table.modelResponseId),
-    unique('unique_user_model_vote').on(table.userId, table.modelResponseId),
-  ],
-);
-
-// Model rankings (legacy - kept for backward compatibility)
-export const modelRankings = pgTable(
-  'model_rankings',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    modelName: text('model_name').notNull(),
-    providerName: text('provider_name').notNull(),
-    totalLikes: integer('total_likes').default(0).notNull(),
-    totalDislikes: integer('total_dislikes').default(0).notNull(),
-    totalNeutral: integer('total_neutral').default(0).notNull(),
-    rankingScore: real('ranking_score').default(0).notNull(),
-    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
-  },
-  (table) => [
-    index('model_rankings_ranking_score_idx').on(table.rankingScore),
-    unique('model_rankings_model_provider_unique').on(
-      table.modelName,
-      table.providerName,
-    ),
-  ],
-);
-
 // Comparison votes - Main voting record for model comparisons
 export const comparisonVotes = pgTable(
   'comparison_votes',
@@ -505,7 +456,6 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   customModels: many(userCustomModels),
   modelOverrides: many(userModelOverrides),
   conversations: many(conversations),
-  votes: many(userVotes),
   comparisonVotes: many(comparisonVotes),
   files: many(files),
   sessions: many(session),
@@ -577,7 +527,6 @@ export const messagesRelations = relations(messages, ({ one, many }) => ({
     references: [conversations.id],
   }),
   modelResponses: many(modelResponses),
-  votes: many(userVotes),
   comparisonVotes: many(comparisonVotes),
 }));
 
@@ -586,23 +535,7 @@ export const modelResponsesRelations = relations(modelResponses, ({ one, many })
     fields: [modelResponses.messageId],
     references: [messages.id],
   }),
-  votes: many(userVotes),
   comparisonVoteResults: many(comparisonVoteResults),
-}));
-
-export const userVotesRelations = relations(userVotes, ({ one }) => ({
-  user: one(users, {
-    fields: [userVotes.userId],
-    references: [users.id],
-  }),
-  message: one(messages, {
-    fields: [userVotes.messageId],
-    references: [messages.id],
-  }),
-  modelResponse: one(modelResponses, {
-    fields: [userVotes.modelResponseId],
-    references: [modelResponses.id],
-  }),
 }));
 
 export const comparisonVotesRelations = relations(comparisonVotes, ({ one, many }) => ({
@@ -662,10 +595,6 @@ export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 export type ModelResponse = typeof modelResponses.$inferSelect;
 export type NewModelResponse = typeof modelResponses.$inferInsert;
-export type UserVote = typeof userVotes.$inferSelect;
-export type NewUserVote = typeof userVotes.$inferInsert;
-export type ModelRanking = typeof modelRankings.$inferSelect;
-export type NewModelRanking = typeof modelRankings.$inferInsert;
 export type File = typeof files.$inferSelect;
 export type NewFile = typeof files.$inferInsert;
 export type SharedResult = typeof sharedResults.$inferSelect;
