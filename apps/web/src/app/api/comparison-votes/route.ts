@@ -14,15 +14,12 @@ import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { comparisonVoteSchema } from '@/libs/validation';
 
-/**
- * Update model comparison statistics after a vote
- */
+/** Update model comparison statistics after a vote */
 async function updateModelComparisonStats(
   modelName: string,
   providerName: string,
   comparisonType: ComparisonType,
 ) {
-  // Count outcomes for this model in this comparison type
   const outcomes = await db
     .select({
       outcome: comparisonVoteResults.outcome,
@@ -95,9 +92,7 @@ async function updateModelComparisonStats(
     });
 }
 
-/**
- * POST - Create or update a comparison vote
- */
+/** POST - Create or update a comparison vote */
 export async function POST(request: Request) {
   try {
     const session = await auth.api.getSession({
@@ -121,7 +116,6 @@ export async function POST(request: Request) {
 
     const body = validationResult.data;
 
-    // Verify message belongs to user
     const [message] = await db
       .select({
         id: messages.id,
@@ -136,7 +130,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Message not found or unauthorized' }, { status: 404 });
     }
 
-    // Verify all participant model responses exist and belong to this message
     const participantResponses = await db
       .select()
       .from(modelResponses)
@@ -154,14 +147,12 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check for existing vote on this message
     const [existingVote] = await db
       .select()
       .from(comparisonVotes)
       .where(and(eq(comparisonVotes.userId, userId), eq(comparisonVotes.messageId, body.messageId)))
       .limit(1);
 
-    // If vote exists, reject with 409 Conflict
     if (existingVote) {
       return NextResponse.json(
         {
@@ -172,58 +163,64 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create new comparison vote
-    const [newVote] = await db
-      .insert(comparisonVotes)
-      .values({
-        userId,
-        messageId: body.messageId,
-        comparisonType: body.comparisonType,
-      })
-      .returning();
+    const { newVote, insertedResults } = await db.transaction(async (tx) => {
+      const [newVote] = await tx
+        .insert(comparisonVotes)
+        .values({
+          userId,
+          messageId: body.messageId,
+          comparisonType: body.comparisonType,
+        })
+        .returning();
 
-    if (!newVote) {
-      return NextResponse.json({ error: 'Failed to create vote' }, { status: 500 });
-    }
-
-    // Determine outcome for each participant
-    const results: Array<{
-      comparisonVoteId: string;
-      modelResponseId: string;
-      modelName: string;
-      providerName: string;
-      outcome: VoteOutcome;
-    }> = [];
-
-    for (const response of participantResponses) {
-      let outcome: VoteOutcome;
-
-      if (body.voteType === 'winner') {
-        outcome = response.id === body.winnerId ? 'winner' : 'loser';
-      } else if (body.voteType === 'tie') {
-        outcome = 'tie';
-      } else {
-        // all_bad
-        outcome = 'all_bad';
+      if (!newVote) {
+        throw new Error('Failed to create vote');
       }
 
-      results.push({
-        comparisonVoteId: newVote.id,
-        modelResponseId: response.id,
-        modelName: response.modelName,
-        providerName: response.providerName,
-        outcome,
-      });
+      const results: Array<{
+        comparisonVoteId: string;
+        modelResponseId: string;
+        modelName: string;
+        providerName: string;
+        outcome: VoteOutcome;
+      }> = [];
+
+      for (const response of participantResponses) {
+        let outcome: VoteOutcome;
+
+        if (body.voteType === 'winner') {
+          outcome = response.id === body.winnerId ? 'winner' : 'loser';
+        } else if (body.voteType === 'tie') {
+          outcome = 'tie';
+        } else {
+          // all_bad
+          outcome = 'all_bad';
+        }
+
+        results.push({
+          comparisonVoteId: newVote.id,
+          modelResponseId: response.id,
+          modelName: response.modelName,
+          providerName: response.providerName,
+          outcome,
+        });
+      }
+
+      const insertedResults = await tx.insert(comparisonVoteResults).values(results).returning();
+
+      return { newVote, insertedResults };
+    });
+
+    // Update stats (gracefully handles failures)
+    try {
+      const updatePromises = participantResponses.map((response) =>
+        updateModelComparisonStats(response.modelName, response.providerName, body.comparisonType),
+      );
+      await Promise.all(updatePromises);
+    } catch (statsError) {
+      // Log but don't fail the request - stats can be recalculated
+      logError('Failed to update model comparison stats', statsError);
     }
-
-    // Insert all results
-    const insertedResults = await db.insert(comparisonVoteResults).values(results).returning();
-
-    // Update stats for each model
-    const updatePromises = participantResponses.map((response) =>
-      updateModelComparisonStats(response.modelName, response.providerName, body.comparisonType),
-    );
-    await Promise.all(updatePromises);
 
     return NextResponse.json(
       {
@@ -249,9 +246,7 @@ export async function POST(request: Request) {
   }
 }
 
-/**
- * GET - Get comparison vote for a message
- */
+/** GET - Get comparison vote for a message */
 export async function GET(request: Request) {
   try {
     const session = await auth.api.getSession({
@@ -270,7 +265,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'messageId is required' }, { status: 400 });
     }
 
-    // Get the comparison vote
     const [vote] = await db
       .select()
       .from(comparisonVotes)
@@ -281,13 +275,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ vote: null }, { status: 200 });
     }
 
-    // Get the results
     const results = await db
       .select()
       .from(comparisonVoteResults)
       .where(eq(comparisonVoteResults.comparisonVoteId, vote.id));
 
-    // Determine vote type and winner from results
     let voteType: 'winner' | 'tie' | 'all_bad' = 'tie';
     let winnerId: string | undefined;
 
@@ -328,9 +320,7 @@ export async function GET(request: Request) {
   }
 }
 
-/**
- * DELETE - Delete a comparison vote
- */
+/** DELETE - Delete a comparison vote */
 export async function DELETE(request: Request) {
   try {
     const session = await auth.api.getSession({
@@ -349,7 +339,6 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'messageId is required' }, { status: 400 });
     }
 
-    // Find the vote
     const [existingVote] = await db
       .select()
       .from(comparisonVotes)
@@ -360,24 +349,27 @@ export async function DELETE(request: Request) {
       return NextResponse.json({ error: 'Vote not found' }, { status: 404 });
     }
 
-    // Get results to update stats after deletion
     const results = await db
       .select()
       .from(comparisonVoteResults)
       .where(eq(comparisonVoteResults.comparisonVoteId, existingVote.id));
 
-    // Delete the vote (results will cascade delete)
     await db.delete(comparisonVotes).where(eq(comparisonVotes.id, existingVote.id));
 
-    // Update stats for affected models
-    const updatePromises = results.map((result) =>
-      updateModelComparisonStats(
-        result.modelName,
-        result.providerName,
-        existingVote.comparisonType,
-      ),
-    );
-    await Promise.all(updatePromises);
+    // Update stats (gracefully handles failures)
+    try {
+      const updatePromises = results.map((result) =>
+        updateModelComparisonStats(
+          result.modelName,
+          result.providerName,
+          existingVote.comparisonType,
+        ),
+      );
+      await Promise.all(updatePromises);
+    } catch (statsError) {
+      // Log but don't fail the request - stats can be recalculated
+      logError('Failed to update model comparison stats after delete', statsError);
+    }
 
     return NextResponse.json({ message: 'Vote deleted successfully' }, { status: 200 });
   } catch (error) {

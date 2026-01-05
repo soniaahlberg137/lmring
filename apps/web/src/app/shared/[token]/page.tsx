@@ -12,20 +12,24 @@ import {
   ScrollArea,
 } from '@lmring/ui';
 import { motion } from 'framer-motion';
-import {
-  AlertCircleIcon,
-  CalendarIcon,
-  ClockIcon,
-  ThumbsDownIcon,
-  ThumbsUpIcon,
-  UserIcon,
-} from 'lucide-react';
+import { AlertCircleIcon, CalendarIcon, ClockIcon, UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import * as React from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { AppConfig } from '@/utils/AppConfig';
+
+interface VoteResult {
+  modelName: string;
+  providerName: string;
+  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
+}
+
+interface VoteInfo {
+  voteType?: 'winner' | 'tie' | 'all_bad';
+  voteResults?: VoteResult[];
+}
 
 interface ModelResponse {
   id: string;
@@ -44,6 +48,7 @@ interface Message {
   content: string;
   createdAt: string;
   responses?: ModelResponse[];
+  voteInfo?: VoteInfo;
 }
 
 interface SharedUser {
@@ -229,11 +234,11 @@ export default function SharedConversationPage() {
 
   const uniqueModels = getUniqueModels();
 
-  // Group messages into conversation turns (user message with model responses)
-  // Note: In the API response, responses are attached to user messages, not assistant messages
+  // Organize messages as conversation turns
   const conversationTurns: Array<{
     userMessage: Message;
     modelResponses: ModelResponse[];
+    voteInfo?: VoteInfo;
   }> = [];
 
   for (const message of data.messages) {
@@ -241,20 +246,22 @@ export default function SharedConversationPage() {
       conversationTurns.push({
         userMessage: message,
         modelResponses: message.responses,
+        voteInfo: message.voteInfo,
       });
     }
   }
 
+  const latestVoteInfo = conversationTurns.find((turn) => turn.voteInfo)?.voteInfo;
+
   return (
     <div className="h-screen bg-background flex flex-col overflow-hidden">
-      {/* Simplified Header with conversation info */}
       <SharedHeader
         title={data.conversation.title}
         createdAt={formatDate(data.conversation.createdAt)}
         models={uniqueModels}
+        voteInfo={latestVoteInfo}
       />
 
-      {/* Arena-style content area */}
       <main className="flex-1 flex flex-col overflow-hidden">
         <ScrollArea className="flex-1">
           <div className="space-y-6 p-4">
@@ -267,15 +274,12 @@ export default function SharedConversationPage() {
                   transition={{ delay: turnIndex * 0.1 }}
                   className="space-y-4"
                 >
-                  {/* User message */}
                   <div className="bg-muted/30 rounded-lg p-4">
                     <UserPrompt content={turn.userMessage.content} user={data.user} />
                   </div>
 
-                  {/* Model responses in Arena grid layout */}
-                  <ArenaModelGrid responses={turn.modelResponses} />
+                  <ArenaModelGrid responses={turn.modelResponses} voteInfo={turn.voteInfo} />
 
-                  {/* Separator between turns */}
                   {turnIndex < conversationTurns.length - 1 && (
                     <div className="border-b border-dashed my-6" />
                   )}
@@ -289,7 +293,6 @@ export default function SharedConversationPage() {
           </div>
         </ScrollArea>
 
-        {/* Footer Notice */}
         <div className="border-t bg-background/95 backdrop-blur-sm px-4 py-3 flex-shrink-0">
           <p className="text-xs text-muted-foreground text-center">
             This is a read-only view of a shared conversation from{' '}
@@ -307,14 +310,37 @@ interface SharedHeaderProps {
   title?: string;
   createdAt?: string;
   models?: Array<{ providerName: string; modelName: string }>;
+  voteInfo?: VoteInfo;
 }
 
-function SharedHeader({ title, createdAt, models }: SharedHeaderProps) {
+function SharedHeader({ title, createdAt, models, voteInfo }: SharedHeaderProps) {
+  const getVoteColorClass = (modelName: string, providerName: string) => {
+    const voteResult = voteInfo?.voteResults?.find(
+      (r) => r.modelName === modelName && r.providerName === providerName,
+    );
+    if (!voteResult) return '';
+    switch (voteResult.outcome) {
+      case 'winner':
+        return 'border-amber-500/50 text-amber-600 bg-amber-500/10';
+      case 'tie':
+        return 'border-green-500/50 text-green-600 bg-green-500/10';
+      case 'all_bad':
+        return 'border-red-500/50 text-red-600 bg-red-500/10';
+      default:
+        return '';
+    }
+  };
+
+  const hasVoteResult = (modelName: string, providerName: string) => {
+    return voteInfo?.voteResults?.some(
+      (r) => r.modelName === modelName && r.providerName === providerName,
+    );
+  };
+
   return (
     <header className="border-b bg-background/95 backdrop-blur-sm sticky top-0 z-50 flex-shrink-0">
       <div className="px-4 py-3">
         <div className="flex items-center justify-between gap-4">
-          {/* Left: Logo */}
           <Link
             href="/"
             className="flex items-center gap-2 hover:opacity-80 transition-opacity flex-shrink-0"
@@ -322,7 +348,6 @@ function SharedHeader({ title, createdAt, models }: SharedHeaderProps) {
             <h1 className="text-xl font-bold">{AppConfig.name}</h1>
           </Link>
 
-          {/* Center: Title and metadata */}
           {title && (
             <div className="flex-1 flex items-center justify-center gap-4 min-w-0">
               <div className="flex items-center gap-3 min-w-0">
@@ -339,8 +364,13 @@ function SharedHeader({ title, createdAt, models }: SharedHeaderProps) {
                   {models.map((model) => (
                     <Badge
                       key={`${model.providerName}:${model.modelName}`}
-                      variant="outline"
-                      className="flex items-center gap-1.5 text-xs"
+                      variant={
+                        hasVoteResult(model.modelName, model.providerName) ? 'outline' : 'secondary'
+                      }
+                      className={cn(
+                        'flex items-center gap-1.5 text-xs py-1 px-2',
+                        getVoteColorClass(model.modelName, model.providerName),
+                      )}
                     >
                       <ProviderIcon providerId={model.providerName.toLowerCase()} size={12} />
                       <span className="truncate max-w-[120px]">{model.modelName}</span>
@@ -351,7 +381,6 @@ function SharedHeader({ title, createdAt, models }: SharedHeaderProps) {
             </div>
           )}
 
-          {/* Right: Sign In */}
           <Link
             href="/sign-in"
             className="px-4 py-2 text-sm border rounded-lg hover:bg-accent transition-colors flex-shrink-0"
@@ -406,9 +435,22 @@ function UserPrompt({ content, user }: UserPromptProps) {
   );
 }
 
-function ArenaModelGrid({ responses }: { responses: ModelResponse[] }) {
+function ArenaModelGrid({
+  responses,
+  voteInfo,
+}: {
+  responses: ModelResponse[];
+  voteInfo?: VoteInfo;
+}) {
   const sortedResponses = [...responses].sort((a, b) => a.displayPosition - b.displayPosition);
   const columnCount = sortedResponses.length;
+
+  const getVoteState = (response: ModelResponse) => {
+    const voteResult = voteInfo?.voteResults?.find(
+      (r) => r.modelName === response.modelName && r.providerName === response.providerName,
+    );
+    return voteResult?.outcome || 'none';
+  };
 
   return (
     <div
@@ -431,17 +473,37 @@ function ArenaModelGrid({ responses }: { responses: ModelResponse[] }) {
             ease: [0.25, 0.1, 0.25, 1],
           }}
         >
-          <ModelResponseCard response={response} />
+          <ModelResponseCard response={response} voteState={getVoteState(response)} />
         </motion.div>
       ))}
     </div>
   );
 }
 
-function ModelResponseCard({ response }: { response: ModelResponse }) {
+type VoteState = 'none' | 'winner' | 'loser' | 'tie' | 'all_bad';
+
+function ModelResponseCard({
+  response,
+  voteState = 'none',
+}: {
+  response: ModelResponse;
+  voteState?: VoteState;
+}) {
+  const voteStateBorderStyles: Record<VoteState, string> = {
+    winner: 'ring-2 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    loser: '',
+    tie: 'ring-2 ring-green-500 border-green-500 shadow-green-500/20',
+    all_bad: 'ring-2 ring-red-500 border-red-500 shadow-red-500/20',
+    none: '',
+  };
+
   return (
-    <Card className="flex flex-col overflow-hidden">
-      {/* Card Header - Model Info */}
+    <Card
+      className={cn(
+        'flex flex-col overflow-hidden transition-all duration-200',
+        voteStateBorderStyles[voteState],
+      )}
+    >
       <CardHeader className="pb-3 flex-shrink-0 space-y-0 border-b bg-muted/30">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
@@ -463,8 +525,7 @@ function ModelResponseCard({ response }: { response: ModelResponse }) {
         </div>
       </CardHeader>
 
-      {/* Card Content - Response */}
-      <CardContent className="flex flex-col p-0">
+      <CardContent className="flex-1 p-0">
         <ScrollArea className="h-[400px]">
           <div className="p-4">
             <ResponseViewer
@@ -474,24 +535,6 @@ function ModelResponseCard({ response }: { response: ModelResponse }) {
             />
           </div>
         </ScrollArea>
-
-        {/* Card Footer - Actions */}
-        <div className="flex items-center justify-start gap-1 px-4 py-3 border-t flex-shrink-0">
-          <button
-            type="button"
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Thumbs up"
-          >
-            <ThumbsUpIcon className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            className="p-2 rounded-lg hover:bg-accent transition-colors"
-            aria-label="Thumbs down"
-          >
-            <ThumbsDownIcon className="h-4 w-4" />
-          </button>
-        </div>
       </CardContent>
     </Card>
   );

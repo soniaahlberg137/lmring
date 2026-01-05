@@ -127,13 +127,11 @@ export function ModelCard({
 
   const hasContent = (messages && messages.length > 0) || !!pendingResponse || !!response;
 
-  // Determine the effective vote state (actual vote or hover preview)
   const effectiveVoteState = hoverState || voteState;
 
-  // Vote state border styles
   const voteStateBorderStyles: Record<string, string> = {
     winner: 'ring-2 ring-amber-500 border-amber-500 shadow-amber-500/20',
-    loser: 'opacity-60',
+    loser: '',
     tie: 'ring-2 ring-green-500 border-green-500 shadow-green-500/20',
     all_bad: 'ring-2 ring-red-500 border-red-500 shadow-red-500/20',
     none: '',
@@ -164,6 +162,12 @@ export function ModelCard({
     }
   };
 
+  // Helper to prevent click events from bubbling to card (triggering vote)
+  const handleInteractiveClick = (e: React.MouseEvent, callback?: () => void) => {
+    e.stopPropagation();
+    callback?.();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -181,7 +185,6 @@ export function ModelCard({
         onMouseEnter={handleCardMouseEnter}
         onMouseLeave={handleCardMouseLeave}
       >
-        {/* Vote celebration animation */}
         <AnimatePresence>
           {showVoteAnimation && (
             <motion.div
@@ -207,7 +210,7 @@ export function ModelCard({
               <ModelSelectorTrigger
                 models={models}
                 selectedModel={selectedModel?.id}
-                onClick={() => setModelSelectorOpen(true)}
+                onClick={(e) => handleInteractiveClick(e, () => setModelSelectorOpen(true))}
               />
             </div>
 
@@ -220,7 +223,7 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift text-muted-foreground hover:text-foreground"
-                        onClick={() => onSyncToggle?.(!synced)}
+                        onClick={(e) => handleInteractiveClick(e, () => onSyncToggle?.(!synced))}
                       >
                         {synced ? (
                           <ToggleRightIcon className="h-4 w-4" />
@@ -242,7 +245,12 @@ export function ModelCard({
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <PopoverTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 hover-lift">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 hover-lift"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <SlidersHorizontalIcon className="h-4 w-4" />
                         </Button>
                       </PopoverTrigger>
@@ -359,7 +367,7 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift"
-                        onClick={onAddCard}
+                        onClick={(e) => handleInteractiveClick(e, onAddCard)}
                       >
                         <PlusIcon className="h-4 w-4" />
                       </Button>
@@ -377,7 +385,9 @@ export function ModelCard({
                         variant="ghost"
                         size="icon"
                         className="h-8 w-8 hover-lift"
-                        onClick={() => setDropdownOpen(!dropdownOpen)}
+                        onClick={(e) =>
+                          handleInteractiveClick(e, () => setDropdownOpen(!dropdownOpen))
+                        }
                       >
                         <MoreHorizontalIcon className="h-4 w-4" />
                       </Button>
@@ -392,7 +402,7 @@ export function ModelCard({
                       <button
                         type="button"
                         className="fixed inset-0 z-10"
-                        onClick={() => setDropdownOpen(false)}
+                        onClick={(e) => handleInteractiveClick(e, () => setDropdownOpen(false))}
                         onKeyDown={(e) => e.key === 'Escape' && setDropdownOpen(false)}
                         aria-label="Close dropdown menu"
                       />
@@ -400,10 +410,12 @@ export function ModelCard({
                         {onClear && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onClear();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onClear();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <EraserIcon className="h-4 w-4" />
@@ -413,10 +425,12 @@ export function ModelCard({
                         {canMoveLeft && onMoveLeft && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onMoveLeft();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onMoveLeft();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <ArrowLeftIcon className="h-4 w-4" />
@@ -426,10 +440,12 @@ export function ModelCard({
                         {canMoveRight && onMoveRight && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onMoveRight();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onMoveRight();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left"
                           >
                             <ArrowRightIcon className="h-4 w-4" />
@@ -439,10 +455,12 @@ export function ModelCard({
                         {onDelete && (
                           <button
                             type="button"
-                            onClick={() => {
-                              onDelete();
-                              setDropdownOpen(false);
-                            }}
+                            onClick={(e) =>
+                              handleInteractiveClick(e, () => {
+                                onDelete();
+                                setDropdownOpen(false);
+                              })
+                            }
                             className="w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-accent transition-colors text-left text-destructive"
                           >
                             <Trash2Icon className="h-4 w-4" />
@@ -509,6 +527,7 @@ export function ModelCard({
                 type="text"
                 value={customPrompt}
                 onChange={(e) => onCustomPromptChange?.(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
                 placeholder="Type a custom prompt for this model..."
                 className="w-full px-3 py-2 text-sm rounded-lg border border-border/50 bg-background/50 focus:outline-none focus:ring-2 focus:ring-ring/50 transition-all"
               />

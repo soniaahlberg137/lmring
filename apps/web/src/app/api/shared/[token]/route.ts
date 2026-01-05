@@ -1,5 +1,7 @@
-import { asc, db, eq } from '@lmring/database';
+import { asc, db, eq, inArray } from '@lmring/database';
 import {
+  comparisonVoteResults,
+  comparisonVotes,
   conversations,
   messages,
   modelResponses,
@@ -8,6 +10,17 @@ import {
 } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { logError } from '@/libs/error-logging';
+
+interface VoteResult {
+  modelName: string;
+  providerName: string;
+  outcome: 'winner' | 'loser' | 'tie' | 'all_bad';
+}
+
+interface VoteInfo {
+  voteType?: 'winner' | 'tie' | 'all_bad';
+  voteResults?: VoteResult[];
+}
 
 interface MessageWithResponses {
   id: string;
@@ -24,6 +37,7 @@ interface MessageWithResponses {
     displayPosition: number;
     createdAt: Date;
   }>;
+  voteInfo?: VoteInfo;
 }
 
 export async function GET(_request: Request, { params }: { params: Promise<{ token: string }> }) {
@@ -68,7 +82,6 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
       .where(eq(messages.conversationId, shared.conversationId))
       .orderBy(asc(messages.createdAt));
 
-    // Get all model responses for these messages
     const messageIds = conversationMessages.map((m) => m.id);
 
     const responsesByMessageId: Map<
@@ -139,13 +152,45 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
       }
     }
 
-    // Build the result with responses
+    const votesByMessageId: Map<string, VoteInfo> = new Map();
+    if (messageIds.length > 0) {
+      const votesWithResults = await db
+        .select({
+          messageId: comparisonVotes.messageId,
+          comparisonType: comparisonVotes.comparisonType,
+          modelName: comparisonVoteResults.modelName,
+          providerName: comparisonVoteResults.providerName,
+          outcome: comparisonVoteResults.outcome,
+        })
+        .from(comparisonVotes)
+        .innerJoin(
+          comparisonVoteResults,
+          eq(comparisonVoteResults.comparisonVoteId, comparisonVotes.id),
+        )
+        .where(inArray(comparisonVotes.messageId, messageIds));
+
+      for (const voteRow of votesWithResults) {
+        if (!votesByMessageId.has(voteRow.messageId)) {
+          votesByMessageId.set(voteRow.messageId, {
+            voteType: voteRow.comparisonType as 'winner' | 'tie' | 'all_bad',
+            voteResults: [],
+          });
+        }
+        votesByMessageId.get(voteRow.messageId)?.voteResults?.push({
+          modelName: voteRow.modelName,
+          providerName: voteRow.providerName,
+          outcome: voteRow.outcome as 'winner' | 'loser' | 'tie' | 'all_bad',
+        });
+      }
+    }
+
     const messagesWithResponses: MessageWithResponses[] = conversationMessages.map((msg) => ({
       id: msg.id,
       role: msg.role,
       content: msg.content,
       createdAt: msg.createdAt,
       responses: responsesByMessageId.get(msg.id),
+      voteInfo: votesByMessageId.get(msg.id),
     }));
 
     return NextResponse.json(
