@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { AuthFormWrapper } from '@/components/auth';
 import { getRequestLocale } from '@/libs/request-locale';
+import { getServerTranslations } from '@/libs/server-translations';
 
 type ISignUpPageProps = {
   searchParams: Promise<{ callbackUrl?: string }>;
@@ -10,31 +10,24 @@ type ISignUpPageProps = {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getRequestLocale();
-  const t = await getTranslations({
-    locale,
-    namespace: 'SignUp',
-  });
+  const t = await getServerTranslations(locale);
 
   return {
-    title: t('meta_title'),
-    description: t('meta_description'),
+    title: t('SignUp.meta_title'),
+    description: t('SignUp.meta_description'),
   };
 }
 
 export default async function SignUpPage(props: ISignUpPageProps) {
   const { callbackUrl } = await props.searchParams;
   const locale = await getRequestLocale();
-  setRequestLocale(locale);
-  const t = await getTranslations({
-    locale,
-    namespace: 'SignUp',
-  });
+  const t = await getServerTranslations(locale);
 
   return (
     <div className="w-full max-w-md space-y-8">
       <div className="text-center">
-        <h1 className="text-3xl font-bold tracking-tight">{t('meta_title')}</h1>
-        <p className="mt-2 text-sm text-muted-foreground">{t('meta_description')}</p>
+        <h1 className="text-3xl font-bold tracking-tight">{t('SignUp.meta_title')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('SignUp.meta_description')}</p>
       </div>
 
       <AuthFormWrapper type="signup" callbackUrl={callbackUrl || '/arena'} />

@@ -1,6 +1,9 @@
 'use client';
 
 import { useCallback, useState } from 'react';
+import type { VoteInfoExtended } from '@/types/vote';
+
+export type { VoteInfoExtended as VoteInfo, VoteResult } from '@/types/vote';
 
 /**
  * Types for conversation management
@@ -37,6 +40,7 @@ export interface ConversationData {
   updatedAt: string;
   firstMessage?: string;
   models?: ConversationModel[];
+  voteInfo?: VoteInfoExtended;
 }
 
 export interface FullConversationData {
@@ -235,7 +239,7 @@ export function useConversation() {
 
       try {
         const response = await fetch(
-          `/api/conversations?limit=${limit}&offset=${offset}&withFirstMessage=true&withModels=true`,
+          `/api/conversations?limit=${limit}&offset=${offset}&withFirstMessage=true&withModels=true&withVotes=true`,
         );
 
         if (!response.ok) {

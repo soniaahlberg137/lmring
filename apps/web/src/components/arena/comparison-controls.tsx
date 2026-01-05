@@ -3,6 +3,7 @@
 import { Badge, Button } from '@lmring/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CopyIcon, DownloadIcon, MinusCircleIcon, PlusCircleIcon, ShuffleIcon } from 'lucide-react';
+import { MAX_COMPARISON_CARDS } from '@/constants/arena';
 
 interface ComparisonControlsProps {
   modelCount: number;
@@ -18,7 +19,7 @@ interface ComparisonControlsProps {
 
 export function ComparisonControls({
   modelCount,
-  maxModels = 4,
+  maxModels = MAX_COMPARISON_CARDS,
   minModels = 2,
   onAddModel,
   onRemoveModel,

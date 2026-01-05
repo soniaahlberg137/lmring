@@ -84,6 +84,12 @@ build-archive.log
 
 # vscode
 .vscode/settings.json
+
+# ai coding
+.local/
+settings.local.json
 .kiro/
 .claude/
-CLAUDE.md
+.agent/
+.mcp.json
+CLAUDE.local.md

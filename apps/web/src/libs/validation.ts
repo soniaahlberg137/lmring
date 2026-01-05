@@ -50,6 +50,32 @@ export const voteSchema = z.object({
   voteType: z.enum(['like', 'dislike', 'neutral']),
 });
 
+// Comparison vote schema for the new voting system
+export const comparisonVoteSchema = z
+  .object({
+    messageId: z.uuid('Invalid message ID'),
+    voteType: z.enum(['winner', 'tie', 'all_bad']),
+    winnerId: z.uuid('Invalid winner model response ID').optional(),
+    comparisonType: z.enum(['text', 'image_gen', 'video_gen', 'tts', 'stt']),
+    participantIds: z
+      .array(z.uuid('Invalid participant model response ID'))
+      .min(2, 'At least 2 participants required')
+      .max(5, 'Maximum 5 participants allowed'),
+  })
+  .refine((data) => data.voteType !== 'winner' || data.winnerId !== undefined, {
+    message: 'winnerId is required when voteType is winner',
+    path: ['winnerId'],
+  })
+  .refine(
+    (data) =>
+      data.voteType !== 'winner' ||
+      (data.winnerId !== undefined && data.participantIds.includes(data.winnerId)),
+    {
+      message: 'winnerId must be one of the participantIds',
+      path: ['winnerId'],
+    },
+  );
+
 export const apiKeySchema = z.object({
   providerName: z.string().min(1).max(100),
   apiKey: z.string().min(1).max(500).optional(),
@@ -184,6 +210,7 @@ export type ConversationInput = z.infer<typeof conversationSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
 export type ModelResponseInput = z.infer<typeof modelResponseSchema>;
 export type VoteInput = z.infer<typeof voteSchema>;
+export type ComparisonVoteInput = z.infer<typeof comparisonVoteSchema>;
 export type ApiKeyInput = z.infer<typeof apiKeySchema>;
 export type ApiKeyPatchInput = z.infer<typeof apiKeyPatchSchema>;
 export type ConnectionCheckInput = z.infer<typeof connectionCheckSchema>;

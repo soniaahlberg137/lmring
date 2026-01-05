@@ -12,16 +12,15 @@ import {
 } from '@lmring/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, ChevronsUpDown, X } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import * as React from 'react';
-
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import { useTranslations } from '@/hooks/use-translations';
 import type { ModelOption } from '@/types/arena';
 
 interface ModelSelectorTriggerProps {
   models: ModelOption[];
   selectedModel?: string;
-  onClick: () => void;
+  onClick: (e: React.MouseEvent) => void;
   onRemove?: () => void;
   placeholder?: string;
   disabled?: boolean;
@@ -37,7 +36,7 @@ export function ModelSelectorTrigger({
   disabled = false,
   showRemove = false,
 }: ModelSelectorTriggerProps) {
-  const t = useTranslations('Arena');
+  const t = useTranslations();
   const selectedModelInfo = models.find((m) => m.id === selectedModel);
 
   return (
@@ -57,7 +56,7 @@ export function ModelSelectorTrigger({
                 <span className="text-sm font-medium truncate">{selectedModelInfo.name}</span>
                 {selectedModelInfo.isCustom && (
                   <Badge variant="outline" className="text-xs px-1.5 py-0 shrink-0">
-                    {t('custom_model')}
+                    {t('Arena.custom_model')}
                   </Badge>
                 )}
                 {selectedModelInfo.isNew && (
@@ -107,7 +106,7 @@ export function ModelSelectorOverlay({
   onClose,
   onModelSelect,
 }: ModelSelectorOverlayProps) {
-  const t = useTranslations('Arena');
+  const t = useTranslations();
   const [, setSearchQuery] = React.useState('');
 
   const groupedModels = React.useMemo(() => {
@@ -164,7 +163,7 @@ export function ModelSelectorOverlay({
                             <span className="font-medium truncate">{model.name}</span>
                             {model.isCustom && (
                               <Badge variant="outline" className="text-xs px-1.5 py-0 shrink-0">
-                                {t('custom_model')}
+                                {t('Arena.custom_model')}
                               </Badge>
                             )}
                             {model.isNew && (

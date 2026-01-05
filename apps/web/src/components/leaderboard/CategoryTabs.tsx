@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@lmring/ui';
-import { Eye, Image, MessageSquare, Mic, Video, Volume2 } from 'lucide-react';
+import { Eye, Image, LayoutGrid, MessageSquare, Mic, Video, Volume2 } from 'lucide-react';
 import { CATEGORY_CONFIGS, type LeaderboardCategory } from '@/libs/zeroeval-api';
 
 const ICON_MAP = {
@@ -11,6 +11,7 @@ const ICON_MAP = {
   Video,
   Volume2,
   Mic,
+  LayoutGrid,
 };
 
 interface CategoryTabsProps {

@@ -19,6 +19,15 @@ export {
   settingsSelectors,
   useSettingsStore,
 } from './settings-store';
+export type {
+  ComparisonVoteData,
+  HoveredVote,
+  VoteActions,
+  VoteResult,
+  VoteState,
+  VoteStore,
+} from './vote-store';
+export { useVoteStore, voteSelectors } from './vote-store';
 export type { WorkflowActions, WorkflowState, WorkflowStore } from './workflow-store';
 export {
   useWorkflowStore,

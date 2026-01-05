@@ -1,8 +1,8 @@
 import { getModelsForProvider } from '@lmring/model-depot/models';
 import { ALL_PROVIDER_METADATA, type ProviderMetadata } from '@lmring/model-depot/providers';
 import type { DefaultModelListItem } from '@lmring/model-depot/types';
-import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 export interface ProviderWithDescription extends ProviderMetadata {
   description: string;
@@ -70,7 +70,7 @@ type ProviderDescriptionKey =
   | 'higress_description';
 
 export function useProviderMetadata(): ProviderWithDescription[] {
-  const t = useTranslations('Providers');
+  const t = useTranslations();
 
   return useMemo(
     () =>
@@ -78,7 +78,7 @@ export function useProviderMetadata(): ProviderWithDescription[] {
         const descriptionKey = `${p.id}_description` as ProviderDescriptionKey;
         return {
           ...p,
-          description: t(descriptionKey),
+          description: t(`Providers.${descriptionKey}`),
           models: getModelsForProvider(p.id),
         };
       }),

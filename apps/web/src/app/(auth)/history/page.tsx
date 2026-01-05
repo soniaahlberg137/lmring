@@ -18,14 +18,14 @@ import {
 import { motion } from 'framer-motion';
 import { CalendarIcon, ClockIcon, MessageSquareIcon, Share2Icon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
-import { type ConversationData, useConversation } from '@/hooks/use-conversation';
+import { type ConversationData, useConversation, type VoteResult } from '@/hooks/use-conversation';
+import { useTranslations } from '@/hooks/use-translations';
 
 export default function HistoryPage() {
-  const t = useTranslations('History');
+  const t = useTranslations();
   const { getConversationsWithModels, shareConversation, deleteConversation, isLoading } =
     useConversation();
   const [conversations, setConversations] = React.useState<ConversationData[]>([]);
@@ -49,13 +49,13 @@ export default function HistoryPage() {
     const result = await shareConversation(conversationId);
     if (result) {
       await navigator.clipboard.writeText(result.shareUrl);
-      toast.success(t('share_success'), {
+      toast.success(t('History.share_success'), {
         description: result.expiresAt
-          ? t('share_expires', { date: new Date(result.expiresAt).toLocaleDateString() })
-          : t('share_no_expire'),
+          ? t('History.share_expires', { date: new Date(result.expiresAt).toLocaleDateString() })
+          : t('History.share_no_expire'),
       });
     } else {
-      toast.error(t('share_failed'));
+      toast.error(t('History.share_failed'));
     }
   };
 
@@ -71,9 +71,9 @@ export default function HistoryPage() {
     const success = await deleteConversation(conversationToDelete);
     if (success) {
       setConversations((prev) => prev.filter((c) => c.id !== conversationToDelete));
-      toast.success(t('delete_success'));
+      toast.success(t('History.delete_success'));
     } else {
-      toast.error(t('delete_failed'));
+      toast.error(t('History.delete_failed'));
     }
     setConversationToDelete(null);
   };
@@ -192,7 +192,7 @@ export default function HistoryPage() {
                           onClick={(e) => handleDeleteClick(e, conversation.id)}
                           disabled={isLoading}
                           className="p-2 rounded-lg transition-colors opacity-0 group-hover:opacity-100 hover:bg-destructive/10 hover:text-destructive"
-                          aria-label={t('delete_aria_label')}
+                          aria-label={t('History.delete_aria_label')}
                         >
                           <Trash2Icon className="h-4 w-4" />
                         </button>
@@ -201,7 +201,7 @@ export default function HistoryPage() {
                           onClick={(e) => handleShare(e, conversation.id)}
                           disabled={isLoading}
                           className="p-2 hover:bg-accent rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                          aria-label={t('share_aria_label')}
+                          aria-label={t('History.share_aria_label')}
                         >
                           <Share2Icon className="h-4 w-4" />
                         </button>
@@ -221,20 +221,44 @@ export default function HistoryPage() {
 
                       {conversation.models && conversation.models.length > 0 && (
                         <div className="flex items-center gap-2 flex-wrap">
-                          {conversation.models.map((model, modelIndex) => (
-                            <Badge
-                              key={`${model.providerName}-${model.modelName}-${modelIndex}`}
-                              variant="secondary"
-                              className="flex items-center gap-1.5 text-xs py-1 px-2"
-                            >
-                              <ProviderIcon
-                                providerId={model.providerName.toLowerCase()}
-                                size={14}
-                                type="avatar"
-                              />
-                              <span>{model.modelName}</span>
-                            </Badge>
-                          ))}
+                          {conversation.models.map((model, modelIndex) => {
+                            const voteResult = conversation.voteInfo?.voteResults?.find(
+                              (r: VoteResult) =>
+                                r.modelName === model.modelName &&
+                                r.providerName === model.providerName,
+                            );
+
+                            const getColorClass = () => {
+                              if (!voteResult) return '';
+                              switch (voteResult.outcome) {
+                                case 'winner':
+                                  return 'border-amber-500/50 text-amber-600 bg-amber-500/10';
+                                case 'loser':
+                                  return '';
+                                case 'tie':
+                                  return 'border-green-500/50 text-green-600 bg-green-500/10';
+                                case 'all_bad':
+                                  return 'border-red-500/50 text-red-600 bg-red-500/10';
+                                default:
+                                  return '';
+                              }
+                            };
+
+                            return (
+                              <Badge
+                                key={`${model.providerName}-${model.modelName}-${modelIndex}`}
+                                variant={voteResult ? 'outline' : 'secondary'}
+                                className={`flex items-center gap-1.5 text-xs py-1 px-2 ${getColorClass()}`}
+                              >
+                                <ProviderIcon
+                                  providerId={model.providerName.toLowerCase()}
+                                  size={14}
+                                  type="avatar"
+                                />
+                                <span>{model.modelName}</span>
+                              </Badge>
+                            );
+                          })}
                         </div>
                       )}
                     </div>
@@ -252,18 +276,20 @@ export default function HistoryPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>{t('delete_dialog_title')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('delete_dialog_description')}</AlertDialogDescription>
+            <AlertDialogTitle>{t('History.delete_dialog_title')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('History.delete_dialog_description')}
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setConversationToDelete(null)}>
-              {t('delete_dialog_cancel')}
+              {t('History.delete_dialog_cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDeleteConfirm}
             >
-              {t('delete_dialog_confirm')}
+              {t('History.delete_dialog_confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
