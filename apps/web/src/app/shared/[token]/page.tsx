@@ -10,6 +10,7 @@ import {
   cn,
   ResponseViewer,
   ScrollArea,
+  Skeleton,
 } from '@lmring/ui';
 import { motion } from 'framer-motion';
 import { AlertCircleIcon, CalendarIcon, ClockIcon, UserIcon } from 'lucide-react';
@@ -121,10 +122,44 @@ export default function SharedConversationPage() {
     return (
       <div className="h-screen bg-background flex flex-col">
         <SharedHeader />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="flex flex-col items-center gap-4">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-            <p className="text-muted-foreground">Loading conversation...</p>
+        <div className="flex-1 overflow-auto">
+          <div className="container max-w-6xl mx-auto py-8 px-4 space-y-6">
+            {/* User message skeleton */}
+            <div className="flex gap-3">
+              <Skeleton className="h-10 w-10 rounded-full flex-shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-20 w-full rounded-lg" />
+              </div>
+            </div>
+
+            {/* Model response cards skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[0, 1].map((i) => (
+                <Card key={i} className="flex flex-col overflow-hidden">
+                  <CardHeader className="pb-3 flex-shrink-0 space-y-0 border-b bg-muted/30">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-5 w-5 rounded" />
+                        <Skeleton className="h-4 w-32" />
+                      </div>
+                      <Skeleton className="h-5 w-16 rounded-full" />
+                    </div>
+                    <div className="flex items-center gap-3 mt-2">
+                      <Skeleton className="h-3 w-16" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                  </CardHeader>
+                  <CardContent className="flex-1 p-4 space-y-2">
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-5/6" />
+                    <Skeleton className="h-4 w-4/6" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-3/4" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -490,10 +525,10 @@ function ModelResponseCard({
   voteState?: VoteState;
 }) {
   const voteStateBorderStyles: Record<VoteState, string> = {
-    winner: 'ring-2 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    winner: 'ring-1 ring-amber-500 border-amber-500 shadow-amber-500/20',
     loser: '',
-    tie: 'ring-2 ring-green-500 border-green-500 shadow-green-500/20',
-    all_bad: 'ring-2 ring-red-500 border-red-500 shadow-red-500/20',
+    tie: 'ring-1 ring-green-500 border-green-500 shadow-green-500/20',
+    all_bad: 'ring-1 ring-red-500 border-red-500 shadow-red-500/20',
     none: '',
   };
 

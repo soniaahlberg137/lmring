@@ -130,17 +130,17 @@ export function ModelCard({
   const effectiveVoteState = hoverState || voteState;
 
   const voteStateBorderStyles: Record<string, string> = {
-    winner: 'ring-2 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    winner: 'ring-1 ring-amber-500 border-amber-500 shadow-amber-500/20',
     loser: '',
-    tie: 'ring-2 ring-green-500 border-green-500 shadow-green-500/20',
-    all_bad: 'ring-2 ring-red-500 border-red-500 shadow-red-500/20',
+    tie: 'ring-1 ring-green-500 border-green-500 shadow-green-500/20',
+    all_bad: 'ring-1 ring-red-500 border-red-500 shadow-red-500/20',
     none: '',
   };
 
   const cardClasses = cn(
     'h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden transition-all duration-200',
     voteStateBorderStyles[effectiveVoteState],
-    isVotable && voteState === 'none' && 'cursor-pointer hover:ring-2 hover:ring-amber-500/50',
+    isVotable && voteState === 'none' && 'cursor-pointer hover:ring-1 hover:ring-amber-500/50',
   );
 
   const handleCardClick = () => {
