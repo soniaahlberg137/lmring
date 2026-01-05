@@ -10,6 +10,7 @@ import cloudflareModels from './cloudflare';
 import cohereModels from './cohere';
 import dashscopeModels from './dashscope';
 import deepseekModels from './deepseek';
+import falModels from './fal';
 import fireworksaiModels from './fireworksai';
 import giteeaiModels from './giteeai';
 import githubModels from './github';
@@ -50,6 +51,7 @@ import vllmModels from './vllm';
 import volcengineModels from './volcengine';
 import wenxinModels from './wenxin';
 import xaiModels from './xai';
+import xiaomimimoModels from './xiaomimimo';
 import xinferenceModels from './xinference';
 import yiModels from './yi';
 import zhipuModels from './zhipu';
@@ -151,6 +153,8 @@ export const PROVIDER_MODELS_MAP: ModelsMap = {
   jina: jinaModels,
   search1api: search1apiModels,
   higress: higressModels,
+  fal: falModels,
+  xiaomimimo: xiaomimimoModels,
 };
 
 export const DEFAULT_MODEL_LIST = buildDefaultModelList(PROVIDER_MODELS_MAP);
@@ -188,6 +192,7 @@ export { default as cloudflare } from './cloudflare';
 export { default as cohere } from './cohere';
 export { default as dashscope } from './dashscope';
 export { default as deepseek } from './deepseek';
+export { default as fal } from './fal';
 export { default as fireworksai } from './fireworksai';
 export { default as giteeai } from './giteeai';
 export { default as github } from './github';
@@ -228,6 +233,7 @@ export { default as vllm } from './vllm';
 export { default as volcengine } from './volcengine';
 export { default as wenxin } from './wenxin';
 export { default as xai } from './xai';
+export { default as xiaomimimo } from './xiaomimimo';
 export { default as xinference } from './xinference';
 export { default as yi } from './yi';
 export { default as zhipu } from './zhipu';

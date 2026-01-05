@@ -263,6 +263,13 @@ export const COMPATIBLE_PROVIDER_METADATA: ProviderMetadata[] = [
     supportsStreaming: true,
     supportsStructuredOutput: true,
   },
+  {
+    id: 'fal',
+    name: 'fal',
+    type: 'compatible',
+    supportsStreaming: false,
+    supportsStructuredOutput: false,
+  },
 
   // Chinese/Domestic Providers
   {
@@ -419,6 +426,14 @@ export const COMPATIBLE_PROVIDER_METADATA: ProviderMetadata[] = [
   {
     id: 'tencentcloud',
     name: 'Tencent Cloud',
+    type: 'compatible',
+    supportsStreaming: true,
+    supportsStructuredOutput: true,
+    supportsFunctionCalling: true,
+  },
+  {
+    id: 'xiaomimimo',
+    name: 'Xiaomi MiMo',
     type: 'compatible',
     supportsStreaming: true,
     supportsStructuredOutput: true,

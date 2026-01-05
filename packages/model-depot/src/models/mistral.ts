@@ -30,6 +30,7 @@ const mistralModels: ChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       structuredOutput: true,
+      vision: true,
     },
     pricing: {
       input: 2,
@@ -48,6 +49,7 @@ const mistralModels: ChatModelCard[] = [
       functionCall: true,
       reasoning: true,
       structuredOutput: true,
+      vision: true,
     },
     pricing: {
       input: 0.2,
