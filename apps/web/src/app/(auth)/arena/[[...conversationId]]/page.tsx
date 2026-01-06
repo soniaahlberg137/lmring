@@ -81,6 +81,7 @@ export default function ArenaPage() {
   const setCustomModelsMap = useArenaStore((state) => state.setCustomModelsMap);
   const modelOverridesMap = useArenaStore(arenaSelectors.modelOverridesMap);
   const setModelOverridesMap = useArenaStore((state) => state.setModelOverridesMap);
+  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
   const savedApiKeys = useSettingsStore(settingsSelectors.savedApiKeys);
   const loadApiKeys = useSettingsStore((state) => state.loadApiKeys);
@@ -529,10 +530,10 @@ export default function ArenaPage() {
   }, [computedModels, enabledModelsLoaded, setAvailableModels]);
 
   React.useEffect(() => {
-    if (computedModels.length > 0 && !initialized) {
+    if (computedModels.length > 0 && enabledModelsLoaded && !initialized) {
       initializeComparisons(computedModels);
     }
-  }, [computedModels, initialized, initializeComparisons]);
+  }, [computedModels, enabledModelsLoaded, initialized, initializeComparisons]);
 
   const displayModels = availableModels.length > 0 ? availableModels : computedModels;
 
@@ -551,10 +552,30 @@ export default function ArenaPage() {
   }, [displayModels, inputMode]);
 
   // Handle input mode change
-  const handleInputModeChange = React.useCallback((mode: InputMode, images: UploadedImage[]) => {
-    setInputMode(mode);
-    setUploadedImages(images);
-  }, []);
+  const handleInputModeChange = React.useCallback(
+    (mode: InputMode, images: UploadedImage[]) => {
+      setInputMode(mode);
+      setUploadedImages(images);
+
+      let targetModels = displayModels;
+
+      if (mode !== 'default') {
+        const abilityKey = INPUT_MODE_ABILITY_MAP[mode as keyof typeof INPUT_MODE_ABILITY_MAP];
+        if (abilityKey) {
+          targetModels = displayModels.filter((model) => model.abilities?.[abilityKey] === true);
+        }
+      }
+
+      const firstModel = targetModels[0];
+      if (firstModel) {
+        // Force select first model for all comparisons
+        comparisons.forEach((_, index) => {
+          selectModel(index, firstModel.id);
+        });
+      }
+    },
+    [displayModels, comparisons, selectModel],
+  );
 
   const getKeyIdForModel = React.useCallback(
     (modelId: string): string | undefined => {
@@ -1268,6 +1289,34 @@ export default function ArenaPage() {
     };
   }, [cancelAllWorkflows]);
 
+  // Sync main content ready state for sidebar skeleton coordination
+  React.useEffect(() => {
+    const isLoadingConv =
+      conversationId &&
+      !conversationLoaded &&
+      storedConversationId !== conversationId &&
+      !isCreatingConversation;
+    const isLoadingVts = conversationId && conversationLoaded && !voteLoadingComplete;
+    const isReady = initialized && enabledModelsLoaded && !isLoadingConv && !isLoadingVts;
+    setMainContentReady(isReady);
+  }, [
+    initialized,
+    enabledModelsLoaded,
+    conversationId,
+    conversationLoaded,
+    storedConversationId,
+    isCreatingConversation,
+    voteLoadingComplete,
+    setMainContentReady,
+  ]);
+
+  // Reset main content ready state on unmount
+  React.useEffect(() => {
+    return () => {
+      setMainContentReady(false);
+    };
+  }, [setMainContentReady]);
+
   const getCardStyles = React.useCallback((cardCount: number): React.CSSProperties => {
     if (cardCount === 1) {
       return {
@@ -1303,7 +1352,7 @@ export default function ArenaPage() {
 
   const isLoadingVotes = conversationId && conversationLoaded && !voteLoadingComplete;
 
-  if (!initialized || isLoadingConversation || isLoadingVotes) {
+  if (!initialized || !enabledModelsLoaded || isLoadingConversation || isLoadingVotes) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">
         <div className="flex-1 overflow-hidden">
