@@ -62,15 +62,15 @@ export const users = pgTable(
     // Better-Auth role and status fields
     role: userRoleEnum('role').default('user').notNull(),
     status: userStatusEnum('status').default('active').notNull(),
-    
+
     // OAuth identifiers (used by Better-Auth for account linking)
     githubId: text('github_id').unique(),
     googleId: text('google_id').unique(),
     linuxdoId: text('linuxdo_id').unique(),
-    
+
     // Invitation system (reserved for future use)
     inviterId: uuid('inviter_id').references((): PgColumn => users.id),
-    
+
     // Soft delete (reserved for future use)
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
 
@@ -342,7 +342,7 @@ export const modelComparisonStats = pgTable(
   ],
 );
 
-// Files (stored as bytea)
+// Files (stored in S3/MinIO)
 export const files = pgTable(
   'files',
   {
@@ -352,7 +352,7 @@ export const files = pgTable(
       .notNull(),
     filename: text('filename').notNull(),
     mimeType: text('mime_type').notNull(),
-    fileData: text('file_data').notNull(), // Base64 encoded for simplicity with Drizzle
+    storagePath: text('storage_path').notNull(), // S3 object key
     sizeBytes: integer('size_bytes').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
