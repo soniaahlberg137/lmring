@@ -39,6 +39,11 @@ export class S3Storage implements StorageService {
         path: string,
         options?: UploadOptions,
     ): Promise<UploadUrlResult> {
+        const defaultExpiration = Number.parseInt(
+            process.env.MINIO_SIGNED_URL_EXPIRATION ?? '3600',
+            10,
+        );
+
         const command = new PutObjectCommand({
             Bucket: this.bucket,
             Key: path,
@@ -46,7 +51,7 @@ export class S3Storage implements StorageService {
         });
 
         const url = await getSignedUrl(this.client, command, {
-            expiresIn: 3600,
+            expiresIn: defaultExpiration,
         });
 
         return {
@@ -59,7 +64,11 @@ export class S3Storage implements StorageService {
         path: string,
         options: SignedUrlOptions = {},
     ): Promise<string> {
-        const expiresIn = options.expiresIn ?? 3600;
+        const defaultExpiration = Number.parseInt(
+            process.env.MINIO_SIGNED_URL_EXPIRATION ?? '3600',
+            10,
+        );
+        const expiresIn = options.expiresIn ?? defaultExpiration;
 
         const command = new GetObjectCommand({
             Bucket: this.bucket,

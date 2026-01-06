@@ -29,6 +29,7 @@ import {
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
 } from '@/hooks/use-workflow-execution';
+import { processAiResponseMedia } from '@/libs/media-response-handler';
 import {
   arenaSelectors,
   settingsSelectors,
@@ -152,6 +153,9 @@ export default function ArenaPage() {
         tokensUsed?: number,
         responseTimeMs?: number,
       ) => {
+        // Process response for base64 media
+        const { processedContent, attachments } = await processAiResponseMedia(responseContent);
+
         let displayPosition = 0;
         for (const [comparisonId, wfId] of comparisonWorkflowMap.current.entries()) {
           if (wfId === workflowId) {
@@ -167,10 +171,11 @@ export default function ArenaPage() {
           messageId,
           modelName,
           providerName,
-          responseContent,
+          processedContent,
           tokensUsed,
           responseTimeMs,
           displayPosition,
+          attachments.length > 0 ? attachments : undefined,
         );
       },
       onConversationCreated: handleConversationCreated,
@@ -437,7 +442,6 @@ export default function ArenaPage() {
             const inputPrice = override?.inputPrice ?? model.pricing?.input;
             const outputPrice = override?.outputPrice ?? model.pricing?.output;
 
-            // Merge abilities
             const abilities = {
               ...model.abilities,
               ...override?.abilities,

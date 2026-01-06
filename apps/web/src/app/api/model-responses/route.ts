@@ -1,9 +1,29 @@
 import { and, db, eq } from '@lmring/database';
+import type { ResponseAttachment } from '@lmring/database/schema';
 import { conversations, messages, modelResponses } from '@lmring/database/schema';
+import { createStorageService } from '@lmring/storage';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { modelResponseSchema } from '@/libs/validation';
+
+/**
+ * Convert attachment storage keys to signed URLs
+ */
+async function attachmentsWithUrls(
+  attachments: ResponseAttachment[] | null,
+): Promise<Array<ResponseAttachment & { url: string }> | null> {
+  if (!attachments || attachments.length === 0) return null;
+
+  const storage = createStorageService();
+
+  return Promise.all(
+    attachments.map(async (att) => ({
+      ...att,
+      url: await storage.createDownloadUrl(att.key),
+    })),
+  );
+}
 
 export async function POST(request: Request) {
   try {
@@ -21,6 +41,13 @@ export async function POST(request: Request) {
       modelName: string;
       providerName: string;
       responseContent: string;
+      attachments?: Array<{
+        type: 'image' | 'audio' | 'video';
+        key: string;
+        mimeType: string;
+        filename?: string;
+        sizeBytes?: number;
+      }>;
       tokensUsed?: number;
       responseTimeMs?: number;
       displayPosition?: number;
@@ -58,6 +85,7 @@ export async function POST(request: Request) {
         modelName: body.modelName,
         providerName: body.providerName,
         responseContent: body.responseContent,
+        attachments: body.attachments ?? null,
         tokensUsed: body.tokensUsed,
         responseTimeMs: body.responseTimeMs,
         displayPosition: body.displayPosition ?? 0,
@@ -96,6 +124,7 @@ export async function GET(request: Request) {
         modelName: modelResponses.modelName,
         providerName: modelResponses.providerName,
         responseContent: modelResponses.responseContent,
+        attachments: modelResponses.attachments,
         tokensUsed: modelResponses.tokensUsed,
         responseTimeMs: modelResponses.responseTimeMs,
         displayPosition: modelResponses.displayPosition,
@@ -106,7 +135,15 @@ export async function GET(request: Request) {
       .innerJoin(conversations, eq(messages.conversationId, conversations.id))
       .where(and(eq(modelResponses.messageId, messageId), eq(conversations.userId, userId)));
 
-    return NextResponse.json({ responses }, { status: 200 });
+    // Convert storage keys to signed URLs
+    const responsesWithUrls = await Promise.all(
+      responses.map(async (response) => ({
+        ...response,
+        attachments: await attachmentsWithUrls(response.attachments as ResponseAttachment[] | null),
+      })),
+    );
+
+    return NextResponse.json({ responses: responsesWithUrls }, { status: 200 });
   } catch (error) {
     logError('Get model responses error', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

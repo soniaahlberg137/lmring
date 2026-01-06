@@ -14,7 +14,7 @@ import {
   type PgColumn,
 } from 'drizzle-orm/pg-core';
 
-// Type for model abilities JSON field
+// Model abilities JSON
 export interface ModelAbilitiesJson {
   files?: boolean;
   functionCall?: boolean;
@@ -24,6 +24,15 @@ export interface ModelAbilitiesJson {
   structuredOutput?: boolean;
   video?: boolean;
   vision?: boolean;
+}
+
+// Response attachments
+export interface ResponseAttachment {
+  type: 'image' | 'audio' | 'video';
+  key: string;
+  mimeType: string;
+  filename?: string;
+  sizeBytes?: number;
 }
 
 // Enums
@@ -47,31 +56,27 @@ export const voteOutcomeEnum = pgEnum('vote_outcome', [
 ]);
 export const userStatusEnum = pgEnum('user_status', ['active', 'disabled', 'pending']);
 
-// Users table (managed by Better-Auth)
+// Users table
 export const users = pgTable(
   'users',
   {
-    id: uuid('id').primaryKey().defaultRandom(), // Auto-generate UUID
+    id: uuid('id').primaryKey().defaultRandom(),
     email: text('email').notNull().unique(),
     emailVerified: boolean('email_verified').notNull().default(false),
 
-    fullName: text('full_name').notNull(), // Mapped to Better-Auth's "name"
+    fullName: text('full_name').notNull(),
     username: text('username').unique(),
-    avatarUrl: text('avatar_url'), // Mapped to Better-Auth's "image"
+    avatarUrl: text('avatar_url'),
 
-    // Better-Auth role and status fields
     role: userRoleEnum('role').default('user').notNull(),
     status: userStatusEnum('status').default('active').notNull(),
 
-    // OAuth identifiers (used by Better-Auth for account linking)
     githubId: text('github_id').unique(),
     googleId: text('google_id').unique(),
     linuxdoId: text('linuxdo_id').unique(),
 
-    // Invitation system (reserved for future use)
     inviterId: uuid('inviter_id').references((): PgColumn => users.id),
 
-    // Soft delete (reserved for future use)
     deletedAt: timestamp('deleted_at', { withTimezone: true }),
 
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -79,7 +84,6 @@ export const users = pgTable(
   },
   (table) => [
     index('users_email_idx').on(table.email),
-    // Note: githubId, googleId, linuxdoId have UNIQUE constraints which create indexes automatically
     index('users_inviter_id_idx').on(table.inviterId),
     index('users_deleted_at_idx').on(table.deletedAt),
   ],
@@ -106,7 +110,7 @@ export const userPreferences = pgTable(
   ],
 );
 
-// API Keys (encrypted)
+// API Keys
 export const apiKeys = pgTable(
   'api_keys',
   {
@@ -116,7 +120,7 @@ export const apiKeys = pgTable(
       .notNull(),
     providerName: text('provider_name').notNull(),
     encryptedKey: text('encrypted_key'),
-    proxyUrl: text('proxy_url'), // Custom proxy URL (nullable, plain text)
+    proxyUrl: text('proxy_url'),
     enabled: boolean('enabled').default(false).notNull(),
     configSource: configSourceEnum('config_source').default('manual'),
     isCustom: boolean('is_custom').default(false).notNull(),
@@ -130,7 +134,7 @@ export const apiKeys = pgTable(
   ],
 );
 
-// User enabled models - tracks which models are enabled for each API key
+// User enabled models
 export const userEnabledModels = pgTable(
   'user_enabled_models',
   {
@@ -141,7 +145,7 @@ export const userEnabledModels = pgTable(
     apiKeyId: uuid('api_key_id')
       .references(() => apiKeys.id, { onDelete: 'cascade' })
       .notNull(),
-    modelId: text('model_id').notNull(), // Model identifier like "gpt-4o"
+    modelId: text('model_id').notNull(),
     enabled: boolean('enabled').default(true).notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -181,7 +185,7 @@ export const userCustomModels = pgTable(
   ],
 );
 
-// User model overrides - stores user customizations for default models
+// User model overrides
 export const userModelOverrides = pgTable(
   'user_model_overrides',
   {
@@ -255,6 +259,7 @@ export const modelResponses = pgTable(
     modelName: text('model_name').notNull(),
     providerName: text('provider_name').notNull(),
     responseContent: text('response_content').notNull(),
+    attachments: jsonb('attachments').$type<ResponseAttachment[]>(),
     tokensUsed: integer('tokens_used'),
     responseTimeMs: integer('response_time_ms'),
     displayPosition: integer('display_position').default(0).notNull(),
@@ -265,7 +270,7 @@ export const modelResponses = pgTable(
   ],
 );
 
-// Comparison votes - Main voting record for model comparisons
+// Comparison votes
 export const comparisonVotes = pgTable(
   'comparison_votes',
   {
@@ -288,7 +293,7 @@ export const comparisonVotes = pgTable(
   ],
 );
 
-// Comparison vote results - Individual model outcomes for each comparison
+// Comparison vote results
 export const comparisonVoteResults = pgTable(
   'comparison_vote_results',
   {
@@ -314,7 +319,7 @@ export const comparisonVoteResults = pgTable(
   ],
 );
 
-// Model comparison stats - Aggregated statistics for leaderboard
+// Model comparison stats
 export const modelComparisonStats = pgTable(
   'model_comparison_stats',
   {
@@ -342,7 +347,7 @@ export const modelComparisonStats = pgTable(
   ],
 );
 
-// Files (stored in S3/MinIO)
+// Files
 export const files = pgTable(
   'files',
   {
@@ -352,7 +357,7 @@ export const files = pgTable(
       .notNull(),
     filename: text('filename').notNull(),
     mimeType: text('mime_type').notNull(),
-    storagePath: text('storage_path').notNull(), // S3 object key
+    storagePath: text('storage_path').notNull(),
     sizeBytes: integer('size_bytes').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -379,7 +384,6 @@ export const sharedResults = pgTable(
   ],
 );
 
-// Better-Auth tables
 // Session table
 export const session = pgTable(
   'session',
@@ -397,11 +401,10 @@ export const session = pgTable(
   },
   (table) => [
     index('session_user_id_idx').on(table.userId),
-    // Note: token has a UNIQUE constraint which creates an index automatically
   ],
 );
 
-// Account table (OAuth)
+// Account table
 export const account = pgTable(
   'account',
   {
@@ -416,10 +419,9 @@ export const account = pgTable(
     refreshToken: text('refresh_token'),
     refreshTokenExpiresAt: timestamp('refresh_token_expires_at', { withTimezone: true }),
     idToken: text('id_token'),
-    // Kept for backward-compat with older data; not used by new adapter
     expiresAt: timestamp('expires_at', { withTimezone: true }),
     scope: text('scope'),
-    password: text('password'), // For email/password
+    password: text('password'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -582,7 +584,7 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
-// Type exports for use in the application
+// Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type UserPreferences = typeof userPreferences.$inferSelect;
@@ -618,6 +620,6 @@ export type NewComparisonVoteResult = typeof comparisonVoteResults.$inferInsert;
 export type ModelComparisonStat = typeof modelComparisonStats.$inferSelect;
 export type NewModelComparisonStat = typeof modelComparisonStats.$inferInsert;
 
-// Enum value types
+// Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
 export type VoteOutcome = (typeof voteOutcomeEnum.enumValues)[number];

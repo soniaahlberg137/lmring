@@ -40,7 +40,11 @@ export class SupabaseStorage implements StorageService {
         path: string,
         options: SignedUrlOptions = {},
     ): Promise<string> {
-        const expiresIn = options.expiresIn ?? 3600;
+        const defaultExpiration = Number.parseInt(
+            process.env.SUPABASE_SIGNED_URL_EXPIRATION ?? '3600',
+            10,
+        );
+        const expiresIn = options.expiresIn ?? defaultExpiration;
 
         const { data, error } = await this.client.storage
             .from(this.bucket)

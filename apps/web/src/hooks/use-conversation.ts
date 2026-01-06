@@ -26,6 +26,14 @@ export interface ModelResponseData {
   modelName: string;
   providerName: string;
   responseContent: string;
+  attachments?: Array<{
+    type: 'image' | 'audio' | 'video';
+    key: string;
+    mimeType: string;
+    filename?: string;
+    sizeBytes?: number;
+    url?: string;
+  }>;
   tokensUsed?: number;
   responseTimeMs?: number;
   displayPosition?: number;
@@ -137,6 +145,13 @@ export function useConversation() {
       tokensUsed?: number,
       responseTimeMs?: number,
       displayPosition?: number,
+      attachments?: Array<{
+        type: 'image' | 'audio' | 'video';
+        key: string;
+        mimeType: string;
+        filename?: string;
+        sizeBytes?: number;
+      }>,
     ): Promise<ModelResponseData | null> => {
       setIsLoading(true);
       setError(null);
@@ -153,6 +168,7 @@ export function useConversation() {
             tokensUsed,
             responseTimeMs,
             displayPosition,
+            attachments,
           }),
         });
 
