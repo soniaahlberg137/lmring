@@ -93,7 +93,7 @@ export function PromptInput({
   );
 
   const addImages = React.useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       const validFiles = files.filter(
         (f) => f.type.startsWith('image/') && f.size <= MAX_IMAGE_SIZE_BYTES,
       );
@@ -107,6 +107,7 @@ export function PromptInput({
         previewUrl: URL.createObjectURL(file),
         filename: file.name,
         size: file.size,
+        isUploading: true,
       }));
 
       const newUploadedImages = [...uploadedImages, ...newImages];
@@ -115,6 +116,45 @@ export function PromptInput({
       if (newImages.length > 0) {
         setModeState('upload');
         onModeChange?.('upload', newUploadedImages);
+      }
+
+      // Upload each image in parallel
+      const { uploadFile } = await import('@/libs/file-upload-api');
+
+      for (const img of newImages) {
+        try {
+          const result = await uploadFile(img.file);
+
+          setUploadedImages((prev) => {
+            const updated = prev.map((i) =>
+              i.id === img.id
+                ? {
+                    ...i,
+                    fileId: result.fileId,
+                    url: result.url,
+                    isUploading: false,
+                  }
+                : i,
+            );
+            queueMicrotask(() => onModeChange?.('upload', updated));
+            return updated;
+          });
+        } catch (error) {
+          console.error('Failed to upload image:', error);
+          setUploadedImages((prev) => {
+            const updated = prev.map((i) =>
+              i.id === img.id
+                ? {
+                    ...i,
+                    isUploading: false,
+                    uploadError: error instanceof Error ? error.message : 'Upload failed',
+                  }
+                : i,
+            );
+            queueMicrotask(() => onModeChange?.('upload', updated));
+            return updated;
+          });
+        }
       }
     },
     [uploadedImages, onModeChange],

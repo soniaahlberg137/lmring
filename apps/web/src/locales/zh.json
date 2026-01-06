@@ -106,6 +106,8 @@
   "Arena.image_too_large": "图片大小必须小于 {size}MB",
   "Arena.clear_mode": "清除模式",
   "Arena.image_conversion_error": "图片处理失败，请重试。",
+  "Arena.images_still_uploading": "请等待图片上传完成。",
+  "Arena.image_upload_failed": "图片上传失败",
   "Settings.title": "设置",
   "Settings.description": "偏好和模型设置。",
   "Settings.powered_by": "由 {name} 支持",

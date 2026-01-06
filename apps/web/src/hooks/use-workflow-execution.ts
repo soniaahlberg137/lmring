@@ -1,7 +1,12 @@
 import { useCallback, useRef } from 'react';
 import { buildWorkflowStreamRequest, streamWorkflow } from '@/libs/workflow-api';
 import { useWorkflowStore } from '@/stores/workflow-store';
-import type { ArenaWorkflow, WorkflowImageAttachment, WorkflowMetrics } from '@/types/workflow';
+import type {
+  ArenaWorkflow,
+  FileAttachment,
+  WorkflowImageAttachment,
+  WorkflowMetrics,
+} from '@/types/workflow';
 
 export interface WorkflowPersistenceCallbacks {
   onCreateConversation?: (title: string) => Promise<string | null>;
@@ -92,7 +97,14 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       const { id, modelId, keyId, messages, config } = workflow;
       const { isNewConversation = false, existingDbMessageId, attachments } = options || {};
 
-      addUserMessage(id, prompt);
+      const messageAttachments: FileAttachment[] | undefined = attachments?.map((att) => ({
+        type: 'file' as const,
+        url: att.data,
+        mediaType: att.mediaType,
+        filename: att.filename || 'image',
+      }));
+
+      addUserMessage(id, prompt, messageAttachments);
       startPendingResponse(id);
 
       const abortController = new AbortController();

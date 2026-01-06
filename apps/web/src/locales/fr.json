@@ -106,6 +106,8 @@
   "Arena.image_too_large": "L'image doit être inférieure à {size}Mo",
   "Arena.clear_mode": "Effacer le mode",
   "Arena.image_conversion_error": "Échec du traitement des images. Veuillez réessayer.",
+  "Arena.images_still_uploading": "Veuillez attendre la fin du téléchargement des images.",
+  "Arena.image_upload_failed": "Échec du téléchargement de l'image",
   "Settings.title": "Paramètres",
   "Settings.description": "Préférences et paramètres de modèle.",
   "Settings.powered_by": "Propulsé par {name}",

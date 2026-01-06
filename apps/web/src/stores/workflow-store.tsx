@@ -6,6 +6,7 @@ import { devtools } from 'zustand/middleware';
 import {
   type ArenaWorkflow,
   DEFAULT_WORKFLOW_CONFIG,
+  type FileAttachment,
   type PendingResponse,
   type WorkflowConfig,
   type WorkflowMessage,
@@ -93,7 +94,7 @@ export type WorkflowActions = {
   setWorkflowStatus: (id: string, status: WorkflowStatus, error?: string) => void;
 
   // Message management
-  addUserMessage: (id: string, content: string) => string;
+  addUserMessage: (id: string, content: string, attachments?: FileAttachment[]) => string;
   addAssistantMessage: (
     id: string,
     content: string,
@@ -371,7 +372,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
 
         // ============ Message Management ============
 
-        addUserMessage: (id, content) => {
+        addUserMessage: (id, content, attachments) => {
           const messageId = generateId();
           set(
             (state) => {
@@ -383,6 +384,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 role: 'user',
                 content,
                 timestamp: new Date(),
+                attachments,
               };
 
               const newMap = new Map(state.workflows);

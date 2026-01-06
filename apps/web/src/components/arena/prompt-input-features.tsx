@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@lmring/ui';
-import { Code, Globe, ImageIcon, Plus, X } from 'lucide-react';
+import { AlertCircle, Code, Globe, ImageIcon, Loader2, Plus, X } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/use-translations';
@@ -190,8 +190,24 @@ export function ImagePreviews() {
           <img
             src={image.previewUrl}
             alt={image.filename}
-            className="h-16 w-16 rounded-lg object-cover border bg-muted"
+            className={cn(
+              'h-16 w-16 rounded-lg object-cover border bg-muted',
+              image.isUploading && 'opacity-50',
+              image.uploadError && 'border-destructive',
+            )}
           />
+          {/* Upload progress overlay */}
+          {image.isUploading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-lg">
+              <Loader2 className="h-5 w-5 animate-spin text-primary" />
+            </div>
+          )}
+          {/* Error indicator */}
+          {image.uploadError && (
+            <div className="absolute inset-0 flex items-center justify-center bg-destructive/20 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-destructive" />
+            </div>
+          )}
           <button
             type="button"
             onClick={() => removeImage(image.id)}

@@ -44,7 +44,6 @@ import { DEFAULT_MODEL_CONFIG } from '@/types/arena';
 import type { InputMode, UploadedImage } from '@/types/input-mode';
 import { INPUT_MODE_ABILITY_MAP } from '@/types/input-mode';
 import type { ArenaWorkflow, WorkflowImageAttachment } from '@/types/workflow';
-import { fileToDataUrl } from '@/utils/file-utils';
 
 export default function ArenaPage() {
   const params = useParams();
@@ -552,30 +551,10 @@ export default function ArenaPage() {
   }, [displayModels, inputMode]);
 
   // Handle input mode change
-  const handleInputModeChange = React.useCallback(
-    (mode: InputMode, images: UploadedImage[]) => {
-      setInputMode(mode);
-      setUploadedImages(images);
-
-      let targetModels = displayModels;
-
-      if (mode !== 'default') {
-        const abilityKey = INPUT_MODE_ABILITY_MAP[mode as keyof typeof INPUT_MODE_ABILITY_MAP];
-        if (abilityKey) {
-          targetModels = displayModels.filter((model) => model.abilities?.[abilityKey] === true);
-        }
-      }
-
-      const firstModel = targetModels[0];
-      if (firstModel) {
-        // Force select first model for all comparisons
-        comparisons.forEach((_, index) => {
-          selectModel(index, firstModel.id);
-        });
-      }
-    },
-    [displayModels, comparisons, selectModel],
-  );
+  const handleInputModeChange = React.useCallback((mode: InputMode, images: UploadedImage[]) => {
+    setInputMode(mode);
+    setUploadedImages(images);
+  }, []);
 
   const getKeyIdForModel = React.useCallback(
     (modelId: string): string | undefined => {
@@ -872,23 +851,34 @@ export default function ArenaPage() {
       return;
     }
 
-    // Convert uploaded images to attachments
+    // Use uploaded image URLs from storage
     let attachments: WorkflowImageAttachment[] | undefined;
     if (uploadedImages.length > 0) {
-      try {
-        attachments = await Promise.all(
-          uploadedImages.map(async (img) => ({
-            type: 'image' as const,
-            data: await fileToDataUrl(img.file),
-            mediaType: img.file.type,
-            filename: img.filename,
-          })),
-        );
-      } catch (error) {
-        console.error('Failed to convert images:', error);
-        toast.error(t('Arena.image_conversion_error'));
+      // Check if any images are still uploading
+      const stillUploading = uploadedImages.some((img) => img.isUploading);
+      if (stillUploading) {
+        toast.error(t('Arena.images_still_uploading'));
         return;
       }
+
+      // Check if any images failed to upload
+      const failedUploads = uploadedImages.filter((img) => img.uploadError);
+      if (failedUploads.length > 0) {
+        toast.error(t('Arena.image_upload_failed'), {
+          description: failedUploads.map((img) => img.filename).join(', '),
+        });
+        return;
+      }
+
+      // Use the URLs from storage (already URL or base64 based on LLM_IMAGE_BASE64 env)
+      attachments = uploadedImages
+        .filter((img) => img.url)
+        .map((img) => ({
+          type: 'image' as const,
+          data: img.url as string,
+          mediaType: img.file.type,
+          filename: img.filename,
+        }));
     }
 
     await startAllSyncedWorkflows(attachments);

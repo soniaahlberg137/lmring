@@ -6,6 +6,10 @@ export interface UploadedImage {
   previewUrl: string;
   filename: string;
   size: number;
+  fileId?: string;
+  url?: string;
+  isUploading?: boolean;
+  uploadError?: string;
 }
 
 export const MAX_IMAGES = 10;
