@@ -20,7 +20,7 @@ interface PromptInputContextValue {
   uploadedImages: UploadedImage[];
   addImages: (files: File[]) => void;
   removeImage: (id: string) => void;
-  clearImages: () => void;
+  isRemovingImage: string | null;
 }
 
 const PromptInputContext = React.createContext<PromptInputContextValue | undefined>(undefined);
@@ -43,7 +43,11 @@ interface PromptInputProps
   onStop?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
-  onModeChange?: (mode: InputMode, images: UploadedImage[]) => void;
+  uploadedImages: UploadedImage[];
+  onAddImages: (newImages: UploadedImage[]) => void;
+  onUpdateImage: (id: string, updates: Partial<UploadedImage>) => void;
+  onRemoveImage: (id: string) => Promise<void>;
+  onModeChange?: (mode: InputMode) => void;
 }
 
 export function PromptInput({
@@ -53,6 +57,10 @@ export function PromptInput({
   onStop,
   isLoading = false,
   disabled = false,
+  uploadedImages,
+  onAddImages,
+  onUpdateImage,
+  onRemoveImage,
   onModeChange,
   className,
   children,
@@ -62,8 +70,18 @@ export function PromptInput({
   const lastSubmitTimeRef = React.useRef<number>(0);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [mode, setModeState] = React.useState<InputMode>('default');
-  const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
   const [isDragging, setIsDragging] = React.useState(false);
+  const [isRemovingImage, setIsRemovingImage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (uploadedImages.length > 0 && mode !== 'upload') {
+      setModeState('upload');
+      onModeChange?.('upload');
+    } else if (uploadedImages.length === 0 && mode === 'upload') {
+      setModeState('default');
+      onModeChange?.('default');
+    }
+  }, [uploadedImages.length, mode, onModeChange]);
 
   const handleSubmit = React.useCallback(() => {
     if (!value.trim() || isLoading || disabled || isSubmitting) return;
@@ -87,9 +105,9 @@ export function PromptInput({
     (newMode: InputMode) => {
       const effectiveMode = newMode === mode ? 'default' : newMode;
       setModeState(effectiveMode);
-      onModeChange?.(effectiveMode, uploadedImages);
+      onModeChange?.(effectiveMode);
     },
-    [mode, uploadedImages, onModeChange],
+    [mode, onModeChange],
   );
 
   const addImages = React.useCallback(
@@ -110,86 +128,43 @@ export function PromptInput({
         isUploading: true,
       }));
 
-      const newUploadedImages = [...uploadedImages, ...newImages];
-      setUploadedImages(newUploadedImages);
-
       if (newImages.length > 0) {
-        setModeState('upload');
-        onModeChange?.('upload', newUploadedImages);
+        onAddImages(newImages);
       }
 
-      // Upload each image in parallel
       const { uploadFile } = await import('@/libs/file-upload-api');
 
       for (const img of newImages) {
         try {
           const result = await uploadFile(img.file);
-
-          setUploadedImages((prev) => {
-            const updated = prev.map((i) =>
-              i.id === img.id
-                ? {
-                    ...i,
-                    fileId: result.fileId,
-                    url: result.url,
-                    isUploading: false,
-                  }
-                : i,
-            );
-            queueMicrotask(() => onModeChange?.('upload', updated));
-            return updated;
+          onUpdateImage(img.id, {
+            fileId: result.fileId,
+            url: result.url,
+            isUploading: false,
           });
         } catch (error) {
           console.error('Failed to upload image:', error);
-          setUploadedImages((prev) => {
-            const updated = prev.map((i) =>
-              i.id === img.id
-                ? {
-                    ...i,
-                    isUploading: false,
-                    uploadError: error instanceof Error ? error.message : 'Upload failed',
-                  }
-                : i,
-            );
-            queueMicrotask(() => onModeChange?.('upload', updated));
-            return updated;
+          onUpdateImage(img.id, {
+            isUploading: false,
+            uploadError: error instanceof Error ? error.message : 'Upload failed',
           });
         }
       }
     },
-    [uploadedImages, onModeChange],
+    [uploadedImages.length, onAddImages, onUpdateImage],
   );
 
   const removeImage = React.useCallback(
-    (id: string) => {
-      const removed = uploadedImages.find((img) => img.id === id);
-      if (removed) {
-        URL.revokeObjectURL(removed.previewUrl);
-      }
-
-      const newImages = uploadedImages.filter((img) => img.id !== id);
-      setUploadedImages(newImages);
-
-      if (newImages.length === 0 && mode === 'upload') {
-        setModeState('default');
-        onModeChange?.('default', []);
-      } else {
-        onModeChange?.(mode, newImages);
+    async (id: string) => {
+      setIsRemovingImage(id);
+      try {
+        await onRemoveImage(id);
+      } finally {
+        setIsRemovingImage(null);
       }
     },
-    [uploadedImages, mode, onModeChange],
+    [onRemoveImage],
   );
-
-  const clearImages = React.useCallback(() => {
-    for (const img of uploadedImages) {
-      URL.revokeObjectURL(img.previewUrl);
-    }
-    setUploadedImages([]);
-    if (mode === 'upload') {
-      setModeState('default');
-      onModeChange?.('default', []);
-    }
-  }, [uploadedImages, mode, onModeChange]);
 
   const handleDragEnter = React.useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -242,7 +217,7 @@ export function PromptInput({
       uploadedImages,
       addImages,
       removeImage,
-      clearImages,
+      isRemovingImage,
     }),
     [
       value,
@@ -257,7 +232,7 @@ export function PromptInput({
       uploadedImages,
       addImages,
       removeImage,
-      clearImages,
+      isRemovingImage,
     ],
   );
 

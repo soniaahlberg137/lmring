@@ -1,7 +1,3 @@
-/**
- * File upload API client for arena page
- */
-
 export interface UploadedFileResult {
   fileId: string;
   url: string;
@@ -16,16 +12,7 @@ export interface FileUrlResult {
   mimeType: string;
 }
 
-/**
- * Upload a file to storage and return the file ID and URL
- *
- * Flow:
- * 1. POST /api/files/upload - Get signed upload URL and file ID
- * 2. PUT to signed URL - Upload file content
- * 3. GET /api/files/[id]/url - Get download URL
- */
 export async function uploadFile(file: File): Promise<UploadedFileResult> {
-  // Step 1: Get upload URL from our API
   const initResponse = await fetch('/api/files/upload', {
     method: 'POST',
     headers: {
@@ -45,7 +32,6 @@ export async function uploadFile(file: File): Promise<UploadedFileResult> {
 
   const { fileId, uploadUrl } = await initResponse.json();
 
-  // Step 2: Upload file to signed URL
   const uploadResponse = await fetch(uploadUrl, {
     method: 'PUT',
     headers: {
@@ -58,7 +44,6 @@ export async function uploadFile(file: File): Promise<UploadedFileResult> {
     throw new Error('Failed to upload file to storage');
   }
 
-  // Step 3: Get the download URL
   const urlResponse = await fetch(`/api/files/${fileId}/url`);
 
   if (!urlResponse.ok) {
@@ -76,9 +61,6 @@ export async function uploadFile(file: File): Promise<UploadedFileResult> {
   };
 }
 
-/**
- * Get file URL/base64 for an already uploaded file
- */
 export async function getFileUrl(fileId: string): Promise<FileUrlResult> {
   const response = await fetch(`/api/files/${fileId}/url`);
 
@@ -88,4 +70,15 @@ export async function getFileUrl(fileId: string): Promise<FileUrlResult> {
   }
 
   return response.json();
+}
+
+export async function deleteFile(fileId: string): Promise<void> {
+  const response = await fetch(`/api/files/${fileId}/url`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || 'Failed to delete file');
+  }
 }

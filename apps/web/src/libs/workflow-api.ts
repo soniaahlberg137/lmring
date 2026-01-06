@@ -20,9 +20,17 @@ export async function* streamWorkflow(
 
   if (!response.ok) {
     let errorMessage = 'Failed to stream workflow';
+    let detailedMessage: string | undefined;
     try {
       const errorData = await response.json();
-      errorMessage = errorData.error || errorMessage;
+      if (typeof errorData.error === 'string') {
+        errorMessage = errorData.error;
+      } else if (errorData.error?.message) {
+        errorMessage = errorData.error.message;
+      }
+      if (errorData.message && errorData.message !== errorMessage) {
+        detailedMessage = errorData.message;
+      }
     } catch {
       // ignore
     }
@@ -30,7 +38,7 @@ export async function* streamWorkflow(
     yield {
       type: 'error',
       workflowId: request.workflowId,
-      error: errorMessage,
+      error: detailedMessage ? `${errorMessage}\n${detailedMessage}` : errorMessage,
     };
     return;
   }

@@ -114,9 +114,7 @@ export default function ArenaPage() {
   const clearAllVotes = useVoteStore((state) => state.clearAllVotes);
   const isVoteSubmitting = useVoteStore((state) => state.isSubmitting);
 
-  // Input mode state for filtering models
   const [inputMode, setInputMode] = React.useState<InputMode>('default');
-  // Uploaded images state for submission
   const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
 
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
@@ -439,7 +437,7 @@ export default function ArenaPage() {
             const inputPrice = override?.inputPrice ?? model.pricing?.input;
             const outputPrice = override?.outputPrice ?? model.pricing?.output;
 
-            // Merge abilities from model definition and override
+            // Merge abilities
             const abilities = {
               ...model.abilities,
               ...override?.abilities,
@@ -536,7 +534,6 @@ export default function ArenaPage() {
 
   const displayModels = availableModels.length > 0 ? availableModels : computedModels;
 
-  // Filter models based on input mode
   const filteredDisplayModels = React.useMemo(() => {
     if (inputMode === 'default') {
       return displayModels;
@@ -550,11 +547,46 @@ export default function ArenaPage() {
     return displayModels.filter((model) => model.abilities?.[abilityKey] === true);
   }, [displayModels, inputMode]);
 
-  // Handle input mode change
-  const handleInputModeChange = React.useCallback((mode: InputMode, images: UploadedImage[]) => {
+  const handleInputModeChange = React.useCallback((mode: InputMode) => {
     setInputMode(mode);
-    setUploadedImages(images);
   }, []);
+
+  const handleAddImages = React.useCallback((newImages: UploadedImage[]) => {
+    setUploadedImages((prev) => [...prev, ...newImages]);
+  }, []);
+
+  const handleUpdateImage = React.useCallback((id: string, updates: Partial<UploadedImage>) => {
+    setUploadedImages((prev) => prev.map((img) => (img.id === id ? { ...img, ...updates } : img)));
+  }, []);
+
+  const handleRemoveImage = React.useCallback(
+    async (id: string) => {
+      const image = uploadedImages.find((img) => img.id === id);
+      if (!image) return;
+
+      if (image.fileId) {
+        try {
+          const { deleteFile } = await import('@/libs/file-upload-api');
+          await deleteFile(image.fileId);
+        } catch (error) {
+          console.error('Failed to delete image from storage:', error);
+          toast.error(t('Arena.image_delete_failed'));
+          throw error; // Re-throw to prevent UI removal
+        }
+      }
+
+      URL.revokeObjectURL(image.previewUrl);
+      setUploadedImages((prev) => prev.filter((img) => img.id !== id));
+    },
+    [uploadedImages, t],
+  );
+
+  const handleClearImages = React.useCallback(() => {
+    for (const img of uploadedImages) {
+      URL.revokeObjectURL(img.previewUrl);
+    }
+    setUploadedImages([]);
+  }, [uploadedImages]);
 
   const getKeyIdForModel = React.useCallback(
     (modelId: string): string | undefined => {
@@ -851,17 +883,14 @@ export default function ArenaPage() {
       return;
     }
 
-    // Use uploaded image URLs from storage
     let attachments: WorkflowImageAttachment[] | undefined;
     if (uploadedImages.length > 0) {
-      // Check if any images are still uploading
       const stillUploading = uploadedImages.some((img) => img.isUploading);
       if (stillUploading) {
         toast.error(t('Arena.images_still_uploading'));
         return;
       }
 
-      // Check if any images failed to upload
       const failedUploads = uploadedImages.filter((img) => img.uploadError);
       if (failedUploads.length > 0) {
         toast.error(t('Arena.image_upload_failed'), {
@@ -870,7 +899,6 @@ export default function ArenaPage() {
         return;
       }
 
-      // Use the URLs from storage (already URL or base64 based on LLM_IMAGE_BASE64 env)
       attachments = uploadedImages
         .filter((img) => img.url)
         .map((img) => ({
@@ -880,6 +908,10 @@ export default function ArenaPage() {
           filename: img.filename,
         }));
     }
+
+    setWorkflowGlobalPrompt('');
+    handleClearImages();
+    setInputMode('default');
 
     await startAllSyncedWorkflows(attachments);
     if (isNewConversationSubmit) {
@@ -894,10 +926,6 @@ export default function ArenaPage() {
         window.history.replaceState(null, '', `${basePath}/${convId}`);
       }
     }
-    setWorkflowGlobalPrompt('');
-    // Clear uploaded images after successful submission
-    setUploadedImages([]);
-    setInputMode('default');
   }, [
     workflowGlobalPrompt,
     comparisons,
@@ -910,6 +938,7 @@ export default function ArenaPage() {
     t,
     setWorkflowGlobalPrompt,
     uploadedImages,
+    handleClearImages,
   ]);
 
   const handleModelSelect = React.useCallback(
@@ -1279,7 +1308,6 @@ export default function ArenaPage() {
     };
   }, [cancelAllWorkflows]);
 
-  // Sync main content ready state for sidebar skeleton coordination
   React.useEffect(() => {
     const isLoadingConv =
       conversationId &&
@@ -1300,7 +1328,6 @@ export default function ArenaPage() {
     setMainContentReady,
   ]);
 
-  // Reset main content ready state on unmount
   React.useEffect(() => {
     return () => {
       setMainContentReady(false);
@@ -1448,6 +1475,10 @@ export default function ArenaPage() {
             onSubmit={handleSubmit}
             onStop={cancelAllWorkflows}
             isLoading={isAnyRunning}
+            uploadedImages={uploadedImages}
+            onAddImages={handleAddImages}
+            onUpdateImage={handleUpdateImage}
+            onRemoveImage={handleRemoveImage}
             onModeChange={handleInputModeChange}
             className="border-input"
           >

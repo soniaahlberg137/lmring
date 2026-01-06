@@ -178,46 +178,53 @@ export function ModeChip() {
 }
 
 export function ImagePreviews() {
-  const { uploadedImages, removeImage } = usePromptInput();
+  const { uploadedImages, removeImage, isRemovingImage } = usePromptInput();
 
   if (uploadedImages.length === 0) return null;
 
   return (
     <div className="flex flex-wrap gap-2 px-3 pt-3">
-      {uploadedImages.map((image) => (
-        <div key={image.id} className="relative group">
-          {/* biome-ignore lint/performance/noImgElement: Using blob URL from URL.createObjectURL which is not compatible with Next.js Image */}
-          <img
-            src={image.previewUrl}
-            alt={image.filename}
-            className={cn(
-              'h-16 w-16 rounded-lg object-cover border bg-muted',
-              image.isUploading && 'opacity-50',
-              image.uploadError && 'border-destructive',
+      {uploadedImages.map((image) => {
+        const isRemoving = isRemovingImage === image.id;
+        return (
+          <div key={image.id} className="relative group">
+            {/* biome-ignore lint/performance/noImgElement: Using blob URL from URL.createObjectURL which is not compatible with Next.js Image */}
+            <img
+              src={image.previewUrl}
+              alt={image.filename}
+              className={cn(
+                'h-16 w-16 rounded-lg object-cover border bg-muted',
+                (image.isUploading || isRemoving) && 'opacity-50',
+                image.uploadError && 'border-destructive',
+              )}
+            />
+            {image.isUploading && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-lg">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              </div>
             )}
-          />
-          {/* Upload progress overlay */}
-          {image.isUploading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-lg">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-            </div>
-          )}
-          {/* Error indicator */}
-          {image.uploadError && (
-            <div className="absolute inset-0 flex items-center justify-center bg-destructive/20 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-destructive" />
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => removeImage(image.id)}
-            className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-sm"
-            aria-label={`Remove ${image.filename}`}
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </div>
-      ))}
+            {isRemoving && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/50 rounded-lg">
+                <Loader2 className="h-5 w-5 animate-spin text-destructive" />
+              </div>
+            )}
+            {image.uploadError && !isRemoving && (
+              <div className="absolute inset-0 flex items-center justify-center bg-destructive/20 rounded-lg">
+                <AlertCircle className="h-5 w-5 text-destructive" />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => removeImage(image.id)}
+              disabled={isRemoving || image.isUploading}
+              className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity shadow-sm disabled:opacity-50"
+              aria-label={`Remove ${image.filename}`}
+            >
+              <X className="h-3 w-3" />
+            </button>
+          </div>
+        );
+      })}
     </div>
   );
 }
