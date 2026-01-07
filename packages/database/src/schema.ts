@@ -35,6 +35,15 @@ export interface ResponseAttachment {
   sizeBytes?: number;
 }
 
+// Message attachments (user-uploaded files)
+export interface MessageAttachment {
+  type: 'image' | 'audio' | 'video' | 'file';
+  fileId: string;
+  mimeType: string;
+  filename?: string;
+  sizeBytes?: number;
+}
+
 // Enums
 export const configSourceEnum = pgEnum('config_source', ['manual', 'cherry-studio', 'newapi']);
 export const roleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
@@ -241,6 +250,7 @@ export const messages = pgTable(
       .notNull(),
     role: roleEnum('role').notNull(),
     content: text('content').notNull(),
+    attachments: jsonb('attachments').$type<MessageAttachment[]>(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [

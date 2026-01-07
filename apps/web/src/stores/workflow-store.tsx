@@ -21,12 +21,27 @@ export interface LoadedConversationMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
+  attachments?: Array<{
+    type: 'image' | 'audio' | 'video' | 'file';
+    fileId: string;
+    mimeType: string;
+    filename?: string;
+    sizeBytes?: number;
+  }> | null;
   createdAt: string;
   responses?: Array<{
     id: string;
     modelName: string;
     providerName: string;
     responseContent: string;
+    attachments?: Array<{
+      type: 'image' | 'audio' | 'video';
+      key: string;
+      mimeType: string;
+      filename?: string;
+      sizeBytes?: number;
+      url?: string;
+    }> | null;
     tokensUsed?: number;
     responseTimeMs?: number;
     displayPosition?: number;
@@ -728,11 +743,25 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               const workflowMessageId = generateId();
               newMessageIdMap.set(msg.id, workflowMessageId);
 
+              // Convert DB attachments to FileAttachment format
+              // Note: URLs will be fetched on-demand by the UI component using fileId
+              const fileAttachments: FileAttachment[] | undefined = msg.attachments
+                ?.filter((att) => att.fileId)
+                .map((att) => ({
+                  type: 'file' as const,
+                  url: '', // URL will be fetched on-demand using fileId
+                  mediaType: att.mimeType,
+                  filename: att.filename || 'attachment',
+                  fileId: att.fileId, // Include fileId for URL fetching
+                }));
+
               const userMessage: WorkflowMessage = {
                 id: workflowMessageId,
                 role: 'user',
                 content: msg.content,
                 timestamp: new Date(msg.createdAt),
+                attachments:
+                  fileAttachments && fileAttachments.length > 0 ? fileAttachments : undefined,
               };
 
               for (const [workflowId, workflow] of newWorkflows) {

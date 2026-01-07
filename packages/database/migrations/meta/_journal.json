@@ -92,6 +92,13 @@
       "when": 1767830000000,
       "tag": "0012_add_model_response_attachments",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1767916400000,
+      "tag": "0013_add_message_attachments",
+      "breakpoints": true
     }
   ]
 }

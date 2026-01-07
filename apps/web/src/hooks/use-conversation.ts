@@ -17,6 +17,13 @@ export interface ConversationMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
+  attachments?: Array<{
+    type: 'image' | 'audio' | 'video' | 'file';
+    fileId: string;
+    mimeType: string;
+    filename?: string;
+    sizeBytes?: number;
+  }> | null;
   createdAt: string;
   responses?: ModelResponseData[];
 }
@@ -104,6 +111,13 @@ export function useConversation() {
       conversationId: string,
       role: 'user' | 'assistant' | 'system',
       content: string,
+      attachments?: Array<{
+        type: 'image' | 'audio' | 'video' | 'file';
+        fileId: string;
+        mimeType: string;
+        filename?: string;
+        sizeBytes?: number;
+      }>,
     ): Promise<ConversationMessage | null> => {
       setIsLoading(true);
       setError(null);
@@ -112,7 +126,7 @@ export function useConversation() {
         const response = await fetch(`/api/conversations/${conversationId}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role, content }),
+          body: JSON.stringify({ role, content, attachments }),
         });
 
         if (!response.ok) {

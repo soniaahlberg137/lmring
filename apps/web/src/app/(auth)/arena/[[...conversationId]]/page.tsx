@@ -26,6 +26,7 @@ import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
 import {
+  type MessageAttachmentForSave,
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
 } from '@/hooks/use-workflow-execution';
@@ -141,8 +142,12 @@ export default function ArenaPage() {
         const conversation = await createConversation(title);
         return conversation?.id ?? null;
       },
-      onSaveUserMessage: async (convId: string, content: string) => {
-        const message = await saveMessage(convId, 'user', content);
+      onSaveUserMessage: async (
+        convId: string,
+        content: string,
+        attachments?: MessageAttachmentForSave[],
+      ) => {
+        const message = await saveMessage(convId, 'user', content, attachments);
         return message?.id ?? null;
       },
       onSaveModelResponse: async (
@@ -242,6 +247,7 @@ export default function ArenaPage() {
         setConversationError(null);
         setVoteLoadingComplete(false);
       } else if (conversationId !== storedConversationId) {
+        comparisonWorkflowMap.current.clear();
         setConversationLoaded(false);
         setConversationError(null);
         setVoteLoadingComplete(false);
@@ -929,6 +935,7 @@ export default function ArenaPage() {
     }
 
     let attachments: WorkflowImageAttachment[] | undefined;
+    let dbAttachments: MessageAttachmentForSave[] | undefined;
     if (uploadedImages.length > 0) {
       const stillUploading = uploadedImages.some((img) => img.isUploading);
       if (stillUploading) {
@@ -952,13 +959,24 @@ export default function ArenaPage() {
           mediaType: img.file.type,
           filename: img.filename,
         }));
+
+      // Convert to DB attachment format for persistence
+      dbAttachments = uploadedImages
+        .filter((img) => img.fileId)
+        .map((img) => ({
+          type: 'image' as const,
+          fileId: img.fileId as string,
+          mimeType: img.file.type,
+          filename: img.filename,
+          sizeBytes: img.size,
+        }));
     }
 
     setWorkflowGlobalPrompt('');
     handleClearImages();
     setInputMode('default');
 
-    await startAllSyncedWorkflows(attachments);
+    await startAllSyncedWorkflows(attachments, dbAttachments);
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';

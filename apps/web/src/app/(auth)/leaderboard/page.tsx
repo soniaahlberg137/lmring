@@ -33,7 +33,7 @@ import {
   type ModelsAllParams,
   sortModels,
 } from '@/libs/zeroeval-api';
-import { type ModelWithArena, useLeaderboardStore } from '@/stores';
+import { type ModelWithArena, useArenaStore, useLeaderboardStore } from '@/stores';
 
 const PAGE_SIZE = 20;
 
@@ -44,6 +44,7 @@ export default function LeaderboardPage() {
   const getCachedData = useLeaderboardStore((state) => state.getCachedData);
   const setCachedData = useLeaderboardStore((state) => state.setCachedData);
   const getLastUpdated = useLeaderboardStore((state) => state.getLastUpdated);
+  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
   const [rawModels, setRawModels] = useState<ModelWithArena[]>([]);
   const [loading, setLoading] = useState(true);
@@ -173,6 +174,19 @@ export default function LeaderboardPage() {
   useEffect(() => {
     fetchData(category);
   }, [fetchData, category]);
+
+  // Manage mainContentReady state for sidebar
+  useEffect(() => {
+    if (!loading && !isInitialLoad) {
+      setMainContentReady(true);
+    }
+  }, [loading, isInitialLoad, setMainContentReady]);
+
+  useEffect(() => {
+    return () => {
+      setMainContentReady(false);
+    };
+  }, [setMainContentReady]);
 
   const filteredModels = rawModels;
 

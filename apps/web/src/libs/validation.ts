@@ -25,6 +25,14 @@ export const conversationSchema = z.object({
     .max(255, 'Title must be less than 255 characters'),
 });
 
+export const messageAttachmentSchema = z.object({
+  type: z.enum(['image', 'audio', 'video', 'file']),
+  fileId: z.uuid('Invalid file ID'),
+  mimeType: z.string().min(1).max(100),
+  filename: z.string().max(255).optional(),
+  sizeBytes: z.number().int().positive().optional(),
+});
+
 export const messageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
   content: z
@@ -32,6 +40,7 @@ export const messageSchema = z.object({
     .trim()
     .min(1, 'Content is required')
     .max(50000, 'Content must be less than 50000 characters'),
+  attachments: z.array(messageAttachmentSchema).max(10).optional(),
 });
 
 export const responseAttachmentSchema = z.object({
@@ -217,6 +226,7 @@ export const workflowStreamSchema = z.object({
 
 export type ConversationInput = z.infer<typeof conversationSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
+export type MessageAttachmentInput = z.infer<typeof messageAttachmentSchema>;
 export type ResponseAttachmentInput = z.infer<typeof responseAttachmentSchema>;
 export type ModelResponseInput = z.infer<typeof modelResponseSchema>;
 export type VoteInput = z.infer<typeof voteSchema>;

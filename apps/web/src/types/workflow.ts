@@ -14,6 +14,7 @@ export interface FileAttachment {
   url: string;
   mediaType: string;
   filename: string;
+  fileId?: string;
 }
 
 export interface WorkflowMessage {

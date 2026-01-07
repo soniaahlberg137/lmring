@@ -8,9 +8,21 @@ import type {
   WorkflowMetrics,
 } from '@/types/workflow';
 
+export interface MessageAttachmentForSave {
+  type: 'image' | 'audio' | 'video' | 'file';
+  fileId: string;
+  mimeType: string;
+  filename?: string;
+  sizeBytes?: number;
+}
+
 export interface WorkflowPersistenceCallbacks {
   onCreateConversation?: (title: string) => Promise<string | null>;
-  onSaveUserMessage?: (conversationId: string, content: string) => Promise<string | null>;
+  onSaveUserMessage?: (
+    conversationId: string,
+    content: string,
+    attachments?: MessageAttachmentForSave[],
+  ) => Promise<string | null>;
   onSaveModelResponse?: (
     workflowId: string,
     messageId: string,
@@ -47,6 +59,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     messageId: string;
   } | null> | null>(null);
   const pendingPromptRef = useRef<string>('');
+  const pendingAttachmentsRef = useRef<MessageAttachmentForSave[] | undefined>(undefined);
 
   const createConversationOnFirstChunk = useCallback(async (): Promise<{
     conversationId: string;
@@ -57,6 +70,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       const messageId = await persistenceCallbacks.onSaveUserMessage(
         existingConversationId,
         pendingPromptRef.current,
+        pendingAttachmentsRef.current,
       );
       if (messageId) {
         return { conversationId: existingConversationId, messageId };
@@ -76,7 +90,11 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
     let messageId: string | null = null;
     if (persistenceCallbacks.onSaveUserMessage) {
-      messageId = await persistenceCallbacks.onSaveUserMessage(conversationId, prompt);
+      messageId = await persistenceCallbacks.onSaveUserMessage(
+        conversationId,
+        prompt,
+        pendingAttachmentsRef.current,
+      );
     }
 
     persistenceCallbacks.onConversationCreated?.(conversationId, title);
@@ -322,7 +340,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
   );
 
   const startAllSyncedWorkflows = useCallback(
-    async (attachments?: WorkflowImageAttachment[]) => {
+    async (attachments?: WorkflowImageAttachment[], dbAttachments?: MessageAttachmentForSave[]) => {
       if (!globalPrompt.trim()) {
         console.warn('Empty global prompt');
         return;
@@ -341,12 +359,14 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
       conversationCreationPromiseRef.current = null;
       pendingPromptRef.current = globalPrompt;
+      pendingAttachmentsRef.current = dbAttachments;
 
       let existingDbMessageId: string | undefined;
       if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
         const messageId = await persistenceCallbacks.onSaveUserMessage(
           existingConversationId,
           globalPrompt,
+          dbAttachments,
         );
         if (messageId) {
           existingDbMessageId = messageId;
