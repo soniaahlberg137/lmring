@@ -33,6 +33,8 @@ export enum ModelProvider {
   Jina = 'jina',
   Search1API = 'search1api',
   Replicate = 'replicate',
+  Fal = 'fal',
+  XiaomiMiMo = 'xiaomimimo',
 
   // Chinese/Domestic Providers
   SiliconFlow = 'silicon',
@@ -99,6 +101,8 @@ export const ProviderDisplayNames: Record<ModelProvider, string> = {
   [ModelProvider.Jina]: 'Jina AI',
   [ModelProvider.Search1API]: 'Search1API',
   [ModelProvider.Replicate]: 'Replicate',
+  [ModelProvider.Fal]: 'fal',
+  [ModelProvider.XiaomiMiMo]: 'Xiaomi MiMo',
 
   // Chinese/Domestic Providers
   [ModelProvider.SiliconFlow]: 'SiliconFlow',

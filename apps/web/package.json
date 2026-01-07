@@ -27,6 +27,7 @@
     "@lmring/env": "workspace:*",
     "@lmring/i18n": "workspace:*",
     "@lmring/model-depot": "workspace:*",
+    "@lmring/storage": "workspace:*",
     "@lmring/ui": "workspace:*",
     "@lobehub/fluent-emoji": "^4.1.0",
     "@lobehub/icons": "^4.0.2",

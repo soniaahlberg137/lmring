@@ -1,4 +1,5 @@
 import { and, asc, db, eq } from '@lmring/database';
+import type { MessageAttachment, ResponseAttachment } from '@lmring/database/schema';
 import { conversations, messages, modelResponses } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
@@ -8,12 +9,14 @@ interface MessageWithResponses {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
+  attachments?: MessageAttachment[] | null;
   createdAt: Date;
   responses?: Array<{
     id: string;
     modelName: string;
     providerName: string;
     responseContent: string;
+    attachments?: ResponseAttachment[] | null;
     tokensUsed: number | null;
     responseTimeMs: number | null;
     displayPosition: number;
@@ -62,6 +65,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         modelName: string;
         providerName: string;
         responseContent: string;
+        attachments?: ResponseAttachment[] | null;
         tokensUsed: number | null;
         responseTimeMs: number | null;
         displayPosition: number;
@@ -78,6 +82,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
           modelName: modelResponses.modelName,
           providerName: modelResponses.providerName,
           responseContent: modelResponses.responseContent,
+          attachments: modelResponses.attachments,
           tokensUsed: modelResponses.tokensUsed,
           responseTimeMs: modelResponses.responseTimeMs,
           displayPosition: modelResponses.displayPosition,
@@ -97,6 +102,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
           modelName: modelResponses.modelName,
           providerName: modelResponses.providerName,
           responseContent: modelResponses.responseContent,
+          attachments: modelResponses.attachments,
           tokensUsed: modelResponses.tokensUsed,
           responseTimeMs: modelResponses.responseTimeMs,
           displayPosition: modelResponses.displayPosition,
@@ -116,6 +122,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
           modelName: response.modelName,
           providerName: response.providerName,
           responseContent: response.responseContent,
+          attachments: response.attachments,
           tokensUsed: response.tokensUsed,
           responseTimeMs: response.responseTimeMs,
           displayPosition: response.displayPosition,
@@ -129,6 +136,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       id: msg.id,
       role: msg.role,
       content: msg.content,
+      attachments: msg.attachments,
       createdAt: msg.createdAt,
       responses: responsesByMessageId.get(msg.id),
     }));

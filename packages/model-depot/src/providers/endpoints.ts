@@ -86,6 +86,9 @@ export const PROVIDER_ENDPOINTS: Record<string, EndpointConfig> = {
   search1api: {
     baseURL: 'https://api.search1api.com/v1',
   },
+  fal: {
+    baseURL: 'https://fal.run',
+  },
 
   // Chinese/Domestic Providers
   silicon: {
@@ -149,6 +152,9 @@ export const PROVIDER_ENDPOINTS: Record<string, EndpointConfig> = {
   },
   tencentcloud: {
     baseURL: 'https://api.lkeap.cloud.tencent.com/v1',
+  },
+  xiaomimimo: {
+    baseURL: 'https://api.xiaomimimo.com/v1',
   },
 
   // Local/Self-hosted

@@ -1,17 +1,28 @@
 import { useCallback, useRef } from 'react';
 import { buildWorkflowStreamRequest, streamWorkflow } from '@/libs/workflow-api';
 import { useWorkflowStore } from '@/stores/workflow-store';
-import type { ArenaWorkflow, WorkflowMetrics } from '@/types/workflow';
+import type {
+  ArenaWorkflow,
+  FileAttachment,
+  WorkflowImageAttachment,
+  WorkflowMetrics,
+} from '@/types/workflow';
 
-/**
- * Persistence callbacks for saving conversation data
- */
+export interface MessageAttachmentForSave {
+  type: 'image' | 'audio' | 'video' | 'file';
+  fileId: string;
+  mimeType: string;
+  filename?: string;
+  sizeBytes?: number;
+}
+
 export interface WorkflowPersistenceCallbacks {
-  /** Called when first message is sent to create a conversation */
   onCreateConversation?: (title: string) => Promise<string | null>;
-  /** Called to save a user message */
-  onSaveUserMessage?: (conversationId: string, content: string) => Promise<string | null>;
-  /** Called when a model response is complete */
+  onSaveUserMessage?: (
+    conversationId: string,
+    content: string,
+    attachments?: MessageAttachmentForSave[],
+  ) => Promise<string | null>;
   onSaveModelResponse?: (
     workflowId: string,
     messageId: string,
@@ -21,20 +32,9 @@ export interface WorkflowPersistenceCallbacks {
     tokensUsed?: number,
     responseTimeMs?: number,
   ) => Promise<void>;
-  /** Called when a conversation is created (for URL update and sidebar notification) */
   onConversationCreated?: (conversationId: string, title: string) => void;
 }
 
-/**
- * Hook for executing workflows with independent streaming
- *
- * Provides methods to:
- * - Start a workflow with an initial prompt
- * - Continue a workflow with a follow-up message
- * - Cancel a running workflow
- * - Retry a failed workflow
- * - Execute all synced workflows with the global prompt
- */
 export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceCallbacks) {
   const addUserMessage = useWorkflowStore((s) => s.addUserMessage);
   const startPendingResponse = useWorkflowStore((s) => s.startPendingResponse);
@@ -59,6 +59,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     messageId: string;
   } | null> | null>(null);
   const pendingPromptRef = useRef<string>('');
+  const pendingAttachmentsRef = useRef<MessageAttachmentForSave[] | undefined>(undefined);
 
   const createConversationOnFirstChunk = useCallback(async (): Promise<{
     conversationId: string;
@@ -69,6 +70,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       const messageId = await persistenceCallbacks.onSaveUserMessage(
         existingConversationId,
         pendingPromptRef.current,
+        pendingAttachmentsRef.current,
       );
       if (messageId) {
         return { conversationId: existingConversationId, messageId };
@@ -88,7 +90,11 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
     let messageId: string | null = null;
     if (persistenceCallbacks.onSaveUserMessage) {
-      messageId = await persistenceCallbacks.onSaveUserMessage(conversationId, prompt);
+      messageId = await persistenceCallbacks.onSaveUserMessage(
+        conversationId,
+        prompt,
+        pendingAttachmentsRef.current,
+      );
     }
 
     persistenceCallbacks.onConversationCreated?.(conversationId, title);
@@ -96,19 +102,27 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     return messageId ? { conversationId, messageId } : null;
   }, [getConversationId, setConversationId, persistenceCallbacks]);
 
-  /**
-   * Execute streaming for a single workflow
-   */
   const executeWorkflowStream = useCallback(
     async (
       workflow: ArenaWorkflow,
       prompt: string,
-      options?: { isNewConversation?: boolean; existingDbMessageId?: string },
+      options?: {
+        isNewConversation?: boolean;
+        existingDbMessageId?: string;
+        attachments?: WorkflowImageAttachment[];
+      },
     ) => {
       const { id, modelId, keyId, messages, config } = workflow;
-      const { isNewConversation = false, existingDbMessageId } = options || {};
+      const { isNewConversation = false, existingDbMessageId, attachments } = options || {};
 
-      addUserMessage(id, prompt);
+      const messageAttachments: FileAttachment[] | undefined = attachments?.map((att) => ({
+        type: 'file' as const,
+        url: att.data,
+        mediaType: att.mediaType,
+        filename: att.filename || 'image',
+      }));
+
+      addUserMessage(id, prompt, messageAttachments);
       startPendingResponse(id);
 
       const abortController = new AbortController();
@@ -119,13 +133,20 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
         { role: 'user' as const, content: prompt },
       ];
 
-      const request = buildWorkflowStreamRequest(id, modelId, keyId, allMessages, {
-        temperature: config.temperature,
-        maxTokens: config.maxTokens,
-        ...(config.topP != null && { topP: config.topP }),
-        ...(config.frequencyPenalty != null && { frequencyPenalty: config.frequencyPenalty }),
-        ...(config.presencePenalty != null && { presencePenalty: config.presencePenalty }),
-      });
+      const request = buildWorkflowStreamRequest(
+        id,
+        modelId,
+        keyId,
+        allMessages,
+        {
+          temperature: config.temperature,
+          maxTokens: config.maxTokens,
+          ...(config.topP != null && { topP: config.topP }),
+          ...(config.frequencyPenalty != null && { frequencyPenalty: config.frequencyPenalty }),
+          ...(config.presencePenalty != null && { presencePenalty: config.presencePenalty }),
+        },
+        attachments,
+      );
 
       let metrics: WorkflowMetrics | undefined;
       let finalContent = '';
@@ -204,9 +225,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     ],
   );
 
-  /**
-   * Start a workflow with an initial prompt
-   */
   const startWorkflow = useCallback(
     async (workflowId: string, prompt: string) => {
       const workflow = getWorkflow(workflowId);
@@ -230,9 +248,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getWorkflow, executeWorkflowStream],
   );
 
-  /**
-   * Continue a workflow with a follow-up message
-   */
   const continueWorkflow = useCallback(
     async (workflowId: string, followUpPrompt: string) => {
       const workflow = getWorkflow(workflowId);
@@ -256,9 +271,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getWorkflow, executeWorkflowStream],
   );
 
-  /**
-   * Cancel a running workflow
-   */
   const cancelWorkflow = useCallback(
     (workflowId: string) => {
       const controller = getAbortController(workflowId);
@@ -271,9 +283,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getAbortController, setAbortController, setWorkflowStatus],
   );
 
-  /**
-   * Retry a failed or cancelled workflow
-   */
   const retryWorkflow = useCallback(
     async (workflowId: string) => {
       const workflow = getWorkflow(workflowId);
@@ -303,10 +312,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getWorkflow, clearWorkflowHistory, executeWorkflowStream],
   );
 
-  /**
-   * Regenerate the last assistant response for a workflow
-   * Removes the last assistant message and re-executes with the same user message
-   */
   const regenerateLastResponse = useCallback(
     async (workflowId: string) => {
       const workflow = getWorkflow(workflowId);
@@ -334,61 +339,60 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getWorkflow, removeLastAssistantMessage, executeWorkflowStream],
   );
 
-  /**
-   * Start all synced workflows with the global prompt
-   * Conversation is created lazily when the first model returns content
-   */
-  const startAllSyncedWorkflows = useCallback(async () => {
-    if (!globalPrompt.trim()) {
-      console.warn('Empty global prompt');
-      return;
-    }
-
-    const syncedWorkflows = getSyncedWorkflows();
-    const runnableWorkflows = syncedWorkflows.filter((w) => w.status !== 'running');
-
-    if (runnableWorkflows.length === 0) {
-      console.warn('No runnable synced workflows');
-      return;
-    }
-
-    const existingConversationId = getConversationId();
-    const isNewConversation = !existingConversationId;
-
-    conversationCreationPromiseRef.current = null;
-    pendingPromptRef.current = globalPrompt;
-
-    let existingDbMessageId: string | undefined;
-    if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
-      const messageId = await persistenceCallbacks.onSaveUserMessage(
-        existingConversationId,
-        globalPrompt,
-      );
-      if (messageId) {
-        existingDbMessageId = messageId;
-        currentDbMessageIdRef.current = messageId;
+  const startAllSyncedWorkflows = useCallback(
+    async (attachments?: WorkflowImageAttachment[], dbAttachments?: MessageAttachmentForSave[]) => {
+      if (!globalPrompt.trim()) {
+        console.warn('Empty global prompt');
+        return;
       }
-    }
 
-    await Promise.all(
-      runnableWorkflows.map((w) =>
-        executeWorkflowStream(w, globalPrompt, {
-          isNewConversation,
-          existingDbMessageId,
-        }),
-      ),
-    );
-  }, [
-    globalPrompt,
-    getSyncedWorkflows,
-    executeWorkflowStream,
-    persistenceCallbacks,
-    getConversationId,
-  ]);
+      const syncedWorkflows = getSyncedWorkflows();
+      const runnableWorkflows = syncedWorkflows.filter((w) => w.status !== 'running');
 
-  /**
-   * Continue all synced workflows with a follow-up prompt
-   */
+      if (runnableWorkflows.length === 0) {
+        console.warn('No runnable synced workflows');
+        return;
+      }
+
+      const existingConversationId = getConversationId();
+      const isNewConversation = !existingConversationId;
+
+      conversationCreationPromiseRef.current = null;
+      pendingPromptRef.current = globalPrompt;
+      pendingAttachmentsRef.current = dbAttachments;
+
+      let existingDbMessageId: string | undefined;
+      if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
+        const messageId = await persistenceCallbacks.onSaveUserMessage(
+          existingConversationId,
+          globalPrompt,
+          dbAttachments,
+        );
+        if (messageId) {
+          existingDbMessageId = messageId;
+          currentDbMessageIdRef.current = messageId;
+        }
+      }
+
+      await Promise.all(
+        runnableWorkflows.map((w) =>
+          executeWorkflowStream(w, globalPrompt, {
+            isNewConversation,
+            existingDbMessageId,
+            attachments,
+          }),
+        ),
+      );
+    },
+    [
+      globalPrompt,
+      getSyncedWorkflows,
+      executeWorkflowStream,
+      persistenceCallbacks,
+      getConversationId,
+    ],
+  );
+
   const continueAllSyncedWorkflows = useCallback(
     async (followUpPrompt: string) => {
       if (!followUpPrompt.trim()) {
@@ -409,9 +413,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [getSyncedWorkflows, executeWorkflowStream],
   );
 
-  /**
-   * Cancel all running workflows
-   */
   const cancelAllWorkflows = useCallback(() => {
     const syncedWorkflows = getSyncedWorkflows();
     const runningWorkflows = syncedWorkflows.filter((w) => w.status === 'running');

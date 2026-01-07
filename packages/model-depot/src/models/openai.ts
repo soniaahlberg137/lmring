@@ -13,6 +13,66 @@ import type {
 
 const openaiChatModels: ChatModelCard[] = [
   {
+    id: 'gpt-5.2',
+    displayName: 'GPT-5.2',
+    description: 'GPT-5.2 是针对编码和 agent 工作流优化的旗舰模型，具备更强的推理和长上下文性能。',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 1.75,
+      output: 14,
+      cachedInput: 0.175,
+    },
+    releasedAt: '2025-12-11',
+  },
+  {
+    id: 'gpt-5.2-pro',
+    displayName: 'GPT-5.2 pro',
+    description: 'GPT-5.2 pro 更智能、更精确，适合复杂问题和多轮长推理。',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    pricing: {
+      input: 21,
+      output: 168,
+    },
+    releasedAt: '2025-12-11',
+  },
+  {
+    id: 'gpt-5.2-chat-latest',
+    displayName: 'GPT-5.2 Chat',
+    description: 'GPT-5.2 Chat 是 ChatGPT 变体，用于最新的对话改进。',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 16_384,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      vision: true,
+    },
+    pricing: {
+      input: 1.75,
+      output: 14,
+      cachedInput: 0.175,
+    },
+    releasedAt: '2025-12-11',
+  },
+  {
     id: 'gpt-5.1',
     displayName: 'GPT-5.1',
     description: 'GPT-5.1 针对编码和 agent 任务优化的旗舰模型，支持可配置的推理强度与更长上下文。',
@@ -22,7 +82,6 @@ const openaiChatModels: ChatModelCard[] = [
     enabled: true,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,
@@ -62,7 +121,6 @@ const openaiChatModels: ChatModelCard[] = [
     maxOutput: 128_000,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,
@@ -83,7 +141,6 @@ const openaiChatModels: ChatModelCard[] = [
     maxOutput: 128_000,
     abilities: {
       functionCall: true,
-      imageOutput: true,
       reasoning: true,
       search: true,
       vision: true,
