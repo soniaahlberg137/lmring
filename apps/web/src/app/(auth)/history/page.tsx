@@ -23,6 +23,7 @@ import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { type ConversationData, useConversation, type VoteResult } from '@/hooks/use-conversation';
 import { useTranslations } from '@/hooks/use-translations';
+import { useArenaStore } from '@/stores';
 
 export default function HistoryPage() {
   const t = useTranslations();
@@ -31,16 +32,22 @@ export default function HistoryPage() {
   const [conversations, setConversations] = React.useState<ConversationData[]>([]);
   const [loaded, setLoaded] = React.useState(false);
   const [conversationToDelete, setConversationToDelete] = React.useState<string | null>(null);
+  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
   React.useEffect(() => {
     const loadConversations = async () => {
       const data = await getConversationsWithModels(50, 0);
       setConversations(data);
       setLoaded(true);
+      setMainContentReady(true);
     };
 
     loadConversations();
-  }, [getConversationsWithModels]);
+
+    return () => {
+      setMainContentReady(false);
+    };
+  }, [getConversationsWithModels, setMainContentReady]);
 
   const handleShare = async (e: React.MouseEvent, conversationId: string) => {
     e.preventDefault();
