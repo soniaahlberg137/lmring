@@ -394,8 +394,8 @@ export function CTASection({
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          {primaryAction}
           {secondaryAction}
+          {primaryAction}
         </motion.div>
       </div>
     </AnimatedSection>
