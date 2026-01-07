@@ -43,6 +43,10 @@ export async function GET(request: Request, { params }: RouteParams) {
       });
     }
 
+    // NOTE: Signed URLs expire after 1 hour (3600 seconds).
+    // For long-running conversations, URLs should be re-fetched when displaying
+    // historical messages. The current architecture assumes URLs are fetched
+    // on-demand when displaying content, which naturally refreshes them.
     const url = await storage.createDownloadUrl(fileRecord.storagePath, {
       expiresIn: 3600,
     });

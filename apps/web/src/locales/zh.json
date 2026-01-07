@@ -109,6 +109,8 @@
   "Arena.images_still_uploading": "请等待图片上传完成。",
   "Arena.image_upload_failed": "图片上传失败",
   "Arena.image_delete_failed": "图片删除失败",
+  "Arena.image_delete_retry_option": "删除失败。您可以强制移除该图片。",
+  "Arena.force_remove": "强制移除",
   "Settings.title": "设置",
   "Settings.description": "偏好和模型设置。",
   "Settings.powered_by": "由 {name} 支持",

@@ -21,6 +21,7 @@ interface PromptInputContextValue {
   addImages: (files: File[]) => void;
   removeImage: (id: string) => void;
   isRemovingImage: string | null;
+  waitForUploads: () => Promise<void>;
 }
 
 const PromptInputContext = React.createContext<PromptInputContextValue | undefined>(undefined);
@@ -34,6 +35,34 @@ export function usePromptInput() {
 }
 
 const SUBMIT_DEBOUNCE_MS = 500;
+const UPLOAD_CONCURRENCY_LIMIT = 3;
+
+function createConcurrencyLimiter(limit: number) {
+  let running = 0;
+  const queue: Array<() => void> = [];
+
+  const next = () => {
+    if (queue.length > 0 && running < limit) {
+      running++;
+      const resolve = queue.shift();
+      resolve?.();
+    }
+  };
+
+  return async <T,>(fn: () => Promise<T>): Promise<T> => {
+    await new Promise<void>((resolve) => {
+      queue.push(resolve);
+      next();
+    });
+
+    try {
+      return await fn();
+    } finally {
+      running--;
+      next();
+    }
+  };
+}
 
 interface PromptInputProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSubmit'> {
@@ -68,6 +97,8 @@ export function PromptInput({
 }: PromptInputProps) {
   const t = useTranslations();
   const lastSubmitTimeRef = React.useRef<number>(0);
+  const uploadPromisesRef = React.useRef<Map<string, Promise<void>>>(new Map());
+  const uploadLimiterRef = React.useRef(createConcurrencyLimiter(UPLOAD_CONCURRENCY_LIMIT));
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [mode, setModeState] = React.useState<InputMode>('default');
   const [isDragging, setIsDragging] = React.useState(false);
@@ -133,26 +164,43 @@ export function PromptInput({
       }
 
       const { uploadFile } = await import('@/libs/file-upload-api');
+      const limiter = uploadLimiterRef.current;
 
-      for (const img of newImages) {
-        try {
-          const result = await uploadFile(img.file);
-          onUpdateImage(img.id, {
-            fileId: result.fileId,
-            url: result.url,
-            isUploading: false,
+      // Upload with concurrency limit and Promise tracking
+      await Promise.all(
+        newImages.map((img) => {
+          const uploadPromise = limiter(async () => {
+            try {
+              const result = await uploadFile(img.file);
+              onUpdateImage(img.id, {
+                fileId: result.fileId,
+                url: result.url,
+                isUploading: false,
+              });
+            } catch (error) {
+              console.error('Failed to upload image:', error);
+              onUpdateImage(img.id, {
+                isUploading: false,
+                uploadError: error instanceof Error ? error.message : 'Upload failed',
+              });
+            } finally {
+              uploadPromisesRef.current.delete(img.id);
+            }
           });
-        } catch (error) {
-          console.error('Failed to upload image:', error);
-          onUpdateImage(img.id, {
-            isUploading: false,
-            uploadError: error instanceof Error ? error.message : 'Upload failed',
-          });
-        }
-      }
+          uploadPromisesRef.current.set(img.id, uploadPromise);
+          return uploadPromise;
+        }),
+      );
     },
     [uploadedImages.length, onAddImages, onUpdateImage],
   );
+
+  const waitForUploads = React.useCallback(async () => {
+    const promises = Array.from(uploadPromisesRef.current.values());
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+  }, []);
 
   const removeImage = React.useCallback(
     async (id: string) => {
@@ -218,6 +266,7 @@ export function PromptInput({
       addImages,
       removeImage,
       isRemovingImage,
+      waitForUploads,
     }),
     [
       value,
@@ -233,6 +282,7 @@ export function PromptInput({
       addImages,
       removeImage,
       isRemovingImage,
+      waitForUploads,
     ],
   );
 

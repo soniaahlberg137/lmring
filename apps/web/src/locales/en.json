@@ -109,6 +109,8 @@
   "Arena.images_still_uploading": "Please wait for images to finish uploading.",
   "Arena.image_upload_failed": "Image upload failed",
   "Arena.image_delete_failed": "Failed to delete image",
+  "Arena.image_delete_retry_option": "Delete failed. You can force remove the image from the list.",
+  "Arena.force_remove": "Force Remove",
   "Settings.title": "Settings",
   "Settings.description": "Preferences and model settings.",
   "Settings.powered_by": "Powered by {name}",

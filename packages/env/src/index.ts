@@ -1,6 +1,13 @@
 import { createEnv } from '@t3-oss/env-nextjs';
 import * as z from 'zod';
 
+// Compile-time constants for file uploads (not environment variables)
+export const FILE_UPLOAD_CONFIG = {
+  MAX_IMAGE_SIZE_MB: 10,
+  MAX_IMAGE_SIZE_BYTES: 10 * 1024 * 1024,
+  MAX_IMAGES: 10,
+} as const;
+
 export const env = createEnv({
   server: {
     ARCJET_KEY: z.string().startsWith('ajkey_').or(z.literal('')).optional(),

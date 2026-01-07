@@ -49,6 +49,17 @@ export function detectBase64Media(content: string): DetectedMedia[] {
 
 /**
  * Convert base64 data URL to File object
+ *
+ * PERFORMANCE NOTE: This function creates multiple memory copies:
+ * 1. The original base64 string
+ * 2. The decoded binary string from atob()
+ * 3. The ArrayBuffer
+ * 4. The Uint8Array view
+ * 5. The final File blob
+ *
+ * For large files (>5MB), consider server-side processing to avoid
+ * client memory pressure. Files larger than ~50MB may cause memory
+ * issues on mobile devices or low-memory environments.
  */
 export function base64ToFile(dataUrl: string, filename: string): File {
   const [header, base64] = dataUrl.split(',');

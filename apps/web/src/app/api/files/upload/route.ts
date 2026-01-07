@@ -1,23 +1,39 @@
+import { tokenBucket } from '@arcjet/next';
 import { db, eq } from '@lmring/database';
 import { files } from '@lmring/database/schema';
+import { FILE_UPLOAD_CONFIG } from '@lmring/env';
 import { createStorageService } from '@lmring/storage';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
+import baseAj from '@/libs/Arcjet';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
+
+const aj = baseAj.withRule(
+  tokenBucket({
+    mode: 'LIVE',
+    refillRate: 10, // 10 uploads per minute
+    interval: '1m',
+    capacity: 20, // burst of 20
+  }),
+);
 
 const uploadRequestSchema = z.object({
   filename: z.string().min(1).max(255),
   mimeType: z.string().min(1).max(100),
-  sizeBytes: z
-    .number()
-    .int()
-    .positive()
-    .max(10 * 1024 * 1024),
+  sizeBytes: z.number().int().positive().max(FILE_UPLOAD_CONFIG.MAX_IMAGE_SIZE_BYTES),
 });
 
 export async function POST(request: Request) {
   try {
+    const decision = await aj.protect(request, { requested: 1 });
+    if (decision.isDenied()) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        { status: 429 },
+      );
+    }
+
     const session = await auth.api.getSession({
       headers: request.headers,
     });

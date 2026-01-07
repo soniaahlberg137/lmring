@@ -117,6 +117,7 @@ export default function ArenaPage() {
 
   const [inputMode, setInputMode] = React.useState<InputMode>('default');
   const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
+  const pendingFileIdsRef = React.useRef<Set<string>>(new Set());
 
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
     string | undefined
@@ -202,6 +203,25 @@ export default function ArenaPage() {
       loadApiKeys();
     }
   }, [apiKeysLoaded, loadApiKeys]);
+
+  // Track uploaded file IDs for cleanup
+  React.useEffect(() => {
+    for (const img of uploadedImages) {
+      if (img.fileId && !img.uploadError) {
+        pendingFileIdsRef.current.add(img.fileId);
+      }
+    }
+  }, [uploadedImages]);
+
+  // Cleanup orphaned files on unmount
+  React.useEffect(() => {
+    return () => {
+      const fileIdsToCleanup = Array.from(pendingFileIdsRef.current);
+      if (fileIdsToCleanup.length > 0) {
+        navigator.sendBeacon('/api/files/cleanup', JSON.stringify({ fileIds: fileIdsToCleanup }));
+      }
+    };
+  }, []);
 
   React.useEffect(() => {
     if (conversationId !== currentUrlConversationId) {
@@ -564,18 +584,35 @@ export default function ArenaPage() {
   }, []);
 
   const handleRemoveImage = React.useCallback(
-    async (id: string) => {
+    async (id: string, forceRemove = false) => {
       const image = uploadedImages.find((img) => img.id === id);
       if (!image) return;
 
-      if (image.fileId) {
-        try {
-          const { deleteFile } = await import('@/libs/file-upload-api');
-          await deleteFile(image.fileId);
-        } catch (error) {
-          console.error('Failed to delete image from storage:', error);
-          toast.error(t('Arena.image_delete_failed'));
-          throw error; // Re-throw to prevent UI removal
+      if (image.fileId && !forceRemove) {
+        const { deleteFileWithRetry } = await import('@/libs/file-upload-api');
+        const result = await deleteFileWithRetry(image.fileId);
+
+        if (!result.success) {
+          console.error('Failed to delete image from storage:', result.error);
+          setUploadedImages((prev) =>
+            prev.map((img) =>
+              img.id === id
+                ? {
+                    ...img,
+                    deleteError: result.error,
+                    deleteRetryCount: (img.deleteRetryCount ?? 0) + 1,
+                  }
+                : img,
+            ),
+          );
+          toast.error(t('Arena.image_delete_failed'), {
+            description: t('Arena.image_delete_retry_option'),
+            action: {
+              label: t('Arena.force_remove'),
+              onClick: () => handleRemoveImage(id, true),
+            },
+          });
+          return;
         }
       }
 
@@ -588,6 +625,10 @@ export default function ArenaPage() {
   const handleClearImages = React.useCallback(() => {
     for (const img of uploadedImages) {
       URL.revokeObjectURL(img.previewUrl);
+      // Clear from pending since this is a successful submission
+      if (img.fileId) {
+        pendingFileIdsRef.current.delete(img.fileId);
+      }
     }
     setUploadedImages([]);
   }, [uploadedImages]);

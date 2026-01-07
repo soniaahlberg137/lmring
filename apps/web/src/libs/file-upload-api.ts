@@ -82,3 +82,25 @@ export async function deleteFile(fileId: string): Promise<void> {
     throw new Error(error.error || 'Failed to delete file');
   }
 }
+
+export async function deleteFileWithRetry(
+  fileId: string,
+  maxRetries = 3,
+): Promise<{ success: boolean; error?: string }> {
+  let lastError: Error | null = null;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await deleteFile(fileId);
+      return { success: true };
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      // Exponential backoff: 500ms, 1000ms, 2000ms
+      if (i < maxRetries - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 2 ** i * 500));
+      }
+    }
+  }
+
+  return { success: false, error: lastError?.message };
+}
