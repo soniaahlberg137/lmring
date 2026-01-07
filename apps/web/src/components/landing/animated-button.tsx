@@ -32,7 +32,7 @@ export function AnimatedButton({
           'group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-8 text-sm font-medium transition-all duration-300',
           isPrimary
             ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30'
-            : 'border border-border/60 bg-background/50 text-foreground backdrop-blur-sm hover:border-border hover:bg-accent/50',
+            : 'border border-white/20 bg-white text-slate-900 hover:bg-slate-100',
           className,
         )}
         {...props}
@@ -54,11 +54,8 @@ export function AnimatedButton({
         {/* Secondary button effects */}
         {!isPrimary && (
           <>
-            {/* Hover gradient */}
-            <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-
-            {/* Border glow */}
-            <span className="absolute -inset-px rounded-full bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 opacity-0 blur-sm transition-opacity duration-300 group-hover:opacity-60" />
+            {/* Subtle shadow on hover */}
+            <span className="absolute inset-0 rounded-full opacity-0 shadow-lg shadow-slate-900/10 transition-opacity duration-300 group-hover:opacity-100" />
           </>
         )}
 
@@ -135,7 +132,7 @@ export function RainbowButton({ children, className, ...props }: RainbowButtonPr
     >
       <Link
         className={cn(
-          'group relative inline-flex h-12 animate-rainbow cursor-pointer items-center justify-center rounded-xl border-0 bg-[length:200%] px-8 py-2 font-medium transition-colors [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:calc(0.08*1rem)_solid_transparent]',
+          'group relative inline-flex h-12 animate-rainbow cursor-pointer items-center justify-center rounded-full border-0 bg-[length:200%] px-8 py-2 font-medium transition-colors [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:calc(0.08*1rem)_solid_transparent]',
           // Rainbow gradient colors - dark inner background
           'bg-[linear-gradient(#121213,#121213),linear-gradient(#121213_50%,rgba(18,18,19,0.6)_80%,rgba(18,18,19,0)),linear-gradient(90deg,hsl(0,100%,63%),hsl(90,100%,63%),hsl(180,100%,63%),hsl(270,100%,63%),hsl(360,100%,63%))]',
           // Glow effect

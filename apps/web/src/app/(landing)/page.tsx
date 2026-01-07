@@ -37,22 +37,16 @@ export default async function Index(props: IIndexProps) {
     <div className="relative min-h-screen">
       <WebGLBackground />
 
-      <div className="relative z-10 flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col">
         <AnimatedHero
           title={t('Index.title')}
           description={t('Index.description')}
-          badge={
-            <span className="inline-flex items-center gap-2 rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-300">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-indigo-400" />
-              AI Model Arena
-            </span>
-          }
           actions={
             <>
-              <RainbowButton href="/sign-up/">{t('Index.get_started')}</RainbowButton>
               <AnimatedButton href="/arena/" variant="secondary">
                 {t('Index.view_arena')}
               </AnimatedButton>
+              <RainbowButton href="/sign-up/">{t('Index.get_started')}</RainbowButton>
             </>
           }
         />
