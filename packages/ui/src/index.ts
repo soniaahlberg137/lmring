@@ -105,3 +105,4 @@ export {
   ProviderSidebarSkeleton,
   ModelCardSkeleton,
 } from './components/skeletons';
+export { FloatingCard, type FloatingCardProps } from './components/floating-card';
