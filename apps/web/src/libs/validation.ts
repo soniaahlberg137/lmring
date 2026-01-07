@@ -25,6 +25,14 @@ export const conversationSchema = z.object({
     .max(255, 'Title must be less than 255 characters'),
 });
 
+export const messageAttachmentSchema = z.object({
+  type: z.enum(['image', 'audio', 'video', 'file']),
+  fileId: z.uuid('Invalid file ID'),
+  mimeType: z.string().min(1).max(100),
+  filename: z.string().max(255).optional(),
+  sizeBytes: z.number().int().positive().optional(),
+});
+
 export const messageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
   content: z
@@ -32,6 +40,15 @@ export const messageSchema = z.object({
     .trim()
     .min(1, 'Content is required')
     .max(50000, 'Content must be less than 50000 characters'),
+  attachments: z.array(messageAttachmentSchema).max(10).optional(),
+});
+
+export const responseAttachmentSchema = z.object({
+  type: z.enum(['image', 'audio', 'video']),
+  key: z.string().min(1).max(500),
+  mimeType: z.string().min(1).max(100),
+  filename: z.string().max(255).optional(),
+  sizeBytes: z.number().int().positive().optional(),
 });
 
 export const modelResponseSchema = z.object({
@@ -39,6 +56,7 @@ export const modelResponseSchema = z.object({
   modelName: z.string().min(1).max(100),
   providerName: z.string().min(1).max(100),
   responseContent: z.string().trim().min(1).max(50000),
+  attachments: z.array(responseAttachmentSchema).max(20).optional(),
   tokensUsed: z.number().int().min(0).max(1000000).optional(),
   responseTimeMs: z.number().int().min(0).max(3600000).optional(),
   displayPosition: z.number().int().min(0).max(10).optional(),
@@ -50,7 +68,6 @@ export const voteSchema = z.object({
   voteType: z.enum(['like', 'dislike', 'neutral']),
 });
 
-// Comparison vote schema for the new voting system
 export const comparisonVoteSchema = z
   .object({
     messageId: z.uuid('Invalid message ID'),
@@ -128,7 +145,6 @@ export const customModelSchema = z.object({
   displayName: z.string().max(200).optional(),
 });
 
-// Schema for model abilities
 export const modelAbilitiesSchema = z.object({
   files: z.boolean().optional(),
   functionCall: z.boolean().optional(),
@@ -140,7 +156,6 @@ export const modelAbilitiesSchema = z.object({
   vision: z.boolean().optional(),
 });
 
-// Schema for creating/updating model override (for default models)
 export const modelOverrideSchema = z.object({
   modelId: z.string().min(1).max(200),
   displayName: z.string().max(200).optional(),
@@ -152,7 +167,6 @@ export const modelOverrideSchema = z.object({
   outputPrice: z.number().min(0).max(1000).optional(),
 });
 
-// Schema for updating custom model (full update)
 export const customModelUpdateSchema = z.object({
   displayName: z.string().max(200).optional(),
   groupName: z.string().max(100).optional(),
@@ -174,10 +188,13 @@ export const shareSchema = z.object({
   expiresInDays: z.number().int().min(1).max(365).optional(),
 });
 
-/**
- * Schema for single workflow stream request
- * Used by /api/workflow/stream endpoint
- */
+export const imageAttachmentSchema = z.object({
+  type: z.literal('image'),
+  data: z.string().min(1),
+  mediaType: z.string().min(1).max(100),
+  filename: z.string().max(255).optional(),
+});
+
 export const workflowStreamSchema = z.object({
   workflowId: z.uuid('Invalid workflow ID'),
   modelId: z
@@ -204,10 +221,13 @@ export const workflowStreamSchema = z.object({
     frequencyPenalty: z.number().min(-2).max(2).optional(),
     presencePenalty: z.number().min(-2).max(2).optional(),
   }),
+  attachments: z.array(imageAttachmentSchema).max(10).optional(),
 });
 
 export type ConversationInput = z.infer<typeof conversationSchema>;
 export type MessageInput = z.infer<typeof messageSchema>;
+export type MessageAttachmentInput = z.infer<typeof messageAttachmentSchema>;
+export type ResponseAttachmentInput = z.infer<typeof responseAttachmentSchema>;
 export type ModelResponseInput = z.infer<typeof modelResponseSchema>;
 export type VoteInput = z.infer<typeof voteSchema>;
 export type ComparisonVoteInput = z.infer<typeof comparisonVoteSchema>;
@@ -218,6 +238,7 @@ export type ModelEnableInput = z.infer<typeof modelEnableSchema>;
 export type CustomModelInput = z.infer<typeof customModelSchema>;
 export type UserPreferencesInput = z.infer<typeof userPreferencesSchema>;
 export type ShareInput = z.infer<typeof shareSchema>;
+export type ImageAttachmentInput = z.infer<typeof imageAttachmentSchema>;
 export type WorkflowStreamInput = z.infer<typeof workflowStreamSchema>;
 export type ModelAbilitiesInput = z.infer<typeof modelAbilitiesSchema>;
 export type ModelOverrideInput = z.infer<typeof modelOverrideSchema>;

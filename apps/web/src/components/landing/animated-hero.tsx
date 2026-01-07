@@ -1,11 +1,8 @@
 'use client';
 
-import { cn } from '@lmring/ui';
 import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion';
 import type { MouseEvent, ReactNode } from 'react';
 import { useCallback, useRef } from 'react';
-
-import { ProviderIcon } from '../arena/provider-icon';
 
 type AnimatedHeroProps = {
   title: ReactNode;
@@ -56,52 +53,6 @@ const titleVariants = {
     },
   },
 };
-
-// Floating model cards - softer styling
-function FloatingModelCard({
-  name,
-  provider,
-  providerId,
-  delay,
-  className,
-}: {
-  name: string;
-  provider: string;
-  providerId: string;
-  delay: number;
-  className?: string;
-}) {
-  return (
-    <motion.div
-      className={cn(
-        'absolute rounded-xl border border-slate-600/30 bg-slate-800/60 px-4 py-3 backdrop-blur-md',
-        'shadow-lg shadow-slate-900/20',
-        className,
-      )}
-      initial={{ opacity: 0, scale: 0.8, y: 20 }}
-      animate={{
-        opacity: [0, 1, 1, 1],
-        scale: [0.8, 1, 1, 1],
-        y: [20, 0, -10, 0],
-      }}
-      transition={{
-        duration: 4,
-        delay,
-        repeat: Number.POSITIVE_INFINITY,
-        repeatDelay: 2,
-        ease: 'easeInOut',
-      }}
-    >
-      <div className="flex items-center gap-3">
-        <ProviderIcon providerId={providerId} size={32} type="avatar" />
-        <div>
-          <p className="text-sm font-semibold text-slate-100">{name}</p>
-          <p className="text-xs text-slate-400">{provider}</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
 
 // Glowing orbs - softer colors
 function InteractiveOrbs() {
@@ -160,40 +111,9 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
   return (
     <section ref={containerRef} className="relative flex min-h-screen w-full flex-col">
       <InteractiveOrbs />
-
-      {/* Floating model cards */}
-      <FloatingModelCard
-        name="GPT-5.2"
-        provider="OpenAI"
-        providerId="openai"
-        delay={1}
-        className="left-[5%] top-[20%] hidden lg:block"
-      />
-      <FloatingModelCard
-        name="Claude 4.5"
-        provider="Anthropic"
-        providerId="anthropic"
-        delay={1.5}
-        className="right-[8%] top-[25%] hidden lg:block"
-      />
-      <FloatingModelCard
-        name="Gemini 3 Pro"
-        provider="Google"
-        providerId="google"
-        delay={2}
-        className="left-[10%] bottom-[30%] hidden lg:block"
-      />
-      <FloatingModelCard
-        name="Llama 4"
-        provider="Meta"
-        providerId="meta"
-        delay={2.5}
-        className="right-[5%] bottom-[35%] hidden lg:block"
-      />
-
       {/* Main content with parallax */}
       <motion.div
-        className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 pt-20"
+        className="relative z-10 flex flex-1 flex-col items-center justify-center px-4"
         style={{ y, opacity }}
       >
         <motion.div
@@ -271,7 +191,7 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
           <span className="text-xs uppercase tracking-widest text-slate-500">Scroll</span>
           <div className="h-10 w-6 rounded-full border border-slate-600/50 p-1">
             <motion.div
-              className="h-2 w-full rounded-full bg-slate-400"
+              className="h-2 w-full rounded-full bg-slate-400/60"
               animate={{ y: [0, 16, 0] }}
               transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }}
             />

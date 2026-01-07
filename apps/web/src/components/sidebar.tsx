@@ -75,6 +75,7 @@ export function Sidebar({ user }: SidebarProps) {
 
   const availableModels = useArenaStore(arenaSelectors.availableModels);
   const resetComparisons = useArenaStore((state) => state.resetComparisons);
+  const mainContentReady = useArenaStore(arenaSelectors.mainContentReady);
 
   const currentPath = pathname;
 
@@ -248,7 +249,7 @@ export function Sidebar({ user }: SidebarProps) {
               {t('Sidebar.today')}
             </div>
             <ScrollArea className="max-h-[300px]">
-              {!conversationsLoaded ? (
+              {!conversationsLoaded || !mainContentReady ? (
                 <SidebarConversationSkeleton count={5} />
               ) : recentConversations.length > 0 ? (
                 <div className="space-y-0.5">

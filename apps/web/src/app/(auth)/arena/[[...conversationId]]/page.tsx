@@ -15,15 +15,22 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from '@/components/arena/prompt-input';
+import {
+  ImagePreviews,
+  ModeChip,
+  PromptInputFeatureButtons,
+} from '@/components/arena/prompt-input-features';
 import { VoteBar } from '@/components/arena/vote-bar';
 import { CARD_MIN_WIDTH, MAX_COMPARISON_CARDS } from '@/constants/arena';
 import { useConversation } from '@/hooks/use-conversation';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
 import {
+  type MessageAttachmentForSave,
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
 } from '@/hooks/use-workflow-execution';
+import { processAiResponseMedia } from '@/libs/media-response-handler';
 import {
   arenaSelectors,
   settingsSelectors,
@@ -36,7 +43,9 @@ import {
 import type { LoadedConversation } from '@/stores/workflow-store';
 import type { ModelComparison, ModelOption } from '@/types/arena';
 import { DEFAULT_MODEL_CONFIG } from '@/types/arena';
-import type { ArenaWorkflow } from '@/types/workflow';
+import type { InputMode, UploadedImage } from '@/types/input-mode';
+import { INPUT_MODE_ABILITY_MAP } from '@/types/input-mode';
+import type { ArenaWorkflow, WorkflowImageAttachment } from '@/types/workflow';
 
 export default function ArenaPage() {
   const params = useParams();
@@ -73,6 +82,7 @@ export default function ArenaPage() {
   const setCustomModelsMap = useArenaStore((state) => state.setCustomModelsMap);
   const modelOverridesMap = useArenaStore(arenaSelectors.modelOverridesMap);
   const setModelOverridesMap = useArenaStore((state) => state.setModelOverridesMap);
+  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
   const savedApiKeys = useSettingsStore(settingsSelectors.savedApiKeys);
   const loadApiKeys = useSettingsStore((state) => state.loadApiKeys);
@@ -106,6 +116,10 @@ export default function ArenaPage() {
   const clearAllVotes = useVoteStore((state) => state.clearAllVotes);
   const isVoteSubmitting = useVoteStore((state) => state.isSubmitting);
 
+  const [inputMode, setInputMode] = React.useState<InputMode>('default');
+  const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
+  const pendingFileIdsRef = React.useRef<Set<string>>(new Set());
+
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
     string | undefined
   >(conversationId);
@@ -128,8 +142,12 @@ export default function ArenaPage() {
         const conversation = await createConversation(title);
         return conversation?.id ?? null;
       },
-      onSaveUserMessage: async (convId: string, content: string) => {
-        const message = await saveMessage(convId, 'user', content);
+      onSaveUserMessage: async (
+        convId: string,
+        content: string,
+        attachments?: MessageAttachmentForSave[],
+      ) => {
+        const message = await saveMessage(convId, 'user', content, attachments);
         return message?.id ?? null;
       },
       onSaveModelResponse: async (
@@ -141,6 +159,9 @@ export default function ArenaPage() {
         tokensUsed?: number,
         responseTimeMs?: number,
       ) => {
+        // Process response for base64 media
+        const { processedContent, attachments } = await processAiResponseMedia(responseContent);
+
         let displayPosition = 0;
         for (const [comparisonId, wfId] of comparisonWorkflowMap.current.entries()) {
           if (wfId === workflowId) {
@@ -156,10 +177,11 @@ export default function ArenaPage() {
           messageId,
           modelName,
           providerName,
-          responseContent,
+          processedContent,
           tokensUsed,
           responseTimeMs,
           displayPosition,
+          attachments.length > 0 ? attachments : undefined,
         );
       },
       onConversationCreated: handleConversationCreated,
@@ -187,6 +209,25 @@ export default function ArenaPage() {
     }
   }, [apiKeysLoaded, loadApiKeys]);
 
+  // Track uploaded file IDs for cleanup
+  React.useEffect(() => {
+    for (const img of uploadedImages) {
+      if (img.fileId && !img.uploadError) {
+        pendingFileIdsRef.current.add(img.fileId);
+      }
+    }
+  }, [uploadedImages]);
+
+  // Cleanup orphaned files on unmount
+  React.useEffect(() => {
+    return () => {
+      const fileIdsToCleanup = Array.from(pendingFileIdsRef.current);
+      if (fileIdsToCleanup.length > 0) {
+        navigator.sendBeacon('/api/files/cleanup', JSON.stringify({ fileIds: fileIdsToCleanup }));
+      }
+    };
+  }, []);
+
   React.useEffect(() => {
     if (conversationId !== currentUrlConversationId) {
       setCurrentUrlConversationId(conversationId);
@@ -206,6 +247,7 @@ export default function ArenaPage() {
         setConversationError(null);
         setVoteLoadingComplete(false);
       } else if (conversationId !== storedConversationId) {
+        comparisonWorkflowMap.current.clear();
         setConversationLoaded(false);
         setConversationError(null);
         setVoteLoadingComplete(false);
@@ -426,6 +468,11 @@ export default function ArenaPage() {
             const inputPrice = override?.inputPrice ?? model.pricing?.input;
             const outputPrice = override?.outputPrice ?? model.pricing?.output;
 
+            const abilities = {
+              ...model.abilities,
+              ...override?.abilities,
+            };
+
             models.push({
               id: modelId,
               name: displayName,
@@ -440,6 +487,7 @@ export default function ArenaPage() {
               type: 'pro',
               isNew: false,
               isCustom: false,
+              abilities,
             });
             addedModelIds.add(modelId);
           }
@@ -509,12 +557,87 @@ export default function ArenaPage() {
   }, [computedModels, enabledModelsLoaded, setAvailableModels]);
 
   React.useEffect(() => {
-    if (computedModels.length > 0 && !initialized) {
+    if (computedModels.length > 0 && enabledModelsLoaded && !initialized) {
       initializeComparisons(computedModels);
     }
-  }, [computedModels, initialized, initializeComparisons]);
+  }, [computedModels, enabledModelsLoaded, initialized, initializeComparisons]);
 
   const displayModels = availableModels.length > 0 ? availableModels : computedModels;
+
+  const filteredDisplayModels = React.useMemo(() => {
+    if (inputMode === 'default') {
+      return displayModels;
+    }
+
+    const abilityKey = INPUT_MODE_ABILITY_MAP[inputMode as keyof typeof INPUT_MODE_ABILITY_MAP];
+    if (!abilityKey) {
+      return displayModels;
+    }
+
+    return displayModels.filter((model) => model.abilities?.[abilityKey] === true);
+  }, [displayModels, inputMode]);
+
+  const handleInputModeChange = React.useCallback((mode: InputMode) => {
+    setInputMode(mode);
+  }, []);
+
+  const handleAddImages = React.useCallback((newImages: UploadedImage[]) => {
+    setUploadedImages((prev) => [...prev, ...newImages]);
+  }, []);
+
+  const handleUpdateImage = React.useCallback((id: string, updates: Partial<UploadedImage>) => {
+    setUploadedImages((prev) => prev.map((img) => (img.id === id ? { ...img, ...updates } : img)));
+  }, []);
+
+  const handleRemoveImage = React.useCallback(
+    async (id: string, forceRemove = false) => {
+      const image = uploadedImages.find((img) => img.id === id);
+      if (!image) return;
+
+      if (image.fileId && !forceRemove) {
+        const { deleteFileWithRetry } = await import('@/libs/file-upload-api');
+        const result = await deleteFileWithRetry(image.fileId);
+
+        if (!result.success) {
+          console.error('Failed to delete image from storage:', result.error);
+          setUploadedImages((prev) =>
+            prev.map((img) =>
+              img.id === id
+                ? {
+                    ...img,
+                    deleteError: result.error,
+                    deleteRetryCount: (img.deleteRetryCount ?? 0) + 1,
+                  }
+                : img,
+            ),
+          );
+          toast.error(t('Arena.image_delete_failed'), {
+            description: t('Arena.image_delete_retry_option'),
+            action: {
+              label: t('Arena.force_remove'),
+              onClick: () => handleRemoveImage(id, true),
+            },
+          });
+          return;
+        }
+      }
+
+      URL.revokeObjectURL(image.previewUrl);
+      setUploadedImages((prev) => prev.filter((img) => img.id !== id));
+    },
+    [uploadedImages, t],
+  );
+
+  const handleClearImages = React.useCallback(() => {
+    for (const img of uploadedImages) {
+      URL.revokeObjectURL(img.previewUrl);
+      // Clear from pending since this is a successful submission
+      if (img.fileId) {
+        pendingFileIdsRef.current.delete(img.fileId);
+      }
+    }
+    setUploadedImages([]);
+  }, [uploadedImages]);
 
   const getKeyIdForModel = React.useCallback(
     (modelId: string): string | undefined => {
@@ -811,7 +934,49 @@ export default function ArenaPage() {
       return;
     }
 
-    await startAllSyncedWorkflows();
+    let attachments: WorkflowImageAttachment[] | undefined;
+    let dbAttachments: MessageAttachmentForSave[] | undefined;
+    if (uploadedImages.length > 0) {
+      const stillUploading = uploadedImages.some((img) => img.isUploading);
+      if (stillUploading) {
+        toast.error(t('Arena.images_still_uploading'));
+        return;
+      }
+
+      const failedUploads = uploadedImages.filter((img) => img.uploadError);
+      if (failedUploads.length > 0) {
+        toast.error(t('Arena.image_upload_failed'), {
+          description: failedUploads.map((img) => img.filename).join(', '),
+        });
+        return;
+      }
+
+      attachments = uploadedImages
+        .filter((img) => img.url)
+        .map((img) => ({
+          type: 'image' as const,
+          data: img.url as string,
+          mediaType: img.file.type,
+          filename: img.filename,
+        }));
+
+      // Convert to DB attachment format for persistence
+      dbAttachments = uploadedImages
+        .filter((img) => img.fileId)
+        .map((img) => ({
+          type: 'image' as const,
+          fileId: img.fileId as string,
+          mimeType: img.file.type,
+          filename: img.filename,
+          sizeBytes: img.size,
+        }));
+    }
+
+    setWorkflowGlobalPrompt('');
+    handleClearImages();
+    setInputMode('default');
+
+    await startAllSyncedWorkflows(attachments, dbAttachments);
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -824,7 +989,6 @@ export default function ArenaPage() {
         window.history.replaceState(null, '', `${basePath}/${convId}`);
       }
     }
-    setWorkflowGlobalPrompt('');
   }, [
     workflowGlobalPrompt,
     comparisons,
@@ -836,6 +1000,8 @@ export default function ArenaPage() {
     router,
     t,
     setWorkflowGlobalPrompt,
+    uploadedImages,
+    handleClearImages,
   ]);
 
   const handleModelSelect = React.useCallback(
@@ -1205,6 +1371,32 @@ export default function ArenaPage() {
     };
   }, [cancelAllWorkflows]);
 
+  React.useEffect(() => {
+    const isLoadingConv =
+      conversationId &&
+      !conversationLoaded &&
+      storedConversationId !== conversationId &&
+      !isCreatingConversation;
+    const isLoadingVts = conversationId && conversationLoaded && !voteLoadingComplete;
+    const isReady = initialized && enabledModelsLoaded && !isLoadingConv && !isLoadingVts;
+    setMainContentReady(isReady);
+  }, [
+    initialized,
+    enabledModelsLoaded,
+    conversationId,
+    conversationLoaded,
+    storedConversationId,
+    isCreatingConversation,
+    voteLoadingComplete,
+    setMainContentReady,
+  ]);
+
+  React.useEffect(() => {
+    return () => {
+      setMainContentReady(false);
+    };
+  }, [setMainContentReady]);
+
   const getCardStyles = React.useCallback((cardCount: number): React.CSSProperties => {
     if (cardCount === 1) {
       return {
@@ -1240,7 +1432,7 @@ export default function ArenaPage() {
 
   const isLoadingVotes = conversationId && conversationLoaded && !voteLoadingComplete;
 
-  if (!initialized || isLoadingConversation || isLoadingVotes) {
+  if (!initialized || !enabledModelsLoaded || isLoadingConversation || isLoadingVotes) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">
         <div className="flex-1 overflow-hidden">
@@ -1289,7 +1481,7 @@ export default function ArenaPage() {
                 >
                   <ModelCard
                     modelId={comparison.modelId}
-                    models={displayModels}
+                    models={filteredDisplayModels}
                     messages={workflow?.messages}
                     pendingResponse={workflow?.pendingResponse}
                     response={response}
@@ -1346,11 +1538,20 @@ export default function ArenaPage() {
             onSubmit={handleSubmit}
             onStop={cancelAllWorkflows}
             isLoading={isAnyRunning}
+            uploadedImages={uploadedImages}
+            onAddImages={handleAddImages}
+            onUpdateImage={handleUpdateImage}
+            onRemoveImage={handleRemoveImage}
+            onModeChange={handleInputModeChange}
             className="border-input"
           >
+            <ImagePreviews />
             <PromptInputTextarea placeholder={t('Arena.prompt_placeholder')} />
             <PromptInputFooter>
-              <PromptInputActions />
+              <PromptInputActions>
+                <PromptInputFeatureButtons />
+                <ModeChip />
+              </PromptInputActions>
               <PromptInputSubmit />
             </PromptInputFooter>
           </PromptInput>

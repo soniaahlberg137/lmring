@@ -3,6 +3,9 @@
 import { Button, cn, Textarea } from '@lmring/ui';
 import { ArrowUp, Square } from 'lucide-react';
 import * as React from 'react';
+import { useTranslations } from '@/hooks/use-translations';
+import type { InputMode, UploadedImage } from '@/types/input-mode';
+import { MAX_IMAGE_SIZE_BYTES, MAX_IMAGES } from '@/types/input-mode';
 
 interface PromptInputContextValue {
   value: string;
@@ -12,11 +15,18 @@ interface PromptInputContextValue {
   isLoading: boolean;
   disabled: boolean;
   isSubmitting: boolean;
+  mode: InputMode;
+  setMode: (mode: InputMode) => void;
+  uploadedImages: UploadedImage[];
+  addImages: (files: File[]) => void;
+  removeImage: (id: string) => void;
+  isRemovingImage: string | null;
+  waitForUploads: () => Promise<void>;
 }
 
 const PromptInputContext = React.createContext<PromptInputContextValue | undefined>(undefined);
 
-function usePromptInput() {
+export function usePromptInput() {
   const context = React.useContext(PromptInputContext);
   if (!context) {
     throw new Error('usePromptInput must be used within a PromptInput');
@@ -25,6 +35,34 @@ function usePromptInput() {
 }
 
 const SUBMIT_DEBOUNCE_MS = 500;
+const UPLOAD_CONCURRENCY_LIMIT = 3;
+
+function createConcurrencyLimiter(limit: number) {
+  let running = 0;
+  const queue: Array<() => void> = [];
+
+  const next = () => {
+    if (queue.length > 0 && running < limit) {
+      running++;
+      const resolve = queue.shift();
+      resolve?.();
+    }
+  };
+
+  return async <T,>(fn: () => Promise<T>): Promise<T> => {
+    await new Promise<void>((resolve) => {
+      queue.push(resolve);
+      next();
+    });
+
+    try {
+      return await fn();
+    } finally {
+      running--;
+      next();
+    }
+  };
+}
 
 interface PromptInputProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange' | 'onSubmit'> {
@@ -34,6 +72,11 @@ interface PromptInputProps
   onStop?: () => void;
   isLoading?: boolean;
   disabled?: boolean;
+  uploadedImages: UploadedImage[];
+  onAddImages: (newImages: UploadedImage[]) => void;
+  onUpdateImage: (id: string, updates: Partial<UploadedImage>) => void;
+  onRemoveImage: (id: string) => Promise<void>;
+  onModeChange?: (mode: InputMode) => void;
 }
 
 export function PromptInput({
@@ -43,12 +86,33 @@ export function PromptInput({
   onStop,
   isLoading = false,
   disabled = false,
+  uploadedImages,
+  onAddImages,
+  onUpdateImage,
+  onRemoveImage,
+  onModeChange,
   className,
   children,
   ...props
 }: PromptInputProps) {
+  const t = useTranslations();
   const lastSubmitTimeRef = React.useRef<number>(0);
+  const uploadPromisesRef = React.useRef<Map<string, Promise<void>>>(new Map());
+  const uploadLimiterRef = React.useRef(createConcurrencyLimiter(UPLOAD_CONCURRENCY_LIMIT));
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [mode, setModeState] = React.useState<InputMode>('default');
+  const [isDragging, setIsDragging] = React.useState(false);
+  const [isRemovingImage, setIsRemovingImage] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    if (uploadedImages.length > 0 && mode !== 'upload') {
+      setModeState('upload');
+      onModeChange?.('upload');
+    } else if (uploadedImages.length === 0 && mode === 'upload') {
+      setModeState('default');
+      onModeChange?.('default');
+    }
+  }, [uploadedImages.length, mode, onModeChange]);
 
   const handleSubmit = React.useCallback(() => {
     if (!value.trim() || isLoading || disabled || isSubmitting) return;
@@ -68,25 +132,180 @@ export function PromptInput({
     onSubmit();
   }, [value, isLoading, disabled, isSubmitting, onSubmit]);
 
+  const setMode = React.useCallback(
+    (newMode: InputMode) => {
+      const effectiveMode = newMode === mode ? 'default' : newMode;
+      setModeState(effectiveMode);
+      onModeChange?.(effectiveMode);
+    },
+    [mode, onModeChange],
+  );
+
+  const addImages = React.useCallback(
+    async (files: File[]) => {
+      const validFiles = files.filter(
+        (f) => f.type.startsWith('image/') && f.size <= MAX_IMAGE_SIZE_BYTES,
+      );
+
+      const remainingSlots = MAX_IMAGES - uploadedImages.length;
+      const filesToAdd = validFiles.slice(0, remainingSlots);
+
+      const newImages: UploadedImage[] = filesToAdd.map((file) => ({
+        id: crypto.randomUUID(),
+        file,
+        previewUrl: URL.createObjectURL(file),
+        filename: file.name,
+        size: file.size,
+        isUploading: true,
+      }));
+
+      if (newImages.length > 0) {
+        onAddImages(newImages);
+      }
+
+      const { uploadFile } = await import('@/libs/file-upload-api');
+      const limiter = uploadLimiterRef.current;
+
+      // Upload with concurrency limit and Promise tracking
+      await Promise.all(
+        newImages.map((img) => {
+          const uploadPromise = limiter(async () => {
+            try {
+              const result = await uploadFile(img.file);
+              onUpdateImage(img.id, {
+                fileId: result.fileId,
+                url: result.url,
+                isUploading: false,
+              });
+            } catch (error) {
+              console.error('Failed to upload image:', error);
+              onUpdateImage(img.id, {
+                isUploading: false,
+                uploadError: error instanceof Error ? error.message : 'Upload failed',
+              });
+            } finally {
+              uploadPromisesRef.current.delete(img.id);
+            }
+          });
+          uploadPromisesRef.current.set(img.id, uploadPromise);
+          return uploadPromise;
+        }),
+      );
+    },
+    [uploadedImages.length, onAddImages, onUpdateImage],
+  );
+
+  const waitForUploads = React.useCallback(async () => {
+    const promises = Array.from(uploadPromisesRef.current.values());
+    if (promises.length > 0) {
+      await Promise.all(promises);
+    }
+  }, []);
+
+  const removeImage = React.useCallback(
+    async (id: string) => {
+      setIsRemovingImage(id);
+      try {
+        await onRemoveImage(id);
+      } finally {
+        setIsRemovingImage(null);
+      }
+    },
+    [onRemoveImage],
+  );
+
+  const handleDragEnter = React.useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.dataTransfer.types.includes('Files')) {
+      setIsDragging(true);
+    }
+  }, []);
+
+  const handleDragLeave = React.useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const relatedTarget = e.relatedTarget as Node | null;
+    const currentTarget = e.currentTarget as Node;
+    if (!currentTarget.contains(relatedTarget)) {
+      setIsDragging(false);
+    }
+  }, []);
+
+  const handleDragOver = React.useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = React.useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
+
+      const files = Array.from(e.dataTransfer.files).filter((f) => f.type.startsWith('image/'));
+      if (files.length > 0) {
+        addImages(files);
+      }
+    },
+    [addImages],
+  );
+
+  const contextValue = React.useMemo(
+    () => ({
+      value,
+      setValue: onChange,
+      onSubmit: handleSubmit,
+      onStop,
+      isLoading,
+      disabled,
+      isSubmitting,
+      mode,
+      setMode,
+      uploadedImages,
+      addImages,
+      removeImage,
+      isRemovingImage,
+      waitForUploads,
+    }),
+    [
+      value,
+      onChange,
+      handleSubmit,
+      onStop,
+      isLoading,
+      disabled,
+      isSubmitting,
+      mode,
+      setMode,
+      uploadedImages,
+      addImages,
+      removeImage,
+      isRemovingImage,
+      waitForUploads,
+    ],
+  );
+
   return (
-    <PromptInputContext.Provider
-      value={{
-        value,
-        setValue: onChange,
-        onSubmit: handleSubmit,
-        onStop,
-        isLoading,
-        disabled,
-        isSubmitting,
-      }}
-    >
+    <PromptInputContext.Provider value={contextValue}>
+      {/* biome-ignore lint/a11y/noStaticElementInteractions: drag-and-drop is handled via native browser events and doesn't need keyboard interaction */}
       <div
         className={cn(
           'relative flex flex-col w-full overflow-hidden rounded-xl border bg-background shadow-sm transition-colors focus-within:ring-1 focus-within:ring-ring',
+          isDragging && 'ring-2 ring-primary border-primary',
           className,
         )}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         {...props}
       >
+        {isDragging && (
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-primary/5 border-2 border-dashed border-primary rounded-xl pointer-events-none">
+            <p className="text-sm text-primary font-medium">{t('Arena.drop_images_here')}</p>
+          </div>
+        )}
         {children}
       </div>
     </PromptInputContext.Provider>

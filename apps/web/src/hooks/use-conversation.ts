@@ -17,6 +17,13 @@ export interface ConversationMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
+  attachments?: Array<{
+    type: 'image' | 'audio' | 'video' | 'file';
+    fileId: string;
+    mimeType: string;
+    filename?: string;
+    sizeBytes?: number;
+  }> | null;
   createdAt: string;
   responses?: ModelResponseData[];
 }
@@ -26,6 +33,14 @@ export interface ModelResponseData {
   modelName: string;
   providerName: string;
   responseContent: string;
+  attachments?: Array<{
+    type: 'image' | 'audio' | 'video';
+    key: string;
+    mimeType: string;
+    filename?: string;
+    sizeBytes?: number;
+    url?: string;
+  }>;
   tokensUsed?: number;
   responseTimeMs?: number;
   displayPosition?: number;
@@ -96,6 +111,13 @@ export function useConversation() {
       conversationId: string,
       role: 'user' | 'assistant' | 'system',
       content: string,
+      attachments?: Array<{
+        type: 'image' | 'audio' | 'video' | 'file';
+        fileId: string;
+        mimeType: string;
+        filename?: string;
+        sizeBytes?: number;
+      }>,
     ): Promise<ConversationMessage | null> => {
       setIsLoading(true);
       setError(null);
@@ -104,7 +126,7 @@ export function useConversation() {
         const response = await fetch(`/api/conversations/${conversationId}/messages`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ role, content }),
+          body: JSON.stringify({ role, content, attachments }),
         });
 
         if (!response.ok) {
@@ -137,6 +159,13 @@ export function useConversation() {
       tokensUsed?: number,
       responseTimeMs?: number,
       displayPosition?: number,
+      attachments?: Array<{
+        type: 'image' | 'audio' | 'video';
+        key: string;
+        mimeType: string;
+        filename?: string;
+        sizeBytes?: number;
+      }>,
     ): Promise<ModelResponseData | null> => {
       setIsLoading(true);
       setError(null);
@@ -153,6 +182,7 @@ export function useConversation() {
             tokensUsed,
             responseTimeMs,
             displayPosition,
+            attachments,
           }),
         });
 

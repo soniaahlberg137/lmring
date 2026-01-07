@@ -13,7 +13,7 @@ export function GridBackground({ className, children }: GridBackgroundProps) {
     <div
       className={cn(
         'relative h-full w-full bg-background',
-        'bg-[linear-gradient(to_right,hsl(var(--border)/0.3)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border)/0.3)_1px,transparent_1px)]',
+        'bg-[linear-gradient(to_right,rgb(71_85_105/0.3)_1px,transparent_1px),linear-gradient(to_bottom,rgb(71_85_105/0.3)_1px,transparent_1px)]',
         'bg-[size:4rem_4rem]',
         className,
       )}
@@ -36,7 +36,7 @@ export function DotBackground({ className, children, dotColor }: DotBackgroundPr
     <div
       className={cn('relative h-full w-full bg-background', className)}
       style={{
-        backgroundImage: `radial-gradient(${dotColor || 'hsl(var(--border))'} 1px, transparent 1px)`,
+        backgroundImage: `radial-gradient(${dotColor || 'rgb(71 85 105)'} 1px, transparent 1px)`,
         backgroundSize: '24px 24px',
       }}
     >

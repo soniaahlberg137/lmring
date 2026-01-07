@@ -1,4 +1,5 @@
 import { and, asc, db, eq } from '@lmring/database';
+import type { MessageAttachment } from '@lmring/database/schema';
 import { conversations, messages } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
@@ -56,6 +57,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     const rawBody = (await request.json()) as {
       role: 'user' | 'assistant' | 'system';
       content: string;
+      attachments?: MessageAttachment[];
     };
 
     const validationResult = messageSchema.safeParse(rawBody);
@@ -84,6 +86,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
         conversationId,
         role: body.role,
         content: body.content,
+        attachments: body.attachments,
       })
       .returning();
 

@@ -129,12 +129,14 @@ const anthropicModels: ChatModelCard[] = [
   {
     id: 'claude-3-7-sonnet-20250219',
     displayName: 'Claude 3.7 Sonnet',
-    description: 'Claude 3.7 Sonnet 是强大的多模态模型，支持视觉理解。',
+    description: 'Claude 3.7 Sonnet 是强大的多模态模型，支持视觉理解、推理和搜索能力。',
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
     abilities: {
       functionCall: true,
+      reasoning: true,
+      search: true,
       vision: true,
     },
     pricing: {
@@ -243,6 +245,10 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
+    abilities: {
+      functionCall: true,
+      vision: true,
+    },
     pricing: {
       input: 0.25,
       output: 1.25,

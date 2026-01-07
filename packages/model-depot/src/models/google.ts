@@ -110,6 +110,27 @@ const googleChatModels: ChatModelCard[] = [
     releasedAt: '2025-11-20',
   },
   {
+    id: 'gemini-3-flash-preview',
+    displayName: 'Gemini 3 Flash Preview',
+    description: 'Gemini 3 Flash Preview 是 Google 最新的快速多模态模型。',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      video: true,
+      vision: true,
+    },
+    pricing: {
+      input: 0.3,
+      output: 2.5,
+      cachedInput: 0.075,
+    },
+    releasedAt: '2025-12-01',
+  },
+  {
     id: 'gemini-2.5-pro',
     displayName: 'Gemini 2.5 Pro',
     description:

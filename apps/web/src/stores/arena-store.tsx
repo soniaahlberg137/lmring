@@ -32,6 +32,7 @@ export type ArenaState = {
   enabledModelsMap: Map<string, Set<string>>;
   customModelsMap: Map<string, Array<{ modelId: string; displayName: string }>>;
   modelOverridesMap: Map<string, Map<string, ModelOverrideData>>;
+  mainContentReady: boolean;
 };
 
 export type ArenaActions = {
@@ -62,6 +63,7 @@ export type ArenaActions = {
   setEnabledModelsMap: (map: Map<string, Set<string>>) => void;
   setCustomModelsMap: (map: Map<string, Array<{ modelId: string; displayName: string }>>) => void;
   setModelOverridesMap: (map: Map<string, Map<string, ModelOverrideData>>) => void;
+  setMainContentReady: (ready: boolean) => void;
 };
 
 export type ArenaStore = ArenaState & ArenaActions;
@@ -87,6 +89,7 @@ const defaultInitState: ArenaState = {
   enabledModelsMap: new Map(),
   customModelsMap: new Map(),
   modelOverridesMap: new Map(),
+  mainContentReady: false,
 };
 
 export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
@@ -316,6 +319,9 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
 
         setModelOverridesMap: (map) =>
           set({ modelOverridesMap: map }, false, 'arena/setModelOverridesMap'),
+
+        setMainContentReady: (ready) =>
+          set({ mainContentReady: ready }, false, 'arena/setMainContentReady'),
       }),
       { name: 'arena-store', enabled: process.env.NODE_ENV === 'development' },
     ),
@@ -356,4 +362,5 @@ export const arenaSelectors = {
   enabledModelsMap: (state: ArenaStore) => state.enabledModelsMap,
   customModelsMap: (state: ArenaStore) => state.customModelsMap,
   modelOverridesMap: (state: ArenaStore) => state.modelOverridesMap,
+  mainContentReady: (state: ArenaStore) => state.mainContentReady,
 };
