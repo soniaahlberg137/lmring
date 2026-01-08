@@ -723,36 +723,80 @@ export function sortModels<T>(models: T[], field: string, direction: 'asc' | 'de
 
 /**
  * Get organization color for charts based on organization_id
+ * Colors are designed to be vibrant and visible on both light and dark backgrounds
  */
 export function getOrganizationColor(organizationId: string): string {
+  // Curated color palette - each color chosen for visibility on light/dark themes
   const colors: Record<string, string> = {
-    openai: '#10A37F',
-    anthropic: '#D4A574',
-    google: '#4285F4',
-    meta: '#0668E1',
-    mistral: '#FF7000',
-    deepseek: '#536DFE',
-    'zai-org': '#000000', // Zhipu AI
-    zhipu: '#000000',
-    minimax: '#7C3AED',
-    xiaomi: '#FF6900',
-    nvidia: '#76B900',
-    cohere: '#D14500',
-    xai: '#000000',
-    'black-forest-labs': '#000000',
-    bytedance: '#00F5D4',
-    luma: '#6366F1',
-    elevenlabs: '#000000',
-    amazon: '#FF9900', // Amazon/AWS orange
-    aws: '#FF9900',
-    moonshot: '#6366F1', // Moonshot/Kimi
-    'moonshot-ai': '#6366F1',
-    kimi: '#6366F1',
-    tencent: '#00A4FF', // Tencent blue
-    hunyuan: '#00A4FF',
-    'recraft-ai': '#8B5CF6',
-    qwen: '#6366F1', // Alibaba Qwen
+    // Major AI Labs - distinctive brand-inspired colors
+    openai: '#10B981', // Emerald green
+    anthropic: '#F59E0B', // Warm amber
+    google: '#3B82F6', // Bright blue
+    meta: '#8B5CF6', // Vibrant purple
+    mistral: '#F97316', // Vivid orange
+    deepseek: '#06B6D4', // Cyan
+    xai: '#EC4899', // Pink (Grok)
+    cohere: '#EF4444', // Red coral
+
+    // Chinese Tech
+    'zai-org': '#14B8A6', // Teal (Zhipu AI)
+    zhipu: '#14B8A6',
+    minimax: '#A855F7', // Purple
+    xiaomi: '#FB923C', // Orange
+    bytedance: '#22D3D3', // Bright teal (Doubao)
+    tencent: '#38BDF8', // Sky blue
+    hunyuan: '#38BDF8',
+    qwen: '#818CF8', // Indigo (Alibaba)
+    moonshot: '#C084FC', // Light purple (Kimi)
+    'moonshot-ai': '#C084FC',
+    kimi: '#C084FC',
+    baidu: '#2563EB', // Blue
+    ernie: '#2563EB',
+    '01-ai': '#34D399', // Emerald (Yi)
+    yi: '#34D399',
+
+    // Hardware & Cloud
+    nvidia: '#84CC16', // Lime green
+    amazon: '#FBBF24', // Yellow
+    aws: '#FBBF24',
+    microsoft: '#60A5FA', // Light blue
+    azure: '#60A5FA',
+
+    // Creative & Media
+    'black-forest-labs': '#A78BFA', // Violet (FLUX)
+    flux: '#A78BFA',
+    luma: '#818CF8', // Indigo
+    elevenlabs: '#F472B6', // Pink
+    stability: '#FB7185', // Rose
+    midjourney: '#4ADE80', // Green
+    runway: '#2DD4BF', // Teal
+    'recraft-ai': '#C084FC', // Purple
+
+    // Other
+    together: '#F87171', // Light red
+    groq: '#FCD34D', // Amber
+    perplexity: '#22D3EE', // Cyan
+    replicate: '#A3E635', // Lime
   };
 
-  return colors[organizationId.toLowerCase()] || '#6B7280';
+  return colors[organizationId.toLowerCase()] || '#94A3B8'; // Slate gray fallback
+}
+
+/**
+ * Get a gradient color pair for more visual interest in charts
+ * Returns [startColor, endColor] for gradient fills
+ */
+export function getOrganizationGradient(organizationId: string): [string, string] {
+  const gradients: Record<string, [string, string]> = {
+    openai: ['#10B981', '#059669'],
+    anthropic: ['#F59E0B', '#D97706'],
+    google: ['#3B82F6', '#2563EB'],
+    meta: ['#8B5CF6', '#7C3AED'],
+    mistral: ['#F97316', '#EA580C'],
+    deepseek: ['#06B6D4', '#0891B2'],
+    xai: ['#EC4899', '#DB2777'],
+  };
+
+  const baseColor = getOrganizationColor(organizationId);
+  return gradients[organizationId.toLowerCase()] || [baseColor, baseColor];
 }

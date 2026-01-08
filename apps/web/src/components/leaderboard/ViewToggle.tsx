@@ -31,7 +31,7 @@ export function ViewToggle({ viewMode, onViewModeChange }: ViewToggleProps) {
           )}
           title={label}
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4 cursor-pointer" />
         </button>
       ))}
     </div>

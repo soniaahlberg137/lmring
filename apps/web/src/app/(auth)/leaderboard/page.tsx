@@ -6,62 +6,46 @@ import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CategoryTabs,
+  createBaseColumns,
+  createMetricColumns,
+  createTrailingColumns,
+  DataTable,
   LeaderboardBarChart,
   LeaderboardContentSkeleton,
   type LeaderboardModel,
   LeaderboardScatterPlot,
-  LeaderboardTable,
   LeaderboardTableSkeleton,
   MetricSelector,
-  type SortConfig,
   type ViewMode,
   ViewToggle,
 } from '@/components/leaderboard';
+import { useLeaderboardData } from '@/hooks/use-leaderboard-query';
 import { useTranslations } from '@/hooks/use-translations';
 import {
   CATEGORY_CONFIGS,
-  calculateCategoryArenaScores,
-  calculateChatArenaScore,
-  calculateCodeArenaScore,
-  getArenaScores,
-  getArenaScoresForCategory,
-  getModelsAll,
-  getModelsFull,
   isNewModel,
   type LeaderboardCategory,
   type MetricConfig,
-  type ModelsAllParams,
   sortModels,
 } from '@/libs/zeroeval-api';
-import { type ModelWithArena, useArenaStore, useLeaderboardStore } from '@/stores';
+import { useArenaStore } from '@/stores';
 
 const PAGE_SIZE = 20;
 
 export default function LeaderboardPage() {
   const t = useTranslations();
 
-  // Zustand store for caching data by category
-  const getCachedData = useLeaderboardStore((state) => state.getCachedData);
-  const setCachedData = useLeaderboardStore((state) => state.setCachedData);
-  const getLastUpdated = useLeaderboardStore((state) => state.getLastUpdated);
   const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
-  const [rawModels, setRawModels] = useState<ModelWithArena[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [category, setCategory] = useState<LeaderboardCategory>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [sortConfig, setSortConfig] = useState<SortConfig>({
-    field: 'gpqa_score',
-    direction: 'desc',
-  });
   const [selectedMetric, setSelectedMetric] = useState<string>('gpqa');
   const [xAxisMetric, setXAxisMetric] = useState<string>('input_price');
   const [yAxisMetric, setYAxisMetric] = useState<string>('gpqa');
-  const [page, setPage] = useState(1);
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [methodologyOpen, setMethodologyOpen] = useState(false);
+
+  // Fetch data using TanStack Query
+  const { data: rawModels, isPending, error, isInitialLoading } = useLeaderboardData(category);
 
   const categoryConfig = useMemo(() => {
     const config = CATEGORY_CONFIGS.find((c) => c.id === category);
@@ -72,115 +56,59 @@ export default function LeaderboardPage() {
     throw new Error('No category config available');
   }, [category]);
 
-  const fetchData = useCallback(
-    async (currentCategory: LeaderboardCategory) => {
-      // Check cache first
-      const cachedData = getCachedData(currentCategory);
-      if (cachedData) {
-        setRawModels(cachedData);
-        setLastUpdated(getLastUpdated(currentCategory));
-        setLoading(false);
-        setIsInitialLoad(false);
-        return;
-      }
-
-      // No cache - fetch from API
-      setLoading(true);
-      setError(null);
-      try {
-        const config = CATEGORY_CONFIGS.find((c) => c.id === currentCategory);
-
-        let fetchedModels: ModelWithArena[];
-
-        if (currentCategory === 'vision') {
-          // VISION category: Show canonical models only
-          const models = await getModelsFull(true);
-          const modelIds = models.map((m) => m.model_id);
-          let arenaData: Awaited<ReturnType<typeof getArenaScores>> = {};
-          try {
-            arenaData = await getArenaScores(modelIds);
-          } catch {
-            console.warn('Failed to fetch arena scores, continuing without them');
-          }
-
-          fetchedModels = models.map((model) => {
-            const arenaScores = arenaData[model.model_id];
-            return {
-              ...model,
-              code_arena_score: arenaScores ? calculateCodeArenaScore(arenaScores) : null,
-              chat_arena_score: arenaScores ? calculateChatArenaScore(arenaScores) : null,
-              arena_raw_scores: arenaScores || null,
-            };
-          });
-        } else if (currentCategory === 'all') {
-          const models = await getModelsFull(false);
-          const modelIds = models.map((m) => m.model_id);
-          let arenaData: Awaited<ReturnType<typeof getArenaScores>> = {};
-          try {
-            arenaData = await getArenaScores(modelIds);
-          } catch {
-            console.warn('Failed to fetch arena scores, continuing without them');
-          }
-
-          fetchedModels = models.map((model) => {
-            const arenaScores = arenaData[model.model_id];
-            return {
-              ...model,
-              code_arena_score: arenaScores ? calculateCodeArenaScore(arenaScores) : null,
-              chat_arena_score: arenaScores ? calculateChatArenaScore(arenaScores) : null,
-              arena_raw_scores: arenaScores || null,
-            };
-          });
-        } else {
-          const apiParams: ModelsAllParams = config?.apiParams || {};
-          const basicModels = await getModelsAll(apiParams);
-          const modelIds = basicModels.map((m) => m.model_id);
-
-          let arenaData: Awaited<ReturnType<typeof getArenaScoresForCategory>> = {};
-          try {
-            arenaData = await getArenaScoresForCategory(modelIds, currentCategory);
-          } catch {
-            console.warn('Failed to fetch arena scores, continuing without them');
-          }
-
-          fetchedModels = basicModels.map((model) => {
-            const arenaScores = arenaData[model.model_id];
-            const convertedScores = arenaScores
-              ? calculateCategoryArenaScores(arenaScores, currentCategory)
-              : {};
-            return {
-              ...model,
-              arena_raw_scores: arenaScores || null,
-              // Flatten converted arena scores to top level for sorting/display
-              ...convertedScores,
-            };
-          });
-        }
-
-        // Store in cache and update state
-        setCachedData(currentCategory, fetchedModels);
-        setRawModels(fetchedModels);
-        setLastUpdated(new Date());
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch data');
-      } finally {
-        setLoading(false);
-        setIsInitialLoad(false);
-      }
-    },
-    [getCachedData, setCachedData, getLastUpdated],
+  // Memoize columns for performance
+  const columns = useMemo(
+    () => [
+      ...createBaseColumns(),
+      ...createMetricColumns(categoryConfig.metrics),
+      ...createTrailingColumns(),
+    ],
+    [categoryConfig.metrics],
   );
 
-  useEffect(() => {
-    fetchData(category);
-  }, [fetchData, category]);
+  // Memoize ranked models with sorting handled by DataTable
+  const rankedModels: LeaderboardModel[] = useMemo(() => {
+    if (!rawModels) return [];
+    // Sort by first metric field by default (DataTable will handle its own sorting)
+    const defaultField = categoryConfig.metrics[0]?.field || 'gpqa_score';
+    const sorted = sortModels(rawModels, defaultField, 'desc');
+    return sorted.map((model, index) => ({
+      ...model,
+      rank: index + 1,
+      isNew: isNewModel(model.release_date, model.announcement_date),
+    })) as LeaderboardModel[];
+  }, [rawModels, categoryConfig.metrics]);
+
+  const barChartModels = useMemo(() => {
+    if (!rawModels) return [];
+    const metricConfig = categoryConfig.metrics.find((m) => m.id === selectedMetric);
+    const field = metricConfig?.field || categoryConfig.metrics[0]?.field || 'gpqa_score';
+    const sorted = sortModels(rawModels, field, 'desc');
+    return sorted.slice(0, PAGE_SIZE).map((model, index) => ({
+      ...model,
+      rank: index + 1,
+      isNew: isNewModel(model.release_date, model.announcement_date),
+    })) as LeaderboardModel[];
+  }, [rawModels, selectedMetric, categoryConfig.metrics]);
+
+  const scatterPlotModels = useMemo(() => {
+    if (!rawModels) return [];
+    const metricConfig = categoryConfig.metrics.find((m) => m.id === yAxisMetric);
+    const field = metricConfig?.field || categoryConfig.metrics[0]?.field || 'gpqa_score';
+    const sorted = sortModels(rawModels, field, 'desc');
+    return sorted.slice(0, PAGE_SIZE).map((model, index) => ({
+      ...model,
+      rank: index + 1,
+      isNew: isNewModel(model.release_date, model.announcement_date),
+    })) as LeaderboardModel[];
+  }, [rawModels, yAxisMetric, categoryConfig.metrics]);
 
   // Manage mainContentReady state for sidebar
   useEffect(() => {
-    if (!loading && !isInitialLoad) {
+    if (!isPending) {
       setMainContentReady(true);
     }
-  }, [loading, isInitialLoad, setMainContentReady]);
+  }, [isPending, setMainContentReady]);
 
   useEffect(() => {
     return () => {
@@ -188,60 +116,12 @@ export default function LeaderboardPage() {
     };
   }, [setMainContentReady]);
 
-  const filteredModels = rawModels;
-
-  const rankedModels: LeaderboardModel[] = useMemo(() => {
-    const sorted = sortModels(filteredModels, sortConfig.field, sortConfig.direction);
-    return sorted.map((model, index) => ({
-      ...model,
-      rank: index + 1,
-      isNew: isNewModel(model.release_date, model.announcement_date),
-    })) as LeaderboardModel[];
-  }, [filteredModels, sortConfig]);
-
-  const paginatedModels = useMemo(() => {
-    const start = (page - 1) * PAGE_SIZE;
-    return rankedModels.slice(start, start + PAGE_SIZE);
-  }, [rankedModels, page]);
-
-  const barChartModels = useMemo(() => {
-    const metricConfig = categoryConfig.metrics.find((m) => m.id === selectedMetric);
-    const field = metricConfig?.field || categoryConfig.metrics[0]?.field || 'gpqa_score';
-    const sorted = sortModels(filteredModels, field, 'desc');
-    return sorted.slice(0, PAGE_SIZE).map((model, index) => ({
-      ...model,
-      rank: index + 1,
-      isNew: isNewModel(model.release_date, model.announcement_date),
-    })) as LeaderboardModel[];
-  }, [filteredModels, selectedMetric, categoryConfig.metrics]);
-
-  const scatterPlotModels = useMemo(() => {
-    const metricConfig = categoryConfig.metrics.find((m) => m.id === yAxisMetric);
-    const field = metricConfig?.field || categoryConfig.metrics[0]?.field || 'gpqa_score';
-    const sorted = sortModels(filteredModels, field, 'desc');
-    return sorted.slice(0, PAGE_SIZE).map((model, index) => ({
-      ...model,
-      rank: index + 1,
-      isNew: isNewModel(model.release_date, model.announcement_date),
-    })) as LeaderboardModel[];
-  }, [filteredModels, yAxisMetric, categoryConfig.metrics]);
-
-  const handleSort = useCallback((field: string) => {
-    setSortConfig((prev) => ({
-      field,
-      direction: prev.field === field && prev.direction === 'desc' ? 'asc' : 'desc',
-    }));
-    setPage(1);
-  }, []);
-
   const handleCategoryChange = useCallback((newCategory: LeaderboardCategory) => {
     setCategory(newCategory);
-    setPage(1);
     const config = CATEGORY_CONFIGS.find((c) => c.id === newCategory);
     if (config && config.metrics.length > 0) {
       const firstMetric = config.metrics[0];
       if (firstMetric) {
-        setSortConfig({ field: firstMetric.field, direction: 'desc' });
         setSelectedMetric(firstMetric.id);
       }
       if (config.metrics.length >= 2) {
@@ -265,7 +145,7 @@ export default function LeaderboardPage() {
     [categoryConfig],
   );
 
-  if (loading && isInitialLoad) {
+  if (isInitialLoading) {
     return <LeaderboardTableSkeleton rows={PAGE_SIZE} metricColumns={7} />;
   }
 
@@ -277,14 +157,7 @@ export default function LeaderboardPage() {
         </div>
         <Card>
           <CardContent className="flex flex-col items-center justify-center h-[400px] gap-4">
-            <p className="text-destructive">{error}</p>
-            <button
-              type="button"
-              onClick={() => fetchData(category)}
-              className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
-            >
-              Retry
-            </button>
+            <p className="text-destructive">{error.message}</p>
           </CardContent>
         </Card>
       </div>
@@ -303,26 +176,21 @@ export default function LeaderboardPage() {
             <h1 className="text-2xl font-medium text-foreground">AI Leaderboards</h1>
             <p className="text-sm text-muted-foreground">Top models ranked by performance.</p>
           </div>
-          {lastUpdated && (
-            <span className="text-xs text-muted-foreground">
-              Updated {lastUpdated.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-            </span>
-          )}
         </div>
 
         <Card>
           <CardContent className="p-6">
+            {/* Toolbar */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
               <CategoryTabs activeCategory={category} onCategoryChange={handleCategoryChange} />
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {viewMode === 'bar' && (
                   <MetricSelector
                     metrics={categoryConfig.metrics}
                     selectedMetric={selectedMetric}
                     onMetricChange={setSelectedMetric}
                     label="Metric"
-                    inline
                   />
                 )}
 
@@ -332,31 +200,32 @@ export default function LeaderboardPage() {
                       metrics={categoryConfig.metrics}
                       selectedMetric={xAxisMetric}
                       onMetricChange={setXAxisMetric}
-                      label="X Axis"
-                      inline
+                      label="X"
                     />
+                    <span className="text-muted-foreground/40 text-xs">vs</span>
                     <MetricSelector
                       metrics={categoryConfig.metrics}
                       selectedMetric={yAxisMetric}
                       onMetricChange={setYAxisMetric}
-                      label="Y Axis"
-                      inline
+                      label="Y"
                     />
                   </>
                 )}
 
+                <div className="w-px h-6 bg-border/50 mx-1" />
                 <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
               </div>
             </div>
 
-            <div className="flex items-center justify-between mb-4">
-              <div className="text-sm text-muted-foreground">
-                {loading ? '—' : `${rankedModels.length} MODELS`}
-              </div>
+            {/* Subheader */}
+            <div className="flex items-center mb-4">
+              <span className="text-xs tabular-nums text-muted-foreground/60 tracking-tight">
+                {isPending ? '—' : `${rankedModels.length} models`}
+              </span>
             </div>
 
             <div className="min-h-[500px]">
-              {loading ? (
+              {isPending ? (
                 <LeaderboardContentSkeleton
                   rows={PAGE_SIZE}
                   metricColumns={categoryConfig.metrics.length}
@@ -364,16 +233,7 @@ export default function LeaderboardPage() {
               ) : (
                 <>
                   {viewMode === 'table' && (
-                    <LeaderboardTable
-                      models={paginatedModels}
-                      metrics={categoryConfig.metrics}
-                      sortConfig={sortConfig}
-                      onSort={handleSort}
-                      page={page}
-                      pageSize={PAGE_SIZE}
-                      totalCount={rankedModels.length}
-                      onPageChange={setPage}
-                    />
+                    <DataTable columns={columns} data={rankedModels} pageSize={PAGE_SIZE} />
                   )}
 
                   {viewMode === 'bar' && (

@@ -14,12 +14,7 @@ import {
   YAxis,
   ZAxis,
 } from 'recharts';
-import {
-  formatMetricValue,
-  getNumericValue,
-  getOrganizationColor,
-  type MetricConfig,
-} from '@/libs/zeroeval-api';
+import { formatMetricValue, getNumericValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel } from './types';
 
 interface LeaderboardScatterPlotProps {
@@ -36,6 +31,27 @@ interface ScatterDataPoint {
   organization: string;
   modelId: string;
   color: string;
+}
+
+// Muted Bioluminescent - Softer sci-fi palette, easier on eyes in dark mode
+// Reduced brightness and saturation for visual comfort
+const SCATTER_COLORS = [
+  '#5BB8CC', // Soft Cyan
+  '#8B7ACC', // Muted Violet
+  '#4DB89A', // Sage Green
+  '#CC7A8F', // Dusty Rose
+  '#CCA055', // Warm Bronze
+  '#7A9FCC', // Slate Blue
+  '#A67ACC', // Soft Purple
+  '#4DA8A0', // Muted Teal
+  '#CC8A6A', // Terracotta
+  '#9AA3CC', // Cool Lavender
+  '#5CC9A8', // Seafoam
+  '#CC6A85', // Muted Coral
+];
+
+function getScatterColor(index: number): string {
+  return SCATTER_COLORS[index % SCATTER_COLORS.length] ?? '#5BB8CC';
 }
 
 export function LeaderboardScatterPlot({ models, xMetric, yMetric }: LeaderboardScatterPlotProps) {
@@ -79,7 +95,7 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
     const xDomain: [number, number] = [Math.max(0, xMin - xPadding), xMax + xPadding];
     const yDomain: [number, number] = [Math.max(0, yMin - yPadding), yMax + yPadding];
 
-    const scatterData: ScatterDataPoint[] = validModels.map((model) => {
+    const scatterData: ScatterDataPoint[] = validModels.map((model, index) => {
       const x = getNumericValue(
         model[xMetric.field as keyof typeof model] as string | number | null,
       );
@@ -94,7 +110,7 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
         name: model.name,
         organization: model.organization,
         modelId: model.model_id,
-        color: getOrganizationColor(model.organization_id),
+        color: getScatterColor(index),
       };
     });
 
@@ -136,15 +152,17 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
     if (!active || !payload || !payload[0]) return null;
     const data = payload[0].payload;
     return (
-      <div className="bg-popover border border-border rounded-lg shadow-lg p-3">
-        <p className="font-medium text-sm text-foreground">{data.name}</p>
-        <p className="text-xs text-muted-foreground">{data.organization}</p>
-        <div className="mt-1 space-y-0.5 text-sm">
+      <div className="bg-popover/95 backdrop-blur-sm border border-border rounded-lg shadow-xl p-3">
+        <p className="font-semibold text-sm text-foreground">{data.name}</p>
+        <p className="text-[10px] text-muted-foreground">{data.organization}</p>
+        <div className="mt-2 space-y-1 text-xs">
           <p style={{ color: data.color }}>
-            {xMetric.label}: {formatMetricValue(data.x, xMetric.format)}
+            {xMetric.label}:{' '}
+            <span className="tabular-nums">{formatMetricValue(data.x, xMetric.format)}</span>
           </p>
           <p style={{ color: data.color }}>
-            {yMetric.label}: {formatMetricValue(data.y, yMetric.format)}
+            {yMetric.label}:{' '}
+            <span className="tabular-nums">{formatMetricValue(data.y, yMetric.format)}</span>
           </p>
         </div>
       </div>
@@ -154,8 +172,10 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
   return (
     <div className="w-full h-[500px]">
       <ResponsiveContainer width="100%" height="100%">
-        <ScatterChart margin={{ top: 20, right: 20, left: 20, bottom: 60 }}>
-          <CartesianGrid strokeDasharray="3 3" className="stroke-border/50" />
+        <ScatterChart margin={{ top: 24, right: 24, left: 20, bottom: 56 }}>
+          {/* Subtle grid */}
+          <CartesianGrid strokeDasharray="3 6" strokeOpacity={0.08} stroke="currentColor" />
+          {/* X-Axis */}
           <XAxis
             type="number"
             dataKey="x"
@@ -163,16 +183,22 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
             tickFormatter={getTickFormatter(xMetric)}
             axisLine={false}
             tickLine={false}
-            className="text-xs"
-            tick={{ fill: 'currentColor', className: 'fill-muted-foreground' }}
+            tick={{
+              fontSize: 11,
+              fontWeight: 500,
+            }}
+            tickMargin={10}
+            className="fill-foreground/50"
           >
             <Label
               value={xMetric.label}
               position="bottom"
-              offset={10}
-              className="fill-muted-foreground text-xs"
+              offset={12}
+              className="fill-foreground/60"
+              style={{ fontSize: 12, fontWeight: 500 }}
             />
           </XAxis>
+          {/* Y-Axis */}
           <YAxis
             type="number"
             dataKey="y"
@@ -180,38 +206,43 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
             tickFormatter={getTickFormatter(yMetric)}
             axisLine={false}
             tickLine={false}
-            className="text-xs"
-            tick={{ fill: 'currentColor', className: 'fill-muted-foreground' }}
-            width={60}
+            tick={{
+              fontSize: 11,
+              fontWeight: 500,
+            }}
+            tickMargin={8}
+            width={55}
+            className="fill-foreground/50"
           >
             <Label
               value={yMetric.label}
               angle={-90}
               position="insideLeft"
-              offset={0}
-              className="fill-muted-foreground text-xs"
-              style={{ textAnchor: 'middle' }}
+              offset={8}
+              className="fill-foreground/60"
+              style={{ fontSize: 12, fontWeight: 500, textAnchor: 'middle' }}
             />
           </YAxis>
-          <ZAxis type="number" dataKey="z" range={[80, 80]} />
+          <ZAxis type="number" dataKey="z" range={[50, 50]} />
           <Tooltip
             content={<CustomTooltip />}
-            cursor={{ strokeDasharray: '3 3', className: 'stroke-muted-foreground' }}
+            cursor={{ strokeDasharray: '3 3', stroke: 'currentColor', strokeOpacity: 0.2 }}
           />
           <Scatter data={scatterData}>
             {scatterData.map((entry) => (
               <Cell
                 key={entry.modelId}
                 fill={entry.color}
-                className="hover:opacity-80 transition-opacity cursor-pointer"
+                fillOpacity={0.8}
+                className="hover:!opacity-100 transition-opacity cursor-pointer"
               />
             ))}
             <LabelList
               dataKey="name"
               position="right"
               offset={8}
-              className="fill-muted-foreground"
-              style={{ fontSize: '10px' }}
+              className="fill-foreground/40"
+              style={{ fontSize: 9, fontWeight: 400 }}
             />
           </Scatter>
         </ScatterChart>
