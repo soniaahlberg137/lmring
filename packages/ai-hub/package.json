@@ -1,6 +1,6 @@
 {
   "name": "@lmring/ai-hub",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "AI Hub - Unified AI Provider Integration with Arena Support",
   "main": "./src/index.ts",
