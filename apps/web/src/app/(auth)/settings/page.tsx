@@ -27,6 +27,7 @@ import {
   Cloudflare,
   Cohere,
   DeepSeek,
+  Fal,
   Fireworks,
   GiteeAI,
   Github,
@@ -67,6 +68,7 @@ import {
   Volcengine,
   Wenxin,
   XAI,
+  XiaomiMiMo,
   Xinference,
   Yi,
   Zhipu,
@@ -153,6 +155,9 @@ const ICON_MAP: Record<string, any> = {
   xinference: Xinference,
   higress: Higress,
   taichu: AiMass,
+  fal: Fal,
+  xiaomimimo: XiaomiMiMo,
+  qwen: AlibabaCloud,
 };
 
 type Tab = 'general' | 'provider' | 'system-model' | 'storage' | 'help' | 'about';
