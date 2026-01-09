@@ -59,11 +59,11 @@ export default function LeaderboardPage() {
   // Memoize columns for performance
   const columns = useMemo(
     () => [
-      ...createBaseColumns(),
-      ...createMetricColumns(categoryConfig.metrics),
-      ...createTrailingColumns(),
+      ...createBaseColumns(t),
+      ...createMetricColumns(categoryConfig.metrics, t),
+      ...createTrailingColumns(t),
     ],
-    [categoryConfig.metrics],
+    [categoryConfig.metrics, t],
   );
 
   // Memoize ranked models with sorting handled by DataTable
@@ -173,8 +173,8 @@ export default function LeaderboardPage() {
       >
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-2xl font-medium text-foreground">AI Leaderboards</h1>
-            <p className="text-sm text-muted-foreground">Top models ranked by performance.</p>
+            <h1 className="text-2xl font-medium text-foreground">{t('Leaderboard.page_title')}</h1>
+            <p className="text-sm text-muted-foreground">{t('Leaderboard.page_description')}</p>
           </div>
         </div>
 
@@ -190,7 +190,7 @@ export default function LeaderboardPage() {
                     metrics={categoryConfig.metrics}
                     selectedMetric={selectedMetric}
                     onMetricChange={setSelectedMetric}
-                    label="Metric"
+                    label={t('Leaderboard.metric_label')}
                   />
                 )}
 
@@ -202,7 +202,7 @@ export default function LeaderboardPage() {
                       onMetricChange={setXAxisMetric}
                       label="X"
                     />
-                    <span className="text-muted-foreground/40 text-xs">vs</span>
+                    <span className="text-muted-foreground/40 text-xs">{t('Leaderboard.vs')}</span>
                     <MetricSelector
                       metrics={categoryConfig.metrics}
                       selectedMetric={yAxisMetric}
@@ -220,7 +220,7 @@ export default function LeaderboardPage() {
             {/* Subheader */}
             <div className="flex items-center mb-4">
               <span className="text-xs tabular-nums text-muted-foreground/60 tracking-tight">
-                {isPending ? '—' : `${rankedModels.length} models`}
+                {isPending ? '—' : t('Leaderboard.models_count', { count: rankedModels.length })}
               </span>
             </div>
 

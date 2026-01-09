@@ -3,7 +3,6 @@
 import { cn } from '@lmring/ui';
 import {
   type ColumnDef,
-  type ColumnResizeMode,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -11,8 +10,10 @@ import {
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { useEventListener, useMemoizedFn, useRafState, useResetState } from 'ahooks';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
@@ -21,26 +22,54 @@ interface DataTableProps<TData> {
 }
 
 export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProps<TData>) {
+  const t = useTranslations();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnResizeMode] = useState<ColumnResizeMode>('onEnd');
+  const [resizingColumnId, setResizingColumnId, resetResizingColumnId] = useResetState<
+    string | null
+  >(null);
+  const [guideLinePosition, setGuideLinePosition] = useRafState<number | null>(null);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
 
   const table = useReactTable({
     data,
     columns,
-    columnResizeMode,
+    columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
-    state: {
-      sorting,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
-    },
+    state: { sorting },
+    initialState: { pagination: { pageSize } },
   });
+
+  // Track resize state (useMemoizedFn: no deps needed, always latest closure)
+  const handleResizeStart = useMemoizedFn((headerId: string, handler: (event: unknown) => void) => {
+    return (event: React.MouseEvent | React.TouchEvent) => {
+      setResizingColumnId(headerId);
+      handler(event);
+    };
+  });
+
+  // Reset resize state
+  const resetResizeState = useMemoizedFn(() => {
+    if (!resizingColumnId) return;
+    resetResizingColumnId();
+    setGuideLinePosition(null);
+  });
+
+  // Update guide line position during resize
+  useEventListener(
+    'mousemove',
+    (e: MouseEvent) => {
+      if (!resizingColumnId || !tableContainerRef.current) return;
+      const { left } = tableContainerRef.current.getBoundingClientRect();
+      setGuideLinePosition(e.clientX - left);
+    },
+    { target: () => document },
+  );
+
+  useEventListener('mouseup', resetResizeState, { target: () => document });
+  useEventListener('touchend', resetResizeState, { target: () => document });
 
   const currentPage = table.getState().pagination.pageIndex;
   const totalPages = table.getPageCount();
@@ -48,37 +77,84 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
   return (
     <div className="space-y-4">
       {/* Table */}
-      <div className="overflow-x-auto rounded-lg border border-border/50">
-        <table className="w-full" style={{ minWidth: '100%', tableLayout: 'fixed' }}>
+      <div
+        ref={tableContainerRef}
+        className="relative overflow-x-auto rounded-lg border border-border/50"
+      >
+        {/* Guide line during resize */}
+        {resizingColumnId && guideLinePosition !== null && (
+          <div
+            className="absolute top-0 bottom-0 z-50 w-0.5 pointer-events-none"
+            style={{
+              left: guideLinePosition,
+              background:
+                'linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--primary)/0.5) 50%, hsl(var(--primary)) 100%)',
+              boxShadow: '0 0 8px hsl(var(--primary)/0.4)',
+            }}
+          />
+        )}
+        <table
+          className={cn('w-full', resizingColumnId && 'select-none')}
+          style={{ minWidth: '100%', tableLayout: 'fixed' }}
+        >
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b border-border/50 bg-muted/30">
-                {headerGroup.headers.map((header) => (
-                  <th
-                    key={header.id}
-                    className="relative px-4 py-3 text-left text-xs font-medium text-muted-foreground group"
-                    style={{ width: header.getSize() }}
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                    {/* Column resize handle - mouse/touch only, keyboard not applicable */}
-                    {header.column.getCanResize() && (
-                      // biome-ignore lint/a11y/noStaticElementInteractions: Resize handle is mouse-only UI
-                      <div
-                        onMouseDown={header.getResizeHandler()}
-                        onTouchStart={header.getResizeHandler()}
-                        onDoubleClick={() => header.column.resetSize()}
-                        className={cn(
-                          'absolute right-0 top-0 h-full w-1 cursor-col-resize select-none touch-none',
-                          'opacity-0 group-hover:opacity-100 transition-opacity',
-                          'bg-border hover:bg-primary',
-                          header.column.getIsResizing() && 'bg-primary opacity-100',
-                        )}
-                      />
-                    )}
-                  </th>
-                ))}
+                {headerGroup.headers.map((header) => {
+                  const isResizing = header.column.getIsResizing();
+                  const isCurrentResizing = resizingColumnId === header.id;
+
+                  return (
+                    <th
+                      key={header.id}
+                      className={cn(
+                        'relative px-4 py-3 text-left text-xs font-medium text-muted-foreground group',
+                        !isResizing && 'transition-[width] duration-150 ease-out',
+                        isCurrentResizing && 'bg-primary/5',
+                      )}
+                      style={{ width: header.getSize() }}
+                    >
+                      {/* Column highlight overlay when resizing */}
+                      {isCurrentResizing && (
+                        <div className="absolute inset-0 bg-primary/5 border-l-2 border-r-2 border-primary/20 pointer-events-none" />
+                      )}
+
+                      <span className="relative z-10">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                      </span>
+
+                      {/* Enhanced column resize handle */}
+                      {header.column.getCanResize() && (
+                        // biome-ignore lint/a11y/noStaticElementInteractions: Resize handle is mouse-only UI
+                        <div
+                          onMouseDown={handleResizeStart(header.id, header.getResizeHandler())}
+                          onTouchStart={handleResizeStart(header.id, header.getResizeHandler())}
+                          onDoubleClick={() => header.column.resetSize()}
+                          className={cn(
+                            'absolute right-0 top-0 h-full w-4 cursor-col-resize select-none touch-none',
+                            'flex items-center justify-center',
+                            'opacity-0 group-hover:opacity-100 transition-all duration-200',
+                            isResizing && 'opacity-100',
+                          )}
+                        >
+                          {/* Handle background with gradient */}
+                          <div
+                            className={cn(
+                              'absolute right-0 top-1 bottom-1 w-1 rounded-full transition-all duration-200',
+                              'bg-gradient-to-b from-border via-muted-foreground/30 to-border',
+                              'group-hover:from-primary/60 group-hover:via-primary group-hover:to-primary/60',
+                              'group-hover:w-1.5 group-hover:shadow-sm',
+                              isResizing &&
+                                'from-primary via-primary to-primary w-1.5 shadow-md shadow-primary/30',
+                            )}
+                          />
+                        </div>
+                      )}
+                    </th>
+                  );
+                })}
               </tr>
             ))}
           </thead>
@@ -91,11 +167,24 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
                   idx % 2 === 0 ? 'bg-background' : 'bg-muted/10',
                 )}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-3" style={{ width: cell.column.getSize() }}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+                {row.getVisibleCells().map((cell) => {
+                  const isColumnResizing = resizingColumnId === cell.column.id;
+                  const anyResizing = resizingColumnId !== null;
+
+                  return (
+                    <td
+                      key={cell.id}
+                      className={cn(
+                        'px-4 py-3',
+                        !anyResizing && 'transition-[width] duration-150 ease-out',
+                        isColumnResizing && 'bg-primary/5',
+                      )}
+                      style={{ width: cell.column.getSize() }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>
@@ -107,7 +196,8 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
         <span className="text-xs tabular-nums text-muted-foreground/70 tracking-tight">
           {table.getState().pagination.pageIndex * pageSize + 1}–
           {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, data.length)}{' '}
-          <span className="text-muted-foreground/50">of</span> {data.length}
+          <span className="text-muted-foreground/50">{t('Leaderboard.pagination_of')}</span>{' '}
+          {data.length}
         </span>
 
         <div className="flex items-center gap-1">
@@ -124,7 +214,7 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
             )}
           >
             <ChevronLeft className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Prev</span>
+            <span className="hidden sm:inline">{t('Leaderboard.pagination_prev')}</span>
           </button>
 
           {/* Page Numbers */}
@@ -172,7 +262,7 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
               'disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-muted-foreground',
             )}
           >
-            <span className="hidden sm:inline">Next</span>
+            <span className="hidden sm:inline">{t('Leaderboard.pagination_next')}</span>
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
         </div>

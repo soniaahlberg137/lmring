@@ -4,6 +4,7 @@ import { cn } from '@lmring/ui';
 import type { ColumnDef } from '@tanstack/react-table';
 import { CheckIcon, ChevronDown, ChevronUp, LockIcon, UnlockIcon, XIcon } from 'lucide-react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import type { TranslationFunction } from '@/hooks/use-translations';
 import { formatMetricValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel } from './types';
 
@@ -34,7 +35,7 @@ function RankCell({ rank }: { rank: number }) {
 }
 
 // Model cell with provider icon and name
-function ModelCell({ model }: { model: LeaderboardModel }) {
+function ModelCell({ model, t }: { model: LeaderboardModel; t: TranslationFunction }) {
   return (
     <div className="flex items-center gap-3">
       <ProviderIcon providerId={model.organization_id} size={24} type="avatar" />
@@ -43,7 +44,7 @@ function ModelCell({ model }: { model: LeaderboardModel }) {
           <span className="font-medium text-foreground text-sm truncate">{model.name}</span>
           {model.isNew && (
             <span className="inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-semibold tracking-wide uppercase bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-sm shadow-emerald-500/25 flex-shrink-0">
-              New
+              {t('Leaderboard.table_new')}
             </span>
           )}
         </div>
@@ -108,6 +109,7 @@ function ScoreCell({
 function SortableHeader({
   column,
   label,
+  t,
 }: {
   column: {
     getIsSorted: () => 'asc' | 'desc' | false;
@@ -115,6 +117,7 @@ function SortableHeader({
     clearSorting: () => void;
   };
   label: string;
+  t: TranslationFunction;
 }) {
   const sorted = column.getIsSorted();
 
@@ -136,7 +139,13 @@ function SortableHeader({
       type="button"
       className="flex items-center gap-1 hover:text-foreground transition-colors cursor-pointer"
       onClick={handleClick}
-      title={!sorted ? 'Sort descending' : sorted === 'desc' ? 'Sort ascending' : 'Clear sort'}
+      title={
+        !sorted
+          ? t('Leaderboard.sort_descending')
+          : sorted === 'desc'
+            ? t('Leaderboard.sort_ascending')
+            : t('Leaderboard.sort_clear')
+      }
     >
       {label}
       {sorted === 'desc' && <ChevronDown className="h-4 w-4" />}
@@ -147,11 +156,13 @@ function SortableHeader({
 }
 
 // Create base columns
-export function createBaseColumns(): ColumnDef<LeaderboardModel>[] {
+export function createBaseColumns(t: TranslationFunction): ColumnDef<LeaderboardModel>[] {
   return [
     {
       accessorKey: 'rank',
-      header: () => <span className="text-xs uppercase tracking-wide">Rank</span>,
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_rank')}</span>
+      ),
       cell: ({ row }) => <RankCell rank={row.original.rank} />,
       size: 70,
       enableSorting: false,
@@ -159,8 +170,10 @@ export function createBaseColumns(): ColumnDef<LeaderboardModel>[] {
     },
     {
       accessorKey: 'name',
-      header: () => <span className="text-xs uppercase tracking-wide">Model</span>,
-      cell: ({ row }) => <ModelCell model={row.original} />,
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_model')}</span>
+      ),
+      cell: ({ row }) => <ModelCell model={row.original} t={t} />,
       size: 280,
       minSize: 200,
       enableSorting: false,
@@ -169,12 +182,15 @@ export function createBaseColumns(): ColumnDef<LeaderboardModel>[] {
 }
 
 // Create metric columns dynamically
-export function createMetricColumns(metrics: MetricConfig[]): ColumnDef<LeaderboardModel>[] {
+export function createMetricColumns(
+  metrics: MetricConfig[],
+  t: TranslationFunction,
+): ColumnDef<LeaderboardModel>[] {
   return metrics.map((metric) => ({
     accessorKey: metric.field,
     header: ({ column }) => (
       <div className="text-right">
-        <SortableHeader column={column} label={metric.label} />
+        <SortableHeader column={column} label={metric.label} t={t} />
       </div>
     ),
     cell: ({ row }) => {
@@ -198,12 +214,14 @@ export function createMetricColumns(metrics: MetricConfig[]): ColumnDef<Leaderbo
 }
 
 // Create trailing columns
-export function createTrailingColumns(): ColumnDef<LeaderboardModel>[] {
+export function createTrailingColumns(t: TranslationFunction): ColumnDef<LeaderboardModel>[] {
   return [
     {
       accessorKey: 'knowledge_cutoff',
       header: () => (
-        <span className="text-xs uppercase tracking-wide text-center block">Cutoff</span>
+        <span className="text-xs uppercase tracking-wide text-center block">
+          {t('Leaderboard.table_cutoff')}
+        </span>
       ),
       cell: ({ row }) => (
         <span className="text-xs text-muted-foreground text-center block">
@@ -217,7 +235,9 @@ export function createTrailingColumns(): ColumnDef<LeaderboardModel>[] {
     {
       accessorKey: 'multimodal',
       header: () => (
-        <span className="text-xs uppercase tracking-wide text-center block">Vision</span>
+        <span className="text-xs uppercase tracking-wide text-center block">
+          {t('Leaderboard.table_vision')}
+        </span>
       ),
       cell: ({ row }) => <MultimodalCell supported={row.original.multimodal} />,
       size: 80,
@@ -227,7 +247,9 @@ export function createTrailingColumns(): ColumnDef<LeaderboardModel>[] {
     {
       accessorKey: 'license',
       header: () => (
-        <span className="text-xs uppercase tracking-wide text-center block">License</span>
+        <span className="text-xs uppercase tracking-wide text-center block">
+          {t('Leaderboard.table_license')}
+        </span>
       ),
       cell: ({ row }) => <LicenseCell license={row.original.license} />,
       size: 120,
