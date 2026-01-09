@@ -244,8 +244,8 @@ importers:
   packages/ai-hub:
     dependencies:
       '@ai-sdk/amazon-bedrock':
-        specifier: ^4.0.11
-        version: 4.0.11(zod@4.3.5)
+        specifier: ^4.0.12
+        version: 4.0.12(zod@4.3.5)
       '@ai-sdk/anthropic':
         specifier: ^3.0.9
         version: 3.0.9(zod@4.3.5)
@@ -274,17 +274,17 @@ importers:
         specifier: ^4.0.4
         version: 4.0.4(zod@4.3.5)
       '@ai-sdk/xai':
-        specifier: ^3.0.10
-        version: 3.0.10(zod@4.3.5)
+        specifier: ^3.0.13
+        version: 3.0.13(zod@4.3.5)
       '@lmring/model-depot':
         specifier: workspace:*
         version: link:../model-depot
       '@openrouter/ai-sdk-provider':
         specifier: ^1.5.4
-        version: 1.5.4(ai@6.0.19(zod@4.3.5))(zod@4.3.5)
+        version: 1.5.4(ai@6.0.25(zod@4.3.5))(zod@4.3.5)
       ai:
-        specifier: ^6.0.19
-        version: 6.0.19(zod@4.3.5)
+        specifier: ^6.0.25
+        version: 6.0.25(zod@4.3.5)
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -570,8 +570,8 @@ packages:
   '@adobe/css-tools@4.4.4':
     resolution: {integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==}
 
-  '@ai-sdk/amazon-bedrock@4.0.11':
-    resolution: {integrity: sha512-jeTKP16D7rVxGAgl0GP9pQUf6nSU1WbLKrNejL7Xf7Or4BvoUehqNvsLq5k4syesrbKs+KyA5LBgWUWe24y5Lw==}
+  '@ai-sdk/amazon-bedrock@4.0.12':
+    resolution: {integrity: sha512-5NvAnCa8mQy9bxWv8tMR8u77fcOhXnxozxRtjB/to69RBFyy4ncxsTHhJEK3ypHEvaYHheBkAxSOwzEu79dW3A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -640,8 +640,8 @@ packages:
     resolution: {integrity: sha512-HrEmNt/BH/hkQ7zpi2o6N3k1ZR1QTb7z85WYhYygiTxOQuaml4CMtHCWRbric5WPU+RNsYI7r1EpyVQMKO1pYw==}
     engines: {node: '>=18'}
 
-  '@ai-sdk/xai@3.0.10':
-    resolution: {integrity: sha512-36Uf1/aALU1pZkyiCh6DkOqcy7GNmFXg3PRDyWT2K/w4cgRh8cEAOy4P9o47KM35F2PAHPGIqv5y2K791yWBdg==}
+  '@ai-sdk/xai@3.0.13':
+    resolution: {integrity: sha512-7bV9iXWXwmVIDv5hhl82VScc7owGcvs0L63nffHQxIGyuNbVteHuDLchTxNqJsYLEMUf0NsnvDP8S5BSRGNC+w==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -5164,8 +5164,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  ai@6.0.19:
-    resolution: {integrity: sha512-LCqc4/ecL2jNvUfJ3vwz+UPuZvtPDONEjZJSw9XtYCjI6FuyBu9oJKlPMK2Mlj/10bWaNoJ+PnI+tDZLl4y06A==}
+  ai@6.0.25:
+    resolution: {integrity: sha512-KErk9JWkRaN4j9Xzxuo+twa0TxcYKdYbrRV8iGktduvUeGb0Yd5seWe3yOfuLGERbDBiKI1ajQz28O2FG3WO5A==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -10213,7 +10213,7 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@ai-sdk/amazon-bedrock@4.0.11(zod@4.3.5)':
+  '@ai-sdk/amazon-bedrock@4.0.12(zod@4.3.5)':
     dependencies:
       '@ai-sdk/anthropic': 3.0.9(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
@@ -10295,7 +10295,7 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/xai@3.0.10(zod@4.3.5)':
+  '@ai-sdk/xai@3.0.13(zod@4.3.5)':
     dependencies:
       '@ai-sdk/openai-compatible': 2.0.4(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
@@ -12334,10 +12334,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@openrouter/ai-sdk-provider@1.5.4(ai@6.0.19(zod@4.3.5))(zod@4.3.5)':
+  '@openrouter/ai-sdk-provider@1.5.4(ai@6.0.25(zod@4.3.5))(zod@4.3.5)':
     dependencies:
       '@openrouter/sdk': 0.1.27
-      ai: 6.0.19(zod@4.3.5)
+      ai: 6.0.25(zod@4.3.5)
       zod: 4.3.5
 
   '@openrouter/sdk@0.1.27':
@@ -15592,7 +15592,7 @@ snapshots:
       screenfull: 5.2.0
       tslib: 2.8.1
 
-  ai@6.0.19(zod@4.3.5):
+  ai@6.0.25(zod@4.3.5):
     dependencies:
       '@ai-sdk/gateway': 3.0.10(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
