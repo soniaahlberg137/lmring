@@ -200,14 +200,14 @@ export default function LeaderboardPage() {
                       metrics={categoryConfig.metrics}
                       selectedMetric={xAxisMetric}
                       onMetricChange={setXAxisMetric}
-                      label="X"
+                      label={t('Leaderboard.axis_x')}
                     />
                     <span className="text-muted-foreground/40 text-xs">{t('Leaderboard.vs')}</span>
                     <MetricSelector
                       metrics={categoryConfig.metrics}
                       selectedMetric={yAxisMetric}
                       onMetricChange={setYAxisMetric}
-                      label="Y"
+                      label={t('Leaderboard.axis_y')}
                     />
                   </>
                 )}

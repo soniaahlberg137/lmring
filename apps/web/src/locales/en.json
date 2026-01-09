@@ -319,6 +319,8 @@
   "Leaderboard.arena_average": "Average",
   "Leaderboard.arena_raw_score_hint": "Raw score × 100 = Display score",
   "Leaderboard.arena_average_hint": "Average of {count} sub-scores × 100",
+  "Leaderboard.axis_x": "X",
+  "Leaderboard.axis_y": "Y",
   "Account.title": "Account",
   "Account.loading": "Loading account information...",
   "Account.error": "Failed to load account information. Please try refreshing the page.",

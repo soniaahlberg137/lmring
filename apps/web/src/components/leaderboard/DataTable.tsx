@@ -65,11 +65,11 @@ export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProp
       const { left } = tableContainerRef.current.getBoundingClientRect();
       setGuideLinePosition(e.clientX - left);
     },
-    { target: () => document },
+    { target: document },
   );
 
-  useEventListener('mouseup', resetResizeState, { target: () => document });
-  useEventListener('touchend', resetResizeState, { target: () => document });
+  useEventListener('mouseup', resetResizeState, { target: document });
+  useEventListener('touchend', resetResizeState, { target: document });
 
   const currentPage = table.getState().pagination.pageIndex;
   const totalPages = table.getPageCount();

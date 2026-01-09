@@ -319,6 +319,8 @@
   "Leaderboard.arena_average": "Moyenne",
   "Leaderboard.arena_raw_score_hint": "Score brut × 100 = Score affiché",
   "Leaderboard.arena_average_hint": "Moyenne de {count} sous-scores × 100",
+  "Leaderboard.axis_x": "X",
+  "Leaderboard.axis_y": "Y",
   "Account.title": "Compte",
   "Account.loading": "Chargement des informations du compte...",
   "Account.error": "Échec du chargement des informations du compte. Veuillez actualiser la page.",
