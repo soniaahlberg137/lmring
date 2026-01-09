@@ -150,16 +150,9 @@ function SortableHeader({
 export function createBaseColumns(): ColumnDef<LeaderboardModel>[] {
   return [
     {
-      id: 'rank',
+      accessorKey: 'rank',
       header: () => <span className="text-xs uppercase tracking-wide">Rank</span>,
-      // Use row.index to show current display position (after sorting)
-      cell: ({ table, row }) => {
-        const pageIndex = table.getState().pagination.pageIndex;
-        const pageSize = table.getState().pagination.pageSize;
-        const rowIndex = table.getSortedRowModel().rows.findIndex((r) => r.id === row.id);
-        const displayRank = rowIndex >= 0 ? rowIndex + 1 : pageIndex * pageSize + row.index + 1;
-        return <RankCell rank={displayRank} />;
-      },
+      cell: ({ row }) => <RankCell rank={row.original.rank} />,
       size: 70,
       enableSorting: false,
       enableResizing: false,

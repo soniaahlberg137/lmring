@@ -22,7 +22,7 @@ interface DataTableProps<TData> {
 
 export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProps<TData>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnResizeMode] = useState<ColumnResizeMode>('onChange');
+  const [columnResizeMode] = useState<ColumnResizeMode>('onEnd');
 
   const table = useReactTable({
     data,
