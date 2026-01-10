@@ -4,6 +4,7 @@ import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { ThemeProvider } from '@/components/theme-provider';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
 import { getRequestLocale } from '@/libs/request-locale';
+import { QueryProvider } from '@/providers';
 import { LanguageProvider } from '@/providers/language-provider';
 import '@/styles/global.css';
 import '@/styles/arena.css';
@@ -26,8 +27,10 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body suppressHydrationWarning className={`min-h-screen`}>
         <LanguageProvider initialLanguage={locale} initialMessages={messages}>
           <ThemeProvider>
-            <PostHogProvider>{props.children}</PostHogProvider>
-            <Toaster />
+            <QueryProvider>
+              <PostHogProvider>{props.children}</PostHogProvider>
+              <Toaster />
+            </QueryProvider>
           </ThemeProvider>
         </LanguageProvider>
       </body>

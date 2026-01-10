@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import type { TranslationFunction } from '@/hooks/use-translations';
+import { useTranslations } from '@/hooks/use-translations';
 import { type ArenaScores, formatMetricValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel, SortConfig } from './types';
 
@@ -185,10 +187,12 @@ function ArenaScoreCell({
   value,
   arenaType,
   rawScores,
+  t,
 }: {
   value: number | null;
   arenaType: 'code_arena' | 'chat_arena';
   rawScores?: ArenaScores | null;
+  t: TranslationFunction;
 }) {
   if (value === null || value === undefined) {
     return <span className="text-muted-foreground">—</span>;
@@ -203,8 +207,12 @@ function ArenaScoreCell({
       const chatScore = rawScores['chat-arena'];
       return (
         <div className="space-y-2 min-w-[200px]">
-          <div className="font-medium border-b border-border pb-1">Chat Arena</div>
-          <div className="text-xs text-muted-foreground">Raw score × 100 = Display score</div>
+          <div className="font-medium border-b border-border pb-1">
+            {t('Leaderboard.arena_chat')}
+          </div>
+          <div className="text-xs text-muted-foreground">
+            {t('Leaderboard.arena_raw_score_hint')}
+          </div>
           {chatScore !== undefined && (
             <div className="flex justify-between text-sm">
               <span>chat-arena:</span>
@@ -228,9 +236,11 @@ function ArenaScoreCell({
 
     return (
       <div className="space-y-2 min-w-[280px]">
-        <div className="font-medium border-b border-border pb-1">Code Arena Breakdown</div>
+        <div className="font-medium border-b border-border pb-1">
+          {t('Leaderboard.arena_code_breakdown')}
+        </div>
         <div className="text-xs text-muted-foreground">
-          Average of {scores.length} sub-scores × 100
+          {t('Leaderboard.arena_average_hint', { count: scores.length })}
         </div>
         <div className="space-y-1">
           {codeArenaKeys.map((key) => {
@@ -249,7 +259,7 @@ function ArenaScoreCell({
           })}
         </div>
         <div className="border-t border-border pt-1 flex justify-between text-sm font-medium">
-          <span>Average:</span>
+          <span>{t('Leaderboard.arena_average')}:</span>
           <span className="tabular-nums">
             {average.toFixed(2)} × 100 = {Math.round(average * 100)}
           </span>
@@ -289,6 +299,7 @@ export function LeaderboardTable({
   totalCount,
   onPageChange,
 }: LeaderboardTableProps) {
+  const t = useTranslations();
   const totalPages = Math.ceil(totalCount / pageSize);
   const startIndex = (page - 1) * pageSize;
   const endIndex = Math.min(startIndex + pageSize, totalCount);
@@ -328,14 +339,14 @@ export function LeaderboardTable({
                 className="group relative px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 style={{ width: getWidth('rank') }}
               >
-                Rank
+                {t('Leaderboard.table_rank')}
                 <ResizeHandle columnId="rank" onResize={handleResize} />
               </th>
               <th
                 className="group relative px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 style={{ width: getWidth('model') }}
               >
-                Model
+                {t('Leaderboard.table_model')}
                 <ResizeHandle columnId="model" onResize={handleResize} />
               </th>
               {metrics.map((metric) => (
@@ -356,21 +367,21 @@ export function LeaderboardTable({
                 className="group relative px-3 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider whitespace-nowrap"
                 style={{ width: getWidth('knowledge_cutoff') }}
               >
-                Knowledge Cutoff
+                {t('Leaderboard.table_knowledge_cutoff')}
                 <ResizeHandle columnId="knowledge_cutoff" onResize={handleResize} />
               </th>
               <th
                 className="group relative px-3 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 style={{ width: getWidth('multimodal') }}
               >
-                Multimodal
+                {t('Leaderboard.table_multimodal')}
                 <ResizeHandle columnId="multimodal" onResize={handleResize} />
               </th>
               <th
                 className="group relative px-3 py-3 text-center text-xs font-medium text-muted-foreground uppercase tracking-wider"
                 style={{ width: getWidth('license') }}
               >
-                License
+                {t('Leaderboard.table_license')}
                 <ResizeHandle columnId="license" onResize={handleResize} />
               </th>
             </tr>
@@ -394,7 +405,7 @@ export function LeaderboardTable({
                             variant="default"
                             className="text-[9px] px-1 py-0 bg-green-500 hover:bg-green-500 flex-shrink-0"
                           >
-                            NEW
+                            {t('Leaderboard.table_new')}
                           </Badge>
                         )}
                       </div>
@@ -418,6 +429,7 @@ export function LeaderboardTable({
                           value={value as number | null}
                           arenaType={metric.field as 'code_arena' | 'chat_arena'}
                           rawScores={model.arena_raw_scores}
+                          t={t}
                         />
                       </td>
                     );
@@ -453,7 +465,7 @@ export function LeaderboardTable({
       {/* Pagination */}
       <div className="flex items-center justify-between px-2">
         <div className="text-sm text-muted-foreground">
-          {startIndex + 1}-{endIndex} of {totalCount}
+          {startIndex + 1}-{endIndex} {t('Leaderboard.pagination_of')} {totalCount}
         </div>
         <div className="flex items-center gap-1">
           <button
@@ -462,7 +474,7 @@ export function LeaderboardTable({
             disabled={page <= 1}
             className="px-3 py-1 text-sm rounded-md hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Previous
+            {t('Leaderboard.pagination_previous')}
           </button>
           {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
             let pageNum: number;
@@ -495,7 +507,7 @@ export function LeaderboardTable({
             disabled={page >= totalPages}
             className="px-3 py-1 text-sm rounded-md hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Next
+            {t('Leaderboard.pagination_next')}
           </button>
         </div>
       </div>

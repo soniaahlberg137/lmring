@@ -1,4 +1,6 @@
 export { CategoryTabs } from './CategoryTabs';
+export { createBaseColumns, createMetricColumns, createTrailingColumns } from './columns';
+export { DataTable } from './DataTable';
 export { LeaderboardBarChart } from './LeaderboardBarChart';
 export { LeaderboardScatterPlot } from './LeaderboardScatterPlot';
 export { LeaderboardTable } from './LeaderboardTable';
