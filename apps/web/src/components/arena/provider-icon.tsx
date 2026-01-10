@@ -14,6 +14,7 @@ import {
   Cohere,
   DeepSeek,
   ElevenLabs,
+  Fal,
   Fireworks,
   GiteeAI,
   Github,
@@ -140,7 +141,9 @@ const ICON_MAP: Record<string, any> = {
   kling: Kling,
   'recraft-ai': Recraft,
   xiaomi: XiaomiMiMo,
-  // Note: xiaomi (XiaomiMiMo), cartesia, wanvideo, playai, deepgram, rime, 'reve-ai'
+  xiaomimimo: XiaomiMiMo,
+  fal: Fal,
+  // Note: cartesia, wanvideo, playai, deepgram, rime, 'reve-ai'
   // require @lobehub/icons package update or fallback to default 🤖 emoji
 };
 
