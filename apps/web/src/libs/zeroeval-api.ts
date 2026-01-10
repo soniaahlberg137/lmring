@@ -721,65 +721,51 @@ export function sortModels<T>(models: T[], field: string, direction: 'asc' | 'de
   });
 }
 
-/**
- * Get organization color for charts based on organization_id
- * Colors are designed to be vibrant and visible on both light and dark backgrounds
- */
 export function getOrganizationColor(organizationId: string): string {
-  // Curated color palette - each color chosen for visibility on light/dark themes
   const colors: Record<string, string> = {
-    // Major AI Labs - distinctive brand-inspired colors
-    openai: '#10B981', // Emerald green
-    anthropic: '#F59E0B', // Warm amber
-    google: '#3B82F6', // Bright blue
-    meta: '#8B5CF6', // Vibrant purple
-    mistral: '#F97316', // Vivid orange
-    deepseek: '#06B6D4', // Cyan
-    xai: '#EC4899', // Pink (Grok)
-    cohere: '#EF4444', // Red coral
-
-    // Chinese Tech
-    'zai-org': '#14B8A6', // Teal (Zhipu AI)
+    openai: '#10B981',
+    anthropic: '#F59E0B',
+    google: '#3B82F6',
+    meta: '#8B5CF6',
+    mistral: '#F97316',
+    deepseek: '#06B6D4',
+    xai: '#EC4899',
+    cohere: '#EF4444',
+    'zai-org': '#14B8A6',
     zhipu: '#14B8A6',
-    minimax: '#A855F7', // Purple
-    xiaomi: '#FB923C', // Orange
-    bytedance: '#22D3D3', // Bright teal (Doubao)
-    tencent: '#38BDF8', // Sky blue
+    minimax: '#A855F7',
+    xiaomi: '#FB923C',
+    bytedance: '#22D3D3',
+    tencent: '#38BDF8',
     hunyuan: '#38BDF8',
-    qwen: '#818CF8', // Indigo (Alibaba)
-    moonshot: '#C084FC', // Light purple (Kimi)
+    qwen: '#818CF8',
+    moonshot: '#C084FC',
     'moonshot-ai': '#C084FC',
     kimi: '#C084FC',
-    baidu: '#2563EB', // Blue
+    baidu: '#2563EB',
     ernie: '#2563EB',
-    '01-ai': '#34D399', // Emerald (Yi)
+    '01-ai': '#34D399',
     yi: '#34D399',
-
-    // Hardware & Cloud
-    nvidia: '#84CC16', // Lime green
-    amazon: '#FBBF24', // Yellow
+    nvidia: '#84CC16',
+    amazon: '#FBBF24',
     aws: '#FBBF24',
-    microsoft: '#60A5FA', // Light blue
+    microsoft: '#60A5FA',
     azure: '#60A5FA',
-
-    // Creative & Media
-    'black-forest-labs': '#A78BFA', // Violet (FLUX)
+    'black-forest-labs': '#A78BFA',
     flux: '#A78BFA',
-    luma: '#818CF8', // Indigo
-    elevenlabs: '#F472B6', // Pink
-    stability: '#FB7185', // Rose
-    midjourney: '#4ADE80', // Green
-    runway: '#2DD4BF', // Teal
-    'recraft-ai': '#C084FC', // Purple
-
-    // Other
-    together: '#F87171', // Light red
-    groq: '#FCD34D', // Amber
-    perplexity: '#22D3EE', // Cyan
-    replicate: '#A3E635', // Lime
+    luma: '#818CF8',
+    elevenlabs: '#F472B6',
+    stability: '#FB7185',
+    midjourney: '#4ADE80',
+    runway: '#2DD4BF',
+    'recraft-ai': '#C084FC',
+    together: '#F87171',
+    groq: '#FCD34D',
+    perplexity: '#22D3EE',
+    replicate: '#A3E635',
   };
 
-  return colors[organizationId.toLowerCase()] || '#94A3B8'; // Slate gray fallback
+  return colors[organizationId.toLowerCase()] || '#94A3B8';
 }
 
 /**
