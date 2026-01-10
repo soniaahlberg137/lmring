@@ -237,8 +237,9 @@ export function LeaderboardBarChart({ models, metric, maxItems = 15 }: Leaderboa
               fontSize: 12,
               fontWeight: 400,
             }}
-            width={150}
+            width={180}
             tickMargin={16}
+            interval={0}
             className="fill-foreground/80"
           />
           <Tooltip content={<CustomTooltip />} cursor={{ fill: 'currentColor', opacity: 0.03 }} />
