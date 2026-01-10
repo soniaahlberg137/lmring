@@ -244,8 +244,8 @@ importers:
   packages/ai-hub:
     dependencies:
       '@ai-sdk/amazon-bedrock':
-        specifier: ^4.0.12
-        version: 4.0.12(zod@4.3.5)
+        specifier: ^4.0.13
+        version: 4.0.13(zod@4.3.5)
       '@ai-sdk/anthropic':
         specifier: ^3.0.9
         version: 3.0.9(zod@4.3.5)
@@ -281,10 +281,10 @@ importers:
         version: link:../model-depot
       '@openrouter/ai-sdk-provider':
         specifier: ^1.5.4
-        version: 1.5.4(ai@6.0.25(zod@4.3.5))(zod@4.3.5)
+        version: 1.5.4(ai@6.0.26(zod@4.3.5))(zod@4.3.5)
       ai:
-        specifier: ^6.0.25
-        version: 6.0.25(zod@4.3.5)
+        specifier: ^6.0.26
+        version: 6.0.26(zod@4.3.5)
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -570,8 +570,8 @@ packages:
   '@adobe/css-tools@4.4.4':
     resolution: {integrity: sha512-Elp+iwUx5rN5+Y8xLt5/GRoG20WGoDCQ/1Fb+1LiGtvwbDavuSk0jhD/eZdckHAuzcDzccnkv+rEjyWfRx18gg==}
 
-  '@ai-sdk/amazon-bedrock@4.0.12':
-    resolution: {integrity: sha512-5NvAnCa8mQy9bxWv8tMR8u77fcOhXnxozxRtjB/to69RBFyy4ncxsTHhJEK3ypHEvaYHheBkAxSOwzEu79dW3A==}
+  '@ai-sdk/amazon-bedrock@4.0.13':
+    resolution: {integrity: sha512-z5FQUoDBo5xwLBmR/PNFiicDpaxaUJzmH5lC4mKVz6h560lEfr25airIsGw3bS1oJc7GhBxak+4oqEqBrbTPYg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -5164,8 +5164,8 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  ai@6.0.25:
-    resolution: {integrity: sha512-KErk9JWkRaN4j9Xzxuo+twa0TxcYKdYbrRV8iGktduvUeGb0Yd5seWe3yOfuLGERbDBiKI1ajQz28O2FG3WO5A==}
+  ai@6.0.26:
+    resolution: {integrity: sha512-zU3Nvx2uTYzCOiWjsXZbsIFqk8ovn9NvhqXaLGIGe9m7p+faC0bRjWoY3fghzswEwEI9krJn73sd07IPzpl4Qw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -10219,7 +10219,7 @@ snapshots:
 
   '@adobe/css-tools@4.4.4': {}
 
-  '@ai-sdk/amazon-bedrock@4.0.12(zod@4.3.5)':
+  '@ai-sdk/amazon-bedrock@4.0.13(zod@4.3.5)':
     dependencies:
       '@ai-sdk/anthropic': 3.0.9(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
@@ -12340,10 +12340,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@openrouter/ai-sdk-provider@1.5.4(ai@6.0.25(zod@4.3.5))(zod@4.3.5)':
+  '@openrouter/ai-sdk-provider@1.5.4(ai@6.0.26(zod@4.3.5))(zod@4.3.5)':
     dependencies:
       '@openrouter/sdk': 0.1.27
-      ai: 6.0.25(zod@4.3.5)
+      ai: 6.0.26(zod@4.3.5)
       zod: 4.3.5
 
   '@openrouter/sdk@0.1.27':
@@ -15598,7 +15598,7 @@ snapshots:
       screenfull: 5.2.0
       tslib: 2.8.1
 
-  ai@6.0.25(zod@4.3.5):
+  ai@6.0.26(zod@4.3.5):
     dependencies:
       '@ai-sdk/gateway': 3.0.10(zod@4.3.5)
       '@ai-sdk/provider': 3.0.2
