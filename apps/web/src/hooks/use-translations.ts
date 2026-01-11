@@ -8,7 +8,7 @@ type MessageKey = keyof typeof messages;
 
 type TranslationValues = Record<string, string | number | boolean | Date | null | undefined>;
 
-type TranslationFunction = {
+export type TranslationFunction = {
   (key: MessageKey): string;
   (key: MessageKey, values: TranslationValues): string;
 };

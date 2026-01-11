@@ -721,38 +721,68 @@ export function sortModels<T>(models: T[], field: string, direction: 'asc' | 'de
   });
 }
 
-/**
- * Get organization color for charts based on organization_id
- */
 export function getOrganizationColor(organizationId: string): string {
   const colors: Record<string, string> = {
-    openai: '#10A37F',
-    anthropic: '#D4A574',
-    google: '#4285F4',
-    meta: '#0668E1',
-    mistral: '#FF7000',
-    deepseek: '#536DFE',
-    'zai-org': '#000000', // Zhipu AI
-    zhipu: '#000000',
-    minimax: '#7C3AED',
-    xiaomi: '#FF6900',
-    nvidia: '#76B900',
-    cohere: '#D14500',
-    xai: '#000000',
-    'black-forest-labs': '#000000',
-    bytedance: '#00F5D4',
-    luma: '#6366F1',
-    elevenlabs: '#000000',
-    amazon: '#FF9900', // Amazon/AWS orange
-    aws: '#FF9900',
-    moonshot: '#6366F1', // Moonshot/Kimi
-    'moonshot-ai': '#6366F1',
-    kimi: '#6366F1',
-    tencent: '#00A4FF', // Tencent blue
-    hunyuan: '#00A4FF',
-    'recraft-ai': '#8B5CF6',
-    qwen: '#6366F1', // Alibaba Qwen
+    openai: '#10B981',
+    anthropic: '#F59E0B',
+    google: '#3B82F6',
+    meta: '#8B5CF6',
+    mistral: '#F97316',
+    deepseek: '#06B6D4',
+    xai: '#EC4899',
+    cohere: '#EF4444',
+    'zai-org': '#14B8A6',
+    zhipu: '#14B8A6',
+    minimax: '#A855F7',
+    xiaomi: '#FB923C',
+    bytedance: '#22D3D3',
+    tencent: '#38BDF8',
+    hunyuan: '#38BDF8',
+    qwen: '#818CF8',
+    moonshot: '#C084FC',
+    'moonshot-ai': '#C084FC',
+    kimi: '#C084FC',
+    baidu: '#2563EB',
+    ernie: '#2563EB',
+    '01-ai': '#34D399',
+    yi: '#34D399',
+    nvidia: '#84CC16',
+    amazon: '#FBBF24',
+    aws: '#FBBF24',
+    microsoft: '#60A5FA',
+    azure: '#60A5FA',
+    'black-forest-labs': '#A78BFA',
+    flux: '#A78BFA',
+    luma: '#818CF8',
+    elevenlabs: '#F472B6',
+    stability: '#FB7185',
+    midjourney: '#4ADE80',
+    runway: '#2DD4BF',
+    'recraft-ai': '#C084FC',
+    together: '#F87171',
+    groq: '#FCD34D',
+    perplexity: '#22D3EE',
+    replicate: '#A3E635',
   };
 
-  return colors[organizationId.toLowerCase()] || '#6B7280';
+  return colors[organizationId.toLowerCase()] || '#94A3B8';
+}
+
+/**
+ * Get a gradient color pair for more visual interest in charts
+ * Returns [startColor, endColor] for gradient fills
+ */
+export function getOrganizationGradient(organizationId: string): [string, string] {
+  const gradients: Record<string, [string, string]> = {
+    openai: ['#10B981', '#059669'],
+    anthropic: ['#F59E0B', '#D97706'],
+    google: ['#3B82F6', '#2563EB'],
+    meta: ['#8B5CF6', '#7C3AED'],
+    mistral: ['#F97316', '#EA580C'],
+    deepseek: ['#06B6D4', '#0891B2'],
+    xai: ['#EC4899', '#DB2777'],
+  };
+
+  const baseColor = getOrganizationColor(organizationId);
+  return gradients[organizationId.toLowerCase()] || [baseColor, baseColor];
 }

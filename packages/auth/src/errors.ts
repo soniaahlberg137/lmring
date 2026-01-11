@@ -17,6 +17,7 @@ export const AuthErrorCodes = {
   MISSING_CREDENTIALS: 'MISSING_CREDENTIALS',
   PASSWORD_TOO_SHORT: 'PASSWORD_TOO_SHORT',
   PASSWORD_TOO_LONG: 'PASSWORD_TOO_LONG',
+  WEAK_PASSWORD: 'WEAK_PASSWORD',
   EMAIL_ALREADY_EXISTS: 'EMAIL_ALREADY_EXISTS',
   CONFIGURATION_ERROR: 'CONFIGURATION_ERROR',
 } as const;
@@ -62,6 +63,7 @@ export function createAuthError(
     [AuthErrorCodes.MISSING_CREDENTIALS]: 'Email and password are required',
     [AuthErrorCodes.PASSWORD_TOO_SHORT]: 'Password must be at least 8 characters long',
     [AuthErrorCodes.PASSWORD_TOO_LONG]: 'Password must be less than 128 characters long',
+    [AuthErrorCodes.WEAK_PASSWORD]: 'Password must contain uppercase, lowercase, number, and special character',
     [AuthErrorCodes.EMAIL_ALREADY_EXISTS]: 'An account with this email already exists',
     [AuthErrorCodes.CONFIGURATION_ERROR]: 'Authentication configuration error',
   };
@@ -78,6 +80,7 @@ export function createAuthError(
     [AuthErrorCodes.MISSING_CREDENTIALS]: 400,
     [AuthErrorCodes.PASSWORD_TOO_SHORT]: 400,
     [AuthErrorCodes.PASSWORD_TOO_LONG]: 400,
+    [AuthErrorCodes.WEAK_PASSWORD]: 400,
     [AuthErrorCodes.EMAIL_ALREADY_EXISTS]: 409,
     [AuthErrorCodes.CONFIGURATION_ERROR]: 500,
   };

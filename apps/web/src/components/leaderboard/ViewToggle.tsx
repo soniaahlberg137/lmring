@@ -2,6 +2,7 @@
 
 import { cn } from '@lmring/ui';
 import { BarChart3Icon, ScatterChartIcon, TableIcon } from 'lucide-react';
+import { useTranslations } from '@/hooks/use-translations';
 import type { ViewMode } from './types';
 
 interface ViewToggleProps {
@@ -9,16 +10,18 @@ interface ViewToggleProps {
   onViewModeChange: (mode: ViewMode) => void;
 }
 
-const VIEW_OPTIONS: { mode: ViewMode; icon: typeof TableIcon; label: string }[] = [
-  { mode: 'table', icon: TableIcon, label: 'Table' },
-  { mode: 'bar', icon: BarChart3Icon, label: 'Bar Chart' },
-  { mode: 'scatter', icon: ScatterChartIcon, label: 'Scatter Plot' },
-];
-
 export function ViewToggle({ viewMode, onViewModeChange }: ViewToggleProps) {
+  const t = useTranslations();
+
+  const VIEW_OPTIONS = [
+    { mode: 'table', icon: TableIcon, labelKey: 'Leaderboard.view_table' },
+    { mode: 'bar', icon: BarChart3Icon, labelKey: 'Leaderboard.view_bar_chart' },
+    { mode: 'scatter', icon: ScatterChartIcon, labelKey: 'Leaderboard.view_scatter_plot' },
+  ] as const;
+
   return (
     <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
-      {VIEW_OPTIONS.map(({ mode, icon: Icon, label }) => (
+      {VIEW_OPTIONS.map(({ mode, icon: Icon, labelKey }) => (
         <button
           type="button"
           key={mode}
@@ -29,9 +32,9 @@ export function ViewToggle({ viewMode, onViewModeChange }: ViewToggleProps) {
               ? 'bg-background text-foreground shadow-sm'
               : 'text-muted-foreground hover:text-foreground hover:bg-background/50',
           )}
-          title={label}
+          title={t(labelKey)}
         >
-          <Icon className="h-4 w-4" />
+          <Icon className="h-4 w-4 cursor-pointer" />
         </button>
       ))}
     </div>
