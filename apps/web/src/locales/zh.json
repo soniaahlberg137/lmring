@@ -20,7 +20,7 @@
   "SignIn.meta_title": "登录",
   "SignIn.meta_description": "安全访问您的 LMRing 账户。",
   "SignUp.meta_title": "注册",
-  "SignUp.meta_description": "通过我们直观的注册流程轻松创建账户。",
+  "SignUp.meta_description": "创建账户，解锁 AI 模型对比与排行榜功能。",
   "UserProfile.meta_title": "用户资料",
   "Providers.openai_description": "OpenAI 是人工智能研究领域的全球领导者，拥有 GPT 系列等模型。",
   "Providers.anthropic_description": "Anthropic 是一家 AI 安全研究公司，构建可靠、可解释、可控的 AI 系统。",

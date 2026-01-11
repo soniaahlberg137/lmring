@@ -18,6 +18,7 @@ import { UserStatus } from './status';
 import type { AuthLogger } from './logger';
 import { authLogger as defaultLogger } from './logger';
 import { AuthErrorCodes, createAuthError } from './errors';
+import { validatePassword } from './password-validation';
 
 interface CreateAuthOptions {
   deploymentMode: 'saas' | 'selfhost';
@@ -179,6 +180,21 @@ export function createAuth(options: CreateAuthOptions) {
       // Hooks to validate user status during sign-in
       hooks: {
         before: createAuthMiddleware(async (ctx) => {
+          // Validate password complexity on sign-up
+          if (ctx.path === '/sign-up/email' && ctx.method === 'POST') {
+            const password = (ctx.body as { password?: string })?.password;
+            if (password) {
+              const validation = validatePassword(password);
+              if (!validation.valid) {
+                logger.warn('Password validation failed during sign-up', {
+                  path: ctx.path,
+                  errors: validation.errors,
+                });
+                throw createAuthError(AuthErrorCodes.WEAK_PASSWORD, validation.errors.join('; '));
+              }
+            }
+          }
+
           // Match sign-in endpoints
           if (
             ctx.path === '/sign-in/email' ||

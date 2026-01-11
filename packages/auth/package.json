@@ -9,6 +9,10 @@
     "./client": {
       "types": "./src/client.ts",
       "default": "./src/client.ts"
+    },
+    "./shared": {
+      "types": "./src/shared.ts",
+      "default": "./src/shared.ts"
     }
   },
   "scripts": {},
