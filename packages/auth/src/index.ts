@@ -61,3 +61,10 @@ export {
 } from './logger';
 export type { AuthLogger, LogContext } from './logger';
 
+// Export password validation utilities
+export {
+  PASSWORD_RULES,
+  validatePassword,
+  getPasswordStrength,
+} from './password-validation';
+export type { PasswordRuleCheck, PasswordValidationResult } from './password-validation';
