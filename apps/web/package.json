@@ -62,7 +62,7 @@
   },
   "devDependencies": {
     "@chromatic-com/playwright": "^0.12.8",
-    "@faker-js/faker": "^10.1.0",
+    "@faker-js/faker": "^10.2.0",
     "@lmring/biome-config": "workspace:*",
     "@lmring/tailwind-config": "workspace:*",
     "@lmring/typescript-config": "workspace:*",
