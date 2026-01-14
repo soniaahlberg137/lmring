@@ -132,7 +132,7 @@ export function RainbowButton({ children, className, ...props }: RainbowButtonPr
     >
       <Link
         className={cn(
-          'group relative inline-flex h-12 animate-rainbow cursor-pointer items-center justify-center rounded-full border-0 bg-[length:200%] px-8 py-2 font-medium transition-colors [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:calc(0.08*1rem)_solid_transparent]',
+          'group relative inline-flex h-12 animate-rainbow cursor-pointer items-center justify-center rounded-full border-0 bg-[length:200%] px-8 py-2 text-sm font-medium transition-colors [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:calc(0.08*1rem)_solid_transparent]',
           // Rainbow gradient colors - dark inner background
           'bg-[linear-gradient(#121213,#121213),linear-gradient(#121213_50%,rgba(18,18,19,0.6)_80%,rgba(18,18,19,0)),linear-gradient(90deg,hsl(0,100%,63%),hsl(90,100%,63%),hsl(180,100%,63%),hsl(270,100%,63%),hsl(360,100%,63%))]',
           // Glow effect
