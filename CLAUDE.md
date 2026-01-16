@@ -26,6 +26,7 @@ lmring/
     ├── database/     # DrizzleORM schemas
     ├── i18n/         # Internationalization
     ├── model-depot/  # AI model definitions
+    ├── storage/      # File storage (S3, Supabase)
     └── ui/           # UI components
 ```
 

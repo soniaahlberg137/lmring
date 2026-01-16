@@ -32,6 +32,7 @@ Built with modern technologies:
   - `database/` - DrizzleORM schemas
   - `i18n/` - Internationalization
   - `model-depot/` - AI model definitions (60+ providers)
+  - `storage/` - File storage (S3, Supabase)
   - `ui/` - UI components
 
 ## Development Workflow

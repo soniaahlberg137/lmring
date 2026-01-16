@@ -76,6 +76,7 @@ lmring/
 │   ├── env/              # Environment variable validation
 │   ├── i18n/             # Internationalization utilities
 │   ├── model-depot/      # AI model definitions and metadata
+│   ├── storage/          # File storage (S3, Supabase)
 │   └── ui/               # Shared UI components (shadcn/ui)
 ├── .github/              # GitHub workflows and templates
 ├── docs/                 # Documentation
@@ -232,6 +233,7 @@ In your PR description, indicate which packages are affected:
 - `packages/env` - Environment validation
 - `packages/i18n` - Internationalization
 - `packages/model-depot` - AI model definitions
+- `packages/storage` - File storage
 - `packages/ui` - UI components
 
 ### PR Requirements

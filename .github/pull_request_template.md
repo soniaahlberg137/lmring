@@ -34,6 +34,7 @@ Closes #
 - [ ] `packages/env`
 - [ ] `packages/i18n`
 - [ ] `packages/model-depot`
+- [ ] `packages/storage`
 - [ ] `packages/ui`
 
 ## Testing
