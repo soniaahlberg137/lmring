@@ -1,10 +1,26 @@
 import { StopCircle } from 'lucide-react';
 import * as React from 'react';
-import { Streamdown } from 'streamdown';
+import { harden } from 'rehype-harden';
+import { Streamdown, defaultRehypePlugins } from 'streamdown';
 
 import { cn } from '../../utils';
 import { Shimmer } from '../shimmer';
 import { StreamingCursor } from '../streaming-cursor';
+
+const permissiveRehypePlugins = [
+  defaultRehypePlugins.raw,
+  defaultRehypePlugins.katex,
+  [
+    harden,
+    {
+      allowedImagePrefixes: ['*'],
+      allowedLinkPrefixes: ['*'],
+      allowedProtocols: ['http', 'https', 'mailto'],
+      allowDataImages: true,
+    },
+  ],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+].filter(Boolean) as any[];
 
 export type ResponseViewerStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
@@ -42,6 +58,7 @@ function ResponseViewer({
               parseIncompleteMarkdown={true}
               isAnimating={false}
               controls={{ code: true }}
+              rehypePlugins={permissiveRehypePlugins}
             >
               {content}
             </Streamdown>
@@ -81,6 +98,7 @@ function ResponseViewer({
         parseIncompleteMarkdown={true}
         isAnimating={isStreaming}
         controls={{ code: true }}
+        rehypePlugins={permissiveRehypePlugins}
       >
         {content}
       </Streamdown>
