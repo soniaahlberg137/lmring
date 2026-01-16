@@ -5,6 +5,7 @@ export { LeaderboardBarChart } from './LeaderboardBarChart';
 export { LeaderboardScatterPlot } from './LeaderboardScatterPlot';
 export { LeaderboardTable } from './LeaderboardTable';
 export { LeaderboardContentSkeleton, LeaderboardTableSkeleton } from './LeaderboardTableSkeleton';
+export { LazyLeaderboardBarChart, LazyLeaderboardScatterPlot } from './lazy-charts';
 export { MetricSelector } from './MetricSelector';
 export type * from './types';
 export { ViewToggle } from './ViewToggle';

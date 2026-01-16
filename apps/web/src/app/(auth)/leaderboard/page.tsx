@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
-import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -10,10 +9,10 @@ import {
   createMetricColumns,
   createTrailingColumns,
   DataTable,
-  LeaderboardBarChart,
+  LazyLeaderboardBarChart,
+  LazyLeaderboardScatterPlot,
   LeaderboardContentSkeleton,
   type LeaderboardModel,
-  LeaderboardScatterPlot,
   LeaderboardTableSkeleton,
   MetricSelector,
   type ViewMode,
@@ -166,11 +165,7 @@ export default function LeaderboardPage() {
 
   return (
     <div className="p-6 space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-medium text-foreground">{t('Leaderboard.page_title')}</h1>
@@ -237,7 +232,7 @@ export default function LeaderboardPage() {
                   )}
 
                   {viewMode === 'bar' && (
-                    <LeaderboardBarChart
+                    <LazyLeaderboardBarChart
                       models={barChartModels}
                       metric={getMetricConfig(selectedMetric)}
                       maxItems={PAGE_SIZE}
@@ -245,7 +240,7 @@ export default function LeaderboardPage() {
                   )}
 
                   {viewMode === 'scatter' && (
-                    <LeaderboardScatterPlot
+                    <LazyLeaderboardScatterPlot
                       models={scatterPlotModels}
                       xMetric={getMetricConfig(xAxisMetric)}
                       yMetric={getMetricConfig(yAxisMetric)}
@@ -397,7 +392,7 @@ export default function LeaderboardPage() {
             </div>
           </CardContent>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 }

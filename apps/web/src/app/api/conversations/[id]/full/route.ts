@@ -37,7 +37,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
     const userId = session.user.id;
     const { id: conversationId } = await params;
 
-    // Get the conversation
+    // Get the conversation (security check)
     const [conversation] = await db
       .select()
       .from(conversations)
@@ -48,54 +48,15 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
 
-    // Get all messages for this conversation
-    const conversationMessages = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.conversationId, conversationId))
-      .orderBy(asc(messages.createdAt));
-
-    // Get all model responses for these messages
-    const messageIds = conversationMessages.map((m) => m.id);
-
-    const responsesByMessageId: Map<
-      string,
-      Array<{
-        id: string;
-        modelName: string;
-        providerName: string;
-        responseContent: string;
-        attachments?: ResponseAttachment[] | null;
-        tokensUsed: number | null;
-        responseTimeMs: number | null;
-        displayPosition: number;
-        createdAt: Date;
-      }>
-    > = new Map();
-
-    if (messageIds.length === 1 && messageIds[0]) {
-      const firstMessageId = messageIds[0];
-      const responses = await db
-        .select({
-          id: modelResponses.id,
-          messageId: modelResponses.messageId,
-          modelName: modelResponses.modelName,
-          providerName: modelResponses.providerName,
-          responseContent: modelResponses.responseContent,
-          attachments: modelResponses.attachments,
-          tokensUsed: modelResponses.tokensUsed,
-          responseTimeMs: modelResponses.responseTimeMs,
-          displayPosition: modelResponses.displayPosition,
-          createdAt: modelResponses.createdAt,
-        })
-        .from(modelResponses)
-        .where(eq(modelResponses.messageId, firstMessageId))
-        .orderBy(asc(modelResponses.displayPosition), asc(modelResponses.createdAt));
-
-      responsesByMessageId.set(firstMessageId, responses);
-    } else if (messageIds.length > 1) {
-      // For multiple messages, query them with a JOIN
-      const allResponses = await db
+    // Parallelize messages and responses fetch for better performance
+    // Both queries only depend on conversationId, not on each other
+    const [conversationMessages, allResponses] = await Promise.all([
+      db
+        .select()
+        .from(messages)
+        .where(eq(messages.conversationId, conversationId))
+        .orderBy(asc(messages.createdAt)),
+      db
         .select({
           id: modelResponses.id,
           messageId: modelResponses.messageId,
@@ -111,24 +72,40 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         .from(modelResponses)
         .innerJoin(messages, eq(modelResponses.messageId, messages.id))
         .where(eq(messages.conversationId, conversationId))
-        .orderBy(asc(modelResponses.displayPosition), asc(modelResponses.createdAt));
+        .orderBy(asc(modelResponses.displayPosition), asc(modelResponses.createdAt)),
+    ]);
 
-      for (const response of allResponses) {
-        if (!responsesByMessageId.has(response.messageId)) {
-          responsesByMessageId.set(response.messageId, []);
-        }
-        responsesByMessageId.get(response.messageId)?.push({
-          id: response.id,
-          modelName: response.modelName,
-          providerName: response.providerName,
-          responseContent: response.responseContent,
-          attachments: response.attachments,
-          tokensUsed: response.tokensUsed,
-          responseTimeMs: response.responseTimeMs,
-          displayPosition: response.displayPosition,
-          createdAt: response.createdAt,
-        });
+    // Build responses map from parallel-fetched data
+    const responsesByMessageId: Map<
+      string,
+      Array<{
+        id: string;
+        modelName: string;
+        providerName: string;
+        responseContent: string;
+        attachments?: ResponseAttachment[] | null;
+        tokensUsed: number | null;
+        responseTimeMs: number | null;
+        displayPosition: number;
+        createdAt: Date;
+      }>
+    > = new Map();
+
+    for (const response of allResponses) {
+      if (!responsesByMessageId.has(response.messageId)) {
+        responsesByMessageId.set(response.messageId, []);
       }
+      responsesByMessageId.get(response.messageId)?.push({
+        id: response.id,
+        modelName: response.modelName,
+        providerName: response.providerName,
+        responseContent: response.responseContent,
+        attachments: response.attachments,
+        tokensUsed: response.tokensUsed,
+        responseTimeMs: response.responseTimeMs,
+        displayPosition: response.displayPosition,
+        createdAt: response.createdAt,
+      });
     }
 
     // Build the result

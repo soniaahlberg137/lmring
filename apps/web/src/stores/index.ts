@@ -1,5 +1,10 @@
 export type { ArenaActions, ArenaState, ArenaStore } from './arena-store';
-export { ArenaStoreProvider, arenaSelectors, useArenaStore } from './arena-store';
+export {
+  ArenaStoreProvider,
+  arenaSelectors,
+  useArenaStore,
+  useArenaStoreShallow,
+} from './arena-store';
 export type {
   ApiKeyRecord,
   SettingsActions,

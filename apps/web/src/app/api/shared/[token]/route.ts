@@ -48,29 +48,33 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
       return NextResponse.json({ error: 'Share link has expired' }, { status: 410 });
     }
 
-    const [conversationWithUser] = await db
-      .select({
-        id: conversations.id,
-        title: conversations.title,
-        createdAt: conversations.createdAt,
-        userId: conversations.userId,
-        userName: users.fullName,
-        userAvatarUrl: users.avatarUrl,
-      })
-      .from(conversations)
-      .leftJoin(users, eq(conversations.userId, users.id))
-      .where(eq(conversations.id, shared.conversationId))
-      .limit(1);
+    // Parallelize conversation and messages fetch for better performance
+    const [conversationResult, conversationMessages] = await Promise.all([
+      db
+        .select({
+          id: conversations.id,
+          title: conversations.title,
+          createdAt: conversations.createdAt,
+          userId: conversations.userId,
+          userName: users.fullName,
+          userAvatarUrl: users.avatarUrl,
+        })
+        .from(conversations)
+        .leftJoin(users, eq(conversations.userId, users.id))
+        .where(eq(conversations.id, shared.conversationId))
+        .limit(1),
+      db
+        .select()
+        .from(messages)
+        .where(eq(messages.conversationId, shared.conversationId))
+        .orderBy(asc(messages.createdAt)),
+    ]);
+
+    const [conversationWithUser] = conversationResult;
 
     if (!conversationWithUser) {
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
-
-    const conversationMessages = await db
-      .select()
-      .from(messages)
-      .where(eq(messages.conversationId, shared.conversationId))
-      .orderBy(asc(messages.createdAt));
 
     const messageIds = conversationMessages.map((m) => m.id);
 
