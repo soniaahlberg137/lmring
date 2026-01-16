@@ -43,8 +43,8 @@ export default async function Index(props: IIndexProps) {
           description={t('Index.description')}
           actions={
             <>
-              <AnimatedButton href="/arena/" variant="secondary">
-                {t('Index.view_arena')}
+              <AnimatedButton href="/leaderboard/" variant="secondary">
+                {t('Index.view_leaderboard')}
               </AnimatedButton>
               <RainbowButton href="/sign-up/">{t('Index.get_started')}</RainbowButton>
             </>
@@ -64,8 +64,8 @@ export default async function Index(props: IIndexProps) {
             </RainbowButton>
           }
           secondaryAction={
-            <AnimatedButton href="/arena/" variant="secondary" className="px-8 py-4 text-lg">
-              Try the Arena
+            <AnimatedButton href="/leaderboard/" variant="secondary" className="px-8 py-4 text-lg">
+              {t('Index.try_leaderboard')}
             </AnimatedButton>
           }
         />

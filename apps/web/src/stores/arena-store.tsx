@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/shallow';
 import { MAX_COMPARISON_CARDS } from '@/constants/arena';
 import {
   DEFAULT_MODEL_CONFIG,
@@ -351,6 +352,16 @@ export function useArenaStore<T>(selector: (state: ArenaStore) => T): T {
   return useStore(store, selector);
 }
 
+// Hook for composite selectors with shallow comparison
+// Use this with arenaSelectors.arenaState and arenaSelectors.arenaActions
+export function useArenaStoreShallow<T>(selector: (state: ArenaStore) => T): T {
+  const store = useContext(ArenaStoreContext);
+  if (!store) {
+    throw new Error('useArenaStoreShallow must be used within ArenaStoreProvider');
+  }
+  return useStore(store, useShallow(selector));
+}
+
 export const arenaSelectors = {
   comparisons: (state: ArenaStore) => state.comparisons,
   globalPrompt: (state: ArenaStore) => state.globalPrompt,
@@ -363,4 +374,38 @@ export const arenaSelectors = {
   customModelsMap: (state: ArenaStore) => state.customModelsMap,
   modelOverridesMap: (state: ArenaStore) => state.modelOverridesMap,
   mainContentReady: (state: ArenaStore) => state.mainContentReady,
+
+  // Composite selector for all state values - use with shallow comparison
+  // Reduces subscription count from 10+ to 1 for state values
+  arenaState: (state: ArenaStore) => ({
+    comparisons: state.comparisons,
+    initialized: state.initialized,
+    availableModels: state.availableModels,
+    modelsLastLoadedAt: state.modelsLastLoadedAt,
+    enabledModelsMap: state.enabledModelsMap,
+    customModelsMap: state.customModelsMap,
+    modelOverridesMap: state.modelOverridesMap,
+  }),
+
+  // Composite selector for all actions - actions never change
+  // Use with shallow comparison for stable reference
+  arenaActions: (state: ArenaStore) => ({
+    initializeComparisons: state.initializeComparisons,
+    addComparison: state.addComparison,
+    selectModel: state.selectModel,
+    toggleSync: state.toggleSync,
+    updateConfig: state.updateConfig,
+    setCustomPrompt: state.setCustomPrompt,
+    moveLeft: state.moveLeft,
+    moveRight: state.moveRight,
+    removeComparison: state.removeComparison,
+    setAvailableModels: state.setAvailableModels,
+    setModelsLastLoadedAt: state.setModelsLastLoadedAt,
+    setComparisons: state.setComparisons,
+    resetComparisons: state.resetComparisons,
+    setEnabledModelsMap: state.setEnabledModelsMap,
+    setCustomModelsMap: state.setCustomModelsMap,
+    setModelOverridesMap: state.setModelOverridesMap,
+    setMainContentReady: state.setMainContentReady,
+  }),
 };

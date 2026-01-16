@@ -79,7 +79,7 @@ const DEFAULT_CONFIG: ModelConfig = {
   temperature: 0.7,
 };
 
-export function ModelCard({
+export const ModelCard = React.memo(function ModelCard({
   modelId,
   models,
   messages,
@@ -545,4 +545,6 @@ export function ModelCard({
       </Card>
     </motion.div>
   );
-}
+});
+
+ModelCard.displayName = 'ModelCard';

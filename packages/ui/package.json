@@ -124,6 +124,7 @@
     "lucide-react": "^0.562.0",
     "radix-ui": "^1.4.3",
     "react-resizable-panels": "^4.2.1",
+    "rehype-harden": "^1.1.7",
     "streamdown": "^1.6.11",
     "tailwind-merge": "^3.4.0"
   },

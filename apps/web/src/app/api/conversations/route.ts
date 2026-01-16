@@ -65,16 +65,57 @@ export async function GET(request: Request) {
       ...c,
     }));
 
-    if (withFirstMessage) {
-      const firstMessages = await db
-        .select({
-          conversationId: messages.conversationId,
-          content: messages.content,
-        })
-        .from(messages)
-        .where(and(inArray(messages.conversationId, conversationIds), eq(messages.role, 'user')))
-        .orderBy(asc(messages.createdAt));
+    // Parallelize all three conditional queries for better performance
+    const [firstMessages, modelsUsed, votesData] = await Promise.all([
+      withFirstMessage
+        ? db
+            .select({
+              conversationId: messages.conversationId,
+              content: messages.content,
+            })
+            .from(messages)
+            .where(
+              and(inArray(messages.conversationId, conversationIds), eq(messages.role, 'user')),
+            )
+            .orderBy(asc(messages.createdAt))
+        : Promise.resolve([]),
+      withModels
+        ? db
+            .selectDistinct({
+              conversationId: messages.conversationId,
+              modelName: modelResponses.modelName,
+              providerName: modelResponses.providerName,
+            })
+            .from(modelResponses)
+            .innerJoin(messages, eq(modelResponses.messageId, messages.id))
+            .where(inArray(messages.conversationId, conversationIds))
+        : Promise.resolve([]),
+      withVotes
+        ? db
+            .select({
+              conversationId: messages.conversationId,
+              voteId: comparisonVotes.id,
+              outcome: comparisonVoteResults.outcome,
+              modelName: comparisonVoteResults.modelName,
+              providerName: comparisonVoteResults.providerName,
+            })
+            .from(comparisonVotes)
+            .innerJoin(messages, eq(comparisonVotes.messageId, messages.id))
+            .innerJoin(
+              comparisonVoteResults,
+              eq(comparisonVoteResults.comparisonVoteId, comparisonVotes.id),
+            )
+            .where(
+              and(
+                inArray(messages.conversationId, conversationIds),
+                eq(comparisonVotes.userId, userId),
+              ),
+            )
+        : Promise.resolve([]),
+    ]);
 
+    // Process first messages
+    if (withFirstMessage && firstMessages.length > 0) {
       const firstMessageMap = new Map<string, string>();
       for (const msg of firstMessages) {
         if (!firstMessageMap.has(msg.conversationId)) {
@@ -90,17 +131,8 @@ export async function GET(request: Request) {
       }
     }
 
-    if (withModels) {
-      const modelsUsed = await db
-        .selectDistinct({
-          conversationId: messages.conversationId,
-          modelName: modelResponses.modelName,
-          providerName: modelResponses.providerName,
-        })
-        .from(modelResponses)
-        .innerJoin(messages, eq(modelResponses.messageId, messages.id))
-        .where(inArray(messages.conversationId, conversationIds));
-
+    // Process models used
+    if (withModels && modelsUsed.length > 0) {
       const modelsMap = new Map<string, Array<{ modelName: string; providerName: string }>>();
       for (const model of modelsUsed) {
         if (!modelsMap.has(model.conversationId)) {
@@ -117,29 +149,8 @@ export async function GET(request: Request) {
       }
     }
 
-    if (withVotes) {
-      // Get all votes for messages in these conversations
-      const votesData = await db
-        .select({
-          conversationId: messages.conversationId,
-          voteId: comparisonVotes.id,
-          outcome: comparisonVoteResults.outcome,
-          modelName: comparisonVoteResults.modelName,
-          providerName: comparisonVoteResults.providerName,
-        })
-        .from(comparisonVotes)
-        .innerJoin(messages, eq(comparisonVotes.messageId, messages.id))
-        .innerJoin(
-          comparisonVoteResults,
-          eq(comparisonVoteResults.comparisonVoteId, comparisonVotes.id),
-        )
-        .where(
-          and(
-            inArray(messages.conversationId, conversationIds),
-            eq(comparisonVotes.userId, userId),
-          ),
-        );
-
+    // Process votes
+    if (withVotes && votesData.length > 0) {
       const votesMap = new Map<string, VoteInfoExtended>();
       for (const vote of votesData) {
         if (!votesMap.has(vote.conversationId)) {
@@ -171,6 +182,10 @@ export async function GET(request: Request) {
 
       for (const conv of result) {
         conv.voteInfo = votesMap.get(conv.id) || { hasVotes: false };
+      }
+    } else if (withVotes) {
+      for (const conv of result) {
+        conv.voteInfo = { hasVotes: false };
       }
     }
 
