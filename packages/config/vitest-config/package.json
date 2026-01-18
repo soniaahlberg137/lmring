@@ -7,8 +7,12 @@
     ".": "./base.mts",
     "./react": "./react.mts"
   },
-  "files": ["base.mts", "react.mts"],
+  "files": [
+    "base.mts",
+    "react.mts"
+  ],
   "dependencies": {
+    "@vitejs/plugin-react": "^5.1.2",
     "vitest": "^4.0.16"
   }
 }
