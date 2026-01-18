@@ -8,7 +8,9 @@
     ".": "./src/index.ts",
     "./config": "./src/config.ts"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "@t3-oss/env-nextjs": "^0.13.10",
     "dotenv": "^17.2.3",
@@ -17,7 +19,9 @@
   },
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
+    "@lmring/vitest-config": "workspace:*",
     "@types/node": "^25.0.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
   }
 }

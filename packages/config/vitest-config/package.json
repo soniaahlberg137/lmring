@@ -1,0 +1,14 @@
+{
+  "name": "@lmring/vitest-config",
+  "version": "1.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./base.mts",
+    "./react": "./react.mts"
+  },
+  "files": ["base.mts", "react.mts"],
+  "dependencies": {
+    "vitest": "^4.0.16"
+  }
+}

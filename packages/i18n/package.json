@@ -10,7 +10,9 @@
     "./client": "./src/client.tsx",
     "./server": "./src/server.ts"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "i18next": "^25.7.4",
     "i18next-resources-to-backend": "^1.2.1",
@@ -21,8 +23,11 @@
   },
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
+    "@lmring/vitest-config": "workspace:*",
     "@types/node": "^25.0.6",
     "@types/react": "^19.2.8",
-    "typescript": "^5.9.3"
+    "jsdom": "^27.4.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.16"
   }
 }
