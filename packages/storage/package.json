@@ -21,6 +21,7 @@
         "@lmring/typescript-config": "workspace:*",
         "@lmring/vitest-config": "workspace:*",
         "@types/node": "^25.0.6",
+        "@vitest/coverage-v8": "4.0.16",
         "typescript": "^5.9.3",
         "vitest": "^4.0.16"
     }
