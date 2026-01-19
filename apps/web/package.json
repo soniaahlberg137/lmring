@@ -19,7 +19,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@arcjet/next": "1.0.0-beta.16",
+    "@arcjet/next": "1.0.0-beta.17",
     "@hookform/resolvers": "^5.2.2",
     "@lmring/ai-hub": "workspace:*",
     "@lmring/auth": "workspace:*",
