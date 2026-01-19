@@ -1,6 +1,6 @@
 {
   "name": "@lmring/vitest-config",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "type": "module",
   "exports": {
@@ -13,6 +13,7 @@
   ],
   "dependencies": {
     "@vitejs/plugin-react": "^5.1.2",
-    "vitest": "^4.0.16"
+    "@vitest/coverage-v8": "^4.0.17",
+    "vitest": "^4.0.17"
   }
 }

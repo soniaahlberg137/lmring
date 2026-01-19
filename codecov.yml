@@ -1,3 +1,25 @@
+codecov:
+  require_ci_to_pass: true
+
 coverage:
+  precision: 2
+  round: down
+  range: "60...90"
   status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
     patch: off
+
+comment:
+  layout: "reach,diff,flags,files"
+  behavior: default
+  require_changes: true
+
+flags:
+  unittests:
+    paths:
+      - packages/
+      - apps/
+    carryforward: true

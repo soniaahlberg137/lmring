@@ -1,6 +1,6 @@
 {
   "name": "@lmring/web",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -77,8 +77,8 @@
     "@types/react": "19.2.8",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "@vitest/browser-playwright": "^4.0.16",
-    "@vitest/coverage-v8": "^4.0.16",
+    "@vitest/browser-playwright": "^4.0.17",
+    "@vitest/coverage-v8": "^4.0.17",
     "checkly": "^6.9.7",
     "cross-env": "^10.1.0",
     "jsdom": "^27.4.0",
@@ -91,7 +91,7 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vite-tsconfig-paths": "^6.0.3",
-    "vitest": "^4.0.16",
+    "vitest": "^4.0.17",
     "vitest-browser-react": "^2.0.2"
   }
 }

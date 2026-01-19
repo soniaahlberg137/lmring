@@ -1,6 +1,6 @@
 {
   "name": "@lmring/model-depot",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "description": "Model Depot - Centralized AI Model Definitions and Metadata",
   "main": "./src/index.ts",
@@ -25,7 +25,8 @@
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
     "@types/node": "^25.0.6",
+    "@vitest/coverage-v8": "^4.0.17",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.17"
   }
 }
