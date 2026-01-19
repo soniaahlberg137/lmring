@@ -243,6 +243,8 @@ export default function ArenaPage() {
         if (availableModels.length > 0) {
           resetComparisons(availableModels);
         }
+        // Force refresh models by clearing the cache timestamp
+        setModelsLastLoadedAt(null);
         setConversationLoaded(false);
         setConversationError(null);
         setVoteLoadingComplete(false);
@@ -262,6 +264,7 @@ export default function ArenaPage() {
     setIsCreatingConversation,
     availableModels,
     resetComparisons,
+    setModelsLastLoadedAt,
   ]);
 
   React.useEffect(() => {
