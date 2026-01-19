@@ -1,6 +1,6 @@
 {
   "name": "@lmring/auth",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "main": "./src/index.ts",
   "types": "./src/index.ts",
@@ -15,7 +15,9 @@
       "default": "./src/shared.ts"
     }
   },
-  "scripts": {},
+  "scripts": {
+    "test": "vitest run"
+  },
   "dependencies": {
     "@lmring/database": "workspace:*",
     "better-auth": "^1.4.10",
@@ -26,8 +28,11 @@
   },
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
+    "@lmring/vitest-config": "workspace:*",
     "@types/react": "^19.2.8",
+    "@vitest/coverage-v8": "^4.0.17",
     "react": "^19.2.3",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
   }
 }

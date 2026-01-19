@@ -1,6 +1,6 @@
 {
   "name": "@lmring/biome-config",
-  "version": "1.0.1",
+  "version": "1.0.6",
   "private": true,
   "files": ["biome.json"]
 }
