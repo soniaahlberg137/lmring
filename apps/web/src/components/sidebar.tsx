@@ -71,10 +71,7 @@ export function Sidebar({ user }: SidebarProps) {
 
   const newConversation = useWorkflowStore(workflowSelectors.newConversation);
   const clearNewConversation = useWorkflowStore((state) => state.clearNewConversation);
-  const resetConversation = useWorkflowStore((state) => state.resetConversation);
 
-  const availableModels = useArenaStore(arenaSelectors.availableModels);
-  const resetComparisons = useArenaStore((state) => state.resetComparisons);
   const mainContentReady = useArenaStore(arenaSelectors.mainContentReady);
 
   const currentPath = pathname;
@@ -193,13 +190,6 @@ export function Sidebar({ user }: SidebarProps) {
               <motion.div
                 whileHover={{ x: 2 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() => {
-                  if (!isNewChat) return;
-                  resetConversation();
-                  if (availableModels.length > 0) {
-                    resetComparisons(availableModels);
-                  }
-                }}
                 className={`
                   relative flex items-center gap-3 px-3 py-2 rounded-lg
                   transition-colors apple-transition

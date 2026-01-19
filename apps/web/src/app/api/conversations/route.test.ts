@@ -28,6 +28,7 @@ const { mockDbInstance, mockAuthInstance } = vi.hoisted(() => {
   return {
     mockDbInstance: {
       select: vi.fn().mockReturnThis(),
+      selectDistinct: vi.fn().mockReturnThis(),
       from: vi.fn().mockReturnThis(),
       where: vi.fn().mockReturnThis(),
       limit: vi.fn().mockReturnThis(),
@@ -68,6 +69,7 @@ vi.mock('@lmring/database', () => ({
   lt: vi.fn(),
   lte: vi.fn(),
   ne: vi.fn(),
+  inArray: vi.fn(),
 }));
 
 vi.mock('@lmring/database/schema', () => ({
@@ -78,9 +80,55 @@ vi.mock('@lmring/database/schema', () => ({
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
   },
+  messages: {
+    id: 'id',
+    conversationId: 'conversationId',
+    role: 'role',
+    content: 'content',
+    createdAt: 'createdAt',
+  },
+  modelResponses: {
+    id: 'id',
+    messageId: 'messageId',
+    modelName: 'modelName',
+    providerName: 'providerName',
+  },
+  comparisonVotes: {
+    id: 'id',
+    userId: 'userId',
+    messageId: 'messageId',
+    comparisonType: 'comparisonType',
+  },
+  comparisonVoteResults: {
+    id: 'id',
+    comparisonVoteId: 'comparisonVoteId',
+    modelResponseId: 'modelResponseId',
+    modelName: 'modelName',
+    providerName: 'providerName',
+    outcome: 'outcome',
+  },
 }));
 
 setupTestEnvironment();
+
+function resetMockChain() {
+  mockDbInstance.select.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.selectDistinct.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.from.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.where.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.limit.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.offset.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.orderBy.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.innerJoin.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.groupBy.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.insert.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.values.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.returning.mockReset().mockResolvedValue([]);
+  mockDbInstance.update.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.set.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.delete.mockReset().mockReturnValue(mockDbInstance);
+  mockDbInstance.onConflictDoUpdate.mockReset().mockReturnValue(mockDbInstance);
+}
 
 describe('Conversations API', () => {
   const mockConversation = {
@@ -93,6 +141,7 @@ describe('Conversations API', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    resetMockChain();
   });
 
   describe('GET /api/conversations', () => {
@@ -125,6 +174,167 @@ describe('Conversations API', () => {
       expect(response.status).toBe(200);
       expect(data.conversations).toBeDefined();
       expect(Array.isArray(data.conversations)).toBe(true);
+    });
+
+    it('should return empty conversations list', async () => {
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where.mockReturnValue(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([]);
+
+      const request = createMockRequest('GET', 'http://localhost:3000/api/conversations');
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations).toEqual([]);
+    });
+
+    it('should cap limit at 100', async () => {
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where.mockReturnValue(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+
+      const request = createMockRequest('GET', 'http://localhost:3000/api/conversations?limit=200');
+      const response = await GET_LIST(request);
+      await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(mockDbInstance.limit).toHaveBeenCalled();
+    });
+
+    it('should return conversations with first message when withFirstMessage=true', async () => {
+      const mockFirstMessages = [
+        { conversationId: 'conv-123', content: 'Hello, this is my first message' },
+      ];
+
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where.mockReturnValue(mockDbInstance);
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance)
+        .mockResolvedValueOnce(mockFirstMessages);
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withFirstMessage=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations).toBeDefined();
+      expect(data.conversations[0].firstMessage).toBe('Hello, this is my first message');
+    });
+
+    it('should return conversations with models when withModels=true', async () => {
+      const mockModels = [
+        { conversationId: 'conv-123', modelName: 'gpt-4o', providerName: 'openai' },
+        { conversationId: 'conv-123', modelName: 'claude-3-5-sonnet', providerName: 'anthropic' },
+      ];
+
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.selectDistinct.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce(mockModels);
+      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+      mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withModels=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations).toBeDefined();
+      expect(data.conversations[0].models).toBeDefined();
+      expect(data.conversations[0].models).toHaveLength(2);
+    });
+
+    it('should return conversations with vote info when withVotes=true', async () => {
+      const mockVotesData = [
+        {
+          conversationId: 'conv-123',
+          voteId: 'vote-1',
+          outcome: 'winner',
+          modelName: 'gpt-4o',
+          providerName: 'openai',
+        },
+        {
+          conversationId: 'conv-123',
+          voteId: 'vote-1',
+          outcome: 'loser',
+          modelName: 'claude-3-5-sonnet',
+          providerName: 'anthropic',
+        },
+      ];
+
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce(mockVotesData);
+      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+      mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withVotes=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations).toBeDefined();
+      expect(data.conversations[0].voteInfo).toBeDefined();
+      expect(data.conversations[0].voteInfo.hasVotes).toBe(true);
+      expect(data.conversations[0].voteInfo.winnerModel).toBe('gpt-4o');
+    });
+
+    it('should return conversations with combined flags', async () => {
+      // Create a thenable mock that is both chainable and resolvable
+      // This handles the case where where() is sometimes terminal (modelsUsed, votesData)
+      // and sometimes needs to chain to orderBy() (firstMessages)
+      const thenableMock = {
+        select: vi.fn().mockReturnThis(),
+        selectDistinct: vi.fn().mockReturnThis(),
+        from: vi.fn().mockReturnThis(),
+        where: vi.fn().mockReturnThis(),
+        orderBy: vi.fn().mockResolvedValue([]),
+        innerJoin: vi.fn().mockReturnThis(),
+        // biome-ignore lint/suspicious/noThenProperty: Mock needs to be thenable for promise resolution
+        then: (resolve: (v: unknown[]) => void) => Promise.resolve([]).then(resolve),
+      };
+
+      // Main query: select().from().where().orderBy().limit().offset()
+      // First where() call (main query) should return mockDbInstance to continue chain
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValueOnce([mockConversation]);
+
+      // Subsequent where() calls (from Promise.all queries) return thenable mock
+      mockDbInstance.where.mockReturnValue(thenableMock);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withFirstMessage=true&withModels=true&withVotes=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations).toBeDefined();
+      expect(data.conversations[0].voteInfo).toEqual({ hasVotes: false });
     });
   });
 

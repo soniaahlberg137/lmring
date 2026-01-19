@@ -119,6 +119,7 @@ export default function ArenaPage() {
   const [inputMode, setInputMode] = React.useState<InputMode>('default');
   const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
   const pendingFileIdsRef = React.useRef<Set<string>>(new Set());
+  const prevInputModeRef = React.useRef<InputMode>(inputMode);
 
   const [currentUrlConversationId, setCurrentUrlConversationId] = React.useState<
     string | undefined
@@ -243,6 +244,8 @@ export default function ArenaPage() {
         if (availableModels.length > 0) {
           resetComparisons(availableModels);
         }
+        // Force refresh models by clearing the cache timestamp
+        setModelsLastLoadedAt(null);
         setConversationLoaded(false);
         setConversationError(null);
         setVoteLoadingComplete(false);
@@ -262,6 +265,7 @@ export default function ArenaPage() {
     setIsCreatingConversation,
     availableModels,
     resetComparisons,
+    setModelsLastLoadedAt,
   ]);
 
   React.useEffect(() => {
@@ -580,6 +584,32 @@ export default function ArenaPage() {
   const handleInputModeChange = React.useCallback((mode: InputMode) => {
     setInputMode(mode);
   }, []);
+
+  React.useEffect(() => {
+    if (filteredDisplayModels.length === 0) {
+      return;
+    }
+
+    const firstFilteredModelId = filteredDisplayModels[0]?.id;
+    if (!firstFilteredModelId) {
+      return;
+    }
+
+    const prevMode = prevInputModeRef.current;
+    const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
+
+    comparisons.forEach((comparison, index) => {
+      const isModelInFilteredList = filteredDisplayModels.some(
+        (model) => model.id === comparison.modelId,
+      );
+
+      if (!isModelInFilteredList || isReturningToDefault) {
+        selectModel(index, firstFilteredModelId);
+      }
+    });
+
+    prevInputModeRef.current = inputMode;
+  }, [inputMode, filteredDisplayModels, comparisons, selectModel]);
 
   const handleAddImages = React.useCallback((newImages: UploadedImage[]) => {
     setUploadedImages((prev) => [...prev, ...newImages]);

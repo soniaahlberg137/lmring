@@ -7,6 +7,7 @@
   <a href="https://discord.gg/JBbp362mv6"><img src="https://img.shields.io/badge/Discord-Join-5865F2?logo=discord&logoColor=white" alt="Discord" /></a>
 
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License" /></a>
+  <a href="https://codecov.io/gh/llm-ring/lmring"><img src="https://codecov.io/gh/llm-ring/lmring/graph/badge.svg" alt="Codecov" /></a>
   <a href="https://github.com/llm-ring/lmring/stargazers"><img src="https://img.shields.io/github/stars/llm-ring/lmring" alt="GitHub Stars" /></a>
   <a href="https://github.com/llm-ring/lmring/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome" /></a>
 
