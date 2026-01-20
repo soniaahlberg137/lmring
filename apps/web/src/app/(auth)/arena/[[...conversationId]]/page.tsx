@@ -241,10 +241,8 @@ export default function ArenaPage() {
       if (!conversationId) {
         resetConversation();
         comparisonWorkflowMap.current.clear();
-        if (availableModels.length > 0) {
-          resetComparisons(availableModels);
-        }
-        // Force refresh models by clearing the cache timestamp
+        // Trigger model refresh - resetComparisons will be called by a separate effect
+        // after models are loaded to avoid race conditions
         setModelsLastLoadedAt(null);
         setConversationLoaded(false);
         setConversationError(null);
@@ -263,10 +261,16 @@ export default function ArenaPage() {
     isCreatingConversation,
     resetConversation,
     setIsCreatingConversation,
-    availableModels,
-    resetComparisons,
     setModelsLastLoadedAt,
   ]);
+
+  // Reset comparisons after models are loaded when navigating to new chat
+  // This ensures we use the freshly loaded models to select defaults
+  React.useEffect(() => {
+    if (!conversationId && availableModels.length > 0 && enabledModelsLoaded) {
+      resetComparisons(availableModels);
+    }
+  }, [conversationId, availableModels, enabledModelsLoaded, resetComparisons]);
 
   React.useEffect(() => {
     if (storedConversationId !== null) return;
