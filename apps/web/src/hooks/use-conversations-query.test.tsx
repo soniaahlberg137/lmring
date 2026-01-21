@@ -8,7 +8,7 @@ import {
   useHistoryConversations,
   usePrefetchConversations,
   useRecentConversations,
-} from '../use-conversations-query';
+} from './use-conversations-query';
 
 const mockConversation = {
   id: 'conv-1',

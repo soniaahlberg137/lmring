@@ -28,7 +28,7 @@
     "@types/node": "^25.0.9",
     "@types/react": "^19.2.8",
     "@vitest/coverage-v8": "^4.0.17",
-    "jsdom": "^27.4.0",
+    "happy-dom": "20.3.4",
     "typescript": "^5.9.3",
     "vitest": "^4.0.17"
   }
