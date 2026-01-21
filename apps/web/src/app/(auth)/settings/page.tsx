@@ -95,8 +95,9 @@ import { useTranslations } from '@/hooks/use-translations';
 import { isSupportedLocale } from '@/libs/locale-utils';
 import { maskApiKey } from '@/libs/validation';
 import { languageSelectors, useLanguageStore } from '@/stores/language-store';
+import { settingsSelectors, useSettingsStore } from '@/stores/settings-store';
 import { ProviderLayout } from './_components/provider/ProviderLayout';
-import type { ApiKeyRecord, Provider } from './_components/provider/types';
+import type { Provider } from './_components/provider/types';
 
 // biome-ignore lint/suspicious/noExplicitAny: @lobehub/icons has incompatible CompoundedIcon types per icon
 const ICON_MAP: Record<string, any> = {
@@ -175,11 +176,17 @@ export default function SettingsPage() {
   const [mounted, setMounted] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<Tab>('general');
   const [telemetryEnabled, setTelemetryEnabled] = React.useState(false);
-  const [apiKeysLoaded, setApiKeysLoaded] = React.useState(false);
-  const [savedApiKeys, setSavedApiKeys] = React.useState<ApiKeyRecord[]>([]);
   const providerMetadata = useProviderMetadata();
   const locale = useLanguageStore(languageSelectors.language);
   const setLanguage = useLanguageStore((state) => state.setLanguage);
+
+  // Use SettingsStore for savedApiKeys - shared with arena page
+  const savedApiKeys = useSettingsStore(settingsSelectors.savedApiKeys);
+  const apiKeysLoaded = useSettingsStore(settingsSelectors.apiKeysLoaded);
+  const loadApiKeys = useSettingsStore((state) => state.loadApiKeys);
+  const updateApiKey = useSettingsStore((state) => state.updateApiKey);
+  const addApiKey = useSettingsStore((state) => state.addApiKey);
+  const removeApiKey = useSettingsStore((state) => state.removeApiKey);
 
   const handleLanguageChange = (newLocale: string) => {
     if (!isSupportedLocale(newLocale)) {
@@ -192,36 +199,10 @@ export default function SettingsPage() {
     setMounted(true);
   }, []);
 
+  // Load API keys from store (shared with arena page)
   React.useEffect(() => {
-    const controller = new AbortController();
-
-    const loadApiKeys = async () => {
-      try {
-        const response = await fetch('/api/settings/api-keys', {
-          signal: controller.signal,
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setSavedApiKeys(data.keys || []);
-        }
-      } catch (error) {
-        if (controller.signal.aborted) {
-          return;
-        }
-        console.error('Failed to load API keys:', error);
-      } finally {
-        if (!controller.signal.aborted) {
-          setApiKeysLoaded(true);
-        }
-      }
-    };
-
     loadApiKeys();
-
-    return () => {
-      controller.abort();
-    };
-  }, []);
+  }, [loadApiKeys]);
 
   const initialProviders: Provider[] = React.useMemo(() => {
     const savedKeysMap = new Map(savedApiKeys.map((key) => [key.providerName.toLowerCase(), key]));
@@ -289,37 +270,104 @@ export default function SettingsPage() {
   }, [initialProviders, apiKeysLoaded]);
 
   const handleToggleProvider = React.useCallback(
-    (id: string, enabled?: boolean, apiKeyId?: string) => {
-      setProviders((prev) =>
-        prev.map((p) => {
+    async (id: string, enabled?: boolean, apiKeyId?: string) => {
+      // Find apiKeyId from savedApiKeys if not provided
+      let effectiveApiKeyId = apiKeyId;
+      if (!effectiveApiKeyId) {
+        const savedKey = savedApiKeys.find(
+          (k) => k.providerName.toLowerCase() === id.toLowerCase(),
+        );
+        effectiveApiKeyId = savedKey?.id;
+      }
+
+      // Determine current state and new enabled value
+      let currentConnected = false;
+      setProviders((prev) => {
+        const provider = prev.find((p) => p.id === id);
+        currentConnected = provider?.connected ?? false;
+        const newEnabled = enabled !== undefined ? enabled : !currentConnected;
+
+        return prev.map((p) => {
           if (p.id === id) {
-            const newEnabled = enabled !== undefined ? enabled : !p.connected;
             return {
               ...p,
               connected: newEnabled,
               type: newEnabled ? 'enabled' : 'disabled',
-              apiKeyId: apiKeyId || p.apiKeyId,
+              apiKeyId: effectiveApiKeyId || p.apiKeyId,
             };
           }
           return p;
-        }),
-      );
+        });
+      });
+
+      // Compute final newEnabled value for API call
+      const finalEnabled = enabled !== undefined ? enabled : !currentConnected;
+
+      // Update store (this will sync with arena page automatically)
+      if (effectiveApiKeyId) {
+        updateApiKey(effectiveApiKeyId, { enabled: finalEnabled });
+      }
+
+      // If we have an apiKeyId, persist the change to the server
+      if (effectiveApiKeyId) {
+        try {
+          const response = await fetch(`/api/settings/api-keys/${effectiveApiKeyId}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: finalEnabled }),
+          });
+
+          if (!response.ok) {
+            // Revert on failure
+            setProviders((prev) =>
+              prev.map((p) => {
+                if (p.id === id) {
+                  return {
+                    ...p,
+                    connected: !finalEnabled,
+                    type: !finalEnabled ? 'enabled' : 'disabled',
+                  };
+                }
+                return p;
+              }),
+            );
+            updateApiKey(effectiveApiKeyId, { enabled: !finalEnabled });
+            console.error('Failed to update provider status');
+          }
+        } catch (error) {
+          // Revert on error
+          setProviders((prev) =>
+            prev.map((p) => {
+              if (p.id === id) {
+                return {
+                  ...p,
+                  connected: !finalEnabled,
+                  type: !finalEnabled ? 'enabled' : 'disabled',
+                };
+              }
+              return p;
+            }),
+          );
+          updateApiKey(effectiveApiKeyId, { enabled: !finalEnabled });
+          console.error('Error updating provider status:', error);
+        }
+      }
     },
-    [],
+    [savedApiKeys, updateApiKey],
   );
 
-  const handleSaveProvider = React.useCallback((providerId: string, apiKeyId: string) => {
-    setProviders((prev) => prev.map((p) => (p.id === providerId ? { ...p, apiKeyId } : p)));
-    setSavedApiKeys((prev) => {
-      const existing = prev.find((k) => k.providerName.toLowerCase() === providerId.toLowerCase());
+  const handleSaveProvider = React.useCallback(
+    (providerId: string, apiKeyId: string) => {
+      setProviders((prev) => prev.map((p) => (p.id === providerId ? { ...p, apiKeyId } : p)));
+
+      // Update or add to store
+      const existing = savedApiKeys.find(
+        (k) => k.providerName.toLowerCase() === providerId.toLowerCase(),
+      );
       if (existing) {
-        return prev.map((k) =>
-          k.providerName.toLowerCase() === providerId.toLowerCase() ? { ...k, id: apiKeyId } : k,
-        );
-      }
-      return [
-        ...prev,
-        {
+        updateApiKey(existing.id, { id: apiKeyId });
+      } else {
+        addApiKey({
           id: apiKeyId,
           providerName: providerId,
           proxyUrl: '',
@@ -327,18 +375,18 @@ export default function SettingsPage() {
           configSource: 'manual',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
-        },
-      ];
-    });
-  }, []);
+        });
+      }
+    },
+    [savedApiKeys, updateApiKey, addApiKey],
+  );
 
-  const handleAddProvider = React.useCallback((provider: Provider) => {
-    setProviders((prev) => [provider, ...prev]);
+  const handleAddProvider = React.useCallback(
+    (provider: Provider) => {
+      setProviders((prev) => [provider, ...prev]);
 
-    if (provider.apiKeyId) {
-      setSavedApiKeys((prev) => [
-        ...prev,
-        {
+      if (provider.apiKeyId) {
+        addApiKey({
           id: provider.apiKeyId as string,
           providerName: provider.id,
           proxyUrl: provider.proxyUrl || '',
@@ -348,17 +396,25 @@ export default function SettingsPage() {
           updatedAt: new Date().toISOString(),
           isCustom: provider.isCustom,
           providerType: provider.providerType,
-        },
-      ]);
-    }
-  }, []);
+        });
+      }
+    },
+    [addApiKey],
+  );
 
-  const handleDeleteProvider = React.useCallback((providerId: string) => {
-    setProviders((prev) => prev.filter((p) => p.id !== providerId));
-    setSavedApiKeys((prev) =>
-      prev.filter((k) => k.providerName.toLowerCase() !== providerId.toLowerCase()),
-    );
-  }, []);
+  const handleDeleteProvider = React.useCallback(
+    (providerId: string) => {
+      setProviders((prev) => prev.filter((p) => p.id !== providerId));
+
+      const keyToRemove = savedApiKeys.find(
+        (k) => k.providerName.toLowerCase() === providerId.toLowerCase(),
+      );
+      if (keyToRemove) {
+        removeApiKey(keyToRemove.id);
+      }
+    },
+    [savedApiKeys, removeApiKey],
+  );
 
   const renderSidebarItem = (id: Tab, label: string, icon: React.ReactNode) => (
     <button

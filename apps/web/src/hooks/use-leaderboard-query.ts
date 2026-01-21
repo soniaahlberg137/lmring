@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useCallback } from 'react';
 import {
   CATEGORY_CONFIGS,
   calculateCategoryArenaScores,
@@ -125,4 +126,24 @@ export function useLeaderboardData(category: LeaderboardCategory) {
     isInitialLoading: query.isPending && query.isFetching,
     isRefetching: !query.isPending && query.isFetching,
   };
+}
+
+/**
+ * Hook for prefetching leaderboard data on hover or during idle time
+ */
+export function usePrefetchLeaderboard() {
+  const queryClient = useQueryClient();
+
+  const prefetchLeaderboard = useCallback(
+    (category: LeaderboardCategory = 'all') => {
+      return queryClient.prefetchQuery({
+        queryKey: leaderboardKeys.category(category),
+        queryFn: () => fetchLeaderboardData(category),
+        staleTime: 5 * 60 * 1000,
+      });
+    },
+    [queryClient],
+  );
+
+  return { prefetchLeaderboard };
 }

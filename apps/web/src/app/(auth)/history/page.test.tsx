@@ -1,6 +1,17 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import HistoryPage from './page';
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
@@ -30,6 +41,21 @@ const { conversationApiMock, setMainContentReadyMock } = vi.hoisted(() => ({
   setMainContentReadyMock: vi.fn(),
 }));
 
+const { mockHistoryConversations, mockIsPending } = vi.hoisted(() => ({
+  mockHistoryConversations: { data: [] as unknown[] },
+  mockIsPending: { value: false },
+}));
+
+vi.mock('@/hooks/use-conversations-query', () => ({
+  useHistoryConversations: () => ({
+    data: mockHistoryConversations.data,
+    isPending: mockIsPending.value,
+  }),
+  conversationsKeys: {
+    all: ['conversations'],
+  },
+}));
+
 vi.mock('@/hooks/use-conversation', () => ({
   useConversation: () => conversationApiMock,
 }));
@@ -49,6 +75,9 @@ vi.mock('@/components/arena/provider-icon', () => ({
 describe('HistoryPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset mock state
+    mockIsPending.value = false;
+    mockHistoryConversations.data = [];
     Object.defineProperty(navigator, 'clipboard', {
       value: {
         writeText: vi.fn().mockResolvedValue(undefined),
@@ -64,22 +93,25 @@ describe('HistoryPage', () => {
   });
 
   it('renders loading skeleton before conversations are loaded', () => {
-    conversationApiMock.getConversationsWithModels.mockReturnValue(new Promise(() => {}));
+    mockIsPending.value = true;
+    mockHistoryConversations.data = [];
 
-    render(<HistoryPage />);
+    render(<HistoryPage />, { wrapper: createWrapper() });
     expect(screen.getByTestId('conversation-skeleton')).toBeInTheDocument();
   });
 
   it('renders empty state when no conversations exist', async () => {
-    conversationApiMock.getConversationsWithModels.mockResolvedValue([]);
+    mockIsPending.value = false;
+    mockHistoryConversations.data = [];
 
-    render(<HistoryPage />);
+    render(<HistoryPage />, { wrapper: createWrapper() });
     expect(await screen.findByText('No conversations yet')).toBeInTheDocument();
     expect(setMainContentReadyMock).toHaveBeenCalledWith(true);
   });
 
   it('shares and deletes a conversation', async () => {
-    conversationApiMock.getConversationsWithModels.mockResolvedValue([
+    mockIsPending.value = false;
+    mockHistoryConversations.data = [
       {
         id: 'conv-1',
         userId: 'user-1',
@@ -89,14 +121,18 @@ describe('HistoryPage', () => {
         firstMessage: 'Hello world',
         models: [{ modelName: 'gpt-4o', providerName: 'openai' }],
       },
-    ]);
+    ];
     conversationApiMock.shareConversation.mockResolvedValue({
       shareUrl: 'https://example.com/shared/abc',
       expiresAt: new Date('2024-02-01T00:00:00.000Z').toISOString(),
     });
-    conversationApiMock.deleteConversation.mockResolvedValue(true);
+    conversationApiMock.deleteConversation.mockImplementation(async () => {
+      // Clear the mock data to simulate deletion
+      mockHistoryConversations.data = [];
+      return true;
+    });
 
-    render(<HistoryPage />);
+    render(<HistoryPage />, { wrapper: createWrapper() });
     expect(await screen.findByText('Hello world')).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'History.share_aria_label' }));
@@ -113,6 +149,8 @@ describe('HistoryPage', () => {
       expect(conversationApiMock.deleteConversation).toHaveBeenCalledWith('conv-1');
     });
     expect(toastMock.success).toHaveBeenCalledWith('History.delete_success');
-    expect(screen.queryByText('Hello world')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('Hello world')).not.toBeInTheDocument();
+    });
   });
 });

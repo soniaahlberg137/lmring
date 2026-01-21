@@ -8,6 +8,7 @@ import {
   leaderboardKeys,
   useLeaderboardData,
   useLeaderboardQuery,
+  usePrefetchLeaderboard,
 } from './use-leaderboard-query';
 
 const mockModelFull: zeroEvalApi.ZeroEvalModelFull = {
@@ -345,5 +346,63 @@ describe('useLeaderboardData', () => {
 
     expect(result.current.data).toBeDefined();
     expect(result.current.data?.length).toBe(1);
+  });
+});
+
+describe('usePrefetchLeaderboard', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('prefetches leaderboard data for a category', async () => {
+    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
+    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
+
+    // Prefetch should return a function
+    expect(typeof result.current.prefetchLeaderboard).toBe('function');
+
+    // Call prefetch
+    await result.current.prefetchLeaderboard('all');
+
+    // Check that data is now in cache
+    const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
+    expect(cachedData).toBeDefined();
+    expect(Array.isArray(cachedData)).toBe(true);
+  });
+
+  it('uses default category "all" when no category is provided', async () => {
+    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
+    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
+
+    // Call prefetch without category (should default to 'all')
+    await result.current.prefetchLeaderboard();
+
+    // Check that data is cached under 'all' key
+    const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
+    expect(cachedData).toBeDefined();
   });
 });

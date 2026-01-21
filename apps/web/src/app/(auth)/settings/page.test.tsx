@@ -1,8 +1,16 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SettingsStoreProvider } from '@/stores/settings-store';
 import SettingsPage from './page';
+
+function createWrapper() {
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <SettingsStoreProvider>{children}</SettingsStoreProvider>;
+  };
+}
 
 const { setThemeMock, setLanguageMock } = vi.hoisted(() => ({
   setThemeMock: vi.fn(),
@@ -198,15 +206,11 @@ describe('SettingsPage', () => {
   });
 
   it('renders tabs and triggers theme/language changes', async () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     expect(screen.getByText('Settings.title')).toBeInTheDocument();
     expect(screen.getByText('Settings.tabs_general')).toBeInTheDocument();
     expect(screen.getByText('Settings.tabs_provider')).toBeInTheDocument();
-
-    await waitFor(() => {
-      expect(global.fetch).toHaveBeenCalledWith('/api/settings/api-keys', expect.any(Object));
-    });
 
     // Click on the '中文' language option (SelectItem calls onValueChange via Context)
     fireEvent.click(screen.getByText('中文'));
@@ -217,7 +221,7 @@ describe('SettingsPage', () => {
   });
 
   it('switches between main tabs', () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_system_model'));
     expect(screen.getByText('Settings.system_model_title')).toBeInTheDocument();
@@ -239,7 +243,7 @@ describe('SettingsPage', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
     global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(consoleError).toHaveBeenCalledWith('Failed to load API keys:', expect.any(Error));
@@ -255,7 +259,7 @@ describe('SettingsPage', () => {
       json: async () => ({ error: 'Unauthorized' }),
     });
 
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalled();
@@ -265,7 +269,7 @@ describe('SettingsPage', () => {
   });
 
   it('shows all theme options', () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     expect(screen.getByText('Settings.general_theme_light')).toBeInTheDocument();
     expect(screen.getByText('Settings.general_theme_dark')).toBeInTheDocument();
@@ -279,7 +283,7 @@ describe('SettingsPage', () => {
   });
 
   it('renders about tab with telemetry toggle', () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_about'));
 
@@ -289,7 +293,7 @@ describe('SettingsPage', () => {
   });
 
   it('renders help tab with resource links', () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_help'));
 
@@ -299,7 +303,7 @@ describe('SettingsPage', () => {
   });
 
   it('does not call setLanguage for unsupported locale', async () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByText('Settings.title')).toBeInTheDocument();
@@ -325,7 +329,7 @@ describe('SettingsPage Provider Handlers', () => {
   });
 
   it('passes handler callbacks to ProviderLayout', async () => {
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {
@@ -360,7 +364,7 @@ describe('SettingsPage Provider Handlers', () => {
       }),
     }) as unknown as typeof fetch;
 
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {
@@ -397,7 +401,7 @@ describe('SettingsPage Provider Handlers', () => {
       }),
     }) as unknown as typeof fetch;
 
-    render(<SettingsPage />);
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {

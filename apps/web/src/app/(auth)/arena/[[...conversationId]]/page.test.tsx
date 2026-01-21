@@ -1,5 +1,16 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 const { mockRouterPush } = vi.hoisted(() => ({
   mockRouterPush: vi.fn(),
@@ -305,7 +316,7 @@ describe('ArenaPage', () => {
     mockArenaState = createMockStoreState({ initialized: false });
 
     const { default: ArenaPage } = await import('./page');
-    render(<ArenaPage />);
+    render(<ArenaPage />, { wrapper: createWrapper() });
 
     expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(2);
   });
@@ -314,14 +325,14 @@ describe('ArenaPage', () => {
     mockSettingsState = createMockSettingsState({ apiKeysLoaded: false });
 
     const { default: ArenaPage } = await import('./page');
-    render(<ArenaPage />);
+    render(<ArenaPage />, { wrapper: createWrapper() });
 
     expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(2);
   });
 
   it('should render model cards when initialized', async () => {
     const { default: ArenaPage } = await import('./page');
-    render(<ArenaPage />);
+    render(<ArenaPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getAllByTestId('model-card')).toHaveLength(2);
@@ -330,7 +341,7 @@ describe('ArenaPage', () => {
 
   it('should render prompt input area', async () => {
     const { default: ArenaPage } = await import('./page');
-    render(<ArenaPage />);
+    render(<ArenaPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByTestId('prompt-input')).toBeInTheDocument();
@@ -347,7 +358,7 @@ describe('ArenaPage', () => {
     // We need to simulate the error state by having the component set conversationError
     // Since we can't easily trigger this, let's test the error UI structure exists
     const { default: ArenaPage } = await import('./page');
-    const { container } = render(<ArenaPage />);
+    const { container } = render(<ArenaPage />, { wrapper: createWrapper() });
 
     // The component should at least render without crashing
     expect(container).toBeInTheDocument();
@@ -355,7 +366,7 @@ describe('ArenaPage', () => {
 
   it('should handle prompt input change', async () => {
     const { default: ArenaPage } = await import('./page');
-    render(<ArenaPage />);
+    render(<ArenaPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(screen.getByTestId('prompt-textarea')).toBeInTheDocument();
