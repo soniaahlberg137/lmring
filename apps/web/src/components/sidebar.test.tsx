@@ -1,6 +1,17 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Sidebar } from './sidebar';
+
+function createWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  return function Wrapper({ children }: { children: ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 const mockPathname = vi.fn();
 
@@ -57,12 +68,12 @@ describe('Sidebar', () => {
   });
 
   it('should render sidebar', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
     expect(screen.getByText('LMRing')).toBeInTheDocument();
   });
 
   it('should render navigation items', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
     const newChatElements = screen.getAllByText('Sidebar.new_chat');
     const leaderboardElements = screen.getAllByText('Sidebar.leaderboard');
     const historyElements = screen.getAllByText('Sidebar.history');
@@ -73,7 +84,7 @@ describe('Sidebar', () => {
   });
 
   it('should render UserMenu component', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
     const userMenus = screen.getAllByTestId('user-menu');
     expect(userMenus.length).toBeGreaterThan(0);
   });
@@ -81,21 +92,21 @@ describe('Sidebar', () => {
   it('should highlight active navigation item', () => {
     mockPathname.mockReturnValue('/leaderboard');
 
-    const { container } = render(<Sidebar user={defaultUser} />);
+    const { container } = render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const leaderboardLink = container.querySelector('a[href="/leaderboard"]');
     expect(leaderboardLink).toBeInTheDocument();
   });
 
   it('should show mobile menu button', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const mobileButtons = screen.getAllByLabelText('Open menu');
     expect(mobileButtons.length).toBeGreaterThan(0);
   });
 
   it('should open mobile menu on button click', async () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const mobileButtons = screen.getAllByLabelText('Open menu');
     const firstButton = mobileButtons[0];
@@ -109,7 +120,7 @@ describe('Sidebar', () => {
   });
 
   it('should close mobile menu on close button click', async () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const mobileButtons = screen.getAllByLabelText('Open menu');
     const firstButton = mobileButtons[0];
@@ -127,7 +138,7 @@ describe('Sidebar', () => {
   });
 
   it('should fetch recent conversations', async () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
@@ -152,7 +163,7 @@ describe('Sidebar', () => {
         }),
     });
 
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       const messages = screen.getAllByText('Hello world');
@@ -177,7 +188,7 @@ describe('Sidebar', () => {
         }),
     });
 
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       const truncated = screen.getAllByText(/This is a very long \.\.\./);
@@ -188,7 +199,7 @@ describe('Sidebar', () => {
   it('should show skeleton while loading conversations', () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(() => {}));
 
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const skeletons = screen.getAllByTestId('skeleton');
     expect(skeletons.length).toBeGreaterThan(0);
@@ -197,13 +208,13 @@ describe('Sidebar', () => {
   it('should collapse on settings page', () => {
     mockPathname.mockReturnValue('/settings');
 
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     expect(screen.queryByText('LMRing')).not.toBeInTheDocument();
   });
 
   it('should handle navigation to new chat', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const newChatLinks = screen.getAllByText('Sidebar.new_chat');
     const newChatLink = newChatLinks[0]?.closest('a');
@@ -211,7 +222,7 @@ describe('Sidebar', () => {
   });
 
   it('should handle navigation to leaderboard', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const leaderboardLinks = screen.getAllByText('Sidebar.leaderboard');
     const leaderboardLink = leaderboardLinks[0]?.closest('a');
@@ -219,7 +230,7 @@ describe('Sidebar', () => {
   });
 
   it('should handle navigation to history', () => {
-    render(<Sidebar user={defaultUser} />);
+    render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
 
     const historyLinks = screen.getAllByText('Sidebar.history');
     const historyLink = historyLinks[0]?.closest('a');
