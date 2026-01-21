@@ -4,29 +4,6 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { BaseTemplate } from './BaseTemplate';
 
 // Mock dependencies
-vi.mock('@lmring/ui', () => ({
-  cn: (...args: unknown[]) => args.filter(Boolean).join(' '),
-  ResizableHandle: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="resizable-handle">{children}</div>
-  ),
-  ResizablePanel: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="resizable-panel">{children}</div>
-  ),
-  ResizablePanelGroup: ({ children }: { children?: React.ReactNode }) => (
-    <div data-testid="resizable-panel-group">{children}</div>
-  ),
-}));
-
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: 'div',
-    header: 'header',
-    footer: 'footer',
-    main: 'main',
-    aside: 'aside',
-  },
-}));
-
 vi.mock('@/hooks/use-translations', () => ({
   useTranslations: () => (key: string) => key,
 }));

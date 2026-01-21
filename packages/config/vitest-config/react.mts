@@ -7,7 +7,7 @@ export const reactConfig = mergeConfig(
   defineConfig({
     plugins: [react()],
     test: {
-      environment: 'jsdom',
+      environment: 'happy-dom',
     },
   }),
 );
