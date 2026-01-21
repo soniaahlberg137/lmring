@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from 'vitest';
-import { getI18nPath } from './Helpers';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { getI18nPath, isServer } from './Helpers';
 
 vi.mock('@lmring/env', () => ({
   env: {
@@ -17,6 +17,28 @@ describe('Helpers', () => {
     it('should not modify the path for other locales', () => {
       const url = '/random-url';
       expect(getI18nPath(url)).toBe(url);
+    });
+  });
+
+  describe('isServer function', () => {
+    const originalWindow = globalThis.window;
+
+    afterEach(() => {
+      if (originalWindow !== undefined) {
+        vi.stubGlobal('window', originalWindow);
+      } else {
+        vi.unstubAllGlobals();
+      }
+    });
+
+    it('should return true when window is undefined (server)', () => {
+      vi.stubGlobal('window', undefined);
+      expect(isServer()).toBe(true);
+    });
+
+    it('should return false when window is defined (client)', () => {
+      vi.stubGlobal('window', {});
+      expect(isServer()).toBe(false);
     });
   });
 });

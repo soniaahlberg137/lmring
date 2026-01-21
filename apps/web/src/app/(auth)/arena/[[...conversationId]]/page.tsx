@@ -2,6 +2,7 @@
 
 import type { ComparisonType } from '@lmring/database';
 import { Button, cn, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
@@ -23,6 +24,7 @@ import {
 import { VoteBar } from '@/components/arena/vote-bar';
 import { CARD_MIN_WIDTH, MAX_COMPARISON_CARDS } from '@/constants/arena';
 import { useConversation } from '@/hooks/use-conversation';
+import { conversationsKeys } from '@/hooks/use-conversations-query';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
 import {
@@ -55,6 +57,7 @@ export default function ArenaPage() {
   const router = useRouter();
   const t = useTranslations();
   const providerMetadata = useProviderMetadata();
+  const queryClient = useQueryClient();
 
   const { loadConversation, saveMessage, saveModelResponse, createConversation } =
     useConversation();
@@ -126,6 +129,7 @@ export default function ArenaPage() {
   >(conversationId);
 
   const comparisonWorkflowMap = React.useRef<Map<string, string>>(new Map());
+  const hasResetForNewChatRef = React.useRef(false);
 
   const handleConversationCreated = React.useCallback(
     (newConversationId: string, title: string) => {
@@ -133,8 +137,10 @@ export default function ArenaPage() {
       setCurrentUrlConversationId(newConversationId);
       setNewConversation({ id: newConversationId, title, updatedAt: new Date().toISOString() });
       setConversationLoaded(true);
+      // Invalidate recent conversations to show new chat in sidebar
+      void queryClient.invalidateQueries({ queryKey: conversationsKeys.all });
     },
-    [setConversationId, setNewConversation],
+    [setConversationId, setNewConversation, queryClient],
   );
 
   const persistenceCallbacks = React.useMemo<WorkflowPersistenceCallbacks>(
@@ -241,15 +247,17 @@ export default function ArenaPage() {
       if (!conversationId) {
         resetConversation();
         comparisonWorkflowMap.current.clear();
-        if (availableModels.length > 0) {
-          resetComparisons(availableModels);
-        }
-        // Force refresh models by clearing the cache timestamp
+        // Reset the guard so resetComparisons can be called for this new navigation
+        hasResetForNewChatRef.current = false;
+        // Trigger model refresh - resetComparisons will be called by a separate effect
+        // after models are loaded to avoid race conditions
         setModelsLastLoadedAt(null);
         setConversationLoaded(false);
         setConversationError(null);
         setVoteLoadingComplete(false);
       } else if (conversationId !== storedConversationId) {
+        // Reset guard when navigating to an existing conversation
+        hasResetForNewChatRef.current = false;
         comparisonWorkflowMap.current.clear();
         setConversationLoaded(false);
         setConversationError(null);
@@ -263,10 +271,22 @@ export default function ArenaPage() {
     isCreatingConversation,
     resetConversation,
     setIsCreatingConversation,
-    availableModels,
-    resetComparisons,
     setModelsLastLoadedAt,
   ]);
+
+  // Reset comparisons after models are loaded when navigating to new chat
+  // This ensures we use the freshly loaded models to select defaults
+  React.useEffect(() => {
+    if (
+      !conversationId &&
+      availableModels.length > 0 &&
+      enabledModelsLoaded &&
+      !hasResetForNewChatRef.current
+    ) {
+      hasResetForNewChatRef.current = true;
+      resetComparisons(availableModels);
+    }
+  }, [conversationId, availableModels, enabledModelsLoaded, resetComparisons]);
 
   React.useEffect(() => {
     if (storedConversationId !== null) return;
@@ -283,6 +303,9 @@ export default function ArenaPage() {
     return savedApiKeys.some((k) => k.enabled);
   }, [savedApiKeys]);
 
+  // Track enabled provider IDs to detect changes
+  const enabledProviderIdsRef = React.useRef<string>('');
+
   React.useEffect(() => {
     const fetchEnabledModels = async () => {
       if (!apiKeysLoaded) return;
@@ -291,10 +314,23 @@ export default function ArenaPage() {
         typeof window !== 'undefined' &&
         sessionStorage.getItem('arena_models_need_refresh') === 'true';
 
-      if (modelsLastLoadedAt && !needsRefresh) {
+      // Compute current enabled provider IDs
+      const currentEnabledIds = savedApiKeys
+        .filter((k) => k.enabled && k.id)
+        .map((k) => k.id)
+        .sort()
+        .join(',');
+
+      // Check if enabled providers changed
+      const enabledProvidersChanged = currentEnabledIds !== enabledProviderIdsRef.current;
+
+      if (modelsLastLoadedAt && !needsRefresh && !enabledProvidersChanged) {
         setEnabledModelsLoaded(true);
         return;
       }
+
+      // Update the ref to track current enabled providers
+      enabledProviderIdsRef.current = currentEnabledIds;
 
       const enabledProviders = savedApiKeys.filter((k) => k.enabled && k.id);
       if (enabledProviders.length === 0) {
@@ -417,13 +453,15 @@ export default function ArenaPage() {
         if (typeof window !== 'undefined') {
           sessionStorage.removeItem('arena_models_need_refresh');
         }
+
+        // Only update maps after successful API calls
+        setEnabledModelsMap(newEnabledModelsMap);
+        setCustomModelsMap(newCustomModelsMap);
+        setModelOverridesMap(newModelOverridesMap);
       } catch (error) {
         console.error('Failed to fetch models:', error);
       }
 
-      setEnabledModelsMap(newEnabledModelsMap);
-      setCustomModelsMap(newCustomModelsMap);
-      setModelOverridesMap(newModelOverridesMap);
       setEnabledModelsLoaded(true);
     };
 
@@ -440,10 +478,25 @@ export default function ArenaPage() {
 
   const filteredProviders = React.useMemo(() => {
     if (hasConfiguredProviders) {
+      // For custom providers, use providerType (e.g., "openai") instead of providerName (e.g., "yzc")
+      // This ensures custom providers match against the correct provider metadata
       const configuredProviderIds = savedApiKeys
         .filter((k) => k.enabled)
-        .map((k) => k.providerName.toLowerCase());
-      return providerMetadata.filter((p) => configuredProviderIds.includes(p.id.toLowerCase()));
+        .map((k) => {
+          if (k.isCustom && k.providerType) {
+            return k.providerType.toLowerCase();
+          }
+          return k.providerName.toLowerCase();
+        });
+      const filtered = providerMetadata.filter((p) =>
+        configuredProviderIds.includes(p.id.toLowerCase()),
+      );
+      // Fallback to all providers if no configured providers match
+      // This can happen with custom/unknown provider names
+      if (filtered.length === 0) {
+        return providerMetadata;
+      }
+      return filtered;
     }
     return providerMetadata;
   }, [savedApiKeys, providerMetadata, hasConfiguredProviders]);

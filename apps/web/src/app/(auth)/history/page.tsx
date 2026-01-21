@@ -15,39 +15,40 @@ import {
   CardHeader,
   ConversationCardSkeleton,
 } from '@lmring/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { CalendarIcon, ClockIcon, MessageSquareIcon, Share2Icon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { ProviderIcon } from '@/components/arena/provider-icon';
-import { type ConversationData, useConversation, type VoteResult } from '@/hooks/use-conversation';
+import { useConversation, type VoteResult } from '@/hooks/use-conversation';
+import { conversationsKeys, useHistoryConversations } from '@/hooks/use-conversations-query';
 import { useTranslations } from '@/hooks/use-translations';
 import { useArenaStore } from '@/stores';
 
 export default function HistoryPage() {
   const t = useTranslations();
-  const { getConversationsWithModels, shareConversation, deleteConversation, isLoading } =
-    useConversation();
-  const [conversations, setConversations] = React.useState<ConversationData[]>([]);
-  const [loaded, setLoaded] = React.useState(false);
+  const queryClient = useQueryClient();
+  const { shareConversation, deleteConversation, isLoading } = useConversation();
   const [conversationToDelete, setConversationToDelete] = React.useState<string | null>(null);
   const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
+  // Use React Query for data fetching with caching
+  const { data: conversations = [], isPending } = useHistoryConversations(50, 0);
+
+  // Set mainContentReady when data is loaded
   React.useEffect(() => {
-    const loadConversations = async () => {
-      const data = await getConversationsWithModels(50, 0);
-      setConversations(data);
-      setLoaded(true);
+    if (!isPending) {
       setMainContentReady(true);
-    };
+    }
+  }, [isPending, setMainContentReady]);
 
-    loadConversations();
-
+  React.useEffect(() => {
     return () => {
       setMainContentReady(false);
     };
-  }, [getConversationsWithModels, setMainContentReady]);
+  }, [setMainContentReady]);
 
   const handleShare = async (e: React.MouseEvent, conversationId: string) => {
     e.preventDefault();
@@ -77,7 +78,8 @@ export default function HistoryPage() {
 
     const success = await deleteConversation(conversationToDelete);
     if (success) {
-      setConversations((prev) => prev.filter((c) => c.id !== conversationToDelete));
+      // Invalidate and refetch the conversations query to update the cache
+      queryClient.invalidateQueries({ queryKey: conversationsKeys.all });
       toast.success(t('History.delete_success'));
     } else {
       toast.error(t('History.delete_failed'));
@@ -111,7 +113,7 @@ export default function HistoryPage() {
     return `${text.slice(0, maxLength)}...`;
   };
 
-  if (!loaded) {
+  if (isPending) {
     return (
       <div className="p-6 space-y-6">
         <motion.div
