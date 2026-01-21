@@ -351,14 +351,25 @@ export const CommandGroup = forwardRef<
   </div>
 ));
 CommandGroup.displayName = 'CommandGroup';
-export const CommandItem = forwardRef<HTMLDivElement, ComponentProps<'div'>>(
-  ({ children, ...props }, ref) => (
-    // biome-ignore lint/a11y/useFocusableInteractive: Mock component
-    <div ref={ref} role="option" cmdk-item="" {...props}>
-      {children}
-    </div>
-  ),
-);
+export const CommandItem = forwardRef<
+  HTMLDivElement,
+  ComponentProps<'div'> & { onSelect?: () => void }
+>(({ children, onSelect, onClick, ...props }, ref) => (
+  // biome-ignore lint/a11y/useFocusableInteractive: Mock component
+  // biome-ignore lint/a11y/useKeyWithClickEvents: Mock component
+  <div
+    ref={ref}
+    role="option"
+    cmdk-item=""
+    onClick={(e) => {
+      onSelect?.();
+      onClick?.(e);
+    }}
+    {...props}
+  >
+    {children}
+  </div>
+));
 CommandItem.displayName = 'CommandItem';
 export const CommandShortcut = createWrapper('command-shortcut', 'span');
 export const CommandSeparator = createWrapper('command-separator', 'hr');
@@ -406,8 +417,20 @@ export const ConversationCardSkeleton = ({ count }: { count?: number }) => (
   <div data-testid="conversation-skeleton" data-count={count} />
 );
 export const SidebarConversationSkeleton = () => <div data-testid="skeleton" />;
-export const ProviderCardSkeleton = () => <div data-testid="provider-skeleton" />;
-export const ProviderSidebarSkeleton = () => <div data-testid="provider-sidebar-skeleton" />;
+export const ProviderCardSkeleton = ({ count }: { count?: number }) => (
+  <>
+    {Array.from({ length: count || 1 }).map((_, i) => (
+      <div key={`provider-skeleton-${i}`} data-testid="provider-skeleton" />
+    ))}
+  </>
+);
+export const ProviderSidebarSkeleton = ({ count }: { count?: number }) => (
+  <>
+    {Array.from({ length: count || 1 }).map((_, i) => (
+      <div key={`provider-sidebar-skeleton-${i}`} data-testid="provider-sidebar-skeleton" />
+    ))}
+  </>
+);
 export const ModelCardSkeleton = () => <div data-testid="model-card-skeleton" />;
 
 // FloatingCard

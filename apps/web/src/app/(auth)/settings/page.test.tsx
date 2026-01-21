@@ -9,6 +9,15 @@ const { setThemeMock, setLanguageMock } = vi.hoisted(() => ({
   setLanguageMock: vi.fn(),
 }));
 
+let capturedProviderLayoutProps: {
+  providers: unknown[];
+  isLoading: boolean;
+  onToggleProvider?: (id: string, enabled?: boolean, apiKeyId?: string) => void;
+  onSaveProvider?: (providerId: string, apiKeyId: string) => void;
+  onAddProvider?: (provider: unknown) => void;
+  onDeleteProvider?: (providerId: string) => void;
+} | null = null;
+
 vi.mock('next-themes', () => ({
   useTheme: () => ({ theme: 'system', setTheme: setThemeMock }),
 }));
@@ -50,11 +59,21 @@ vi.mock('@/stores/language-store', () => ({
 }));
 
 vi.mock('./_components/provider/ProviderLayout', () => ({
-  ProviderLayout: ({ providers, isLoading }: { providers: unknown[]; isLoading: boolean }) => (
-    <div data-testid="provider-layout">
-      {isLoading ? 'loading' : 'ready'}:{providers.length}
-    </div>
-  ),
+  ProviderLayout: (props: {
+    providers: unknown[];
+    isLoading: boolean;
+    onToggleProvider?: (id: string, enabled?: boolean, apiKeyId?: string) => void;
+    onSaveProvider?: (providerId: string, apiKeyId: string) => void;
+    onAddProvider?: (provider: unknown) => void;
+    onDeleteProvider?: (providerId: string) => void;
+  }) => {
+    capturedProviderLayoutProps = props;
+    return (
+      <div data-testid="provider-layout">
+        {props.isLoading ? 'loading' : 'ready'}:{props.providers.length}
+      </div>
+    );
+  },
 }));
 
 // framer-motion is mocked globally via alias in vitest.config.mts
@@ -166,6 +185,7 @@ vi.mock('next/link', () => ({
 describe('SettingsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    capturedProviderLayoutProps = null;
 
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -213,5 +233,188 @@ describe('SettingsPage', () => {
 
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
     expect(screen.getByTestId('provider-layout')).toBeInTheDocument();
+  });
+
+  it('handles API keys loading error gracefully', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
+
+    render(<SettingsPage />);
+
+    await waitFor(() => {
+      expect(consoleError).toHaveBeenCalledWith('Failed to load API keys:', expect.any(Error));
+    });
+
+    expect(screen.getByText('Settings.title')).toBeInTheDocument();
+    consoleError.mockRestore();
+  });
+
+  it('handles non-ok API response', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: 'Unauthorized' }),
+    });
+
+    render(<SettingsPage />);
+
+    await waitFor(() => {
+      expect(global.fetch).toHaveBeenCalled();
+    });
+
+    expect(screen.getByText('Settings.title')).toBeInTheDocument();
+  });
+
+  it('shows all theme options', () => {
+    render(<SettingsPage />);
+
+    expect(screen.getByText('Settings.general_theme_light')).toBeInTheDocument();
+    expect(screen.getByText('Settings.general_theme_dark')).toBeInTheDocument();
+    expect(screen.getByText('Settings.general_theme_auto')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByText('Settings.general_theme_dark'));
+    expect(setThemeMock).toHaveBeenCalledWith('dark');
+
+    fireEvent.click(screen.getByText('Settings.general_theme_auto'));
+    expect(setThemeMock).toHaveBeenCalledWith('system');
+  });
+
+  it('renders about tab with telemetry toggle', () => {
+    render(<SettingsPage />);
+
+    fireEvent.click(screen.getByText('Settings.tabs_about'));
+
+    expect(screen.getByText('Settings.about_telemetry')).toBeInTheDocument();
+    expect(screen.getByText('Settings.about_telemetry_description')).toBeInTheDocument();
+    expect(screen.getByText('Settings.about_changelog')).toBeInTheDocument();
+  });
+
+  it('renders help tab with resource links', () => {
+    render(<SettingsPage />);
+
+    fireEvent.click(screen.getByText('Settings.tabs_help'));
+
+    expect(screen.getByText('Settings.help_resources')).toBeInTheDocument();
+    expect(screen.getByText('Settings.help_how_it_works')).toBeInTheDocument();
+    expect(screen.getByText('Settings.help_about_us')).toBeInTheDocument();
+  });
+
+  it('does not call setLanguage for unsupported locale', async () => {
+    render(<SettingsPage />);
+
+    await waitFor(() => {
+      expect(screen.getByText('Settings.title')).toBeInTheDocument();
+    });
+
+    expect(setLanguageMock).not.toHaveBeenCalledWith('es');
+  });
+});
+
+describe('SettingsPage Provider Handlers', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capturedProviderLayoutProps = null;
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ keys: [] }),
+    }) as unknown as typeof fetch;
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it('passes handler callbacks to ProviderLayout', async () => {
+    render(<SettingsPage />);
+    fireEvent.click(screen.getByText('Settings.tabs_provider'));
+
+    await waitFor(() => {
+      expect(capturedProviderLayoutProps).not.toBeNull();
+      expect(capturedProviderLayoutProps?.isLoading).toBe(false);
+    });
+
+    expect(typeof capturedProviderLayoutProps?.onToggleProvider).toBe('function');
+    expect(typeof capturedProviderLayoutProps?.onSaveProvider).toBe('function');
+    expect(typeof capturedProviderLayoutProps?.onAddProvider).toBe('function');
+    expect(typeof capturedProviderLayoutProps?.onDeleteProvider).toBe('function');
+  });
+
+  it('transforms savedApiKeys to providers with correct connection status', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        keys: [
+          {
+            id: 'key-1',
+            providerName: 'openai',
+            enabled: true,
+            hasApiKey: true,
+          },
+          {
+            id: 'key-2',
+            providerName: 'anthropic',
+            enabled: false,
+            hasApiKey: true,
+          },
+        ],
+      }),
+    }) as unknown as typeof fetch;
+
+    render(<SettingsPage />);
+    fireEvent.click(screen.getByText('Settings.tabs_provider'));
+
+    await waitFor(() => {
+      expect(capturedProviderLayoutProps).not.toBeNull();
+      expect(capturedProviderLayoutProps?.isLoading).toBe(false);
+      expect(capturedProviderLayoutProps?.providers.length).toBeGreaterThan(0);
+    });
+
+    const openaiProvider = (
+      capturedProviderLayoutProps?.providers as {
+        id: string;
+        connected: boolean;
+        apiKeyId?: string;
+      }[]
+    )?.find((p) => p.id === 'openai');
+    expect(openaiProvider?.connected).toBe(true);
+    expect(openaiProvider?.apiKeyId).toBe('key-1');
+  });
+
+  it('creates custom providers from isCustom=true keys', async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        keys: [
+          {
+            id: 'custom-key',
+            providerName: 'my-custom-provider',
+            enabled: true,
+            hasApiKey: true,
+            isCustom: true,
+            providerType: 'openai',
+          },
+        ],
+      }),
+    }) as unknown as typeof fetch;
+
+    render(<SettingsPage />);
+    fireEvent.click(screen.getByText('Settings.tabs_provider'));
+
+    await waitFor(() => {
+      expect(capturedProviderLayoutProps).not.toBeNull();
+      expect(capturedProviderLayoutProps?.isLoading).toBe(false);
+      expect(capturedProviderLayoutProps?.providers.length).toBeGreaterThan(0);
+    });
+
+    const customProvider = (
+      capturedProviderLayoutProps?.providers as {
+        id: string;
+        isCustom?: boolean;
+        providerType?: string;
+      }[]
+    )?.find((p) => p.id === 'my-custom-provider');
+    expect(customProvider).toBeDefined();
+    expect(customProvider?.isCustom).toBe(true);
+    expect(customProvider?.providerType).toBe('openai');
   });
 });

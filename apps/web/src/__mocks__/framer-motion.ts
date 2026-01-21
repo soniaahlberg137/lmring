@@ -60,6 +60,41 @@ export const motion = {
   img: createMotionComponent('img'),
   svg: createMotionComponent('svg'),
   path: createMotionComponent('path'),
+  // motion.create() for wrapping custom components
+  create: (Component: React.ComponentType<Record<string, unknown>>) =>
+    forwardRef(
+      (
+        { children, ...props }: { children?: React.ReactNode } & Record<string, unknown>,
+        ref: React.Ref<unknown>,
+      ) => {
+        // Filter out framer-motion specific props
+        const {
+          onAnimationComplete,
+          initial,
+          animate,
+          exit,
+          variants,
+          whileHover,
+          whileTap,
+          whileFocus,
+          whileDrag,
+          whileInView,
+          transition,
+          layout,
+          layoutId,
+          drag,
+          dragConstraints,
+          dragElastic,
+          dragMomentum,
+          dragTransition,
+          onDragStart,
+          onDragEnd,
+          onDrag,
+          ...domProps
+        } = props;
+        return createElement(Component, { ...domProps, ref }, children);
+      },
+    ),
 };
 
 export const useAnimation = () => ({

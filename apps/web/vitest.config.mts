@@ -22,7 +22,7 @@ export default defineConfig({
     teardownTimeout: 5000,
     coverage: {
       include: ['src/**/*'],
-      exclude: ['src/**/*.stories.{js,jsx,ts,tsx}'],
+      exclude: ['src/**/*.stories.{js,jsx,ts,tsx}', 'src/__mocks__/**/*'],
     },
     env: loadEnv('', process.cwd(), ''),
   },
