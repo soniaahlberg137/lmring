@@ -3,7 +3,11 @@ import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as zeroEvalApi from '@/libs/zeroeval-api';
-import { useLeaderboardData, useLeaderboardQuery } from '../use-leaderboard-query';
+import {
+  useLeaderboardData,
+  useLeaderboardQuery,
+  usePrefetchLeaderboard,
+} from '../use-leaderboard-query';
 
 const mockModelFull = {
   model_id: 'test-model',
@@ -198,5 +202,63 @@ describe('useLeaderboardData', () => {
     // After loading
     expect(result.current.isInitialLoading).toBe(false);
     expect(result.current.isRefetching).toBe(false);
+  });
+});
+
+describe('usePrefetchLeaderboard', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('prefetches leaderboard data for a category', async () => {
+    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
+    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
+
+    // Prefetch should return a function
+    expect(typeof result.current.prefetchLeaderboard).toBe('function');
+
+    // Call prefetch
+    await result.current.prefetchLeaderboard('all');
+
+    // Check that data is now in cache
+    const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
+    expect(cachedData).toBeDefined();
+    expect(Array.isArray(cachedData)).toBe(true);
+  });
+
+  it('uses default category "all" when no category is provided', async () => {
+    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
+    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+
+    const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    );
+
+    const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
+
+    // Call prefetch without category (should default to 'all')
+    await result.current.prefetchLeaderboard();
+
+    // Check that data is cached under 'all' key
+    const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
+    expect(cachedData).toBeDefined();
   });
 });

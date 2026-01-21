@@ -16,6 +16,8 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
+import { usePrefetchConversations } from '@/hooks/use-conversations-query';
+import { usePrefetchLeaderboard } from '@/hooks/use-leaderboard-query';
 import { useTranslations } from '@/hooks/use-translations';
 import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } from '@/stores';
 import { UserMenu } from './user-menu';
@@ -74,6 +76,10 @@ export function Sidebar({ user }: SidebarProps) {
 
   const mainContentReady = useArenaStore(arenaSelectors.mainContentReady);
 
+  // Prefetch hooks for navigation optimization
+  const { prefetchLeaderboard } = usePrefetchLeaderboard();
+  const { prefetchHistoryConversations } = usePrefetchConversations();
+
   const currentPath = pathname;
 
   const isSettingsPage = currentPath.startsWith('/settings');
@@ -128,6 +134,18 @@ export function Sidebar({ user }: SidebarProps) {
     if (text.length <= maxLength) return text;
     return `${text.slice(0, maxLength)}...`;
   };
+
+  // Handle prefetch on hover for navigation items
+  const handleNavItemMouseEnter = React.useCallback(
+    (href: string) => {
+      if (href === '/leaderboard') {
+        void prefetchLeaderboard('all');
+      } else if (href === '/history') {
+        void prefetchHistoryConversations(50, 0);
+      }
+    },
+    [prefetchLeaderboard, prefetchHistoryConversations],
+  );
 
   const SidebarContent = () => (
     <>
@@ -186,7 +204,13 @@ export function Sidebar({ user }: SidebarProps) {
           const Icon = item.icon;
 
           return (
-            <Link key={item.href} href={item.href} className="block">
+            <Link
+              key={item.href}
+              href={item.href}
+              prefetch={true}
+              className="block"
+              onMouseEnter={() => handleNavItemMouseEnter(item.href)}
+            >
               <motion.div
                 whileHover={{ x: 2 }}
                 whileTap={{ scale: 0.98 }}
@@ -250,7 +274,12 @@ export function Sidebar({ user }: SidebarProps) {
                       : truncateText(conv.title, 20);
 
                     return (
-                      <Link key={conv.id} href={`/arena/${conv.id}`} className="block">
+                      <Link
+                        key={conv.id}
+                        href={`/arena/${conv.id}`}
+                        prefetch={false}
+                        className="block"
+                      >
                         <motion.div
                           whileHover={{ x: 2 }}
                           whileTap={{ scale: 0.98 }}
