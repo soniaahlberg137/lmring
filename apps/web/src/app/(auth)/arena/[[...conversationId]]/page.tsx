@@ -49,6 +49,7 @@ import { DEFAULT_MODEL_CONFIG } from '@/types/arena';
 import type { InputMode, UploadedImage } from '@/types/input-mode';
 import { INPUT_MODE_ABILITY_MAP } from '@/types/input-mode';
 import type { ArenaWorkflow, WorkflowImageAttachment } from '@/types/workflow';
+import { selectUniqueRandomModels } from '@/utils/model-selection';
 
 export default function ArenaPage() {
   const params = useParams();
@@ -644,13 +645,11 @@ export default function ArenaPage() {
       return;
     }
 
-    const firstFilteredModelId = filteredDisplayModels[0]?.id;
-    if (!firstFilteredModelId) {
-      return;
-    }
-
     const prevMode = prevInputModeRef.current;
     const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
+
+    const validModelIds: string[] = [];
+    const indicesToReplace: number[] = [];
 
     comparisons.forEach((comparison, index) => {
       const isModelInFilteredList = filteredDisplayModels.some(
@@ -658,9 +657,24 @@ export default function ArenaPage() {
       );
 
       if (!isModelInFilteredList || isReturningToDefault) {
-        selectModel(index, firstFilteredModelId);
+        indicesToReplace.push(index);
+      } else {
+        validModelIds.push(comparison.modelId);
       }
     });
+
+    if (indicesToReplace.length > 0) {
+      const replacementModels = selectUniqueRandomModels(
+        filteredDisplayModels,
+        indicesToReplace.length,
+        validModelIds,
+      );
+
+      indicesToReplace.forEach((index, i) => {
+        const modelId = replacementModels[i] || filteredDisplayModels[0]?.id || '';
+        selectModel(index, modelId);
+      });
+    }
 
     prevInputModeRef.current = inputMode;
   }, [inputMode, filteredDisplayModels, comparisons, selectModel]);

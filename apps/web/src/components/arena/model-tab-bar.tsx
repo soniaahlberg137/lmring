@@ -72,13 +72,14 @@ export function ModelTabBar({
             type="button"
             onClick={onAddComparison}
             className={cn(
-              'flex items-center justify-center w-10 h-10 rounded-lg border border-dashed',
+              'flex items-center justify-center gap-1.5 px-3 h-10 rounded-lg border border-dashed',
               'border-border/50 hover:border-border hover:bg-accent/30 transition-all',
               'text-muted-foreground hover:text-foreground',
             )}
             aria-label={t('Arena.add_model')}
           >
             <Plus className="h-4 w-4" />
+            <span>{t('Arena.add_model')}</span>
           </button>
         )}
       </div>
