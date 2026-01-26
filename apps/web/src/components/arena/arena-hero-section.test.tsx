@@ -66,11 +66,11 @@ describe('ArenaHeroSection', () => {
     }
   });
 
-  it('renders hero title with font-medium styling', () => {
+  it('renders hero title with font-normal styling', () => {
     render(<ArenaHeroSection />);
 
     const title = screen.getByRole('heading', { level: 1 });
-    expect(title).toHaveClass('font-medium');
+    expect(title).toHaveClass('font-normal');
     expect(title).not.toHaveClass('font-bold');
   });
 

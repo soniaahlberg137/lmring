@@ -40,10 +40,12 @@ export function ArenaHeroSection() {
       </div>
 
       {/* Headline */}
-      <h1 className="text-3xl font-medium text-foreground">{t('Arena.hero_title')}</h1>
+      <h1 className="text-text-secondary text-[32px] font-normal sm:text-5xl">
+        {t('Arena.hero_title')}
+      </h1>
 
       {/* Description */}
-      <p className="text-sm text-muted-foreground text-center whitespace-nowrap">
+      <p className="text-sm text-muted-foreground text-center whitespace-nowrap mb-2">
         {t('Arena.hero_description')}{' '}
         <Link href="/leaderboard" className="text-blue-500 hover:underline">
           {t('Arena.hero_leaderboard')}

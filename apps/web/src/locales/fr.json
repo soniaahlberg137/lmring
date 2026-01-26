@@ -87,7 +87,7 @@
   "Arena.select_model_for_all_cards_description": "Toutes les cartes synchronisées doivent avoir un modèle sélectionné avant de soumettre",
   "Arena.missing_api_key_title": "Configuration de clé API manquante",
   "Arena.missing_api_key_description": "Les fournisseurs suivants n'ont pas de clés API configurées : {{providers}}",
-  "Arena.prompt_placeholder": "Posez une question pour comparer les réponses des modèles...",
+  "Arena.prompt_placeholder": "saisissez quelque chose...",
   "Arena.custom_model": "Personnalisé",
   "Arena.add_model": "Ajouter un modèle",
   "Arena.remove_model": "Supprimer le modèle",

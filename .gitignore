@@ -93,4 +93,5 @@ settings.local.json
 .claude/
 .agent/
 .mcp.json
+*.pen
 CLAUDE.local.md
