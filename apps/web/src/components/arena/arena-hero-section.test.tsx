@@ -74,11 +74,12 @@ describe('ArenaHeroSection', () => {
     expect(title).not.toHaveClass('font-bold');
   });
 
-  it('renders hero description with max-w-lg', () => {
+  it('renders hero description with text-center and whitespace-nowrap', () => {
     render(<ArenaHeroSection />);
 
     const description = screen.getByText(/Arena\.hero_description/);
-    expect(description).toHaveClass('max-w-lg');
+    expect(description).toHaveClass('text-center');
+    expect(description).toHaveClass('whitespace-nowrap');
   });
 
   it('renders leaderboard link with correct href', () => {
@@ -88,11 +89,10 @@ describe('ArenaHeroSection', () => {
     expect(link).toHaveAttribute('href', '/leaderboard');
   });
 
-  it('container has proper spacing classes (gap-3 pb-4)', () => {
+  it('container has proper spacing classes (gap-3)', () => {
     const { container } = render(<ArenaHeroSection />);
 
     const mainContainer = container.firstChild as HTMLElement;
     expect(mainContainer).toHaveClass('gap-3');
-    expect(mainContainer).toHaveClass('pb-4');
   });
 });
