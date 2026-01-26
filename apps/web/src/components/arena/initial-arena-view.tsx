@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@lmring/ui';
+import { ArenaHeroSection } from '@/components/arena/arena-hero-section';
 import { ModelTabBar } from '@/components/arena/model-tab-bar';
 import {
   PromptInput,
@@ -62,7 +63,8 @@ export function InitialArenaView({
 
   return (
     <div className={cn('flex flex-col items-center justify-center h-full p-4', className)}>
-      <div className="w-full max-w-2xl space-y-4">
+      <div className="w-full max-w-3xl space-y-2">
+        <ArenaHeroSection />
         <PromptInput
           value={globalPrompt}
           onChange={onPromptChange}

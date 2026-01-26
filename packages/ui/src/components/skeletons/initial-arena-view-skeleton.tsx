@@ -4,7 +4,18 @@ function InitialArenaViewSkeleton() {
   return (
     <div className="flex flex-col h-full bg-background overflow-hidden">
       <div className="flex flex-col items-center justify-center h-full p-4">
-        <div className="w-full max-w-2xl space-y-4">
+        <div className="w-full max-w-3xl space-y-2">
+          {/* Hero section skeleton */}
+          <div className="flex flex-col items-center gap-3">
+            <div className="flex items-center gap-2">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <Skeleton key={i} className="h-[22px] w-[22px] rounded-md" />
+              ))}
+            </div>
+            <Skeleton className="h-8 w-48" />
+            <Skeleton className="h-4 w-[420px]" />
+          </div>
+
           {/* Prompt input skeleton */}
           <div className="rounded-xl border border-input bg-background p-3 space-y-3">
             <Skeleton className="h-24 rounded-lg" />
