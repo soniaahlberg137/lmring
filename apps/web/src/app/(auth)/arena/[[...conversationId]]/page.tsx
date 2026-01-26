@@ -1,13 +1,14 @@
 'use client';
 
 import type { ComparisonType } from '@lmring/database';
-import { Button, cn, ModelCardSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
+import { Button, cn, InitialArenaViewSkeleton, ResponseViewer, ScrollArea } from '@lmring/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
+import { InitialArenaView } from '@/components/arena/initial-arena-view';
 import { ModelCard } from '@/components/arena/model-card';
 import {
   PromptInput,
@@ -1516,19 +1517,35 @@ export default function ArenaPage() {
   const isLoadingVotes = conversationId && conversationLoaded && !voteLoadingComplete;
 
   if (!initialized || !enabledModelsLoaded || isLoadingConversation || isLoadingVotes) {
+    return <InitialArenaViewSkeleton />;
+  }
+
+  // Determine if a conversation has started by checking if there are workflows with messages
+  const hasConversationStarted =
+    storedConversationId !== null ||
+    Array.from(workflows.values()).some((wf) => wf.messages && wf.messages.length > 0);
+
+  // Show initial view when no conversation has started
+  if (!hasConversationStarted) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">
-        <div className="flex-1 overflow-hidden">
-          <div className="h-full overflow-x-auto overflow-y-hidden custom-scrollbar p-4">
-            <div className="h-full flex gap-4" style={{ minWidth: 'fit-content' }}>
-              {[0, 1].map((index) => (
-                <div key={index} style={getCardStyles(2)}>
-                  <ModelCardSkeleton />
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <InitialArenaView
+          comparisons={comparisons}
+          availableModels={filteredDisplayModels}
+          globalPrompt={workflowGlobalPrompt}
+          isLoading={isAnyRunning}
+          uploadedImages={uploadedImages}
+          onPromptChange={setWorkflowGlobalPrompt}
+          onSubmit={handleSubmit}
+          onStop={cancelAllWorkflows}
+          onModelSelect={handleModelSelect}
+          onAddComparison={addComparison}
+          onRemoveComparison={handleDelete}
+          onAddImages={handleAddImages}
+          onUpdateImage={handleUpdateImage}
+          onRemoveImage={handleRemoveImage}
+          onModeChange={handleInputModeChange}
+        />
       </div>
     );
   }

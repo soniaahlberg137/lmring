@@ -100,6 +100,7 @@ export { StreamingCursor } from './components/streaming-cursor';
 export { Skeleton } from './components/skeleton';
 export {
   ConversationCardSkeleton,
+  InitialArenaViewSkeleton,
   SidebarConversationSkeleton,
   ProviderCardSkeleton,
   ProviderSidebarSkeleton,
