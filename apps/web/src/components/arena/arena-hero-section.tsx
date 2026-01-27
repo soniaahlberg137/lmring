@@ -40,7 +40,7 @@ export function ArenaHeroSection() {
       </div>
 
       {/* Headline */}
-      <h1 className="text-text-secondary text-[32px] font-normal sm:text-5xl">
+      <h1 className="text-secondary-foreground text-[32px] font-normal sm:text-5xl">
         {t('Arena.hero_title')}
       </h1>
 
