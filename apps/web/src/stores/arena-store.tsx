@@ -11,6 +11,7 @@ import {
   type ModelConfig,
   type ModelOption,
 } from '@/types/arena';
+import { selectRandomModel, selectUniqueRandomModels } from '@/utils/model-selection';
 
 // Type for model override data
 export interface ModelOverrideData {
@@ -106,13 +107,13 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
           const state = get();
           if (state.initialized || availableModels.length === 0) return;
 
-          const defaultModelId = availableModels[0]?.id || '';
+          const [modelId1, modelId2] = selectUniqueRandomModels(availableModels, 2);
 
           set(
             {
               comparisons: [
-                createEmptyComparison('1', defaultModelId),
-                createEmptyComparison('2', defaultModelId),
+                createEmptyComparison('1', modelId1 || ''),
+                createEmptyComparison('2', modelId2 || ''),
               ],
               initialized: true,
               availableModels,
@@ -126,7 +127,8 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
           const state = get();
           if (state.comparisons.length >= MAX_COMPARISON_CARDS) return;
 
-          const newModelId = state.availableModels[0]?.id || '';
+          const existingModelIds = state.comparisons.map((c) => c.modelId);
+          const newModelId = selectRandomModel(state.availableModels, existingModelIds);
 
           set(
             {
@@ -299,12 +301,12 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
         setComparisons: (comparisons) => set({ comparisons }, false, 'arena/setComparisons'),
 
         resetComparisons: (availableModels) => {
-          const defaultModelId = availableModels[0]?.id || '';
+          const [modelId1, modelId2] = selectUniqueRandomModels(availableModels, 2);
           set(
             {
               comparisons: [
-                createEmptyComparison('1', defaultModelId),
-                createEmptyComparison('2', defaultModelId),
+                createEmptyComparison('1', modelId1 || ''),
+                createEmptyComparison('2', modelId2 || ''),
               ],
             },
             false,

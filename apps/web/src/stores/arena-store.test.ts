@@ -74,15 +74,17 @@ describe('arena-store', () => {
   });
 
   describe('initializeComparisons', () => {
-    it('should initialize with two comparisons using first available model', () => {
+    it('should initialize with two comparisons using different models', () => {
       const store = createArenaStore();
 
       store.getState().initializeComparisons(mockModels);
 
       const state = store.getState();
       expect(state.comparisons).toHaveLength(2);
-      expect(state.comparisons[0]?.modelId).toBe('openai:gpt-4');
-      expect(state.comparisons[1]?.modelId).toBe('openai:gpt-4');
+      const modelIds = mockModels.map((m) => m.id);
+      expect(modelIds).toContain(state.comparisons[0]?.modelId);
+      expect(modelIds).toContain(state.comparisons[1]?.modelId);
+      expect(state.comparisons[0]?.modelId).not.toBe(state.comparisons[1]?.modelId);
       expect(state.initialized).toBe(true);
       expect(state.availableModels).toEqual(mockModels);
     });
@@ -131,14 +133,17 @@ describe('arena-store', () => {
       expect(store.getState().comparisons).toHaveLength(3);
     });
 
-    it('should use first available model for new comparison', () => {
+    it('should use a different model for new comparison when possible', () => {
       const store = createArenaStore();
       store.getState().initializeComparisons(mockModels);
+      const initialModelIds = store.getState().comparisons.map((c) => c.modelId);
 
       store.getState().addComparison();
 
       const newComparison = store.getState().comparisons[2];
-      expect(newComparison?.modelId).toBe('openai:gpt-4');
+      const modelIds = mockModels.map((m) => m.id);
+      expect(modelIds).toContain(newComparison?.modelId);
+      expect(initialModelIds).not.toContain(newComparison?.modelId);
     });
 
     it('should not exceed MAX_COMPARISON_CARDS (5)', () => {
@@ -240,9 +245,11 @@ describe('arena-store', () => {
       const store = createArenaStore();
       store.getState().initializeComparisons(mockModels);
 
+      const secondComparisonModelId = store.getState().comparisons[1]?.modelId;
+
       store.getState().selectModel(0, 'anthropic:claude-3');
 
-      expect(store.getState().comparisons[1]?.modelId).toBe('openai:gpt-4');
+      expect(store.getState().comparisons[1]?.modelId).toBe(secondComparisonModelId);
     });
   });
 
@@ -432,7 +439,7 @@ describe('arena-store', () => {
   });
 
   describe('resetComparisons', () => {
-    it('should reset to two default comparisons', () => {
+    it('should reset to two default comparisons with different models', () => {
       const store = createArenaStore();
       store.getState().initializeComparisons(mockModels);
       store.getState().addComparison();
@@ -444,7 +451,12 @@ describe('arena-store', () => {
       const state = store.getState();
       expect(state.comparisons).toHaveLength(2);
       expect(state.comparisons[0]?.response).toBe('');
-      expect(state.comparisons[0]?.modelId).toBe('openai:gpt-4');
+      // Should be valid model IDs
+      const modelIds = mockModels.map((m) => m.id);
+      expect(modelIds).toContain(state.comparisons[0]?.modelId);
+      expect(modelIds).toContain(state.comparisons[1]?.modelId);
+      // Models should be different
+      expect(state.comparisons[0]?.modelId).not.toBe(state.comparisons[1]?.modelId);
     });
   });
 
