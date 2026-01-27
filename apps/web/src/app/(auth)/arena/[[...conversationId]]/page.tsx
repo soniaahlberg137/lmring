@@ -5,7 +5,7 @@ import { Button, cn, InitialArenaViewSkeleton, ResponseViewer, ScrollArea } from
 import { useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { XIcon } from 'lucide-react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { InitialArenaView } from '@/components/arena/initial-arena-view';
@@ -57,6 +57,7 @@ export default function ArenaPage() {
   const conversationId = conversationIdParam?.[0];
 
   const router = useRouter();
+  const pathname = usePathname();
   const t = useTranslations();
   const providerMetadata = useProviderMetadata();
   const queryClient = useQueryClient();
@@ -132,6 +133,7 @@ export default function ArenaPage() {
 
   const comparisonWorkflowMap = React.useRef<Map<string, string>>(new Map());
   const hasResetForNewChatRef = React.useRef(false);
+  const prevPathnameRef = React.useRef<string>(pathname);
 
   const handleConversationCreated = React.useCallback(
     (newConversationId: string, title: string) => {
@@ -275,6 +277,24 @@ export default function ArenaPage() {
     setIsCreatingConversation,
     setModelsLastLoadedAt,
   ]);
+
+  React.useEffect(() => {
+    const prevPathname = prevPathnameRef.current;
+    prevPathnameRef.current = pathname;
+
+    const isNewChatPath = pathname === '/arena' || pathname === '/arena/';
+    const wasOnConversation = prevPathname.startsWith('/arena/') && prevPathname !== '/arena/';
+
+    if (isNewChatPath && wasOnConversation && storedConversationId) {
+      resetConversation();
+      comparisonWorkflowMap.current.clear();
+      hasResetForNewChatRef.current = false;
+      setModelsLastLoadedAt(null);
+      setConversationLoaded(false);
+      setConversationError(null);
+      setVoteLoadingComplete(false);
+    }
+  }, [pathname, storedConversationId, resetConversation, setModelsLastLoadedAt]);
 
   // Reset comparisons after models are loaded when navigating to new chat
   // This ensures we use the freshly loaded models to select defaults
@@ -1539,7 +1559,6 @@ export default function ArenaPage() {
     storedConversationId !== null ||
     Array.from(workflows.values()).some((wf) => wf.messages && wf.messages.length > 0);
 
-  // Show initial view when no conversation has started
   if (!hasConversationStarted) {
     return (
       <div className="flex flex-col h-full bg-background overflow-hidden">

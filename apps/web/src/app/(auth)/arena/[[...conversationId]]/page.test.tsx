@@ -19,6 +19,7 @@ const { mockRouterPush } = vi.hoisted(() => ({
 vi.mock('next/navigation', () => ({
   useParams: () => ({ conversationId: undefined }),
   useRouter: () => ({ push: mockRouterPush }),
+  usePathname: () => '/arena',
 }));
 
 vi.mock('@/hooks/use-translations', () => ({
