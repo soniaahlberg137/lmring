@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@lmring/ui';
-import { ChevronDown, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import type * as React from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { useTranslations } from '@/hooks/use-translations';
@@ -47,8 +47,7 @@ export function ModelTab({
         {model ? (
           <>
             <ProviderIcon providerId={model.providerId} size={18} />
-            <span className="text-sm font-medium truncate max-w-[120px]">{model.name}</span>
-            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+            <span className="text-sm font-medium whitespace-nowrap">{model.name}</span>
           </>
         ) : (
           <span className="text-sm text-muted-foreground">{t('Arena.select_model')}</span>

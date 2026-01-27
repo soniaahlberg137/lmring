@@ -20,7 +20,6 @@ vi.mock('@lmring/ui', () => ({
 }));
 
 vi.mock('lucide-react', () => ({
-  ChevronDown: () => <svg data-testid="chevron-down" />,
   X: () => <svg data-testid="x-icon" />,
 }));
 
@@ -41,7 +40,6 @@ describe('ModelTab', () => {
     expect(screen.getByTestId('provider-icon')).toBeInTheDocument();
     expect(screen.getByTestId('provider-icon')).toHaveAttribute('data-provider-id', 'openai');
     expect(screen.getByText('GPT-4')).toBeInTheDocument();
-    expect(screen.getByTestId('chevron-down')).toBeInTheDocument();
   });
 
   it('should render select model text when model is undefined', async () => {
