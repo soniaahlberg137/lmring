@@ -19,6 +19,7 @@ const { mockRouterPush } = vi.hoisted(() => ({
 vi.mock('next/navigation', () => ({
   useParams: () => ({ conversationId: undefined }),
   useRouter: () => ({ push: mockRouterPush }),
+  usePathname: () => '/arena',
 }));
 
 vi.mock('@/hooks/use-translations', () => ({
@@ -226,6 +227,7 @@ vi.mock('@lmring/ui', () => ({
   ),
   cn: (...args: string[]) => args.filter(Boolean).join(' '),
   ModelCardSkeleton: () => <div data-testid="model-card-skeleton">Loading...</div>,
+  InitialArenaViewSkeleton: () => <div data-testid="model-card-skeleton">Loading...</div>,
   ResponseViewer: ({ content }: { content: string }) => (
     <div data-testid="response-viewer">{content}</div>
   ),
@@ -236,6 +238,14 @@ vi.mock('@lmring/ui', () => ({
 
 vi.mock('lucide-react', () => ({
   XIcon: () => <svg data-testid="icon-x" />,
+}));
+
+vi.mock('framer-motion', () => ({
+  motion: {
+    div: ({ children, ...props }: { children: React.ReactNode }) => (
+      <div {...props}>{children}</div>
+    ),
+  },
 }));
 
 vi.mock('@/components/arena/model-card', () => ({
@@ -283,6 +293,10 @@ vi.mock('@/components/arena/vote-bar', () => ({
   VoteBar: () => <div data-testid="vote-bar">Vote Bar</div>,
 }));
 
+vi.mock('@/components/arena/initial-arena-view', () => ({
+  InitialArenaView: () => <div data-testid="initial-arena-view">Initial Arena View</div>,
+}));
+
 vi.mock('@/constants/arena', () => ({
   CARD_MIN_WIDTH: 300,
   MAX_COMPARISON_CARDS: 4,
@@ -318,19 +332,53 @@ describe('ArenaPage', () => {
     const { default: ArenaPage } = await import('./page');
     render(<ArenaPage />, { wrapper: createWrapper() });
 
-    expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(2);
+    expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(1);
   });
 
   it('should render loading skeleton when models not loaded', async () => {
+    mockArenaState = createMockStoreState({ initialized: false });
     mockSettingsState = createMockSettingsState({ apiKeysLoaded: false });
 
     const { default: ArenaPage } = await import('./page');
     render(<ArenaPage />, { wrapper: createWrapper() });
 
-    expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(2);
+    expect(screen.getAllByTestId('model-card-skeleton')).toHaveLength(1);
   });
 
-  it('should render model cards when initialized', async () => {
+  it('should render initial arena view when no conversation started', async () => {
+    const { default: ArenaPage } = await import('./page');
+    render(<ArenaPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('initial-arena-view')).toBeInTheDocument();
+    });
+  });
+
+  it('should render model cards when conversation has started', async () => {
+    // Set up workflow state with a conversation in progress
+    const workflowWithMessages = new Map([
+      [
+        'workflow-1',
+        {
+          id: 'workflow-1',
+          modelId: 'openai:gpt-4',
+          keyId: 'key-1',
+          synced: true,
+          customPrompt: '',
+          config: {},
+          status: 'completed' as const,
+          messages: [
+            { id: 'msg-1', role: 'user' as const, content: 'Hello' },
+            { id: 'msg-2', role: 'assistant' as const, content: 'Hi there!' },
+          ],
+        },
+      ],
+    ]);
+    mockWorkflowState = createMockWorkflowState({
+      workflows: workflowWithMessages,
+      conversationId: 'conv-123',
+    });
+
     const { default: ArenaPage } = await import('./page');
     render(<ArenaPage />, { wrapper: createWrapper() });
 
@@ -339,7 +387,28 @@ describe('ArenaPage', () => {
     });
   });
 
-  it('should render prompt input area', async () => {
+  it('should render prompt input when conversation has started', async () => {
+    // Set up workflow state with a conversation in progress
+    const workflowWithMessages = new Map([
+      [
+        'workflow-1',
+        {
+          id: 'workflow-1',
+          modelId: 'openai:gpt-4',
+          keyId: 'key-1',
+          synced: true,
+          customPrompt: '',
+          config: {},
+          status: 'completed' as const,
+          messages: [{ id: 'msg-1', role: 'user' as const, content: 'Hello' }],
+        },
+      ],
+    ]);
+    mockWorkflowState = createMockWorkflowState({
+      workflows: workflowWithMessages,
+      conversationId: 'conv-123',
+    });
+
     const { default: ArenaPage } = await import('./page');
     render(<ArenaPage />, { wrapper: createWrapper() });
 
@@ -364,7 +433,27 @@ describe('ArenaPage', () => {
     expect(container).toBeInTheDocument();
   });
 
-  it('should handle prompt input change', async () => {
+  it('should handle prompt input change when conversation has started', async () => {
+    const workflowWithMessages = new Map([
+      [
+        'workflow-1',
+        {
+          id: 'workflow-1',
+          modelId: 'openai:gpt-4',
+          keyId: 'key-1',
+          synced: true,
+          customPrompt: '',
+          config: {},
+          status: 'completed' as const,
+          messages: [{ id: 'msg-1', role: 'user' as const, content: 'Hello' }],
+        },
+      ],
+    ]);
+    mockWorkflowState = createMockWorkflowState({
+      workflows: workflowWithMessages,
+      conversationId: 'conv-123',
+    });
+
     const { default: ArenaPage } = await import('./page');
     render(<ArenaPage />, { wrapper: createWrapper() });
 
@@ -376,5 +465,71 @@ describe('ArenaPage', () => {
     fireEvent.change(textarea, { target: { value: 'Test prompt' } });
 
     expect(mockWorkflowState.setGlobalPrompt).toHaveBeenCalled();
+  });
+
+  it('should render maximized content view when maximized content is set', async () => {
+    const workflowWithMessages = new Map([
+      [
+        'workflow-1',
+        {
+          id: 'workflow-1',
+          modelId: 'openai:gpt-4',
+          keyId: 'key-1',
+          synced: true,
+          customPrompt: '',
+          config: {},
+          status: 'completed' as const,
+          messages: [
+            { id: 'msg-1', role: 'user' as const, content: 'Hello' },
+            { id: 'msg-2', role: 'assistant' as const, content: 'Hi there!' },
+          ],
+        },
+      ],
+    ]);
+    mockWorkflowState = createMockWorkflowState({
+      workflows: workflowWithMessages,
+      conversationId: 'conv-123',
+    });
+
+    const { default: ArenaPage } = await import('./page');
+    render(<ArenaPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('model-card')).toHaveLength(2);
+    });
+  });
+
+  it('should close maximized view when close button is clicked', async () => {
+    const workflowWithMessages = new Map([
+      [
+        'workflow-1',
+        {
+          id: 'workflow-1',
+          modelId: 'openai:gpt-4',
+          keyId: 'key-1',
+          synced: true,
+          customPrompt: '',
+          config: {},
+          status: 'completed' as const,
+          messages: [
+            { id: 'msg-1', role: 'user' as const, content: 'Hello' },
+            { id: 'msg-2', role: 'assistant' as const, content: 'Hi there!' },
+          ],
+        },
+      ],
+    ]);
+    mockWorkflowState = createMockWorkflowState({
+      workflows: workflowWithMessages,
+      conversationId: 'conv-123',
+    });
+
+    const { default: ArenaPage } = await import('./page');
+    render(<ArenaPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId('model-card')).toHaveLength(2);
+    });
+
+    expect(screen.queryByTestId('response-viewer')).not.toBeInTheDocument();
   });
 });
