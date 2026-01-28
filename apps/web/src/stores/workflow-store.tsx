@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/shallow';
 import {
   type ArenaWorkflow,
   DEFAULT_WORKFLOW_CONFIG,
@@ -376,6 +377,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 ...workflow,
                 status,
                 error: error ?? (status === 'failed' ? workflow.error : undefined),
+                // Only clear pendingResponse on cancel, preserve on failed to allow error display
+                pendingResponse: status === 'cancelled' ? undefined : workflow.pendingResponse,
                 updatedAt: new Date(),
               });
               return { workflows: newMap };
@@ -702,20 +705,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           const newWorkflows = new Map<string, ArenaWorkflow>();
           const newMessageIdMap = new Map<string, string>();
 
-          // Build a map of modelKey -> displayPosition from the first message's responses
-          const modelPositionMap = new Map<string, number>();
-          const firstUserMessage = messages.find((m) => m.role === 'user');
-
-          if (firstUserMessage?.responses) {
-            for (const response of firstUserMessage.responses) {
-              const modelKey = `${response.providerName}:${response.modelName}`;
-              // Use displayPosition from response if available, otherwise use a high number
-              modelPositionMap.set(modelKey, response.displayPosition ?? 999);
-            }
-          }
-
           // Initialize workflows for each model in the conversation
-          // Note: modelKeyMap uses modelId (e.g. "openai:gpt-4") as key, but workflow IDs must be UUIDs
+          // Note: modelKeyMap uses key format "provider:model:position" but workflow IDs must be UUIDs
           const modelKeyToWorkflowId = new Map<string, string>();
           for (const [modelKey, { modelId, keyId }] of modelKeyMap) {
             const workflowId = generateId();
@@ -725,8 +716,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           }
 
           const sortedModelKeys = Array.from(modelKeyMap.keys()).sort((a, b) => {
-            const posA = modelPositionMap.get(a) ?? 999;
-            const posB = modelPositionMap.get(b) ?? 999;
+            const posA = Number.parseInt(a.split(':').pop() ?? '999', 10);
+            const posB = Number.parseInt(b.split(':').pop() ?? '999', 10);
             return posA - posB;
           });
           const sortedWorkflowIds = sortedModelKeys
@@ -777,7 +768,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               if (msg.responses) {
                 for (const response of msg.responses) {
                   // Find the workflow for this model using the modelKey -> workflowId mapping
-                  const modelKey = `${response.providerName}:${response.modelName}`;
+                  // Key format includes displayPosition: "provider:model:position"
+                  const modelKey = `${response.providerName}:${response.modelName}:${response.displayPosition ?? 0}`;
                   const workflowId = modelKeyToWorkflowId.get(modelKey);
                   const workflow = workflowId ? newWorkflows.get(workflowId) : undefined;
 
@@ -911,6 +903,15 @@ export function useWorkflowStore<T>(selector: (state: WorkflowStore) => T): T {
   return useStore(store, selector);
 }
 
+// Hook for composite selectors with shallow comparison
+export function useWorkflowStoreShallow<T>(selector: (state: WorkflowStore) => T): T {
+  const store = useContext(WorkflowStoreContext);
+  if (!store) {
+    throw new Error('useWorkflowStoreShallow must be used within WorkflowStoreProvider');
+  }
+  return useStore(store, useShallow(selector));
+}
+
 /**
  * Pre-defined selectors for common use cases
  */
@@ -929,4 +930,31 @@ export const workflowSelectors = {
   hasConversation: (state: WorkflowStore) => state.conversationId !== null,
   newConversation: (state: WorkflowStore) => state.newConversation,
   isCreatingConversation: (state: WorkflowStore) => state.isCreatingConversation,
+
+  // Composite selector for state values used in Arena page
+  workflowState: (state: WorkflowStore) => ({
+    workflows: state.workflows,
+    workflowOrder: state.workflowOrder,
+    globalPrompt: state.globalPrompt,
+    isAnyRunning: Array.from(state.workflows.values()).some((w) => w.status === 'running'),
+    conversationId: state.conversationId,
+    isCreatingConversation: state.isCreatingConversation,
+  }),
+
+  // Composite selector for actions used in Arena page
+  workflowActions: (state: WorkflowStore) => ({
+    createWorkflow: state.createWorkflow,
+    deleteWorkflow: state.deleteWorkflow,
+    setGlobalPrompt: state.setGlobalPrompt,
+    toggleWorkflowSync: state.toggleWorkflowSync,
+    setWorkflowConfig: state.setWorkflowConfig,
+    setCustomPrompt: state.setCustomPrompt,
+    clearWorkflowHistory: state.clearWorkflowHistory,
+    resetConversation: state.resetConversation,
+    loadConversationHistory: state.loadConversationHistory,
+    setConversationId: state.setConversationId,
+    getConversationId: state.getConversationId,
+    setNewConversation: state.setNewConversation,
+    setIsCreatingConversation: state.setIsCreatingConversation,
+  }),
 };

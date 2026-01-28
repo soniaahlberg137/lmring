@@ -29,6 +29,7 @@ export { useVoteStore, voteSelectors } from './vote-store';
 export type { WorkflowActions, WorkflowState, WorkflowStore } from './workflow-store';
 export {
   useWorkflowStore,
+  useWorkflowStoreShallow,
   WorkflowStoreProvider,
   workflowSelectors,
 } from './workflow-store';

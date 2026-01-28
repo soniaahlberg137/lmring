@@ -349,4 +349,101 @@ describe('RuntimeExecutor', () => {
       expect(aiSdk.streamText).toHaveBeenCalled();
     });
   });
+
+  describe('optimization: engine and middleware reuse', () => {
+    it('reuses existing engine when no per-call plugins provided', async () => {
+      const constructorPlugin = new TestPlugin();
+      constructorPlugin.name = 'Constructor';
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [constructorPlugin]);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.streamText({ model: 'm', messages: [] });
+
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+    });
+
+    it('reuses existing engine when options.plugins is empty array', async () => {
+      const constructorPlugin = new TestPlugin();
+      constructorPlugin.name = 'Constructor';
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [constructorPlugin]);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.streamText({ model: 'm', messages: [] }, { plugins: [] });
+
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+    });
+
+    it('reuses existing middlewares when no per-call middlewares provided', async () => {
+      const constructorMw: LanguageModelV3Middleware = {
+        specificationVersion: 'v3',
+        transformParams: async ({ params }) => params,
+      };
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [], [constructorMw]);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.streamText({ model: 'm', messages: [] });
+
+      expect(aiSdk.streamText).toHaveBeenCalled();
+    });
+
+    it('reuses existing middlewares when options.middlewares is empty array', async () => {
+      const constructorMw: LanguageModelV3Middleware = {
+        specificationVersion: 'v3',
+        transformParams: async ({ params }) => params,
+      };
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [], [constructorMw]);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.streamText({ model: 'm', messages: [] }, { middlewares: [] });
+
+      expect(aiSdk.streamText).toHaveBeenCalled();
+    });
+
+    it('creates new engine only when per-call plugins are provided', async () => {
+      const constructorPlugin = new TestPlugin();
+      constructorPlugin.name = 'Constructor';
+      const callPlugin = new TestPlugin();
+      callPlugin.name = 'Call';
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [constructorPlugin]);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.streamText({ model: 'm', messages: [] }, { plugins: [callPlugin] });
+
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+      expect(callPlugin.transformParamsCalled).toBe(true);
+    });
+
+    it('applies optimization across all execution methods', async () => {
+      const constructorPlugin = new TestPlugin();
+      constructorPlugin.name = 'Constructor';
+
+      const provider = createMockProviderInstance();
+      const executor = new RuntimeExecutor(provider, [constructorPlugin]);
+      vi.mocked(aiSdk.generateText).mockResolvedValue({} as never);
+      vi.mocked(aiSdk.streamText).mockResolvedValue({} as never);
+
+      await executor.generateText({ model: 'm', messages: [] }, { plugins: [] });
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+
+      constructorPlugin.transformParamsCalled = false;
+
+      await executor.generateObject({ model: 'm', messages: [], schema: {} }, { plugins: [] });
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+
+      constructorPlugin.transformParamsCalled = false;
+
+      await executor.streamObject({ model: 'm', messages: [], schema: {} }, { plugins: [] });
+      expect(constructorPlugin.transformParamsCalled).toBe(true);
+    });
+  });
 });

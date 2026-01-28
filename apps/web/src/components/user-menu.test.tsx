@@ -4,6 +4,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const mocks = vi.hoisted(() => ({
   mockPush: vi.fn(),
   mockSignOut: vi.fn(),
+  mockResetConversation: vi.fn(),
+  mockSetModelsLastLoadedAt: vi.fn(),
 }));
 
 vi.mock('next/navigation', () => ({
@@ -22,6 +24,13 @@ vi.mock('@/libs/AuthClient', () => ({
   },
 }));
 
+vi.mock('@/stores', () => ({
+  useWorkflowStore: (selector: (state: { resetConversation: () => void }) => unknown) =>
+    selector({ resetConversation: mocks.mockResetConversation }),
+  useArenaStore: (selector: (state: { setModelsLastLoadedAt: () => void }) => unknown) =>
+    selector({ setModelsLastLoadedAt: mocks.mockSetModelsLastLoadedAt }),
+}));
+
 describe('UserMenu', () => {
   const defaultUser = {
     name: 'Test User',
@@ -33,6 +42,8 @@ describe('UserMenu', () => {
     mocks.mockPush.mockClear();
     mocks.mockSignOut.mockClear();
     mocks.mockSignOut.mockResolvedValue(undefined);
+    mocks.mockResetConversation.mockClear();
+    mocks.mockSetModelsLastLoadedAt.mockClear();
   });
 
   afterEach(() => {

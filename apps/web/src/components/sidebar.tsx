@@ -73,8 +73,10 @@ export function Sidebar({ user }: SidebarProps) {
 
   const newConversation = useWorkflowStore(workflowSelectors.newConversation);
   const clearNewConversation = useWorkflowStore((state) => state.clearNewConversation);
+  const resetConversation = useWorkflowStore((state) => state.resetConversation);
 
   const mainContentReady = useArenaStore(arenaSelectors.mainContentReady);
+  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
 
   // Prefetch hooks for navigation optimization
   const { prefetchLeaderboard } = usePrefetchLeaderboard();
@@ -147,6 +149,12 @@ export function Sidebar({ user }: SidebarProps) {
     [prefetchLeaderboard, prefetchHistoryConversations],
   );
 
+  // Handle new chat click to reset state
+  const handleNewChatClick = React.useCallback(() => {
+    resetConversation();
+    setModelsLastLoadedAt(null);
+  }, [resetConversation, setModelsLastLoadedAt]);
+
   const SidebarContent = () => (
     <>
       <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-border">
@@ -210,6 +218,12 @@ export function Sidebar({ user }: SidebarProps) {
               prefetch={true}
               className="block"
               onMouseEnter={() => handleNavItemMouseEnter(item.href)}
+              onClick={() => {
+                if (isNewChat) {
+                  handleNewChatClick();
+                }
+                setMobileOpen(false);
+              }}
             >
               <motion.div
                 whileHover={{ x: 2 }}

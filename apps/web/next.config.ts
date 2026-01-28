@@ -8,6 +8,17 @@ const baseConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
   reactStrictMode: true,
+  experimental: {
+    optimizePackageImports: [
+      'lucide-react',
+      '@lobehub/icons',
+      '@lobehub/ui',
+      '@radix-ui/react-icons',
+      'recharts',
+      'date-fns',
+      '@lmring/ui',
+    ],
+  },
   transpilePackages: [
     '@lmring/database',
     '@lmring/ui',

@@ -797,6 +797,53 @@ describe('workflow-store', () => {
 
       expect(store.getState().workflows.get(id)?.error).toBeUndefined();
     });
+
+    it('should preserve pendingResponse when status is failed to allow error display', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Partial content');
+
+      // Verify pendingResponse exists before setting failed status
+      expect(store.getState().workflows.get(id)?.pendingResponse).toBeDefined();
+      expect(store.getState().workflows.get(id)?.pendingResponse?.content).toBe('Partial content');
+
+      store.getState().setWorkflowStatus(id, 'failed', 'Rate limit exceeded');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('failed');
+      expect(workflow?.error).toBe('Rate limit exceeded');
+      // pendingResponse should be preserved so UI can show error message
+      expect(workflow?.pendingResponse).toBeDefined();
+      expect(workflow?.pendingResponse?.content).toBe('Partial content');
+    });
+
+    it('should clear pendingResponse when status is cancelled', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Partial content');
+
+      store.getState().setWorkflowStatus(id, 'cancelled');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('cancelled');
+      expect(workflow?.pendingResponse).toBeUndefined();
+    });
+
+    it('should preserve pendingResponse when status is running', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Streaming content');
+
+      store.getState().setWorkflowStatus(id, 'running');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('running');
+      expect(workflow?.pendingResponse).toBeDefined();
+      expect(workflow?.pendingResponse?.content).toBe('Streaming content');
+    });
   });
 
   describe('selectors', () => {
@@ -885,6 +932,110 @@ describe('workflow-store', () => {
       store.getState().setIsCreatingConversation(true);
 
       expect(workflowSelectors.isCreatingConversation(store.getState())).toBe(true);
+    });
+
+    describe('workflowState composite selector', () => {
+      it('should return correct structure with workflows, workflowOrder, globalPrompt, isAnyRunning, conversationId, isCreatingConversation', () => {
+        const store = createWorkflowStore({
+          globalPrompt: 'Test prompt',
+          conversationId: 'conv-123',
+        });
+        const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+
+        const result = workflowSelectors.workflowState(store.getState());
+
+        expect(result).toHaveProperty('workflows');
+        expect(result).toHaveProperty('workflowOrder');
+        expect(result).toHaveProperty('globalPrompt');
+        expect(result).toHaveProperty('isAnyRunning');
+        expect(result).toHaveProperty('conversationId');
+        expect(result).toHaveProperty('isCreatingConversation');
+
+        expect(result.workflows.size).toBe(1);
+        expect(result.workflowOrder).toContain(id);
+        expect(result.globalPrompt).toBe('Test prompt');
+        expect(result.isAnyRunning).toBe(false);
+        expect(result.conversationId).toBe('conv-123');
+        expect(result.isCreatingConversation).toBe(false);
+      });
+
+      it('should compute isAnyRunning correctly when a workflow is running', () => {
+        const store = createWorkflowStore();
+        const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+        store.getState().setWorkflowStatus(id, 'running');
+
+        const result = workflowSelectors.workflowState(store.getState());
+
+        expect(result.isAnyRunning).toBe(true);
+      });
+
+      it('should compute isAnyRunning correctly when no workflows are running', () => {
+        const store = createWorkflowStore();
+        const id1 = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+        const id2 = store.getState().createWorkflow('anthropic:claude-3', 'key-2');
+        store.getState().setWorkflowStatus(id1, 'completed');
+        store.getState().setWorkflowStatus(id2, 'pending');
+
+        const result = workflowSelectors.workflowState(store.getState());
+
+        expect(result.isAnyRunning).toBe(false);
+      });
+
+      it('should return isCreatingConversation from state', () => {
+        const store = createWorkflowStore();
+        store.getState().setIsCreatingConversation(true);
+
+        const result = workflowSelectors.workflowState(store.getState());
+
+        expect(result.isCreatingConversation).toBe(true);
+      });
+    });
+
+    describe('workflowActions composite selector', () => {
+      it('should return all expected action functions', () => {
+        const store = createWorkflowStore();
+
+        const result = workflowSelectors.workflowActions(store.getState());
+
+        expect(typeof result.createWorkflow).toBe('function');
+        expect(typeof result.deleteWorkflow).toBe('function');
+        expect(typeof result.setGlobalPrompt).toBe('function');
+        expect(typeof result.toggleWorkflowSync).toBe('function');
+        expect(typeof result.setWorkflowConfig).toBe('function');
+        expect(typeof result.setCustomPrompt).toBe('function');
+        expect(typeof result.clearWorkflowHistory).toBe('function');
+        expect(typeof result.resetConversation).toBe('function');
+        expect(typeof result.loadConversationHistory).toBe('function');
+        expect(typeof result.setConversationId).toBe('function');
+        expect(typeof result.getConversationId).toBe('function');
+        expect(typeof result.setNewConversation).toBe('function');
+        expect(typeof result.setIsCreatingConversation).toBe('function');
+      });
+
+      it('should return functional actions that modify state', () => {
+        const store = createWorkflowStore();
+        const actions = workflowSelectors.workflowActions(store.getState());
+
+        // Test createWorkflow
+        const id = actions.createWorkflow('openai:gpt-4', 'key-1');
+        expect(store.getState().workflows.has(id)).toBe(true);
+
+        // Test setGlobalPrompt
+        actions.setGlobalPrompt('New prompt');
+        expect(store.getState().globalPrompt).toBe('New prompt');
+
+        // Test setConversationId
+        actions.setConversationId('conv-456');
+        expect(store.getState().conversationId).toBe('conv-456');
+
+        // Test setIsCreatingConversation
+        actions.setIsCreatingConversation(true);
+        expect(store.getState().isCreatingConversation).toBe(true);
+
+        // Test deleteWorkflow
+        actions.deleteWorkflow(id);
+        expect(store.getState().workflows.has(id)).toBe(false);
+      });
     });
   });
 });
