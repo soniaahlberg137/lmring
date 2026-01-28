@@ -770,6 +770,8 @@ export default function ArenaPage() {
   );
 
   React.useEffect(() => {
+    let didCancel = false;
+
     const loadConversationData = async () => {
       if (!conversationId) {
         return;
@@ -785,6 +787,9 @@ export default function ArenaPage() {
 
       try {
         const data = await loadConversation(conversationId);
+
+        if (didCancel) return;
+
         if (!data) {
           setConversationError('Conversation not found');
           return;
@@ -804,15 +809,23 @@ export default function ArenaPage() {
             }
           }
         }
+
+        if (didCancel) return;
+
         loadConversationHistory(data as LoadedConversation, modelKeyMap);
         setConversationLoaded(true);
       } catch (error) {
+        if (didCancel) return;
         console.error('Failed to load conversation:', error);
         setConversationError('Failed to load conversation');
       }
     };
 
     loadConversationData();
+
+    return () => {
+      didCancel = true;
+    };
   }, [
     conversationId,
     conversationLoaded,
@@ -1532,12 +1545,18 @@ export default function ArenaPage() {
     };
   }, []);
 
+  const handleStartNewConversation = React.useCallback(() => {
+    resetConversation();
+    setModelsLastLoadedAt(null);
+    router.push('/arena');
+  }, [resetConversation, setModelsLastLoadedAt, router]);
+
   if (conversationError) {
     return (
       <div className="flex items-center justify-center h-full bg-background">
         <div className="text-center space-y-4">
           <div className="text-destructive">{conversationError}</div>
-          <Button onClick={() => router.push('/arena')}>Start New Conversation</Button>
+          <Button onClick={handleStartNewConversation}>Start New Conversation</Button>
         </div>
       </div>
     );

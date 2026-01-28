@@ -15,6 +15,7 @@ import { LayoutDashboardIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-
 import { useRouter } from 'next/navigation';
 import { useTranslations } from '@/hooks/use-translations';
 import { authClient } from '@/libs/AuthClient';
+import { useArenaStore, useWorkflowStore } from '@/stores';
 
 interface UserMenuProps {
   user?: {
@@ -28,6 +29,14 @@ interface UserMenuProps {
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
   const t = useTranslations();
   const router = useRouter();
+  const resetConversation = useWorkflowStore((state) => state.resetConversation);
+  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
+
+  const handleGoToArena = () => {
+    resetConversation();
+    setModelsLastLoadedAt(null);
+    router.push('/arena');
+  };
 
   const handleLogout = async () => {
     try {
@@ -85,7 +94,7 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
           <span className="font-medium">{t('Sidebar.user_menu_account')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={() => router.push('/arena')} className="apple-transition">
+        <DropdownMenuItem onClick={handleGoToArena} className="apple-transition">
           <LayoutDashboardIcon className="mr-2 h-4 w-4" />
           <span className="font-medium">{t('Sidebar.user_menu_arena')}</span>
         </DropdownMenuItem>

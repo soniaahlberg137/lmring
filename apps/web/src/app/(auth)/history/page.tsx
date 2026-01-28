@@ -25,7 +25,7 @@ import { ProviderIcon } from '@/components/arena/provider-icon';
 import { useConversation, type VoteResult } from '@/hooks/use-conversation';
 import { conversationsKeys, useHistoryConversations } from '@/hooks/use-conversations-query';
 import { useTranslations } from '@/hooks/use-translations';
-import { useArenaStore } from '@/stores';
+import { useArenaStore, useWorkflowStore } from '@/stores';
 
 export default function HistoryPage() {
   const t = useTranslations();
@@ -33,6 +33,8 @@ export default function HistoryPage() {
   const { shareConversation, deleteConversation, isLoading } = useConversation();
   const [conversationToDelete, setConversationToDelete] = React.useState<string | null>(null);
   const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
+  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
+  const resetConversation = useWorkflowStore((state) => state.resetConversation);
 
   // Use React Query for data fetching with caching
   const { data: conversations = [], isPending } = useHistoryConversations(50, 0);
@@ -157,6 +159,10 @@ export default function HistoryPage() {
             </p>
             <Link
               href="/arena"
+              onClick={() => {
+                resetConversation();
+                setModelsLastLoadedAt(null);
+              }}
               className="mt-6 px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               Start New Chat
