@@ -376,6 +376,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 ...workflow,
                 status,
                 error: error ?? (status === 'failed' ? workflow.error : undefined),
+                // Only clear pendingResponse on cancel, preserve on failed to allow error display
+                pendingResponse: status === 'cancelled' ? undefined : workflow.pendingResponse,
                 updatedAt: new Date(),
               });
               return { workflows: newMap };
@@ -702,20 +704,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           const newWorkflows = new Map<string, ArenaWorkflow>();
           const newMessageIdMap = new Map<string, string>();
 
-          // Build a map of modelKey -> displayPosition from the first message's responses
-          const modelPositionMap = new Map<string, number>();
-          const firstUserMessage = messages.find((m) => m.role === 'user');
-
-          if (firstUserMessage?.responses) {
-            for (const response of firstUserMessage.responses) {
-              const modelKey = `${response.providerName}:${response.modelName}`;
-              // Use displayPosition from response if available, otherwise use a high number
-              modelPositionMap.set(modelKey, response.displayPosition ?? 999);
-            }
-          }
-
           // Initialize workflows for each model in the conversation
-          // Note: modelKeyMap uses modelId (e.g. "openai:gpt-4") as key, but workflow IDs must be UUIDs
+          // Note: modelKeyMap uses key format "provider:model:position" but workflow IDs must be UUIDs
           const modelKeyToWorkflowId = new Map<string, string>();
           for (const [modelKey, { modelId, keyId }] of modelKeyMap) {
             const workflowId = generateId();
@@ -725,8 +715,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           }
 
           const sortedModelKeys = Array.from(modelKeyMap.keys()).sort((a, b) => {
-            const posA = modelPositionMap.get(a) ?? 999;
-            const posB = modelPositionMap.get(b) ?? 999;
+            const posA = Number.parseInt(a.split(':').pop() ?? '999', 10);
+            const posB = Number.parseInt(b.split(':').pop() ?? '999', 10);
             return posA - posB;
           });
           const sortedWorkflowIds = sortedModelKeys
@@ -777,7 +767,8 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               if (msg.responses) {
                 for (const response of msg.responses) {
                   // Find the workflow for this model using the modelKey -> workflowId mapping
-                  const modelKey = `${response.providerName}:${response.modelName}`;
+                  // Key format includes displayPosition: "provider:model:position"
+                  const modelKey = `${response.providerName}:${response.modelName}:${response.displayPosition ?? 0}`;
                   const workflowId = modelKeyToWorkflowId.get(modelKey);
                   const workflow = workflowId ? newWorkflows.get(workflowId) : undefined;
 

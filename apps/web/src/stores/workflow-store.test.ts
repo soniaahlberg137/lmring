@@ -797,6 +797,53 @@ describe('workflow-store', () => {
 
       expect(store.getState().workflows.get(id)?.error).toBeUndefined();
     });
+
+    it('should preserve pendingResponse when status is failed to allow error display', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Partial content');
+
+      // Verify pendingResponse exists before setting failed status
+      expect(store.getState().workflows.get(id)?.pendingResponse).toBeDefined();
+      expect(store.getState().workflows.get(id)?.pendingResponse?.content).toBe('Partial content');
+
+      store.getState().setWorkflowStatus(id, 'failed', 'Rate limit exceeded');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('failed');
+      expect(workflow?.error).toBe('Rate limit exceeded');
+      // pendingResponse should be preserved so UI can show error message
+      expect(workflow?.pendingResponse).toBeDefined();
+      expect(workflow?.pendingResponse?.content).toBe('Partial content');
+    });
+
+    it('should clear pendingResponse when status is cancelled', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Partial content');
+
+      store.getState().setWorkflowStatus(id, 'cancelled');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('cancelled');
+      expect(workflow?.pendingResponse).toBeUndefined();
+    });
+
+    it('should preserve pendingResponse when status is running', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().startPendingResponse(id);
+      store.getState().appendPendingResponse(id, 'Streaming content');
+
+      store.getState().setWorkflowStatus(id, 'running');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('running');
+      expect(workflow?.pendingResponse).toBeDefined();
+      expect(workflow?.pendingResponse?.content).toBe('Streaming content');
+    });
   });
 
   describe('selectors', () => {

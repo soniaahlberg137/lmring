@@ -796,9 +796,10 @@ export default function ArenaPage() {
           if (message.responses) {
             for (const response of message.responses) {
               const fullModelId = `${response.providerName}:${response.modelName}`;
-              if (!modelKeyMap.has(fullModelId)) {
+              const fullModelKey = `${fullModelId}:${response.displayPosition ?? 0}`;
+              if (!modelKeyMap.has(fullModelKey)) {
                 const keyId = getKeyIdForModel(fullModelId) || '';
-                modelKeyMap.set(fullModelId, { modelId: fullModelId, keyId });
+                modelKeyMap.set(fullModelKey, { modelId: fullModelId, keyId });
               }
             }
           }

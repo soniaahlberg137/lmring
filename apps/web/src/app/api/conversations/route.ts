@@ -81,7 +81,7 @@ export async function GET(request: Request) {
         : Promise.resolve([]),
       withModels
         ? db
-            .selectDistinct({
+            .select({
               conversationId: messages.conversationId,
               modelName: modelResponses.modelName,
               providerName: modelResponses.providerName,
