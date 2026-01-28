@@ -3,6 +3,7 @@
 import { createContext, type ReactNode, useContext, useRef } from 'react';
 import { createStore, useStore } from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { useShallow } from 'zustand/shallow';
 import {
   type ArenaWorkflow,
   DEFAULT_WORKFLOW_CONFIG,
@@ -902,6 +903,15 @@ export function useWorkflowStore<T>(selector: (state: WorkflowStore) => T): T {
   return useStore(store, selector);
 }
 
+// Hook for composite selectors with shallow comparison
+export function useWorkflowStoreShallow<T>(selector: (state: WorkflowStore) => T): T {
+  const store = useContext(WorkflowStoreContext);
+  if (!store) {
+    throw new Error('useWorkflowStoreShallow must be used within WorkflowStoreProvider');
+  }
+  return useStore(store, useShallow(selector));
+}
+
 /**
  * Pre-defined selectors for common use cases
  */
@@ -920,4 +930,31 @@ export const workflowSelectors = {
   hasConversation: (state: WorkflowStore) => state.conversationId !== null,
   newConversation: (state: WorkflowStore) => state.newConversation,
   isCreatingConversation: (state: WorkflowStore) => state.isCreatingConversation,
+
+  // Composite selector for state values used in Arena page
+  workflowState: (state: WorkflowStore) => ({
+    workflows: state.workflows,
+    workflowOrder: state.workflowOrder,
+    globalPrompt: state.globalPrompt,
+    isAnyRunning: Array.from(state.workflows.values()).some((w) => w.status === 'running'),
+    conversationId: state.conversationId,
+    isCreatingConversation: state.isCreatingConversation,
+  }),
+
+  // Composite selector for actions used in Arena page
+  workflowActions: (state: WorkflowStore) => ({
+    createWorkflow: state.createWorkflow,
+    deleteWorkflow: state.deleteWorkflow,
+    setGlobalPrompt: state.setGlobalPrompt,
+    toggleWorkflowSync: state.toggleWorkflowSync,
+    setWorkflowConfig: state.setWorkflowConfig,
+    setCustomPrompt: state.setCustomPrompt,
+    clearWorkflowHistory: state.clearWorkflowHistory,
+    resetConversation: state.resetConversation,
+    loadConversationHistory: state.loadConversationHistory,
+    setConversationId: state.setConversationId,
+    getConversationId: state.getConversationId,
+    setNewConversation: state.setNewConversation,
+    setIsCreatingConversation: state.setIsCreatingConversation,
+  }),
 };

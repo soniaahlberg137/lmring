@@ -180,6 +180,34 @@ vi.mock('@/stores', () => ({
     enabledModelsMap: (state: typeof mockArenaState) => state.enabledModelsMap,
     customModelsMap: (state: typeof mockArenaState) => state.customModelsMap,
     modelOverridesMap: (state: typeof mockArenaState) => state.modelOverridesMap,
+    arenaState: (state: typeof mockArenaState) => ({
+      comparisons: state.comparisons,
+      initialized: state.initialized,
+      availableModels: state.availableModels,
+      modelsLastLoadedAt: state.modelsLastLoadedAt,
+      enabledModelsMap: state.enabledModelsMap,
+      customModelsMap: state.customModelsMap,
+      modelOverridesMap: state.modelOverridesMap,
+    }),
+    arenaActions: (state: typeof mockArenaState) => ({
+      initializeComparisons: state.initializeComparisons,
+      addComparison: state.addComparison,
+      selectModel: state.selectModel,
+      toggleSync: state.toggleSync,
+      updateConfig: state.updateConfig,
+      setCustomPrompt: state.setCustomPrompt,
+      moveLeft: state.moveLeft,
+      moveRight: state.moveRight,
+      removeComparison: state.removeComparison,
+      setAvailableModels: state.setAvailableModels,
+      setModelsLastLoadedAt: state.setModelsLastLoadedAt,
+      setComparisons: state.setComparisons,
+      resetComparisons: state.resetComparisons,
+      setEnabledModelsMap: state.setEnabledModelsMap,
+      setCustomModelsMap: state.setCustomModelsMap,
+      setModelOverridesMap: state.setModelOverridesMap,
+      setMainContentReady: state.setMainContentReady,
+    }),
   },
   settingsSelectors: {
     savedApiKeys: (state: typeof mockSettingsState) => state.savedApiKeys,
@@ -192,8 +220,52 @@ vi.mock('@/stores', () => ({
     conversationId: (state: typeof mockWorkflowState) => state.conversationId,
     isCreatingConversation: (state: typeof mockWorkflowState) => state.isCreatingConversation,
     workflowOrder: (state: typeof mockWorkflowState) => state.workflowOrder,
+    workflowState: (state: typeof mockWorkflowState) => ({
+      workflows: state.workflows,
+      workflowOrder: state.workflowOrder,
+      globalPrompt: state.globalPrompt,
+      isAnyRunning: state.isAnyRunning,
+      conversationId: state.conversationId,
+      isCreatingConversation: state.isCreatingConversation,
+    }),
+    workflowActions: (state: typeof mockWorkflowState) => ({
+      createWorkflow: state.createWorkflow,
+      deleteWorkflow: state.deleteWorkflow,
+      setGlobalPrompt: state.setGlobalPrompt,
+      toggleWorkflowSync: state.toggleWorkflowSync,
+      setWorkflowConfig: state.setWorkflowConfig,
+      setCustomPrompt: state.setCustomPrompt,
+      clearWorkflowHistory: state.clearWorkflowHistory,
+      resetConversation: state.resetConversation,
+      loadConversationHistory: state.loadConversationHistory,
+      setConversationId: state.setConversationId,
+      getConversationId: state.getConversationId,
+      setNewConversation: state.setNewConversation,
+      setIsCreatingConversation: state.setIsCreatingConversation,
+    }),
+  },
+  voteSelectors: {
+    hoveredVote: (state: typeof mockVoteState) => state.hoveredVote,
+    isSubmitting: (state: typeof mockVoteState) => state.isSubmitting,
+    voteState: (state: typeof mockVoteState) => ({
+      hoveredVote: state.hoveredVote,
+      isSubmitting: state.isSubmitting,
+    }),
+    voteActions: (state: typeof mockVoteState) => ({
+      getVote: state.getVote,
+      setHoveredVote: state.setHoveredVote,
+      submitVote: state.submitVote,
+      loadVoteForMessage: state.loadVoteForMessage,
+      clearAllVotes: state.clearAllVotes,
+    }),
   },
   useArenaStore: (selector: (state: typeof mockArenaState) => unknown) => {
+    if (typeof selector === 'function') {
+      return selector(mockArenaState);
+    }
+    return mockArenaState;
+  },
+  useArenaStoreShallow: (selector: (state: typeof mockArenaState) => unknown) => {
     if (typeof selector === 'function') {
       return selector(mockArenaState);
     }
@@ -206,6 +278,12 @@ vi.mock('@/stores', () => ({
     return mockSettingsState;
   },
   useWorkflowStore: (selector: (state: typeof mockWorkflowState) => unknown) => {
+    if (typeof selector === 'function') {
+      return selector(mockWorkflowState);
+    }
+    return mockWorkflowState;
+  },
+  useWorkflowStoreShallow: (selector: (state: typeof mockWorkflowState) => unknown) => {
     if (typeof selector === 'function') {
       return selector(mockWorkflowState);
     }

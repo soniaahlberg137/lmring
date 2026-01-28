@@ -98,12 +98,15 @@ export class RuntimeExecutor {
   ): Promise<StreamTextResponse> {
     const context = this.createContext(params.model, 'streamText');
 
-    // Merge plugins
-    const allPlugins = [...this.engine.getPlugins(), ...(options?.plugins || [])];
-    const engine = new PluginEngine(allPlugins);
+    // Reuse existing engine when no additional plugins provided
+    const engine = options?.plugins?.length
+      ? new PluginEngine([...this.engine.getPlugins(), ...options.plugins])
+      : this.engine;
 
     // Merge middlewares
-    const allMiddlewares = [...this.middlewares, ...(options?.middlewares || [])];
+    const allMiddlewares = options?.middlewares?.length
+      ? [...this.middlewares, ...options.middlewares]
+      : this.middlewares;
 
     return engine.executeLifecycle(
       'streamText',
@@ -146,12 +149,13 @@ export class RuntimeExecutor {
   ): Promise<GenerateTextResponse> {
     const context = this.createContext(params.model, 'generateText');
 
-    // Merge plugins
-    const allPlugins = [...this.engine.getPlugins(), ...(options?.plugins || [])];
-    const engine = new PluginEngine(allPlugins);
+    const engine = options?.plugins?.length
+      ? new PluginEngine([...this.engine.getPlugins(), ...options.plugins])
+      : this.engine;
 
-    // Merge middlewares
-    const allMiddlewares = [...this.middlewares, ...(options?.middlewares || [])];
+    const allMiddlewares = options?.middlewares?.length
+      ? [...this.middlewares, ...options.middlewares]
+      : this.middlewares;
 
     return engine.executeLifecycle(
       'generateText',
@@ -194,12 +198,13 @@ export class RuntimeExecutor {
   ): Promise<GenerateObjectResponse> {
     const context = this.createContext(params.model, 'generateObject');
 
-    // Merge plugins
-    const allPlugins = [...this.engine.getPlugins(), ...(options?.plugins || [])];
-    const engine = new PluginEngine(allPlugins);
+    const engine = options?.plugins?.length
+      ? new PluginEngine([...this.engine.getPlugins(), ...options.plugins])
+      : this.engine;
 
-    // Merge middlewares
-    const allMiddlewares = [...this.middlewares, ...(options?.middlewares || [])];
+    const allMiddlewares = options?.middlewares?.length
+      ? [...this.middlewares, ...options.middlewares]
+      : this.middlewares;
 
     return engine.executeLifecycle(
       'generateObject',
@@ -251,12 +256,13 @@ export class RuntimeExecutor {
   ): Promise<StreamObjectResponse> {
     const context = this.createContext(params.model, 'streamObject');
 
-    // Merge plugins
-    const allPlugins = [...this.engine.getPlugins(), ...(options?.plugins || [])];
-    const engine = new PluginEngine(allPlugins);
+    const engine = options?.plugins?.length
+      ? new PluginEngine([...this.engine.getPlugins(), ...options.plugins])
+      : this.engine;
 
-    // Merge middlewares
-    const allMiddlewares = [...this.middlewares, ...(options?.middlewares || [])];
+    const allMiddlewares = options?.middlewares?.length
+      ? [...this.middlewares, ...options.middlewares]
+      : this.middlewares;
 
     return engine.executeLifecycle(
       'streamObject',

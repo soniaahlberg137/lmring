@@ -325,4 +325,17 @@ export const voteSelectors = {
   isSubmitting: (state: VoteStore) => state.isSubmitting,
   isLoading: (messageId: string) => (state: VoteStore) =>
     state.loadingStates.get(messageId) ?? false,
+
+  voteState: (state: VoteStore) => ({
+    hoveredVote: state.hoveredVote,
+    isSubmitting: state.isSubmitting,
+  }),
+
+  voteActions: (state: VoteStore) => ({
+    getVote: state.getVote,
+    setHoveredVote: state.setHoveredVote,
+    submitVote: state.submitVote,
+    loadVoteForMessage: state.loadVoteForMessage,
+    clearAllVotes: state.clearAllVotes,
+  }),
 };

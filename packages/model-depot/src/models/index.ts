@@ -159,18 +159,27 @@ export const PROVIDER_MODELS_MAP: ModelsMap = {
 
 export const DEFAULT_MODEL_LIST = buildDefaultModelList(PROVIDER_MODELS_MAP);
 
+// Pre-built index for O(1) provider lookups instead of filtering the entire list
+const PROVIDER_INDEX = new Map<string, DefaultModelListItem[]>();
+for (const model of DEFAULT_MODEL_LIST) {
+  const existing = PROVIDER_INDEX.get(model.providerId);
+  if (existing) {
+    existing.push(model);
+  } else {
+    PROVIDER_INDEX.set(model.providerId, [model]);
+  }
+}
+
 export function getModelsForProvider(providerId: string): DefaultModelListItem[] {
-  return DEFAULT_MODEL_LIST.filter((model) => model.providerId === providerId);
+  return PROVIDER_INDEX.get(providerId) ?? [];
 }
 
 export function getEnabledModelsForProvider(providerId: string): DefaultModelListItem[] {
-  return DEFAULT_MODEL_LIST.filter((model) => model.providerId === providerId && model.enabled);
+  return (PROVIDER_INDEX.get(providerId) ?? []).filter((model) => model.enabled);
 }
 
 export function getModel(providerId: string, modelId: string): DefaultModelListItem | undefined {
-  return DEFAULT_MODEL_LIST.find(
-    (model) => model.providerId === providerId && model.id === modelId,
-  );
+  return (PROVIDER_INDEX.get(providerId) ?? []).find((model) => model.id === modelId);
 }
 
 export function getAllEnabledModels(): DefaultModelListItem[] {

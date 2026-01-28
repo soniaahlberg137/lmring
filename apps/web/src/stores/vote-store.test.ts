@@ -598,5 +598,97 @@ describe('vote-store', () => {
       expect(voteSelectors.isLoading('msg-1')(state)).toBe(true);
       expect(voteSelectors.isLoading('msg-2')(state)).toBe(false);
     });
+
+    describe('voteState composite selector', () => {
+      it('should return hoveredVote and isSubmitting', () => {
+        useVoteStore.getState().setHoveredVote({
+          messageId: 'msg-1',
+          voteType: 'winner',
+          winnerId: 'response-1',
+        });
+        useVoteStore.getState().setSubmitting(true);
+
+        const state = useVoteStore.getState();
+        const result = voteSelectors.voteState(state);
+
+        expect(result).toHaveProperty('hoveredVote');
+        expect(result).toHaveProperty('isSubmitting');
+        expect(result.hoveredVote).toEqual({
+          messageId: 'msg-1',
+          voteType: 'winner',
+          winnerId: 'response-1',
+        });
+        expect(result.isSubmitting).toBe(true);
+      });
+
+      it('should return null hoveredVote when not set', () => {
+        const state = useVoteStore.getState();
+        const result = voteSelectors.voteState(state);
+
+        expect(result.hoveredVote).toBeNull();
+        expect(result.isSubmitting).toBe(false);
+      });
+    });
+
+    describe('voteActions composite selector', () => {
+      it('should return all expected action functions', () => {
+        const state = useVoteStore.getState();
+        const result = voteSelectors.voteActions(state);
+
+        expect(typeof result.getVote).toBe('function');
+        expect(typeof result.setHoveredVote).toBe('function');
+        expect(typeof result.submitVote).toBe('function');
+        expect(typeof result.loadVoteForMessage).toBe('function');
+        expect(typeof result.clearAllVotes).toBe('function');
+      });
+
+      it('should return functional actions that modify state', () => {
+        const actions = voteSelectors.voteActions(useVoteStore.getState());
+
+        // Test setHoveredVote
+        actions.setHoveredVote({
+          messageId: 'msg-1',
+          voteType: 'tie',
+        });
+        expect(useVoteStore.getState().hoveredVote).toEqual({
+          messageId: 'msg-1',
+          voteType: 'tie',
+        });
+
+        // Test clearAllVotes
+        useVoteStore.getState().setVote('msg-1', {
+          id: 'vote-1',
+          messageId: 'msg-1',
+          comparisonType: 'text',
+          voteType: 'winner',
+          winnerId: 'response-1',
+          results: [],
+        });
+        actions.clearAllVotes();
+        expect(useVoteStore.getState().votes.size).toBe(0);
+        expect(useVoteStore.getState().hoveredVote).toBeNull();
+      });
+
+      it('getVote should return undefined for non-existent vote', () => {
+        const actions = voteSelectors.voteActions(useVoteStore.getState());
+
+        expect(actions.getVote('non-existent')).toBeUndefined();
+      });
+
+      it('getVote should return existing vote', () => {
+        const mockVote: ComparisonVoteData = {
+          id: 'vote-1',
+          messageId: 'msg-1',
+          comparisonType: 'text',
+          voteType: 'winner',
+          winnerId: 'response-1',
+          results: [],
+        };
+        useVoteStore.getState().setVote('msg-1', mockVote);
+
+        const actions = voteSelectors.voteActions(useVoteStore.getState());
+        expect(actions.getVote('msg-1')).toEqual(mockVote);
+      });
+    });
   });
 });
