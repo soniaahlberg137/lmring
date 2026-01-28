@@ -22,7 +22,7 @@ interface VoteBarProps {
   disabled?: boolean;
 }
 
-export function VoteBar({
+export const VoteBar = React.memo(function VoteBar({
   messageId,
   modelResponses,
   comparisonType,
@@ -182,7 +182,7 @@ export function VoteBar({
       </Button>
     </motion.div>
   );
-}
+});
 
 export function useCardVoting(
   messageId: string,

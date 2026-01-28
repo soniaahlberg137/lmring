@@ -31,7 +31,12 @@ const { toastMock } = vi.hoisted(() => ({
 }));
 vi.mock('sonner', () => ({ toast: toastMock }));
 
-const { conversationApiMock, setMainContentReadyMock } = vi.hoisted(() => ({
+const {
+  conversationApiMock,
+  setMainContentReadyMock,
+  setModelsLastLoadedAtMock,
+  resetConversationMock,
+} = vi.hoisted(() => ({
   conversationApiMock: {
     getConversationsWithModels: vi.fn(),
     shareConversation: vi.fn(),
@@ -39,6 +44,8 @@ const { conversationApiMock, setMainContentReadyMock } = vi.hoisted(() => ({
     isLoading: false,
   },
   setMainContentReadyMock: vi.fn(),
+  setModelsLastLoadedAtMock: vi.fn(),
+  resetConversationMock: vi.fn(),
 }));
 
 const { mockHistoryConversations, mockIsPending } = vi.hoisted(() => ({
@@ -62,8 +69,17 @@ vi.mock('@/hooks/use-conversation', () => ({
 
 vi.mock('@/stores', () => ({
   useArenaStore: (
-    selector: (state: { setMainContentReady: (ready: boolean) => void }) => unknown,
-  ) => selector({ setMainContentReady: setMainContentReadyMock }),
+    selector: (state: {
+      setMainContentReady: (ready: boolean) => void;
+      setModelsLastLoadedAt: (timestamp: number | null) => void;
+    }) => unknown,
+  ) =>
+    selector({
+      setMainContentReady: setMainContentReadyMock,
+      setModelsLastLoadedAt: setModelsLastLoadedAtMock,
+    }),
+  useWorkflowStore: (selector: (state: { resetConversation: () => void }) => unknown) =>
+    selector({ resetConversation: resetConversationMock }),
 }));
 
 vi.mock('@/components/arena/provider-icon', () => ({

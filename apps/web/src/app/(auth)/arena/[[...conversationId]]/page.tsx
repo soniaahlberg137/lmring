@@ -8,6 +8,7 @@ import { XIcon } from 'lucide-react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
+import { useShallow } from 'zustand/shallow';
 import { InitialArenaView } from '@/components/arena/initial-arena-view';
 import { ModelCard } from '@/components/arena/model-card';
 import {
@@ -37,10 +38,11 @@ import { processAiResponseMedia } from '@/libs/media-response-handler';
 import {
   arenaSelectors,
   settingsSelectors,
-  useArenaStore,
+  useArenaStoreShallow,
   useSettingsStore,
   useVoteStore,
-  useWorkflowStore,
+  useWorkflowStoreShallow,
+  voteSelectors,
   workflowSelectors,
 } from '@/stores';
 import type { LoadedConversation } from '@/stores/workflow-store';
@@ -65,62 +67,73 @@ export default function ArenaPage() {
   const { loadConversation, saveMessage, saveModelResponse, createConversation } =
     useConversation();
 
-  const comparisons = useArenaStore(arenaSelectors.comparisons);
-  const initialized = useArenaStore(arenaSelectors.initialized);
-  const initializeComparisons = useArenaStore((state) => state.initializeComparisons);
-  const addComparison = useArenaStore((state) => state.addComparison);
-  const selectModel = useArenaStore((state) => state.selectModel);
-  const toggleSync = useArenaStore((state) => state.toggleSync);
-  const updateConfig = useArenaStore((state) => state.updateConfig);
-  const setCustomPrompt = useArenaStore((state) => state.setCustomPrompt);
-  const moveLeft = useArenaStore((state) => state.moveLeft);
-  const moveRight = useArenaStore((state) => state.moveRight);
-  const removeComparison = useArenaStore((state) => state.removeComparison);
-  const availableModels = useArenaStore(arenaSelectors.availableModels);
-  const setAvailableModels = useArenaStore((state) => state.setAvailableModels);
-  const modelsLastLoadedAt = useArenaStore(arenaSelectors.modelsLastLoadedAt);
-  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
-  const setComparisons = useArenaStore((state) => state.setComparisons);
-  const resetComparisons = useArenaStore((state) => state.resetComparisons);
-  const enabledModelsMap = useArenaStore(arenaSelectors.enabledModelsMap);
-  const setEnabledModelsMap = useArenaStore((state) => state.setEnabledModelsMap);
-  const customModelsMap = useArenaStore(arenaSelectors.customModelsMap);
-  const setCustomModelsMap = useArenaStore((state) => state.setCustomModelsMap);
-  const modelOverridesMap = useArenaStore(arenaSelectors.modelOverridesMap);
-  const setModelOverridesMap = useArenaStore((state) => state.setModelOverridesMap);
-  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
+  // Arena store
+  const {
+    comparisons,
+    initialized,
+    availableModels,
+    modelsLastLoadedAt,
+    enabledModelsMap,
+    customModelsMap,
+    modelOverridesMap,
+  } = useArenaStoreShallow(arenaSelectors.arenaState);
+  const {
+    initializeComparisons,
+    addComparison,
+    selectModel,
+    toggleSync,
+    updateConfig,
+    setCustomPrompt,
+    moveLeft,
+    moveRight,
+    removeComparison,
+    setAvailableModels,
+    setModelsLastLoadedAt,
+    setComparisons,
+    resetComparisons,
+    setEnabledModelsMap,
+    setCustomModelsMap,
+    setModelOverridesMap,
+    setMainContentReady,
+  } = useArenaStoreShallow(arenaSelectors.arenaActions);
 
+  // Settings store
   const savedApiKeys = useSettingsStore(settingsSelectors.savedApiKeys);
   const loadApiKeys = useSettingsStore((state) => state.loadApiKeys);
   const apiKeysLoaded = useSettingsStore(settingsSelectors.apiKeysLoaded);
 
-  const workflows = useWorkflowStore(workflowSelectors.workflows);
-  const createWorkflow = useWorkflowStore((state) => state.createWorkflow);
-  const deleteWorkflow = useWorkflowStore((state) => state.deleteWorkflow);
-  const setWorkflowGlobalPrompt = useWorkflowStore((state) => state.setGlobalPrompt);
-  const workflowGlobalPrompt = useWorkflowStore(workflowSelectors.globalPrompt);
-  const isAnyRunning = useWorkflowStore(workflowSelectors.isAnyRunning);
-  const toggleWorkflowSync = useWorkflowStore((state) => state.toggleWorkflowSync);
-  const setWorkflowConfig = useWorkflowStore((state) => state.setWorkflowConfig);
-  const setWorkflowCustomPrompt = useWorkflowStore((state) => state.setCustomPrompt);
-  const clearWorkflowHistory = useWorkflowStore((state) => state.clearWorkflowHistory);
-  const resetConversation = useWorkflowStore((state) => state.resetConversation);
-  const loadConversationHistory = useWorkflowStore((state) => state.loadConversationHistory);
-  const setConversationId = useWorkflowStore((state) => state.setConversationId);
-  const getWorkflowConversationId = useWorkflowStore((state) => state.getConversationId);
-  const storedConversationId = useWorkflowStore(workflowSelectors.conversationId);
-  const setNewConversation = useWorkflowStore((state) => state.setNewConversation);
-  const isCreatingConversation = useWorkflowStore(workflowSelectors.isCreatingConversation);
-  const workflowOrder = useWorkflowStore(workflowSelectors.workflowOrder);
-  const setIsCreatingConversation = useWorkflowStore((state) => state.setIsCreatingConversation);
+  // Workflow store
+  const {
+    workflows,
+    workflowOrder,
+    globalPrompt: workflowGlobalPrompt,
+    isAnyRunning,
+    conversationId: storedConversationId,
+    isCreatingConversation,
+  } = useWorkflowStoreShallow(workflowSelectors.workflowState);
+  const {
+    createWorkflow,
+    deleteWorkflow,
+    setGlobalPrompt: setWorkflowGlobalPrompt,
+    toggleWorkflowSync,
+    setWorkflowConfig,
+    setCustomPrompt: setWorkflowCustomPrompt,
+    clearWorkflowHistory,
+    resetConversation,
+    loadConversationHistory,
+    setConversationId,
+    getConversationId: getWorkflowConversationId,
+    setNewConversation,
+    setIsCreatingConversation,
+  } = useWorkflowStoreShallow(workflowSelectors.workflowActions);
 
-  const getVote = useVoteStore((state) => state.getVote);
-  const hoveredVote = useVoteStore((state) => state.hoveredVote);
-  const setHoveredVote = useVoteStore((state) => state.setHoveredVote);
-  const submitVote = useVoteStore((state) => state.submitVote);
-  const loadVoteForMessage = useVoteStore((state) => state.loadVoteForMessage);
-  const clearAllVotes = useVoteStore((state) => state.clearAllVotes);
-  const isVoteSubmitting = useVoteStore((state) => state.isSubmitting);
+  // Vote store
+  const { hoveredVote, isSubmitting: isVoteSubmitting } = useVoteStore(
+    useShallow(voteSelectors.voteState),
+  );
+  const { getVote, setHoveredVote, submitVote, loadVoteForMessage, clearAllVotes } = useVoteStore(
+    useShallow(voteSelectors.voteActions),
+  );
 
   const [inputMode, setInputMode] = React.useState<InputMode>('default');
   const [uploadedImages, setUploadedImages] = React.useState<UploadedImage[]>([]);
@@ -770,6 +783,8 @@ export default function ArenaPage() {
   );
 
   React.useEffect(() => {
+    let didCancel = false;
+
     const loadConversationData = async () => {
       if (!conversationId) {
         return;
@@ -785,6 +800,9 @@ export default function ArenaPage() {
 
       try {
         const data = await loadConversation(conversationId);
+
+        if (didCancel) return;
+
         if (!data) {
           setConversationError('Conversation not found');
           return;
@@ -796,22 +814,31 @@ export default function ArenaPage() {
           if (message.responses) {
             for (const response of message.responses) {
               const fullModelId = `${response.providerName}:${response.modelName}`;
-              if (!modelKeyMap.has(fullModelId)) {
+              const fullModelKey = `${fullModelId}:${response.displayPosition ?? 0}`;
+              if (!modelKeyMap.has(fullModelKey)) {
                 const keyId = getKeyIdForModel(fullModelId) || '';
-                modelKeyMap.set(fullModelId, { modelId: fullModelId, keyId });
+                modelKeyMap.set(fullModelKey, { modelId: fullModelId, keyId });
               }
             }
           }
         }
+
+        if (didCancel) return;
+
         loadConversationHistory(data as LoadedConversation, modelKeyMap);
         setConversationLoaded(true);
       } catch (error) {
+        if (didCancel) return;
         console.error('Failed to load conversation:', error);
         setConversationError('Failed to load conversation');
       }
     };
 
     loadConversationData();
+
+    return () => {
+      didCancel = true;
+    };
   }, [
     conversationId,
     conversationLoaded,
@@ -1531,12 +1558,18 @@ export default function ArenaPage() {
     };
   }, []);
 
+  const handleStartNewConversation = React.useCallback(() => {
+    resetConversation();
+    setModelsLastLoadedAt(null);
+    router.push('/arena');
+  }, [resetConversation, setModelsLastLoadedAt, router]);
+
   if (conversationError) {
     return (
       <div className="flex items-center justify-center h-full bg-background">
         <div className="text-center space-y-4">
           <div className="text-destructive">{conversationError}</div>
-          <Button onClick={() => router.push('/arena')}>Start New Conversation</Button>
+          <Button onClick={handleStartNewConversation}>Start New Conversation</Button>
         </div>
       </div>
     );
