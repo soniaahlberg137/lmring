@@ -16,6 +16,7 @@ export const AiModelTypeSchema = z.enum([
   'tts',
   'stt',
   'image',
+  'video',
   'realtime',
 ] as const);
 
@@ -29,6 +30,7 @@ export interface ModelAbilities {
   search?: boolean;
   structuredOutput?: boolean;
   video?: boolean;
+  videoOutput?: boolean;
   vision?: boolean;
 }
 
@@ -40,6 +42,7 @@ export const ModelAbilitiesSchema = z.object({
   search: z.boolean().optional(),
   structuredOutput: z.boolean().optional(),
   video: z.boolean().optional(),
+  videoOutput: z.boolean().optional(),
   vision: z.boolean().optional(),
 });
 
@@ -101,13 +104,23 @@ export interface RealtimeModelCard extends BaseModelCard {
   pricing?: ModelPricing;
 }
 
+export interface VideoModelCard extends BaseModelCard {
+  type: 'video';
+  maxDurationSeconds?: number;
+  resolutions?: string[];
+  fps?: number;
+  pricing?: ModelPricing;
+  runtimeProvider?: string;
+}
+
 export type AnyModelCard =
   | ChatModelCard
   | EmbeddingModelCard
   | ImageModelCard
   | TTSModelCard
   | STTModelCard
-  | RealtimeModelCard;
+  | RealtimeModelCard
+  | VideoModelCard;
 
 export interface FullModelCard extends BaseModelCard {
   type: AiModelType;
@@ -115,6 +128,7 @@ export interface FullModelCard extends BaseModelCard {
   pricing?: ModelPricing;
   maxDimension?: number;
   resolutions?: string[];
+  runtimeProvider?: string;
 }
 
 export interface DefaultModelListItem extends FullModelCard {

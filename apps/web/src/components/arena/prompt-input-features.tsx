@@ -1,7 +1,7 @@
 'use client';
 
 import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@lmring/ui';
-import { AlertCircle, Code, Globe, ImageIcon, Loader2, Plus, X } from 'lucide-react';
+import { AlertCircle, Code, Globe, ImageIcon, Loader2, Plus, Video, X } from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/use-translations';
@@ -146,6 +146,11 @@ export function ModeChip() {
       icon: ImageIcon,
       label: t('Arena.image_generation'),
       colorClass: 'text-purple-500',
+    },
+    videoGenerate: {
+      icon: Video,
+      label: t('Arena.video_generation'),
+      colorClass: 'text-cyan-500',
     },
   };
 

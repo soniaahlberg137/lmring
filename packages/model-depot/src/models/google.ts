@@ -1,4 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 // ============================================================================
 // Chat Models
@@ -679,10 +679,78 @@ const googleImageModels: ImageModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const googleVideoModels: VideoModelCard[] = [
+  {
+    id: 'google/veo-3.0',
+    displayName: 'Google Veo 3.0',
+    description: 'Google latest video generation model with 8s duration',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'google/veo-3.0-audio',
+    displayName: 'Google Veo 3.0 + Audio',
+    description: 'Google Veo 3.0 with audio generation support',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'google/veo-2.0',
+    displayName: 'Google Veo 2.0',
+    description: 'Google Veo 2.0 video generation model',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'google/veo-3.0-fast',
+    displayName: 'Google Veo 3.0 Fast',
+    description: 'Google Veo 3.0 optimized for faster generation',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'google/veo-3.0-fast-audio',
+    displayName: 'Google Veo 3.0 Fast + Audio',
+    description: 'Google Veo 3.0 Fast with audio generation support',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'togetherai',
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
 export default {
   chat: googleChatModels,
   image: googleImageModels,
+  video: googleVideoModels,
 };

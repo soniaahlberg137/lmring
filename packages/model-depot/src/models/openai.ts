@@ -5,6 +5,7 @@ import type {
   RealtimeModelCard,
   STTModelCard,
   TTSModelCard,
+  VideoModelCard,
 } from '../types';
 
 // ============================================================================
@@ -1051,6 +1052,35 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const openaiVideoModels: VideoModelCard[] = [
+  {
+    id: 'openai/sora-2',
+    displayName: 'OpenAI Sora 2',
+    description: 'OpenAI flagship video generation model with 8s duration',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280'],
+    organization: 'OpenAI',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'openai/sora-2-pro',
+    displayName: 'OpenAI Sora 2 Pro',
+    description: 'OpenAI Sora 2 Pro with enhanced quality',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280'],
+    organization: 'OpenAI',
+    runtimeProvider: 'togetherai',
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
@@ -1061,4 +1091,5 @@ export default {
   stt: openaiSTTModels,
   image: openaiImageModels,
   realtime: openaiRealtimeModels,
+  video: openaiVideoModels,
 };

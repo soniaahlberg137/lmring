@@ -65,7 +65,14 @@ export interface ArenaWorkflow {
   updatedAt: Date;
 }
 
-export type WorkflowStreamEventType = 'ttft' | 'chunk' | 'reasoning' | 'complete' | 'error';
+export type WorkflowStreamEventType =
+  | 'ttft'
+  | 'chunk'
+  | 'reasoning'
+  | 'complete'
+  | 'error'
+  | 'heartbeat'
+  | 'video';
 
 export interface WorkflowStreamEvent {
   type: WorkflowStreamEventType;
@@ -74,6 +81,11 @@ export interface WorkflowStreamEvent {
   reasoning?: string;
   metrics?: WorkflowMetrics;
   error?: string;
+  video?: {
+    url: string;
+    mimeType: string;
+    thumbnailUrl?: string;
+  };
 }
 
 export interface WorkflowImageAttachment {

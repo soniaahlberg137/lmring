@@ -1,6 +1,10 @@
-import type { ChatModelCard } from '../types';
+import type { ChatModelCard, VideoModelCard } from '../types';
 
-const togetheraiModels: ChatModelCard[] = [
+// ============================================================================
+// Chat Models
+// ============================================================================
+
+const togetheraiChatModels: ChatModelCard[] = [
   {
     id: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
     displayName: 'Llama 3.3 70B Instruct Turbo',
@@ -166,4 +170,183 @@ const togetheraiModels: ChatModelCard[] = [
   },
 ];
 
-export default togetheraiModels;
+// ============================================================================
+// Video Models
+// ============================================================================
+
+const togetheraiVideoModels: VideoModelCard[] = [
+  // -------------------------------------------------------------------------
+  // Tier 1 - Flagship Models (enabled: true)
+  // -------------------------------------------------------------------------
+
+  // Kuaishou Kling Models
+  {
+    id: 'kwaivgI/kling-2.1-master',
+    displayName: 'Kling 2.1 Master',
+    description: 'Kuaishou Kling 2.1 Master with highest quality output',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+
+  // -------------------------------------------------------------------------
+  // Tier 2 - Production Models (enabled: true)
+  // -------------------------------------------------------------------------
+
+  {
+    id: 'ByteDance/Seedance-1.0-pro',
+    displayName: 'ByteDance Seedance 1.0 Pro',
+    description: 'ByteDance professional video generation model',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280', '1024x1024'],
+    fps: 24,
+    organization: 'ByteDance',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'kwaivgI/kling-2.1-pro',
+    displayName: 'Kling 2.1 Pro',
+    description: 'Kuaishou Kling 2.1 Pro with enhanced quality',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'vidu/vidu-2.0',
+    displayName: 'Vidu 2.0',
+    description: 'Vidu latest video generation model with 8s duration',
+    type: 'video',
+    enabled: true,
+    maxDurationSeconds: 8,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920', '1280x720', '720x1280'],
+    fps: 24,
+    organization: 'Vidu',
+    runtimeProvider: 'togetherai',
+  },
+
+  // -------------------------------------------------------------------------
+  // Tier 3 - Standard Models (enabled: false)
+  // -------------------------------------------------------------------------
+
+  {
+    id: 'ByteDance/Seedance-1.0-lite',
+    displayName: 'ByteDance Seedance 1.0 Lite',
+    description: 'ByteDance lightweight video generation model',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280', '1024x1024'],
+    fps: 24,
+    organization: 'ByteDance',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'pixverse/pixverse-v5',
+    displayName: 'PixVerse v5',
+    description: 'PixVerse video generation model with stylized output',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280', '1024x1024'],
+    fps: 24,
+    organization: 'PixVerse',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'kwaivgI/kling-2.1-standard',
+    displayName: 'Kling 2.1 Standard',
+    description: 'Kuaishou Kling 2.1 Standard quality tier',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'kwaivgI/kling-2.0-master',
+    displayName: 'Kling 2.0 Master',
+    description: 'Kuaishou Kling 2.0 Master previous generation',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x720', '720x1280'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'kwaivgI/kling-1.6-standard',
+    displayName: 'Kling 1.6 Standard',
+    description: 'Kuaishou Kling 1.6 Standard legacy model',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'kwaivgI/kling-1.6-pro',
+    displayName: 'Kling 1.6 Pro',
+    description: 'Kuaishou Kling 1.6 Pro legacy model',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Kuaishou',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'Wan-AI/Wan2.2-I2V-A14B',
+    displayName: 'Wan 2.2 Image-to-Video',
+    description: 'Wan-AI image-to-video generation model',
+    type: 'video',
+    enabled: false,
+    organization: 'Wan-AI',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'Wan-AI/Wan2.2-T2V-A14B',
+    displayName: 'Wan 2.2 Text-to-Video',
+    description: 'Wan-AI text-to-video generation model',
+    type: 'video',
+    enabled: false,
+    organization: 'Wan-AI',
+    runtimeProvider: 'togetherai',
+  },
+  {
+    id: 'vidu/vidu-q1',
+    displayName: 'Vidu Q1',
+    description: 'Vidu Q1 quality-focused video generation',
+    type: 'video',
+    enabled: false,
+    maxDurationSeconds: 5,
+    resolutions: ['1920x1080', '1080x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Vidu',
+    runtimeProvider: 'togetherai',
+  },
+];
+
+// ============================================================================
+// Exports
+// ============================================================================
+
+export default {
+  chat: togetheraiChatModels,
+  video: togetheraiVideoModels,
+};

@@ -1,6 +1,6 @@
 import { FILE_UPLOAD_CONFIG } from '@lmring/env';
 
-export type InputMode = 'default' | 'search' | 'imageGenerate' | 'upload';
+export type InputMode = 'default' | 'search' | 'imageGenerate' | 'videoGenerate' | 'upload';
 
 export interface UploadedImage {
   id: string;
@@ -23,6 +23,7 @@ export const MAX_IMAGE_SIZE_BYTES = FILE_UPLOAD_CONFIG.MAX_IMAGE_SIZE_BYTES;
 export const INPUT_MODE_ABILITY_MAP = {
   search: 'search',
   imageGenerate: 'imageOutput',
+  videoGenerate: 'videoOutput',
   upload: 'vision',
 } as const;
 
