@@ -1,7 +1,17 @@
 'use client';
 
 import { Button, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@lmring/ui';
-import { AlertCircle, Code, Globe, ImageIcon, Loader2, Plus, Video, X } from 'lucide-react';
+import {
+  AlertCircle,
+  Code,
+  Globe,
+  ImageIcon,
+  Loader2,
+  Plus,
+  SquarePlay,
+  Video,
+  X,
+} from 'lucide-react';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/use-translations';
@@ -108,6 +118,25 @@ export function PromptInputFeatureButtons() {
             </Button>
           </TooltipTrigger>
           <TooltipContent>{t('Arena.image_generation')}</TooltipContent>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              size="icon"
+              className={cn(
+                'h-8 w-8 rounded-lg',
+                isActive('videoGenerate') && 'bg-primary/10 text-cyan-500 border-cyan-500',
+              )}
+              onClick={() => setMode('videoGenerate')}
+              disabled={isButtonDisabled}
+            >
+              <SquarePlay className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('Arena.video_generation')}</TooltipContent>
         </Tooltip>
 
         <Tooltip>

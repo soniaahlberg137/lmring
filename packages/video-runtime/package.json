@@ -1,8 +1,8 @@
 {
-  "name": "@lmring/model-depot",
-  "version": "1.0.6",
+  "name": "@lmring/video-runtime",
+  "version": "1.0.0",
   "private": true,
-  "description": "Model Depot - Centralized AI Model Definitions and Metadata",
+  "description": "Video Runtime - Multi-provider Video Generation API Adapter",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "scripts": {
@@ -13,11 +13,8 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./models": "./src/models/index.ts",
     "./types": "./src/types/index.ts",
-    "./const": "./src/const/index.ts",
-    "./providers": "./src/providers/index.ts",
-    "./utils": "./src/utils/index.ts"
+    "./providers": "./src/providers/index.ts"
   },
   "dependencies": {
     "zod": "^4.3.6"

@@ -1062,10 +1062,11 @@ const openaiVideoModels: VideoModelCard[] = [
     description: 'OpenAI flagship video generation model with 8s duration',
     type: 'video',
     enabled: true,
+    abilities: { videoOutput: true },
     maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280'],
     organization: 'OpenAI',
-    runtimeProvider: 'togetherai',
+    runtimeProvider: 'openai',
   },
   {
     id: 'openai/sora-2-pro',
@@ -1073,10 +1074,11 @@ const openaiVideoModels: VideoModelCard[] = [
     description: 'OpenAI Sora 2 Pro with enhanced quality',
     type: 'video',
     enabled: true,
+    abilities: { videoOutput: true },
     maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280'],
     organization: 'OpenAI',
-    runtimeProvider: 'togetherai',
+    runtimeProvider: 'openai',
   },
 ];
 

@@ -17,6 +17,13 @@ export interface FileAttachment {
   fileId?: string;
 }
 
+export interface VideoAttachment {
+  url: string;
+  mimeType: string;
+  thumbnailUrl?: string;
+  duration?: number;
+}
+
 export interface WorkflowMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -25,6 +32,7 @@ export interface WorkflowMessage {
   timestamp: Date;
   metrics?: WorkflowMessageMetrics;
   attachments?: FileAttachment[];
+  videoAttachment?: VideoAttachment;
 }
 
 export interface WorkflowMetrics {
@@ -47,6 +55,7 @@ export interface PendingResponse {
   content: string;
   reasoning?: string;
   startTime: number;
+  isVideoGenerating?: boolean;
 }
 
 export interface ArenaWorkflow {

@@ -9,6 +9,7 @@ import { modelResponseSchema } from '@/libs/validation';
 
 /**
  * Convert attachment storage keys to signed URLs
+ * If an attachment already has an external URL (e.g., video URLs), use that directly
  */
 async function attachmentsWithUrls(
   attachments: ResponseAttachment[] | null,
@@ -20,7 +21,8 @@ async function attachmentsWithUrls(
   return Promise.all(
     attachments.map(async (att) => ({
       ...att,
-      url: await storage.createDownloadUrl(att.key),
+      // If already has external URL, use it; otherwise generate from storage
+      url: att.url || (await storage.createDownloadUrl(att.key)),
     })),
   );
 }

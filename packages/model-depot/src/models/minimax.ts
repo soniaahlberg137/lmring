@@ -120,11 +120,12 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax latest video model with 10s duration and HD support',
     type: 'video',
     enabled: true,
+    abilities: { videoOutput: true },
     maxDurationSeconds: 10,
     resolutions: ['1366x768', '1920x1080'],
     fps: 25,
     organization: 'MiniMax',
-    runtimeProvider: 'togetherai',
+    runtimeProvider: 'minimax',
   },
   {
     id: 'minimax/video-01-director',
@@ -132,11 +133,12 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax video model with camera movement control',
     type: 'video',
     enabled: true,
+    abilities: { videoOutput: true },
     maxDurationSeconds: 5,
     resolutions: ['1366x768'],
     fps: 25,
     organization: 'MiniMax',
-    runtimeProvider: 'togetherai',
+    runtimeProvider: 'minimax',
   },
 ];
 

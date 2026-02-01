@@ -106,11 +106,13 @@ export interface RealtimeModelCard extends BaseModelCard {
 
 export interface VideoModelCard extends BaseModelCard {
   type: 'video';
+  abilities?: Pick<ModelAbilities, 'videoOutput'>;
   maxDurationSeconds?: number;
   resolutions?: string[];
   fps?: number;
   pricing?: ModelPricing;
   runtimeProvider?: string;
+  runtimeModelId?: string;
 }
 
 export type AnyModelCard =
@@ -129,6 +131,7 @@ export interface FullModelCard extends BaseModelCard {
   maxDimension?: number;
   resolutions?: string[];
   runtimeProvider?: string;
+  runtimeModelId?: string;
 }
 
 export interface DefaultModelListItem extends FullModelCard {
