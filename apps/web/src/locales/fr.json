@@ -117,6 +117,7 @@
   "Arena.image_delete_retry_option": "Échec de la suppression. Vous pouvez forcer la suppression de l'image.",
   "Arena.force_remove": "Forcer la suppression",
   "Arena.hero_title": "Découvrez votre meilleure IA",
+  "Arena.hero_title_alt": "Que souhaitez-vous faire ?",
   "Arena.hero_description": "Sélectionnez des modèles, envoyez un message et votez pour les réponses—vos retours alimentent notre",
   "Arena.hero_leaderboard": "classement public",
   "Settings.title": "Paramètres",

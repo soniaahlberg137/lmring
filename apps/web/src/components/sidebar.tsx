@@ -9,7 +9,6 @@ import {
   MessageSquarePlusIcon,
   PanelLeftClose,
   PanelLeftOpen,
-  SparklesIcon,
   TrophyIcon,
   XIcon,
 } from 'lucide-react';
@@ -169,12 +168,11 @@ export function Sidebar({ user }: SidebarProps) {
             {isLogoHovered ? (
               <PanelLeftOpen className="h-6 w-6 text-primary" />
             ) : (
-              <SparklesIcon className="h-6 w-6 text-primary" />
+              <span className="text-lg font-semibold">LM</span>
             )}
           </button>
         ) : (
           <div className="flex items-center gap-2 px-2 py-1.5">
-            <SparklesIcon className="h-6 w-6 text-primary flex-shrink-0" />
             <AnimatePresence>
               {!collapsed && (
                 <motion.span
