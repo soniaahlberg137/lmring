@@ -9,6 +9,7 @@ type AnimatedHeroProps = {
   description: ReactNode;
   actions: ReactNode;
   badge?: ReactNode;
+  logo?: ReactNode;
 };
 
 const containerVariants = {
@@ -98,7 +99,7 @@ function InteractiveOrbs() {
   );
 }
 
-export function AnimatedHero({ title, description, actions, badge }: AnimatedHeroProps) {
+export function AnimatedHero({ title, description, actions, badge, logo }: AnimatedHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -129,17 +130,31 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
             </motion.div>
           )}
 
-          {/* Title with softer gradient */}
+          {/* Title with logo or gradient text */}
           <motion.div variants={titleVariants} className="relative">
-            <h1 className="relative text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-              {/* Subtle glow */}
-              <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-50 blur-2xl">
-                {title}
-              </span>
-              <span className="relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
-                {title}
-              </span>
-            </h1>
+            {logo ? (
+              <>
+                {/* Logo with subtle glow */}
+                <div className="relative flex items-center justify-center">
+                  <span className="absolute inset-0 flex items-center justify-center opacity-50 blur-2xl">
+                    {logo}
+                  </span>
+                  <span className="relative">{logo}</span>
+                </div>
+                {/* Hidden h1 for SEO/accessibility */}
+                <h1 className="sr-only">{title}</h1>
+              </>
+            ) : (
+              <h1 className="relative text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+                {/* Subtle glow */}
+                <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-50 blur-2xl">
+                  {title}
+                </span>
+                <span className="relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
+                  {title}
+                </span>
+              </h1>
+            )}
 
             {/* Softer underline */}
             <motion.div
@@ -151,12 +166,9 @@ export function AnimatedHero({ title, description, actions, badge }: AnimatedHer
           </motion.div>
 
           {/* Description */}
-          <motion.p
-            variants={itemVariants}
-            className="mt-10 max-w-2xl text-lg leading-relaxed text-slate-400 sm:text-xl md:text-2xl"
-          >
+          <motion.div variants={itemVariants} className="mt-10 max-w-2xl leading-relaxed">
             {description}
-          </motion.p>
+          </motion.div>
 
           {/* Actions */}
           <motion.div variants={itemVariants} className="mt-12 flex flex-col gap-4 sm:flex-row">

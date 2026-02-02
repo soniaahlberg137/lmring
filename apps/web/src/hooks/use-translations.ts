@@ -16,7 +16,6 @@ export type TranslationFunction = {
 export function useTranslations(): TranslationFunction {
   const { t } = useTranslation();
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: t changes when language changes in react-i18next
   const translate = useCallback(
     ((key: MessageKey, values?: TranslationValues) => {
       if (values) {

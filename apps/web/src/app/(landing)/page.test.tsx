@@ -61,7 +61,8 @@ describe('Landing Index Page', () => {
     const html = renderToStaticMarkup(element);
 
     expect(html).toContain('en:Index.title');
-    expect(html).toContain('en:Index.description');
+    expect(html).toContain('en:Index.tagline');
+    expect(html).toContain('en:Index.subtitle');
     expect(html).toContain('en:Index.view_leaderboard');
     expect(html).toContain('en:Index.get_started');
     expect(html).toContain('ProvidersSection');

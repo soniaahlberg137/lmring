@@ -1,5 +1,6 @@
 import { isValidLocale, type Locale } from '@lmring/i18n';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 
 import {
   AnimatedButton,
@@ -40,7 +41,24 @@ export default async function Index(props: IIndexProps) {
       <div className="flex min-h-screen flex-col">
         <AnimatedHero
           title={t('Index.title')}
-          description={t('Index.description')}
+          logo={<Image src="/athena-black.svg" alt="LMRing" width={120} height={120} priority />}
+          description={
+            <>
+              <span className="relative block text-2xl font-semibold sm:text-3xl md:text-4xl">
+                {/* Glow layer */}
+                <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent opacity-70 blur-sm">
+                  {t('Index.tagline')}
+                </span>
+                {/* Main text layer */}
+                <span className="relative bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 bg-clip-text text-transparent opacity-70">
+                  {t('Index.tagline')}
+                </span>
+              </span>
+              <span className="mt-3 block text-lg text-slate-400 sm:text-xl">
+                {t('Index.subtitle')}
+              </span>
+            </>
+          }
           actions={
             <>
               <AnimatedButton href="/leaderboard/" variant="secondary">
