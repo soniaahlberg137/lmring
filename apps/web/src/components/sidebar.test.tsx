@@ -69,7 +69,7 @@ describe('Sidebar', () => {
 
   it('should render sidebar', () => {
     render(<Sidebar user={defaultUser} />, { wrapper: createWrapper() });
-    expect(screen.getByText('LMRing')).toBeInTheDocument();
+    expect(screen.getByText('lmring')).toBeInTheDocument();
   });
 
   it('should render navigation items', () => {
