@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@lmring/database": "workspace:*",
-    "better-auth": "^1.4.17",
+    "better-auth": "^1.4.18",
     "drizzle-orm": "^0.45.1"
   },
   "peerDependencies": {
