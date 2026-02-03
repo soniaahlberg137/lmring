@@ -174,8 +174,25 @@ export class OpenAICompatibleVideoProvider extends BaseVideoProvider {
   }
 
   resolveModelId(modelId: string): string {
-    // Pass through the model ID as-is for compatible proxies
-    return stripProviderPrefix(modelId);
+    const stripped = stripProviderPrefix(modelId);
+
+    // Map Google official model names to third-party proxy formats (e.g., bltcy.ai)
+    // Google uses: veo-X.Y-fast-generate-001, veo-X.Y-generate-001
+    // Proxies use: veoX.Y-fast, veoX.Y
+    const modelMapping: Record<string, string> = {
+      // Veo 3.1
+      'veo-3.1-generate-001': 'veo3.1',
+      'veo-3.1-fast-generate-001': 'veo3.1-fast',
+      'veo-3.1-pro-generate-001': 'veo3.1-pro',
+      // Veo 3.0
+      'veo-3.0-generate-001': 'veo3',
+      'veo-3.0-fast-generate-001': 'veo3-fast',
+      // Veo 2.0
+      'veo-2.0-generate-001': 'veo2',
+      'veo-2.0-fast-generate-001': 'veo2-fast',
+    };
+
+    return modelMapping[stripped] || stripped;
   }
 
   /**
