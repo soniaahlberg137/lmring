@@ -481,6 +481,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
           } else if (event.type === 'video' && event.video) {
             videoResult = {
               url: event.video.url,
+              storagePath: event.video.storagePath,
               mimeType: event.video.mimeType,
               thumbnailUrl: event.video.thumbnailUrl,
             };
@@ -515,7 +516,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
               [
                 {
                   type: 'video',
-                  key: videoResult.url, // Use URL as key for external resources
+                  key: videoResult.storagePath || videoResult.url, // Use storagePath for storage key
                   mimeType: videoResult.mimeType,
                   url: videoResult.url, // External URL
                 },

@@ -106,6 +106,7 @@ export async function POST(request: Request) {
             } else if (event.type === 'video' && event.video) {
               // Video generation complete - download and re-upload to user storage
               let permanentUrl = event.video.url;
+              let storagePath: string | undefined;
 
               try {
                 const videoResponse = await fetch(event.video.url);
@@ -114,7 +115,7 @@ export async function POST(request: Request) {
                   const storage = createStorageService();
                   const timestamp = Date.now();
                   const randomId = crypto.randomUUID().slice(0, 8);
-                  const storagePath = `users/${session.user.id}/videos/${timestamp}-${randomId}.mp4`;
+                  storagePath = `users/${session.user.id}/videos/${timestamp}-${randomId}.mp4`;
 
                   await storage.upload(storagePath, videoBuffer, {
                     contentType: 'video/mp4',
@@ -133,6 +134,7 @@ export async function POST(request: Request) {
                 workflowId,
                 video: {
                   url: permanentUrl,
+                  storagePath: storagePath,
                   mimeType: event.video.mimeType,
                   thumbnailUrl: event.video.thumbnailUrl,
                 },

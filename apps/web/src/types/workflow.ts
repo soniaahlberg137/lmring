@@ -19,6 +19,7 @@ export interface FileAttachment {
 
 export interface VideoAttachment {
   url: string;
+  storagePath?: string;
   mimeType: string;
   thumbnailUrl?: string;
   duration?: number;
@@ -92,6 +93,7 @@ export interface WorkflowStreamEvent {
   error?: string;
   video?: {
     url: string;
+    storagePath?: string;
     mimeType: string;
     thumbnailUrl?: string;
   };
