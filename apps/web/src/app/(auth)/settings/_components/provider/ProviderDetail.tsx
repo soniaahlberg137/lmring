@@ -406,7 +406,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
         setCheckStatus('success');
         setResponseTime(result.responseTimeMs ?? null);
         toast.success('Connection Successful', {
-          description: `Connected in ${result.responseTimeMs}ms`,
+          description: result.responseTimeMs
+            ? `Connected in ${result.responseTimeMs}ms`
+            : 'Connection verified',
         });
 
         await handleSave();

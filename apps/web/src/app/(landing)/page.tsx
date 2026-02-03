@@ -41,7 +41,16 @@ export default async function Index(props: IIndexProps) {
       <div className="flex min-h-screen flex-col">
         <AnimatedHero
           title={t('Index.title')}
-          logo={<Image src="/athena-black.svg" alt="LMRing" width={120} height={120} priority />}
+          logo={
+            <Image
+              src="/athena-black.svg"
+              alt="LMRing"
+              width={120}
+              height={120}
+              style={{ width: 120, height: 120 }}
+              priority
+            />
+          }
           description={
             <>
               <span className="relative block text-2xl font-semibold sm:text-3xl md:text-4xl">

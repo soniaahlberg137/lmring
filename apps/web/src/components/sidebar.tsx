@@ -176,6 +176,7 @@ export function Sidebar({ user }: SidebarProps) {
                   width={24}
                   height={24}
                   className="dark:hidden"
+                  style={{ width: 24, height: 24, flexShrink: 0 }}
                 />
                 <Image
                   src="/athena-white.svg"
@@ -183,6 +184,7 @@ export function Sidebar({ user }: SidebarProps) {
                   width={24}
                   height={24}
                   className="hidden dark:block"
+                  style={{ width: 24, height: 24, flexShrink: 0 }}
                 />
               </>
             )}
@@ -204,6 +206,7 @@ export function Sidebar({ user }: SidebarProps) {
                     width={24}
                     height={24}
                     className="dark:hidden"
+                    style={{ width: 24, height: 24, flexShrink: 0 }}
                   />
                   <Image
                     src="/athena-white.svg"
@@ -211,6 +214,7 @@ export function Sidebar({ user }: SidebarProps) {
                     width={24}
                     height={24}
                     className="hidden dark:block"
+                    style={{ width: 24, height: 24, flexShrink: 0 }}
                   />
                   <span className="text-lg font-semibold">lmring</span>
                 </motion.div>

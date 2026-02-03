@@ -1672,7 +1672,7 @@ export default function ArenaPage() {
                   style={getCardStyles(comparisons.length)}
                 >
                   <ModelCard
-                    modelId={comparison.modelId}
+                    modelId={workflow?.modelId || comparison.modelId}
                     models={filteredDisplayModels}
                     messages={workflow?.messages}
                     pendingResponse={workflow?.pendingResponse}
