@@ -9,6 +9,7 @@ import {
   DEFAULT_WORKFLOW_CONFIG,
   type FileAttachment,
   type PendingResponse,
+  type VideoAttachment,
   type WorkflowConfig,
   type WorkflowMessage,
   type WorkflowMetrics,
@@ -124,6 +125,10 @@ export type WorkflowActions = {
   appendPendingReasoning: (id: string, chunk: string) => void;
   completePendingResponse: (id: string, metrics?: WorkflowMetrics) => void;
 
+  // Video generation management
+  setVideoGenerating: (id: string, isGenerating: boolean) => void;
+  completeVideoResponse: (id: string, video: VideoAttachment, metrics?: WorkflowMetrics) => void;
+
   // Abort controller management (for cancellation)
   setAbortController: (id: string, controller: AbortController | undefined) => void;
   getAbortController: (id: string) => AbortController | undefined;
@@ -218,8 +223,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         ...defaultInitState,
         ...initState,
 
-        // ============ CRUD Operations ============
-
         createWorkflow: (modelId, keyId, synced = true) => {
           const id = generateId();
           set(
@@ -279,13 +282,9 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           );
         },
 
-        // ============ Global Prompt ============
-
         setGlobalPrompt: (prompt) => {
           set({ globalPrompt: prompt }, false, 'workflow/setGlobalPrompt');
         },
-
-        // ============ Workflow Configuration ============
 
         setWorkflowConfig: (id, config) => {
           set(
@@ -364,8 +363,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           );
         },
 
-        // ============ Status Management ============
-
         setWorkflowStatus: (id, status, error) => {
           set(
             (state) => {
@@ -387,8 +384,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
             'workflow/setStatus',
           );
         },
-
-        // ============ Message Management ============
 
         addUserMessage: (id, content, attachments) => {
           const messageId = generateId();
@@ -456,8 +451,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           );
           return messageId;
         },
-
-        // ============ Streaming Response Management ============
 
         startPendingResponse: (id) => {
           set(
@@ -560,7 +553,68 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           );
         },
 
-        // ============ Abort Controller Management ============
+        setVideoGenerating: (id, isGenerating) => {
+          set(
+            (state) => {
+              const workflow = state.workflows.get(id);
+              if (!workflow) return state;
+
+              const newMap = new Map(state.workflows);
+              newMap.set(id, {
+                ...workflow,
+                pendingResponse: isGenerating
+                  ? {
+                      content: '',
+                      startTime: Date.now(),
+                      isVideoGenerating: true,
+                    }
+                  : undefined,
+                status: isGenerating ? 'running' : workflow.status,
+                error: isGenerating ? undefined : workflow.error,
+                updatedAt: new Date(),
+              });
+              return { workflows: newMap };
+            },
+            false,
+            'workflow/setVideoGenerating',
+          );
+        },
+
+        completeVideoResponse: (id, video, metrics) => {
+          const messageId = generateId();
+          set(
+            (state) => {
+              const workflow = state.workflows.get(id);
+              if (!workflow) return state;
+
+              const message: WorkflowMessage = {
+                id: messageId,
+                role: 'assistant',
+                content: '',
+                timestamp: new Date(),
+                videoAttachment: video,
+                metrics: metrics
+                  ? {
+                      responseTime: metrics.totalTime,
+                    }
+                  : undefined,
+              };
+
+              const newMap = new Map(state.workflows);
+              newMap.set(id, {
+                ...workflow,
+                messages: [...workflow.messages, message],
+                pendingResponse: undefined,
+                status: 'completed',
+                metrics,
+                updatedAt: new Date(),
+              });
+              return { workflows: newMap };
+            },
+            false,
+            'workflow/completeVideoResponse',
+          );
+        },
 
         setAbortController: (id, controller) => {
           if (controller) {
@@ -573,8 +627,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         getAbortController: (id) => {
           return abortControllers.get(id);
         },
-
-        // ============ History Management ============
 
         clearWorkflowHistory: (id) => {
           const controller = abortControllers.get(id);
@@ -673,8 +725,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           return userContent;
         },
 
-        // ============ Bulk Operations ============
-
         getWorkflow: (id) => {
           return get().workflows.get(id);
         },
@@ -686,8 +736,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         getSyncedWorkflows: () => {
           return Array.from(get().workflows.values()).filter((w) => w.synced);
         },
-
-        // ============ Conversation Management ============
 
         setConversationId: (id) => {
           set({ conversationId: id }, false, 'workflow/setConversationId');
@@ -774,6 +822,11 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                   const workflow = workflowId ? newWorkflows.get(workflowId) : undefined;
 
                   if (workflow && workflowId) {
+                    // Extract video attachment if present
+                    const videoAttachment = response.attachments?.find(
+                      (att) => att.type === 'video',
+                    );
+
                     const assistantMessage: WorkflowMessage = {
                       id: generateId(),
                       role: 'assistant',
@@ -783,6 +836,12 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                         ? {
                             responseTime: response.responseTimeMs,
                             tokenCount: response.tokensUsed,
+                          }
+                        : undefined,
+                      videoAttachment: videoAttachment
+                        ? {
+                            url: videoAttachment.url || '',
+                            mimeType: videoAttachment.mimeType,
                           }
                         : undefined,
                     };
@@ -853,8 +912,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           return undefined;
         },
 
-        // ============ New Conversation Notification ============
-
         setNewConversation: (conversation) => {
           set(
             { newConversation: conversation, isCreatingConversation: true },
@@ -866,8 +923,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         clearNewConversation: () => {
           set({ newConversation: null }, false, 'workflow/clearNewConversation');
         },
-
-        // ============ Conversation Creation Flag ============
 
         setIsCreatingConversation: (isCreating) => {
           set({ isCreatingConversation: isCreating }, false, 'workflow/setIsCreatingConversation');

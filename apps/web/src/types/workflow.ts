@@ -17,6 +17,14 @@ export interface FileAttachment {
   fileId?: string;
 }
 
+export interface VideoAttachment {
+  url: string;
+  storagePath?: string;
+  mimeType: string;
+  thumbnailUrl?: string;
+  duration?: number;
+}
+
 export interface WorkflowMessage {
   id: string;
   role: 'user' | 'assistant' | 'system';
@@ -25,6 +33,7 @@ export interface WorkflowMessage {
   timestamp: Date;
   metrics?: WorkflowMessageMetrics;
   attachments?: FileAttachment[];
+  videoAttachment?: VideoAttachment;
 }
 
 export interface WorkflowMetrics {
@@ -47,6 +56,7 @@ export interface PendingResponse {
   content: string;
   reasoning?: string;
   startTime: number;
+  isVideoGenerating?: boolean;
 }
 
 export interface ArenaWorkflow {
@@ -65,7 +75,14 @@ export interface ArenaWorkflow {
   updatedAt: Date;
 }
 
-export type WorkflowStreamEventType = 'ttft' | 'chunk' | 'reasoning' | 'complete' | 'error';
+export type WorkflowStreamEventType =
+  | 'ttft'
+  | 'chunk'
+  | 'reasoning'
+  | 'complete'
+  | 'error'
+  | 'heartbeat'
+  | 'video';
 
 export interface WorkflowStreamEvent {
   type: WorkflowStreamEventType;
@@ -74,6 +91,12 @@ export interface WorkflowStreamEvent {
   reasoning?: string;
   metrics?: WorkflowMetrics;
   error?: string;
+  video?: {
+    url: string;
+    storagePath?: string;
+    mimeType: string;
+    thumbnailUrl?: string;
+  };
 }
 
 export interface WorkflowImageAttachment {

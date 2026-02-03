@@ -16,7 +16,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@lmring/ui';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
+// VOTE_DISABLED: AnimatePresence temporarily unused
+// import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -24,7 +26,8 @@ import {
   MoreHorizontalIcon,
   PlusIcon,
   SlidersHorizontalIcon,
-  ThumbsUp,
+  // VOTE_DISABLED: ThumbsUp temporarily unused
+  // ThumbsUp,
   ToggleLeftIcon,
   ToggleRightIcon,
   Trash2Icon,
@@ -96,7 +99,8 @@ export const ModelCard = React.memo(function ModelCard({
   canMoveRight = false,
   voteState = 'none',
   hoverState = null,
-  isVotable = false,
+  // VOTE_DISABLED: Prefix unused vote props with underscore
+  isVotable: _isVotable = false,
   onModelSelect,
   onSyncToggle,
   onConfigChange,
@@ -106,16 +110,17 @@ export const ModelCard = React.memo(function ModelCard({
   onMoveLeft,
   onMoveRight,
   onAddCard,
-  onVoteClick,
-  onVoteHover,
-  onVoteHoverLeave,
+  onVoteClick: _onVoteClick,
+  onVoteHover: _onVoteHover,
+  onVoteHoverLeave: _onVoteHoverLeave,
   onRetry,
   onMaximize,
 }: ModelCardProps) {
   const [settingsOpen, setSettingsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
   const [modelSelectorOpen, setModelSelectorOpen] = React.useState(false);
-  const [showVoteAnimation, setShowVoteAnimation] = React.useState(false);
+  // VOTE_DISABLED: Vote animation state temporarily unused
+  // const [showVoteAnimation, setShowVoteAnimation] = React.useState(false);
 
   const selectedModel = models.find((m) => m.id === modelId);
 
@@ -129,37 +134,45 @@ export const ModelCard = React.memo(function ModelCard({
 
   const effectiveVoteState = hoverState || voteState;
 
+  // VOTE_DISABLED: Vote state border styles temporarily disabled
   const voteStateBorderStyles: Record<string, string> = {
-    winner: 'ring-1 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    // winner: 'ring-1 ring-amber-500 border-amber-500 shadow-amber-500/20',
+    winner: '',
     loser: '',
-    tie: 'ring-1 ring-green-500 border-green-500 shadow-green-500/20',
-    all_bad: 'ring-1 ring-red-500 border-red-500 shadow-red-500/20',
+    // tie: 'ring-1 ring-green-500 border-green-500 shadow-green-500/20',
+    tie: '',
+    // all_bad: 'ring-1 ring-red-500 border-red-500 shadow-red-500/20',
+    all_bad: '',
     none: '',
   };
 
   const cardClasses = cn(
     'h-full min-h-0 arena-card flex flex-col glass-effect relative overflow-hidden transition-all duration-200',
     voteStateBorderStyles[effectiveVoteState],
-    isVotable && voteState === 'none' && 'cursor-pointer hover:ring-1 hover:ring-amber-500/50',
+    // VOTE_DISABLED: Vote hover styles temporarily disabled
+    // isVotable && voteState === 'none' && 'cursor-pointer hover:ring-1 hover:ring-amber-500/50',
   );
 
+  // VOTE_DISABLED: Card click voting temporarily disabled
   const handleCardClick = () => {
-    if (isVotable && voteState === 'none' && onVoteClick) {
-      setShowVoteAnimation(true);
-      onVoteClick();
-    }
+    // if (isVotable && voteState === 'none' && onVoteClick) {
+    //   setShowVoteAnimation(true);
+    //   onVoteClick();
+    // }
   };
 
+  // VOTE_DISABLED: Card hover voting preview temporarily disabled
   const handleCardMouseEnter = () => {
-    if (isVotable && voteState === 'none' && onVoteHover) {
-      onVoteHover();
-    }
+    // if (isVotable && voteState === 'none' && onVoteHover) {
+    //   onVoteHover();
+    // }
   };
 
+  // VOTE_DISABLED: Card hover leave temporarily disabled
   const handleCardMouseLeave = () => {
-    if (isVotable && onVoteHoverLeave) {
-      onVoteHoverLeave();
-    }
+    // if (isVotable && onVoteHoverLeave) {
+    //   onVoteHoverLeave();
+    // }
   };
 
   // Helper to prevent click events from bubbling to card (triggering vote)
@@ -185,6 +198,7 @@ export const ModelCard = React.memo(function ModelCard({
         onMouseEnter={handleCardMouseEnter}
         onMouseLeave={handleCardMouseLeave}
       >
+        {/* VOTE_DISABLED: Vote animation temporarily disabled
         <AnimatePresence>
           {showVoteAnimation && (
             <motion.div
@@ -203,6 +217,7 @@ export const ModelCard = React.memo(function ModelCard({
             </motion.div>
           )}
         </AnimatePresence>
+        */}
 
         <CardHeader className="pb-3 flex-shrink-0 space-y-0">
           <div className="flex items-center gap-2">

@@ -1,9 +1,11 @@
 import { useCallback, useRef } from 'react';
+import { buildVideoStreamRequest, streamVideoWorkflow } from '@/libs/video-workflow-api';
 import { buildWorkflowStreamRequest, streamWorkflow } from '@/libs/workflow-api';
 import { useWorkflowStore } from '@/stores/workflow-store';
 import type {
   ArenaWorkflow,
   FileAttachment,
+  VideoAttachment,
   WorkflowImageAttachment,
   WorkflowMetrics,
 } from '@/types/workflow';
@@ -14,6 +16,15 @@ export interface MessageAttachmentForSave {
   mimeType: string;
   filename?: string;
   sizeBytes?: number;
+}
+
+export interface ResponseAttachmentForSave {
+  type: 'image' | 'audio' | 'video';
+  key: string;
+  mimeType: string;
+  filename?: string;
+  sizeBytes?: number;
+  url?: string; // External URL for resources not stored in our storage (e.g., video URLs)
 }
 
 export interface WorkflowPersistenceCallbacks {
@@ -31,6 +42,7 @@ export interface WorkflowPersistenceCallbacks {
     responseContent: string,
     tokensUsed?: number,
     responseTimeMs?: number,
+    attachments?: ResponseAttachmentForSave[],
   ) => Promise<void>;
   onConversationCreated?: (conversationId: string, title: string) => void;
 }
@@ -51,6 +63,8 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
   const removeLastAssistantMessage = useWorkflowStore((s) => s.removeLastAssistantMessage);
   const getConversationId = useWorkflowStore((s) => s.getConversationId);
   const setConversationId = useWorkflowStore((s) => s.setConversationId);
+  const setVideoGenerating = useWorkflowStore((s) => s.setVideoGenerating);
+  const completeVideoResponse = useWorkflowStore((s) => s.completeVideoResponse);
 
   const currentDbMessageIdRef = useRef<string | null>(null);
 
@@ -422,6 +436,166 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     }
   }, [getSyncedWorkflows, cancelWorkflow]);
 
+  const executeVideoWorkflowStream = useCallback(
+    async (
+      workflow: ArenaWorkflow,
+      prompt: string,
+      options?: {
+        isNewConversation?: boolean;
+        existingDbMessageId?: string;
+      },
+    ) => {
+      const { id, modelId, keyId } = workflow;
+      const { isNewConversation = false, existingDbMessageId } = options || {};
+
+      addUserMessage(id, prompt);
+      setVideoGenerating(id, true);
+
+      const abortController = new AbortController();
+      setAbortController(id, abortController);
+
+      const request = buildVideoStreamRequest(id, modelId, keyId, prompt);
+
+      let videoResult: VideoAttachment | undefined;
+      let metrics: WorkflowMetrics | undefined;
+      let dbMessageId = existingDbMessageId;
+      let isFirstEvent = true;
+
+      try {
+        for await (const event of streamVideoWorkflow(request, abortController.signal)) {
+          if (event.type === 'heartbeat') {
+            // Handle conversation creation on first event for new conversations
+            if (isFirstEvent && isNewConversation && persistenceCallbacks) {
+              isFirstEvent = false;
+
+              if (!conversationCreationPromiseRef.current) {
+                conversationCreationPromiseRef.current = createConversationOnFirstChunk();
+              }
+
+              const result = await conversationCreationPromiseRef.current;
+              if (result) {
+                dbMessageId = result.messageId;
+                currentDbMessageIdRef.current = result.messageId;
+              }
+            }
+          } else if (event.type === 'video' && event.video) {
+            videoResult = {
+              url: event.video.url,
+              storagePath: event.video.storagePath,
+              mimeType: event.video.mimeType,
+              thumbnailUrl: event.video.thumbnailUrl,
+            };
+          } else if (event.type === 'complete') {
+            metrics = event.metrics;
+          } else if (event.type === 'error') {
+            setWorkflowStatus(id, 'failed', event.error);
+            setAbortController(id, undefined);
+            return;
+          }
+        }
+
+        if (videoResult) {
+          completeVideoResponse(id, videoResult, metrics);
+        } else {
+          setWorkflowStatus(id, 'failed', 'No video received');
+        }
+        setAbortController(id, undefined);
+
+        if (dbMessageId && persistenceCallbacks?.onSaveModelResponse && videoResult) {
+          const [providerName, modelName] = modelId.split(':');
+          try {
+            await persistenceCallbacks.onSaveModelResponse(
+              id,
+              dbMessageId,
+              modelName || modelId,
+              providerName || 'unknown',
+              `[video](${videoResult.url})`,
+              undefined,
+              metrics?.totalTime,
+              // Pass video attachment for persistence
+              [
+                {
+                  type: 'video',
+                  key: videoResult.storagePath || videoResult.url, // Use storagePath for storage key
+                  mimeType: videoResult.mimeType,
+                  url: videoResult.url, // External URL
+                },
+              ],
+            );
+          } catch (error) {
+            console.error('Failed to save video response:', error);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          setWorkflowStatus(id, 'cancelled');
+        } else {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          setWorkflowStatus(id, 'failed', errorMessage);
+        }
+        setAbortController(id, undefined);
+      }
+    },
+    [
+      addUserMessage,
+      setVideoGenerating,
+      completeVideoResponse,
+      setWorkflowStatus,
+      setAbortController,
+      persistenceCallbacks,
+      createConversationOnFirstChunk,
+    ],
+  );
+
+  const startAllSyncedVideoWorkflows = useCallback(async () => {
+    if (!globalPrompt.trim()) {
+      console.warn('Empty global prompt');
+      return;
+    }
+
+    const syncedWorkflows = getSyncedWorkflows();
+    const runnableWorkflows = syncedWorkflows.filter((w) => w.status !== 'running');
+
+    if (runnableWorkflows.length === 0) {
+      console.warn('No runnable synced workflows');
+      return;
+    }
+
+    const existingConversationId = getConversationId();
+    const isNewConversation = !existingConversationId;
+
+    conversationCreationPromiseRef.current = null;
+    pendingPromptRef.current = globalPrompt;
+    pendingAttachmentsRef.current = undefined;
+
+    let existingDbMessageId: string | undefined;
+    if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
+      const messageId = await persistenceCallbacks.onSaveUserMessage(
+        existingConversationId,
+        globalPrompt,
+      );
+      if (messageId) {
+        existingDbMessageId = messageId;
+        currentDbMessageIdRef.current = messageId;
+      }
+    }
+
+    await Promise.all(
+      runnableWorkflows.map((w) =>
+        executeVideoWorkflowStream(w, globalPrompt, {
+          isNewConversation,
+          existingDbMessageId,
+        }),
+      ),
+    );
+  }, [
+    globalPrompt,
+    getSyncedWorkflows,
+    executeVideoWorkflowStream,
+    persistenceCallbacks,
+    getConversationId,
+  ]);
+
   return {
     startWorkflow,
     continueWorkflow,
@@ -431,5 +605,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     startAllSyncedWorkflows,
     continueAllSyncedWorkflows,
     cancelAllWorkflows,
+    startAllSyncedVideoWorkflows,
   };
 }

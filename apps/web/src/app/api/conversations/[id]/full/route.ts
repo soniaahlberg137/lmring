@@ -1,9 +1,29 @@
 import { and, asc, db, eq } from '@lmring/database';
 import type { MessageAttachment, ResponseAttachment } from '@lmring/database/schema';
 import { conversations, messages, modelResponses } from '@lmring/database/schema';
+import { createStorageService } from '@lmring/storage';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
+
+/**
+ * Convert attachment storage keys to signed URLs
+ * If an attachment already has an external URL (e.g., video URLs), use that directly
+ */
+async function attachmentsWithUrls(
+  attachments: ResponseAttachment[] | null,
+): Promise<Array<ResponseAttachment & { url: string }> | null> {
+  if (!attachments || attachments.length === 0) return null;
+
+  const storage = createStorageService();
+
+  return Promise.all(
+    attachments.map(async (att) => ({
+      ...att,
+      url: att.url || (await storage.createDownloadUrl(att.key)),
+    })),
+  );
+}
 
 interface MessageWithResponses {
   id: string;
@@ -16,7 +36,7 @@ interface MessageWithResponses {
     modelName: string;
     providerName: string;
     responseContent: string;
-    attachments?: ResponseAttachment[] | null;
+    attachments?: Array<ResponseAttachment & { url: string }> | null;
     tokensUsed: number | null;
     responseTimeMs: number | null;
     displayPosition: number;
@@ -75,7 +95,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         .orderBy(asc(modelResponses.displayPosition), asc(modelResponses.createdAt)),
     ]);
 
-    // Build responses map from parallel-fetched data
+    // Build responses map from parallel-fetched data with signed URLs for attachments
     const responsesByMessageId: Map<
       string,
       Array<{
@@ -83,7 +103,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
         modelName: string;
         providerName: string;
         responseContent: string;
-        attachments?: ResponseAttachment[] | null;
+        attachments?: Array<ResponseAttachment & { url: string }> | null;
         tokensUsed: number | null;
         responseTimeMs: number | null;
         displayPosition: number;
@@ -91,7 +111,14 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
       }>
     > = new Map();
 
-    for (const response of allResponses) {
+    const responsesWithUrls = await Promise.all(
+      allResponses.map(async (response) => ({
+        ...response,
+        attachments: await attachmentsWithUrls(response.attachments as ResponseAttachment[] | null),
+      })),
+    );
+
+    for (const response of responsesWithUrls) {
       if (!responsesByMessageId.has(response.messageId)) {
         responsesByMessageId.set(response.messageId, []);
       }

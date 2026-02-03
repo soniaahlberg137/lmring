@@ -33,6 +33,7 @@ export interface ResponseAttachment {
   mimeType: string;
   filename?: string;
   sizeBytes?: number;
+  url?: string; // External URL for resources not stored in our storage (e.g., video URLs)
 }
 
 // Message attachments (user-uploaded files)

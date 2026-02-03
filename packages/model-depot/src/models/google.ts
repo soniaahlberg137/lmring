@@ -1,4 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 // ============================================================================
 // Chat Models
@@ -679,10 +679,152 @@ const googleImageModels: ImageModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const googleVideoModels: VideoModelCard[] = [
+  // Veo 3.1 Models (Latest - January 2026)
+  {
+    id: 'google/veo-3.1',
+    displayName: 'Google Veo 3.1',
+    description:
+      'Google 最新的视频生成模型，支持 720p、1080p、4K 分辨率，8 秒时长，原生音频生成，竖屏视频支持',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.1-generate-001',
+    releasedAt: '2026-01-13',
+  },
+  {
+    id: 'google/veo-3.1-audio',
+    displayName: 'Google Veo 3.1 + Audio',
+    description: 'Google Veo 3.1 带原生音频生成，支持自然对话和同步音效',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.1-generate-001',
+    releasedAt: '2026-01-13',
+  },
+  {
+    id: 'google/veo-3.1-fast',
+    displayName: 'Google Veo 3.1 Fast',
+    description: 'Google Veo 3.1 快速版本，优化生成速度同时保持高质量',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.1-fast-generate-001',
+    releasedAt: '2026-01-13',
+  },
+  {
+    id: 'google/veo-3.1-fast-audio',
+    displayName: 'Google Veo 3.1 Fast + Audio',
+    description: 'Google Veo 3.1 Fast 带音频生成支持',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.1-fast-generate-001',
+    releasedAt: '2026-01-13',
+  },
+  // Veo 3.0 Models
+  {
+    id: 'google/veo-3.0',
+    displayName: 'Google Veo 3.0',
+    description: 'Google latest video generation model with 8s duration',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.0-generate-001',
+  },
+  {
+    id: 'google/veo-3.0-audio',
+    displayName: 'Google Veo 3.0 + Audio',
+    description: 'Google Veo 3.0 with audio generation support',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.0-generate-001',
+  },
+  {
+    id: 'google/veo-3.0-fast',
+    displayName: 'Google Veo 3.0 Fast',
+    description: 'Google Veo 3.0 optimized for faster generation',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.0-fast-generate-001',
+  },
+  {
+    id: 'google/veo-3.0-fast-audio',
+    displayName: 'Google Veo 3.0 Fast + Audio',
+    description: 'Google Veo 3.0 Fast with audio generation support',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 8,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-3.0-fast-generate-001',
+  },
+  // Veo 2.0 Model
+  {
+    id: 'google/veo-2.0',
+    displayName: 'Google Veo 2.0',
+    description: 'Google Veo 2.0 video generation model',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    fps: 24,
+    organization: 'Google',
+    runtimeProvider: 'google',
+    runtimeModelId: 'veo-2.0-generate-001',
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
 export default {
   chat: googleChatModels,
   image: googleImageModels,
+  video: googleVideoModels,
 };

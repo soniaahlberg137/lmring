@@ -1,0 +1,30 @@
+{
+  "name": "@lmring/video-runtime",
+  "version": "1.1.0",
+  "private": true,
+  "description": "Video Runtime - Multi-provider Video Generation API Adapter",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "check:types": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "test": "vitest run"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./types": "./src/types/index.ts",
+    "./providers": "./src/providers/index.ts"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@lmring/typescript-config": "workspace:*",
+    "@lmring/vitest-config": "workspace:*",
+    "@types/node": "^25.0.10",
+    "@vitest/coverage-v8": "^4.0.17",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.17"
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useMemo } from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { useTranslations } from '@/hooks/use-translations';
 
@@ -21,8 +22,16 @@ const FEATURED_PROVIDERS = [
   'zhipu',
 ];
 
+const HERO_TITLE_KEYS = ['Arena.hero_title', 'Arena.hero_title_alt'] as const;
+
 export function ArenaHeroSection() {
   const t = useTranslations();
+
+  const heroTitleKey = useMemo(() => {
+    return (
+      HERO_TITLE_KEYS[Math.floor(Math.random() * HERO_TITLE_KEYS.length)] ?? HERO_TITLE_KEYS[0]
+    );
+  }, []);
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -41,7 +50,7 @@ export function ArenaHeroSection() {
 
       {/* Headline */}
       <h1 className="text-secondary-foreground text-[32px] font-normal sm:text-5xl">
-        {t('Arena.hero_title')}
+        {t(heroTitleKey)}
       </h1>
 
       {/* Description */}
