@@ -687,45 +687,6 @@ export default function ArenaPage() {
     setInputMode(mode);
   }, []);
 
-  React.useEffect(() => {
-    if (filteredDisplayModels.length === 0) {
-      return;
-    }
-
-    const prevMode = prevInputModeRef.current;
-    const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
-
-    const validModelIds: string[] = [];
-    const indicesToReplace: number[] = [];
-
-    comparisons.forEach((comparison, index) => {
-      const isModelInFilteredList = filteredDisplayModels.some(
-        (model) => model.id === comparison.modelId,
-      );
-
-      if (!isModelInFilteredList || isReturningToDefault) {
-        indicesToReplace.push(index);
-      } else {
-        validModelIds.push(comparison.modelId);
-      }
-    });
-
-    if (indicesToReplace.length > 0) {
-      const replacementModels = selectUniqueRandomModels(
-        filteredDisplayModels,
-        indicesToReplace.length,
-        validModelIds,
-      );
-
-      indicesToReplace.forEach((index, i) => {
-        const modelId = replacementModels[i] || filteredDisplayModels[0]?.id || '';
-        selectModel(index, modelId);
-      });
-    }
-
-    prevInputModeRef.current = inputMode;
-  }, [inputMode, filteredDisplayModels, comparisons, selectModel]);
-
   const handleAddImages = React.useCallback((newImages: UploadedImage[]) => {
     setUploadedImages((prev) => [...prev, ...newImages]);
   }, []);
@@ -897,6 +858,50 @@ export default function ArenaPage() {
     },
     [workflows],
   );
+
+  React.useEffect(() => {
+    if (filteredDisplayModels.length === 0) {
+      return;
+    }
+
+    const prevMode = prevInputModeRef.current;
+    const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
+
+    const validModelIds: string[] = [];
+    const indicesToReplace: number[] = [];
+
+    comparisons.forEach((comparison, index) => {
+      const isModelInFilteredList = filteredDisplayModels.some(
+        (model) => model.id === comparison.modelId,
+      );
+
+      const workflow = getWorkflowForComparison(comparison.id);
+      const isWorkflowRunning = workflow?.status === 'running';
+
+      if (isWorkflowRunning) {
+        validModelIds.push(comparison.modelId);
+      } else if (!isModelInFilteredList || isReturningToDefault) {
+        indicesToReplace.push(index);
+      } else {
+        validModelIds.push(comparison.modelId);
+      }
+    });
+
+    if (indicesToReplace.length > 0) {
+      const replacementModels = selectUniqueRandomModels(
+        filteredDisplayModels,
+        indicesToReplace.length,
+        validModelIds,
+      );
+
+      indicesToReplace.forEach((index, i) => {
+        const modelId = replacementModels[i] || filteredDisplayModels[0]?.id || '';
+        selectModel(index, modelId);
+      });
+    }
+
+    prevInputModeRef.current = inputMode;
+  }, [inputMode, filteredDisplayModels, comparisons, selectModel, getWorkflowForComparison]);
 
   React.useEffect(() => {
     if (!conversationId || !storedConversationId || storedConversationId !== conversationId) {
