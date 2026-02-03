@@ -30,8 +30,8 @@ export function VideoResponse({ url, thumbnailUrl, isLoading, error }: VideoResp
   if (!url) return null;
 
   return (
-    <div className="w-full p-2">
-      <VideoPlayer url={url} thumbnailUrl={thumbnailUrl} className="rounded-lg overflow-hidden" />
+    <div className="w-full flex items-center justify-center p-4">
+      <VideoPlayer url={url} thumbnailUrl={thumbnailUrl} className="rounded-lg w-full max-w-2xl" />
     </div>
   );
 }

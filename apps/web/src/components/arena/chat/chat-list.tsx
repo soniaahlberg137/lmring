@@ -72,6 +72,7 @@ export function ChatList({
             }}
             providerId={providerId}
             isStreaming={status === 'running'}
+            isVideoGenerating={pendingResponse.isVideoGenerating}
             status={status}
             error={error}
           />

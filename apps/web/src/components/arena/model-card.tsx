@@ -39,7 +39,6 @@ import { ProviderIcon } from '@/components/arena/provider-icon';
 import type { ModelConfig, ModelOption } from '@/types/arena';
 import type { PendingResponse, WorkflowMessage, WorkflowStatus } from '@/types/workflow';
 import { ChatList } from './chat/chat-list';
-import { VideoResponse } from './video-response';
 
 export type VoteState = 'none' | 'winner' | 'loser' | 'tie' | 'all_bad';
 
@@ -523,37 +522,16 @@ export const ModelCard = React.memo(function ModelCard({
           ) : (
             <div className="flex-1 flex flex-col min-h-0">
               <div className="flex-1 min-h-0">
-                {(() => {
-                  const lastAssistantMsg = messages?.filter((m) => m.role === 'assistant').pop();
-                  const hasVideoAttachment = !!lastAssistantMsg?.videoAttachment;
-                  const isVideoGenerating = !!pendingResponse?.isVideoGenerating;
-
-                  if (hasVideoAttachment || isVideoGenerating) {
-                    return (
-                      <div className="flex items-center justify-center h-full">
-                        <VideoResponse
-                          url={lastAssistantMsg?.videoAttachment?.url}
-                          thumbnailUrl={lastAssistantMsg?.videoAttachment?.thumbnailUrl}
-                          isLoading={isVideoGenerating}
-                          error={error}
-                        />
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <ChatList
-                      messages={messages || []}
-                      pendingResponse={pendingResponse}
-                      isLoading={isLoading}
-                      status={status}
-                      error={error}
-                      providerId={selectedModel?.providerId}
-                      onRetry={onRetry}
-                      onMaximize={onMaximize}
-                    />
-                  );
-                })()}
+                <ChatList
+                  messages={messages || []}
+                  pendingResponse={pendingResponse}
+                  isLoading={isLoading}
+                  status={status}
+                  error={error}
+                  providerId={selectedModel?.providerId}
+                  onRetry={onRetry}
+                  onMaximize={onMaximize}
+                />
               </div>
             </div>
           )}
