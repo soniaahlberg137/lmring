@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const mocks = vi.hoisted(() => ({
@@ -29,7 +29,6 @@ vi.mock('sonner', () => ({
 }));
 
 import { act, renderHook } from '@testing-library/react';
-import { toast } from 'sonner';
 import { useCardVoting, VoteBar } from './vote-bar';
 
 const defaultProps = {
@@ -52,115 +51,9 @@ describe('VoteBar', () => {
     cleanup();
   });
 
-  it('should render tie and all bad buttons when no vote exists', () => {
-    render(<VoteBar {...defaultProps} />);
-
-    expect(screen.getByRole('button', { name: /tie/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /all bad/i })).toBeInTheDocument();
-  });
-
-  it('should show winner selected message when vote type is winner', () => {
-    mocks.mockGetVote.mockReturnValue({ voteType: 'winner', winnerId: 'resp-1' });
-
-    render(<VoteBar {...defaultProps} />);
-
-    expect(screen.getByText('Winner selected')).toBeInTheDocument();
-  });
-
-  it('should show tie message when vote type is tie', () => {
-    mocks.mockGetVote.mockReturnValue({ voteType: 'tie' });
-
-    render(<VoteBar {...defaultProps} />);
-
-    expect(screen.getByText("It's a tie")).toBeInTheDocument();
-  });
-
-  it('should show all bad message when vote type is all_bad', () => {
-    mocks.mockGetVote.mockReturnValue({ voteType: 'all_bad' });
-
-    render(<VoteBar {...defaultProps} />);
-
-    expect(screen.getByText('All marked poor')).toBeInTheDocument();
-  });
-
-  it('should call submitVote with tie when tie button is clicked', async () => {
-    render(<VoteBar {...defaultProps} />);
-
-    fireEvent.click(screen.getByRole('button', { name: /tie/i }));
-
-    await waitFor(() => {
-      expect(mocks.mockSubmitVote).toHaveBeenCalledWith({
-        messageId: 'msg-1',
-        voteType: 'tie',
-        winnerId: undefined,
-        comparisonType: 'text',
-        participantIds: ['resp-1', 'resp-2'],
-      });
-    });
-  });
-
-  it('should call submitVote with all_bad when all bad button is clicked', async () => {
-    render(<VoteBar {...defaultProps} />);
-
-    fireEvent.click(screen.getByRole('button', { name: /all bad/i }));
-
-    await waitFor(() => {
-      expect(mocks.mockSubmitVote).toHaveBeenCalledWith({
-        messageId: 'msg-1',
-        voteType: 'all_bad',
-        winnerId: undefined,
-        comparisonType: 'text',
-        participantIds: ['resp-1', 'resp-2'],
-      });
-    });
-  });
-
-  it('should show success toast on successful vote', async () => {
-    mocks.mockSubmitVote.mockResolvedValue(true);
-
-    render(<VoteBar {...defaultProps} />);
-    fireEvent.click(screen.getByRole('button', { name: /tie/i }));
-
-    await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith('Vote recorded');
-    });
-  });
-
-  it('should show error toast on failed vote', async () => {
-    mocks.mockSubmitVote.mockResolvedValue(false);
-
-    render(<VoteBar {...defaultProps} />);
-    fireEvent.click(screen.getByRole('button', { name: /tie/i }));
-
-    await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith('Failed to record vote');
-    });
-  });
-
-  it('should set hovered vote on mouse enter', () => {
-    render(<VoteBar {...defaultProps} />);
-
-    fireEvent.mouseEnter(screen.getByRole('button', { name: /tie/i }));
-
-    expect(mocks.mockSetHoveredVote).toHaveBeenCalledWith({
-      messageId: 'msg-1',
-      voteType: 'tie',
-    });
-  });
-
-  it('should clear hovered vote on mouse leave', () => {
-    render(<VoteBar {...defaultProps} />);
-
-    fireEvent.mouseLeave(screen.getByRole('button', { name: /tie/i }));
-
-    expect(mocks.mockSetHoveredVote).toHaveBeenCalledWith(null);
-  });
-
-  it('should disable buttons when disabled prop is true', () => {
-    render(<VoteBar {...defaultProps} disabled />);
-
-    expect(screen.getByRole('button', { name: /tie/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /all bad/i })).toBeDisabled();
+  it('should render nothing when voting is disabled', () => {
+    const { container } = render(<VoteBar {...defaultProps} />);
+    expect(container.firstChild).toBeNull();
   });
 });
 
@@ -171,7 +64,7 @@ describe('useCardVoting', () => {
     mocks.mockSubmitVote.mockResolvedValue(true);
   });
 
-  it('should return voting handlers', () => {
+  it('should return voting handlers (no-op when disabled)', () => {
     const { result } = renderHook(() => useCardVoting('msg-1', 'text', ['resp-1', 'resp-2']));
 
     expect(result.current.handleCardClick).toBeDefined();
@@ -181,25 +74,7 @@ describe('useCardVoting', () => {
     expect(result.current.isSubmitting).toBe(false);
   });
 
-  it('should submit winner vote on card click', async () => {
-    const { result } = renderHook(() => useCardVoting('msg-1', 'text', ['resp-1', 'resp-2']));
-
-    await act(async () => {
-      await result.current.handleCardClick('resp-1');
-    });
-
-    expect(mocks.mockSubmitVote).toHaveBeenCalledWith({
-      messageId: 'msg-1',
-      voteType: 'winner',
-      winnerId: 'resp-1',
-      comparisonType: 'text',
-      participantIds: ['resp-1', 'resp-2'],
-    });
-  });
-
-  it('should not submit if already voted', async () => {
-    mocks.mockGetVote.mockReturnValue({ voteType: 'winner' });
-
+  it('should not submit vote when voting is disabled', async () => {
     const { result } = renderHook(() => useCardVoting('msg-1', 'text', ['resp-1', 'resp-2']));
 
     await act(async () => {
@@ -209,27 +84,23 @@ describe('useCardVoting', () => {
     expect(mocks.mockSubmitVote).not.toHaveBeenCalled();
   });
 
-  it('should set hovered vote on card hover', () => {
+  it('should not set hovered vote when voting is disabled', () => {
     const { result } = renderHook(() => useCardVoting('msg-1', 'text', ['resp-1', 'resp-2']));
 
     act(() => {
       result.current.handleCardHover('resp-1');
     });
 
-    expect(mocks.mockSetHoveredVote).toHaveBeenCalledWith({
-      messageId: 'msg-1',
-      voteType: 'winner',
-      winnerId: 'resp-1',
-    });
+    expect(mocks.mockSetHoveredVote).not.toHaveBeenCalled();
   });
 
-  it('should clear hovered vote on hover leave', () => {
+  it('should not clear hovered vote when voting is disabled', () => {
     const { result } = renderHook(() => useCardVoting('msg-1', 'text', ['resp-1', 'resp-2']));
 
     act(() => {
       result.current.handleCardHoverLeave();
     });
 
-    expect(mocks.mockSetHoveredVote).toHaveBeenCalledWith(null);
+    expect(mocks.mockSetHoveredVote).not.toHaveBeenCalled();
   });
 });

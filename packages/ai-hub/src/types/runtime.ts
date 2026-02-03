@@ -92,3 +92,27 @@ export interface RetryOptions {
   maxDelay?: number;
   retryableErrors?: string[];
 }
+
+// ============================================================================
+// Video Generation Types
+// ============================================================================
+
+export interface VideoGenerationParams {
+  model: string;
+  prompt: string;
+  width?: number;
+  height?: number;
+  duration?: number;
+}
+
+export interface VideoGenerationResult {
+  url: string;
+  mimeType: string;
+  thumbnailUrl?: string;
+  duration?: number;
+}
+
+export type VideoStreamEvent =
+  | { type: 'heartbeat' }
+  | { type: 'video'; video: VideoGenerationResult }
+  | { type: 'error'; error: string };

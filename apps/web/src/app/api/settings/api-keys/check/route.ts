@@ -1,4 +1,5 @@
 import { generateText, ProviderBuilder, streamText } from '@lmring/ai-hub';
+import { isVideoModel } from '@lmring/model-depot';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
@@ -103,6 +104,16 @@ export async function POST(request: Request) {
     }
 
     const { providerName, providerType, apiKey, proxyUrl, model } = validationResult.data;
+
+    // Early return for video models (cannot be tested via chat endpoint)
+    if (isVideoModel(model)) {
+      return NextResponse.json({
+        success: true,
+        message:
+          'Video models cannot be tested via chat endpoint. Test by generating a video in Arena.',
+        skipReason: 'video_model',
+      });
+    }
 
     let provider: ReturnType<typeof ProviderBuilder.openai>;
     try {

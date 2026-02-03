@@ -44,7 +44,11 @@ describe('INPUT_MODE_ABILITY_MAP', () => {
     expect(INPUT_MODE_ABILITY_MAP.upload).toBe('vision');
   });
 
-  it('should have exactly 3 mappings', () => {
-    expect(Object.keys(INPUT_MODE_ABILITY_MAP)).toHaveLength(3);
+  it('should map videoGenerate mode to videoOutput ability', () => {
+    expect(INPUT_MODE_ABILITY_MAP.videoGenerate).toBe('videoOutput');
+  });
+
+  it('should have exactly 4 mappings', () => {
+    expect(Object.keys(INPUT_MODE_ABILITY_MAP)).toHaveLength(4);
   });
 });

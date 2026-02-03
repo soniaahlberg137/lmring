@@ -23,7 +23,12 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const messages = await loadLocaleMessages(locale);
 
   return (
-    <html lang={locale} className="scroll-smooth" suppressHydrationWarning>
+    <html
+      lang={locale}
+      className="scroll-smooth"
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
+    >
       <body suppressHydrationWarning className={`min-h-screen`}>
         <LanguageProvider initialLanguage={locale} initialMessages={messages}>
           <ThemeProvider>

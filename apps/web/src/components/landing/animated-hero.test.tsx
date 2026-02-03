@@ -134,10 +134,13 @@ describe('AnimatedHero', () => {
     const titles = screen.getAllByText('Test Glow Title');
     expect(titles.length).toBe(2);
 
-    const glowLayer = titles[0];
+    const glowLayer = titles.find((el) => el.className.includes('blur-2xl'));
+    const visibleLayer = titles.find((el) => !el.className.includes('blur-2xl'));
+
+    expect(glowLayer).toBeDefined();
     expect(glowLayer).toHaveClass('opacity-50', 'blur-2xl');
 
-    const visibleLayer = titles[1];
+    expect(visibleLayer).toBeDefined();
     expect(visibleLayer).toHaveClass('relative');
   });
 

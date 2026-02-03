@@ -1,4 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 // ============================================================================
 // Chat Models
@@ -110,10 +110,44 @@ const minimaxImageModels: ImageModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const minimaxVideoModels: VideoModelCard[] = [
+  {
+    id: 'minimax/hailuo-02',
+    displayName: 'MiniMax Hailuo 02',
+    description: 'MiniMax latest video model with 10s duration and HD support',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 10,
+    resolutions: ['1366x768', '1920x1080'],
+    fps: 25,
+    organization: 'MiniMax',
+    runtimeProvider: 'minimax',
+  },
+  {
+    id: 'minimax/video-01-director',
+    displayName: 'MiniMax Video-01 Director',
+    description: 'MiniMax video model with camera movement control',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1366x768'],
+    fps: 25,
+    organization: 'MiniMax',
+    runtimeProvider: 'minimax',
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
 export default {
   chat: minimaxChatModels,
   image: minimaxImageModels,
+  video: minimaxVideoModels,
 };

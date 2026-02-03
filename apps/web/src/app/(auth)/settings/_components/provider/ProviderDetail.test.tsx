@@ -29,6 +29,7 @@ vi.mock('lucide-react', () => ({
   RadioIcon: createMockIcon('RadioIcon'),
   Search: createMockIcon('Search'),
   Trash2Icon: createMockIcon('Trash2Icon'),
+  VideoIcon: createMockIcon('VideoIcon'),
   VolumeIcon: createMockIcon('VolumeIcon'),
   WrenchIcon: createMockIcon('WrenchIcon'),
   ZapIcon: createMockIcon('ZapIcon'),

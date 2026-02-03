@@ -82,7 +82,7 @@ describe('ModelCard', () => {
     expect(screen.getByText('Test description')).toBeInTheDocument();
   });
 
-  it('calls onVoteClick when votable card is clicked', () => {
+  it('does not call onVoteClick when card is clicked (voting disabled)', () => {
     const onVoteClick = vi.fn();
 
     render(
@@ -96,7 +96,7 @@ describe('ModelCard', () => {
     );
 
     fireEvent.click(screen.getByTestId('card'));
-    expect(onVoteClick).toHaveBeenCalledTimes(1);
+    expect(onVoteClick).not.toHaveBeenCalled();
   });
 
   it('does not bubble click from settings button to vote handler', () => {

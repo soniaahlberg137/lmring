@@ -9,10 +9,10 @@ import {
   MessageSquarePlusIcon,
   PanelLeftClose,
   PanelLeftOpen,
-  SparklesIcon,
   TrophyIcon,
   XIcon,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
@@ -169,23 +169,55 @@ export function Sidebar({ user }: SidebarProps) {
             {isLogoHovered ? (
               <PanelLeftOpen className="h-6 w-6 text-primary" />
             ) : (
-              <SparklesIcon className="h-6 w-6 text-primary" />
+              <>
+                <Image
+                  src="/athena-black.svg"
+                  alt="lmring"
+                  width={24}
+                  height={24}
+                  className="dark:hidden"
+                  style={{ width: 24, height: 24, flexShrink: 0 }}
+                />
+                <Image
+                  src="/athena-white.svg"
+                  alt="lmring"
+                  width={24}
+                  height={24}
+                  className="hidden dark:block"
+                  style={{ width: 24, height: 24, flexShrink: 0 }}
+                />
+              </>
             )}
           </button>
         ) : (
           <div className="flex items-center gap-2 px-2 py-1.5">
-            <SparklesIcon className="h-6 w-6 text-primary flex-shrink-0" />
             <AnimatePresence>
               {!collapsed && (
-                <motion.span
+                <motion.div
                   initial={{ opacity: 0, width: 0 }}
                   animate={{ opacity: 1, width: 'auto' }}
                   exit={{ opacity: 0, width: 0 }}
                   transition={{ duration: 0.2 }}
-                  className="text-lg font-semibold whitespace-nowrap overflow-hidden text-left"
+                  className="flex items-center gap-2 whitespace-nowrap overflow-hidden"
                 >
-                  LMRing
-                </motion.span>
+                  <Image
+                    src="/athena-black.svg"
+                    alt="lmring"
+                    width={24}
+                    height={24}
+                    className="dark:hidden"
+                    style={{ width: 24, height: 24, flexShrink: 0 }}
+                  />
+                  <Image
+                    src="/athena-white.svg"
+                    alt="lmring"
+                    width={24}
+                    height={24}
+                    className="hidden dark:block"
+                    style={{ width: 24, height: 24, flexShrink: 0 }}
+                  />
+                  <span className="text-lg font-semibold">lmring</span>
+                </motion.div>
               )}
             </AnimatePresence>
           </div>

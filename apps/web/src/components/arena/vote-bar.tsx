@@ -1,13 +1,15 @@
 'use client';
 
 import type { ComparisonType } from '@lmring/database';
-import { Button } from '@lmring/ui';
-import { AnimatePresence, motion } from 'framer-motion';
-import { CheckIcon, Handshake, ThumbsDown } from 'lucide-react';
+// VOTE_DISABLED: Unused imports while voting is disabled
+// import { Button } from '@lmring/ui';
+// import { AnimatePresence, motion } from 'framer-motion';
+// import { CheckIcon, Handshake, ThumbsDown } from 'lucide-react';
 import * as React from 'react';
-import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
-import { useVoteStore } from '@/stores/vote-store';
+
+// import { useTranslation } from 'react-i18next';
+// import { toast } from 'sonner';
+// import { useVoteStore } from '@/stores/vote-store';
 
 interface ModelResponse {
   id: string;
@@ -22,12 +24,17 @@ interface VoteBarProps {
   disabled?: boolean;
 }
 
+// VOTE_DISABLED: VoteBar component temporarily disabled
 export const VoteBar = React.memo(function VoteBar({
-  messageId,
-  modelResponses,
-  comparisonType,
-  disabled = false,
+  messageId: _messageId,
+  modelResponses: _modelResponses,
+  comparisonType: _comparisonType,
+  disabled: _disabled = false,
 }: VoteBarProps) {
+  // Return null to hide the vote bar while voting is disabled
+  return null;
+
+  /* Original implementation:
   const { t } = useTranslation();
   const { getVote, setHoveredVote, submitVote, isSubmitting } = useVoteStore();
 
@@ -182,13 +189,25 @@ export const VoteBar = React.memo(function VoteBar({
       </Button>
     </motion.div>
   );
+  */
 });
 
+// VOTE_DISABLED: useCardVoting hook temporarily disabled
 export function useCardVoting(
-  messageId: string,
-  comparisonType: ComparisonType,
-  participantIds: string[],
+  _messageId: string,
+  _comparisonType: ComparisonType,
+  _participantIds: string[],
 ) {
+  // Return no-op handlers while voting is disabled
+  return {
+    handleCardClick: async (_modelResponseId: string) => {},
+    handleCardHover: (_modelResponseId: string) => {},
+    handleCardHoverLeave: () => {},
+    isVoted: false,
+    isSubmitting: false,
+  };
+
+  /* Original implementation:
   const { t } = useTranslation();
   const { setHoveredVote, submitVote, getVote, isSubmitting } = useVoteStore();
 
@@ -233,4 +252,5 @@ export function useCardVoting(
     isVoted: !!existingVote,
     isSubmitting,
   };
+  */
 }

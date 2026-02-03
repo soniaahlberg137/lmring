@@ -75,6 +75,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Skip static resources
+  const pathname = url.pathname;
+  if (
+    pathname.match(/\.(svg|png|jpg|jpeg|gif|webp|ico|css|js|woff|woff2|ttf|eot|map)$/i) ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/static/')
+  ) {
+    return;
+  }
+
   if (!currentLanguage) {
     return;
   }

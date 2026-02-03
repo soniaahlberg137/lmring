@@ -31,6 +31,7 @@ import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
 import {
   type MessageAttachmentForSave,
+  type ResponseAttachmentForSave,
   useWorkflowExecution,
   type WorkflowPersistenceCallbacks,
 } from '@/hooks/use-workflow-execution';
@@ -182,9 +183,18 @@ export default function ArenaPage() {
         responseContent: string,
         tokensUsed?: number,
         responseTimeMs?: number,
+        explicitAttachments?: ResponseAttachmentForSave[],
       ) => {
-        // Process response for base64 media
-        const { processedContent, attachments } = await processAiResponseMedia(responseContent);
+        // If explicit attachments are provided (e.g., video), use them directly
+        // Otherwise, process response for base64 media
+        let finalContent = responseContent;
+        let finalAttachments = explicitAttachments;
+
+        if (!explicitAttachments || explicitAttachments.length === 0) {
+          const { processedContent, attachments } = await processAiResponseMedia(responseContent);
+          finalContent = processedContent;
+          finalAttachments = attachments.length > 0 ? attachments : undefined;
+        }
 
         let displayPosition = 0;
         for (const [comparisonId, wfId] of comparisonWorkflowMap.current.entries()) {
@@ -201,11 +211,11 @@ export default function ArenaPage() {
           messageId,
           modelName,
           providerName,
-          processedContent,
+          finalContent,
           tokensUsed,
           responseTimeMs,
           displayPosition,
-          attachments.length > 0 ? attachments : undefined,
+          finalAttachments,
         );
       },
       onConversationCreated: handleConversationCreated,
@@ -213,8 +223,12 @@ export default function ArenaPage() {
     [createConversation, saveMessage, saveModelResponse, handleConversationCreated, comparisons],
   );
 
-  const { startAllSyncedWorkflows, cancelAllWorkflows, regenerateLastResponse } =
-    useWorkflowExecution(persistenceCallbacks);
+  const {
+    startAllSyncedWorkflows,
+    cancelAllWorkflows,
+    regenerateLastResponse,
+    startAllSyncedVideoWorkflows,
+  } = useWorkflowExecution(persistenceCallbacks);
 
   const [enabledModelsLoaded, setEnabledModelsLoaded] = React.useState(false);
   const [maximizedContent, setMaximizedContent] = React.useState<string | null>(null);
@@ -673,45 +687,6 @@ export default function ArenaPage() {
     setInputMode(mode);
   }, []);
 
-  React.useEffect(() => {
-    if (filteredDisplayModels.length === 0) {
-      return;
-    }
-
-    const prevMode = prevInputModeRef.current;
-    const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
-
-    const validModelIds: string[] = [];
-    const indicesToReplace: number[] = [];
-
-    comparisons.forEach((comparison, index) => {
-      const isModelInFilteredList = filteredDisplayModels.some(
-        (model) => model.id === comparison.modelId,
-      );
-
-      if (!isModelInFilteredList || isReturningToDefault) {
-        indicesToReplace.push(index);
-      } else {
-        validModelIds.push(comparison.modelId);
-      }
-    });
-
-    if (indicesToReplace.length > 0) {
-      const replacementModels = selectUniqueRandomModels(
-        filteredDisplayModels,
-        indicesToReplace.length,
-        validModelIds,
-      );
-
-      indicesToReplace.forEach((index, i) => {
-        const modelId = replacementModels[i] || filteredDisplayModels[0]?.id || '';
-        selectModel(index, modelId);
-      });
-    }
-
-    prevInputModeRef.current = inputMode;
-  }, [inputMode, filteredDisplayModels, comparisons, selectModel]);
-
   const handleAddImages = React.useCallback((newImages: UploadedImage[]) => {
     setUploadedImages((prev) => [...prev, ...newImages]);
   }, []);
@@ -883,6 +858,50 @@ export default function ArenaPage() {
     },
     [workflows],
   );
+
+  React.useEffect(() => {
+    if (filteredDisplayModels.length === 0) {
+      return;
+    }
+
+    const prevMode = prevInputModeRef.current;
+    const isReturningToDefault = prevMode !== 'default' && inputMode === 'default';
+
+    const validModelIds: string[] = [];
+    const indicesToReplace: number[] = [];
+
+    comparisons.forEach((comparison, index) => {
+      const isModelInFilteredList = filteredDisplayModels.some(
+        (model) => model.id === comparison.modelId,
+      );
+
+      const workflow = getWorkflowForComparison(comparison.id);
+      const isWorkflowRunning = workflow?.status === 'running';
+
+      if (isWorkflowRunning) {
+        validModelIds.push(comparison.modelId);
+      } else if (!isModelInFilteredList || isReturningToDefault) {
+        indicesToReplace.push(index);
+      } else {
+        validModelIds.push(comparison.modelId);
+      }
+    });
+
+    if (indicesToReplace.length > 0) {
+      const replacementModels = selectUniqueRandomModels(
+        filteredDisplayModels,
+        indicesToReplace.length,
+        validModelIds,
+      );
+
+      indicesToReplace.forEach((index, i) => {
+        const modelId = replacementModels[i] || filteredDisplayModels[0]?.id || '';
+        selectModel(index, modelId);
+      });
+    }
+
+    prevInputModeRef.current = inputMode;
+  }, [inputMode, filteredDisplayModels, comparisons, selectModel, getWorkflowForComparison]);
 
   React.useEffect(() => {
     if (!conversationId || !storedConversationId || storedConversationId !== conversationId) {
@@ -1119,9 +1138,14 @@ export default function ArenaPage() {
 
     setWorkflowGlobalPrompt('');
     handleClearImages();
+    const currentInputMode = inputMode;
     setInputMode('default');
 
-    await startAllSyncedWorkflows(attachments, dbAttachments);
+    if (currentInputMode === 'videoGenerate') {
+      await startAllSyncedVideoWorkflows();
+    } else {
+      await startAllSyncedWorkflows(attachments, dbAttachments);
+    }
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -1141,12 +1165,14 @@ export default function ArenaPage() {
     getWorkflowConversationId,
     getOrCreateWorkflow,
     startAllSyncedWorkflows,
+    startAllSyncedVideoWorkflows,
     hasConfiguredProviders,
     router,
     t,
     setWorkflowGlobalPrompt,
     uploadedImages,
     handleClearImages,
+    inputMode,
   ]);
 
   const handleModelSelect = React.useCallback(
@@ -1646,7 +1672,7 @@ export default function ArenaPage() {
                   style={getCardStyles(comparisons.length)}
                 >
                   <ModelCard
-                    modelId={comparison.modelId}
+                    modelId={workflow?.modelId || comparison.modelId}
                     models={filteredDisplayModels}
                     messages={workflow?.messages}
                     pendingResponse={workflow?.pendingResponse}

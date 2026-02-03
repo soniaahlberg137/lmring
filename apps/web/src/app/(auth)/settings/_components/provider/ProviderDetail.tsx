@@ -51,6 +51,7 @@ import {
   RadioIcon,
   Search,
   Trash2Icon,
+  VideoIcon,
   VolumeIcon,
   WrenchIcon,
   ZapIcon,
@@ -81,6 +82,7 @@ const MODEL_TYPE_CONFIG: Record<
   chat: { label: 'Chat', icon: MessageSquareIcon, color: 'text-blue-500' },
   embedding: { label: 'Embedding', icon: ZapIcon, color: 'text-purple-500' },
   image: { label: 'Image', icon: ImageIcon, color: 'text-green-500' },
+  video: { label: 'Video', icon: VideoIcon, color: 'text-cyan-500' },
   tts: { label: 'TTS', icon: VolumeIcon, color: 'text-orange-500' },
   stt: { label: 'STT', icon: MicIcon, color: 'text-pink-500' },
   realtime: { label: 'Realtime', icon: RadioIcon, color: 'text-red-500' },
@@ -309,7 +311,15 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
   }, [filteredModels]);
 
   const sortedModelTypes = useMemo(() => {
-    const typeOrder: AiModelType[] = ['chat', 'image', 'embedding', 'tts', 'stt', 'realtime'];
+    const typeOrder: AiModelType[] = [
+      'chat',
+      'image',
+      'video',
+      'embedding',
+      'tts',
+      'stt',
+      'realtime',
+    ];
     return typeOrder.filter((type) => modelsByType[type] && modelsByType[type].length > 0);
   }, [modelsByType]);
 
@@ -396,7 +406,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
         setCheckStatus('success');
         setResponseTime(result.responseTimeMs ?? null);
         toast.success('Connection Successful', {
-          description: `Connected in ${result.responseTimeMs}ms`,
+          description: result.responseTimeMs
+            ? `Connected in ${result.responseTimeMs}ms`
+            : 'Connection verified',
         });
 
         await handleSave();

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1><a href="https://www.lmring.com/">LMRING</a></h1>
+  <h1><img src="apps/web/public/athena-white.svg" alt="LMRing Logo" height="32" style="vertical-align: middle;" /> <a href="https://www.lmring.com/">LMRING</a></h1>
   <p><strong>Open-source LLMs Comparison Arena</strong></p>
   <p>Compare multiple LLMs. Vote on responses. See the leaderboard.</p>
 

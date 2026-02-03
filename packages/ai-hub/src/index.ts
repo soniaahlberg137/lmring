@@ -24,6 +24,7 @@ export * from './core/arena';
 export * from './core/models';
 export * from './core/plugins';
 export * from './core/runtime';
+export * from './core/video';
 // Provider exports
 export * from './providers';
 // Type exports
