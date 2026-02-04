@@ -25,11 +25,12 @@
 ## Features
 
 - **Arena Mode** — Compare 2-5 AI models simultaneously with real-time streaming
+- **Video Generation** — Compare AI-generated videos across 7 providers (OpenAI Sora, Google Vevo, MiniMax, Kling, Seedance, Vidu, and more)
 - **Leaderboard** — Ranked models with table, bar chart, and scatter plot views
 - **Voting System** — Crowdsource model quality evaluations
 - **Conversation History** — Save, share, and revisit your comparisons
 - **50+ Providers** — OpenAI, Anthropic, Google, DeepSeek, Mistral, and more
-- **Multimodal** — Text and image inputs for vision-capable models
+- **Multimodal** — Text, image, and video inputs for vision-capable models
 - **Self-Hosted** — Full data ownership on your own infrastructure
 - **i18n Ready** — English, French, and Chinese
 
