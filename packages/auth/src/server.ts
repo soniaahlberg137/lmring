@@ -5,6 +5,8 @@
 import { betterAuth, generateId } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { genericOAuth } from 'better-auth/plugins';
+import { emailOTP } from 'better-auth/plugins';
 import {
   db,
   users,
@@ -19,6 +21,7 @@ import type { AuthLogger } from './logger';
 import { authLogger as defaultLogger } from './logger';
 import { AuthErrorCodes, createAuthError } from './errors';
 import { validatePassword } from './password-validation';
+import { createEmailService } from './email';
 
 interface CreateAuthOptions {
   deploymentMode: 'saas' | 'selfhost';
@@ -28,16 +31,22 @@ interface CreateAuthOptions {
   githubClientSecret?: string;
   googleClientId?: string;
   googleClientSecret?: string;
+  linuxdoClientId?: string;
+  linuxdoClientSecret?: string;
+  linuxdoAuthEnabled?: boolean;
+  emailEnabled?: boolean;
+  resendApiKey?: string;
+  emailFrom?: string;
   logger?: AuthLogger;
 }
 
 export function createAuth(options: CreateAuthOptions) {
   const logger = options.logger || defaultLogger;
   type AccountRecord = typeof account.$inferSelect;
-  type OAuthProviderId = 'github' | 'google';
+  type OAuthProviderId = 'github' | 'google' | 'linuxdo';
 
   const isSupportedProvider = (providerId: string): providerId is OAuthProviderId =>
-    providerId === 'github' || providerId === 'google';
+    providerId === 'github' || providerId === 'google' || providerId === 'linuxdo';
 
   const syncProviderIdForUser = async (userId: string, providerId: OAuthProviderId, source: string) => {
     try {
@@ -85,7 +94,6 @@ export function createAuth(options: CreateAuthOptions) {
       provider: 'pg',
     });
 
-    // Prepare the complete betterAuth configuration
     const betterAuthConfig = {
       ...config,
       database: drizzleAdapter(db, {
@@ -98,12 +106,11 @@ export function createAuth(options: CreateAuthOptions) {
         },
       }),
       advanced: {
-        // Use new API: advanced.database.generateId
         database: {
           generateId: (options: { model: string; size?: number }) => {
             // Let database generate UUID for user IDs
             if (options.model === 'user') return undefined;
-            // For other tables (session, account, verification), use Better-Auth's generator
+            // For other tables, use Better-Auth's generator
             return options.size ? generateId(options.size) : generateId();
           },
         },
@@ -119,20 +126,17 @@ export function createAuth(options: CreateAuthOptions) {
         updateAge: 60 * 60 * 24, // 1 day
         freshAge: 60 * 10, // 10 minutes
       },
-      // Account linking configuration
       account: {
         accountLinking: {
           enabled: true,
-          trustedProviders: ['github', 'google'],
+          trustedProviders: ['github', 'google', 'linuxdo'],
         },
       },
-      // User creation hooks to set default role and status
       user: {
-        // Field mapping: map Better-Auth required fields to our database schema
         fields: {
-          name: 'fullName',          // Better-Auth's "name" -> our "fullName"
-          image: 'avatarUrl',        // Better-Auth's "image" -> our "avatarUrl"
-          emailVerified: 'emailVerified', // Keep as is (snake_case in DB)
+          name: 'fullName',
+          image: 'avatarUrl',
+          emailVerified: 'emailVerified',
         },
         additionalFields: {
           username: {
@@ -177,10 +181,8 @@ export function createAuth(options: CreateAuthOptions) {
           },
         },
       },
-      // Hooks to validate user status during sign-in
       hooks: {
         before: createAuthMiddleware(async (ctx) => {
-          // Validate password complexity on sign-up
           if (ctx.path === '/sign-up/email' && ctx.method === 'POST') {
             const password = (ctx.body as { password?: string })?.password;
             if (password) {
@@ -195,7 +197,6 @@ export function createAuth(options: CreateAuthOptions) {
             }
           }
 
-          // Match sign-in endpoints
           if (
             ctx.path === '/sign-in/email' ||
             ctx.path === '/sign-in/social' ||
@@ -209,13 +210,11 @@ export function createAuth(options: CreateAuthOptions) {
           }
         }),
         after: createAuthMiddleware(async (ctx) => {
-          // Match sign-in endpoints
           if (
             ctx.path === '/sign-in/email' ||
             ctx.path === '/sign-in/social' ||
             ctx.path?.includes('/callback')
           ) {
-            // Check if user was successfully authenticated
             const sessionInfo = ctx.context.newSession ?? ctx.context.session;
 
             if (sessionInfo?.user) {
@@ -227,15 +226,12 @@ export function createAuth(options: CreateAuthOptions) {
                 role: user.role,
               });
 
-              // Check user status
               if (user.status === UserStatus.DISABLED) {
                 logger.warn('Disabled user attempted to sign in', {
                   userId: user.id,
                   status: user.status,
                   errorCode: AuthErrorCodes.USER_DISABLED,
                 });
-
-                // Throw error to prevent sign-in
                 throw createAuthError(AuthErrorCodes.USER_DISABLED);
               }
 
@@ -245,11 +241,9 @@ export function createAuth(options: CreateAuthOptions) {
                   status: user.status,
                   errorCode: AuthErrorCodes.USER_PENDING,
                 });
-
                 throw createAuthError(AuthErrorCodes.USER_PENDING);
               }
 
-              // Log successful sign-in for active users
               if (user.status === UserStatus.ACTIVE) {
                 logger.info('User signed in successfully', {
                   userId: user.id,
@@ -263,8 +257,9 @@ export function createAuth(options: CreateAuthOptions) {
                 if (ctx.path?.includes('/callback')) {
                   const isGithub = ctx.path.includes('/callback/github');
                   const isGoogle = ctx.path.includes('/callback/google');
+                  const isLinuxdo = ctx.path.includes('/callback/linuxdo');
 
-                  const providerId = isGithub ? 'github' : isGoogle ? 'google' : undefined;
+                  const providerId = isGithub ? 'github' : isGoogle ? 'google' : isLinuxdo ? 'linuxdo' : undefined;
 
                   if (providerId) {
                     await syncProviderIdForUser(user.id, providerId, 'middleware:callback');
@@ -299,7 +294,144 @@ export function createAuth(options: CreateAuthOptions) {
           },
         },
       },
+      plugins: [] as any[],
     };
+
+    // Add Linux.do OAuth plugin if enabled
+    if (config.linuxdoConfig) {
+      betterAuthConfig.plugins.push(
+        genericOAuth({
+          config: [
+            {
+              providerId: 'linuxdo',
+              clientId: config.linuxdoConfig.clientId,
+              clientSecret: config.linuxdoConfig.clientSecret,
+              authorizationUrl: 'https://connect.linux.do/oauth2/authorize',
+              tokenUrl: 'https://connect.linux.do/oauth2/token',
+              userInfoUrl: 'https://connect.linux.do/api/user',
+              scopes: ['user'],
+              getToken: async ({ code, redirectURI, codeVerifier }) => {
+                logger.debug('Linux.do token exchange request', {
+                  tokenUrl: 'https://connect.linux.do/oauth2/token',
+                  redirectURI,
+                  hasCode: !!code,
+                  hasCodeVerifier: !!codeVerifier,
+                });
+
+                const body = new URLSearchParams({
+                  grant_type: 'authorization_code',
+                  code,
+                  redirect_uri: redirectURI,
+                  client_id: config.linuxdoConfig.clientId,
+                  client_secret: config.linuxdoConfig.clientSecret,
+                });
+
+                let response: Response;
+                try {
+                  response = await fetch('https://connect.linux.do/oauth2/token', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                      Accept: 'application/json',
+                    },
+                    body,
+                  });
+                } catch (fetchError) {
+                  const cause =
+                    fetchError instanceof Error ? (fetchError as any).cause : undefined;
+                  logger.error('Linux.do token exchange network error', {
+                    error:
+                      fetchError instanceof Error ? fetchError.message : 'Unknown error',
+                    cause: cause instanceof Error ? cause.message : undefined,
+                    code: cause?.code,
+                    redirectURI,
+                  });
+                  throw new Error(
+                    `Token exchange failed: network error (${cause instanceof Error ? cause.message : 'fetch failed'})`,
+                  );
+                }
+
+                const responseText = await response.text();
+
+                let data: any;
+                try {
+                  data = JSON.parse(responseText);
+                } catch {
+                  logger.error('Linux.do token exchange returned non-JSON response', {
+                    status: response.status,
+                    body: responseText.slice(0, 500),
+                    redirectURI,
+                  });
+                  throw new Error(`Token exchange failed: non-JSON response (status ${response.status})`);
+                }
+
+                if (!response.ok) {
+                  logger.error('Linux.do token exchange failed', {
+                    status: response.status,
+                    error: data.error,
+                    errorDescription: data.error_description,
+                    redirectURI,
+                  });
+                  throw new Error(`Token exchange failed: ${data.error} - ${data.error_description}`);
+                }
+
+                logger.debug('Linux.do token exchange successful');
+
+                return {
+                  accessToken: data.access_token,
+                  refreshToken: data.refresh_token,
+                  accessTokenExpiresAt: data.expires_in
+                    ? new Date(Date.now() + data.expires_in * 1000)
+                    : undefined,
+                  tokenType: data.token_type,
+                  scopes: data.scope ? data.scope.split(' ') : [],
+                  raw: data,
+                };
+              },
+              mapProfileToUser: (profile: any) => {
+                // Avatar template format: /user_avatar/linux.do/{username}/{size}/xxx.png
+                const avatarUrl = profile.avatar_template
+                  ? `https://linux.do${profile.avatar_template.replace('{size}', '200')}`
+                  : undefined;
+
+                return {
+                  id: String(profile.id),
+                  // Linux.do doesn't provide email - user must add after login
+                  // Use a placeholder that will be detected and require completion
+                  email: `linuxdo_${profile.id}@placeholder.local`,
+                  name: profile.name || profile.username,
+                  image: avatarUrl,
+                };
+              },
+            },
+          ],
+        })
+      );
+      logger.info('Linux.do OAuth plugin configured');
+    }
+
+    // Add Email OTP plugin if enabled
+    if (config.emailConfig) {
+      const emailService = createEmailService({
+        resendApiKey: config.emailConfig.resendApiKey,
+        emailFrom: config.emailConfig.emailFrom,
+      }, logger);
+
+      betterAuthConfig.plugins.push(
+        emailOTP({
+          otpLength: 6,
+          expiresIn: 600, // 10 minutes
+          allowedAttempts: 5,
+          async sendVerificationOTP({ email, otp, type }) {
+            const result = await emailService.sendOTP({ email, otp, type });
+            if (!result.success) {
+              throw new Error(result.error || 'Failed to send verification email');
+            }
+          },
+        })
+      );
+      logger.info('Email OTP plugin configured');
+    }
 
     const auth = betterAuth(betterAuthConfig);
 
@@ -309,6 +441,8 @@ export function createAuth(options: CreateAuthOptions) {
       sessionFreshAge: '10 minutes',
       emailPasswordEnabled: true,
       accountLinkingEnabled: true,
+      linuxdoOAuthEnabled: !!config.linuxdoConfig,
+      emailOTPEnabled: !!config.emailConfig,
     });
 
     return auth;

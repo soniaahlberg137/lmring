@@ -12,14 +12,15 @@ import { SignUpForm } from './SignUpForm';
 interface AuthFormWrapperProps {
   type: 'signin' | 'signup';
   callbackUrl?: string;
+  error?: string;
 }
 
-export function AuthFormWrapper({ type, callbackUrl }: AuthFormWrapperProps) {
+export function AuthFormWrapper({ type, callbackUrl, error }: AuthFormWrapperProps) {
   // Check if we're in SaaS mode - OAuth is only available in SaaS mode
   const showOAuth = env.NEXT_PUBLIC_DEPLOYMENT_MODE === 'saas';
 
   if (type === 'signin') {
-    return <SignInForm callbackUrl={callbackUrl} showOAuth={showOAuth} />;
+    return <SignInForm callbackUrl={callbackUrl} showOAuth={showOAuth} initialError={error} />;
   }
 
   return <SignUpForm callbackUrl={callbackUrl} showOAuth={showOAuth} />;

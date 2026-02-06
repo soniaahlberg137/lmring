@@ -16,6 +16,12 @@ const createAuthInstance = () => {
     githubClientSecret: env.GITHUB_CLIENT_SECRET,
     googleClientId: env.GOOGLE_CLIENT_ID,
     googleClientSecret: env.GOOGLE_CLIENT_SECRET,
+    linuxdoClientId: env.LINUXDO_CLIENT_ID,
+    linuxdoClientSecret: env.LINUXDO_CLIENT_SECRET,
+    linuxdoAuthEnabled: env.NEXT_PUBLIC_LINUXDO_AUTH_ENABLED === 'true',
+    emailEnabled: env.NEXT_PUBLIC_EMAIL_ENABLED === 'true',
+    resendApiKey: env.RESEND_API_KEY,
+    emailFrom: env.EMAIL_FROM,
     logger: {
       warn: (message: string, context?: Record<string, unknown>) => {
         logger.warn(message, context);
