@@ -13,6 +13,12 @@ interface ConfigOptions {
   githubClientSecret?: string;
   googleClientId?: string;
   googleClientSecret?: string;
+  linuxdoClientId?: string;
+  linuxdoClientSecret?: string;
+  linuxdoAuthEnabled?: boolean;
+  emailEnabled?: boolean;
+  resendApiKey?: string;
+  emailFrom?: string;
   logger?: AuthLogger;
 }
 
@@ -25,6 +31,12 @@ export function getAuthConfig(options: ConfigOptions) {
     githubClientSecret,
     googleClientId,
     googleClientSecret,
+    linuxdoClientId,
+    linuxdoClientSecret,
+    linuxdoAuthEnabled = false,
+    emailEnabled = false,
+    resendApiKey,
+    emailFrom = 'noreply@lmring.com',
     logger = defaultLogger,
   } = options;
 
@@ -57,6 +69,7 @@ export function getAuthConfig(options: ConfigOptions) {
     deploymentMode,
     baseURL,
     appName: config.appName,
+    oauthCallbackBase: `${baseURL}/api/auth/oauth2/callback`,
   });
 
   // OAuth providers only in SaaS mode
@@ -138,11 +151,67 @@ export function getAuthConfig(options: ConfigOptions) {
     });
   }
 
+  // Linux.do OAuth - available in both SaaS and selfhost when enabled
+  const linuxdoConfig = linuxdoAuthEnabled && linuxdoClientId && linuxdoClientSecret
+    ? {
+        clientId: linuxdoClientId,
+        clientSecret: linuxdoClientSecret,
+      }
+    : undefined;
+
+  if (linuxdoAuthEnabled) {
+    if (linuxdoConfig) {
+      logger.info('Linux.do OAuth enabled', {
+        provider: 'linuxdo',
+        hasClientId: !!linuxdoClientId,
+        hasClientSecret: !!linuxdoClientSecret,
+      });
+    } else {
+      logger.warn('Linux.do OAuth enabled but credentials not configured', {
+        provider: 'linuxdo',
+        hasClientId: !!linuxdoClientId,
+        hasClientSecret: !!linuxdoClientSecret,
+        missingFields: [
+          !linuxdoClientId && 'LINUXDO_CLIENT_ID',
+          !linuxdoClientSecret && 'LINUXDO_CLIENT_SECRET',
+        ].filter(Boolean),
+      });
+    }
+  }
+
+  // Email configuration
+  const emailConfig = emailEnabled && resendApiKey
+    ? {
+        resendApiKey,
+        emailFrom,
+      }
+    : undefined;
+
+  if (emailEnabled) {
+    if (emailConfig) {
+      logger.info('Email OTP enabled', {
+        emailFrom,
+        hasResendApiKey: !!resendApiKey,
+      });
+    } else {
+      logger.warn('Email enabled but Resend API key not configured', {
+        hasResendApiKey: !!resendApiKey,
+        missingFields: [!resendApiKey && 'RESEND_API_KEY'].filter(Boolean),
+      });
+    }
+  }
+
   logger.debug('Final auth configuration', {
     hasDatabase: !!config.database,
     hasSocialProviders: !!config.socialProviders,
     socialProviderCount: config.socialProviders ? Object.keys(config.socialProviders).length : 0,
+    hasLinuxdoOAuth: !!linuxdoConfig,
+    hasEmailOTP: !!emailConfig,
   });
 
-  return config;
+  return {
+    ...config,
+    linuxdoConfig,
+    emailConfig,
+  };
 }

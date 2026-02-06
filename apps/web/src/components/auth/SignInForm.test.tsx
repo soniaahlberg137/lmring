@@ -163,6 +163,7 @@ describe('SignInForm', () => {
       expect(mocks.mockSignInSocial).toHaveBeenCalledWith({
         provider: 'github',
         callbackURL: '/arena',
+        errorCallbackURL: '/sign-in',
       });
     });
   });
@@ -177,6 +178,7 @@ describe('SignInForm', () => {
       expect(mocks.mockSignInSocial).toHaveBeenCalledWith({
         provider: 'google',
         callbackURL: '/arena',
+        errorCallbackURL: '/sign-in',
       });
     });
   });

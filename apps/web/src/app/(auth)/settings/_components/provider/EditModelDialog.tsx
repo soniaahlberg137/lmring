@@ -121,7 +121,7 @@ export function EditModelDialog({
   }, []);
 
   const handleSubmit = useCallback(
-    async (e: React.FormEvent) => {
+    async (e: React.SubmitEvent) => {
       e.preventDefault();
       setIsSaving(true);
 

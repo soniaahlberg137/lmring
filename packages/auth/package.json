@@ -13,6 +13,14 @@
     "./shared": {
       "types": "./src/shared.ts",
       "default": "./src/shared.ts"
+    },
+    "./placeholder-email": {
+      "types": "./src/placeholder-email.ts",
+      "default": "./src/placeholder-email.ts"
+    },
+    "./email": {
+      "types": "./src/email.ts",
+      "default": "./src/email.ts"
     }
   },
   "scripts": {
@@ -21,7 +29,8 @@
   "dependencies": {
     "@lmring/database": "workspace:*",
     "better-auth": "^1.4.18",
-    "drizzle-orm": "^0.45.1"
+    "drizzle-orm": "^0.45.1",
+    "resend": "^6.9.1"
   },
   "peerDependencies": {
     "react": "^19.2.4"

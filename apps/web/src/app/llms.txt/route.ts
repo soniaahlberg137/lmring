@@ -20,11 +20,13 @@ LMRing is a web application that allows users to compare 2-5 AI models simultane
 Key features:
 - Arena Mode for side-by-side model comparison
 - Video generation comparison (OpenAI Sora, Google Vevo, MiniMax, Kling, Seedance, Vidu, etc.)
+- Authentication via GitHub, Google, and Linux.do OAuth
+- Email OTP verification via Resend
 - Crowdsourced voting system and leaderboard
 - Self-hosted deployment option with full data ownership
 - Internationalization (English, French, Chinese)
 
-Tech stack: Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, DrizzleORM, Better-Auth, Vercel AI SDK
+Tech stack: Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, DrizzleORM, Better-Auth, Resend, Vercel AI SDK
 
 ## Docs
 

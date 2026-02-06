@@ -29,6 +29,7 @@
 - **Leaderboard** — Ranked models with table, bar chart, and scatter plot views
 - **Voting System** — Crowdsource model quality evaluations
 - **Conversation History** — Save, share, and revisit your comparisons
+- **Flexible Auth** — GitHub, Google, and Linux.do OAuth plus Email OTP via Resend
 - **50+ Providers** — OpenAI, Anthropic, Google, DeepSeek, Mistral, and more
 - **Multimodal** — Text, image, and video inputs for vision-capable models
 - **Self-Hosted** — Full data ownership on your own infrastructure
@@ -99,6 +100,12 @@ Deploy to your preferred platform. Configure environment variables as shown abov
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth client secret | No |
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID | No |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret | No |
+| `NEXT_PUBLIC_LINUXDO_AUTH_ENABLED` | Enable Linux.do OAuth | No |
+| `LINUXDO_CLIENT_ID` | Linux.do OAuth client ID | No |
+| `LINUXDO_CLIENT_SECRET` | Linux.do OAuth client secret | No |
+| `NEXT_PUBLIC_EMAIL_ENABLED` | Enable email OTP login | No |
+| `RESEND_API_KEY` | Resend API key for email OTP | No |
+| `EMAIL_FROM` | Sender email address | No |
 
 ## Tech Stack
 
@@ -108,7 +115,7 @@ Deploy to your preferred platform. Configure environment variables as shown abov
 | Styling | Tailwind CSS 4, shadcn/ui |
 | State | Zustand |
 | Database | PostgreSQL, DrizzleORM |
-| Auth | Better-Auth |
+| Auth | Better-Auth, Resend |
 | AI | Vercel AI SDK |
 | Build | Turborepo, pnpm workspaces |
 

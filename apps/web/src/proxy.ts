@@ -16,6 +16,8 @@ import {
 const PROTECTED_PATHS = ['/arena', '/account', '/settings', '/history', '/leaderboard'];
 const AUTH_PATHS = ['/sign-in', '/sign-up'];
 const ACCOUNT_DISABLED_PATH = '/account-disabled';
+const COMPLETE_PROFILE_PATH = '/complete-profile';
+const PLACEHOLDER_EMAIL_DOMAIN = '@placeholder.local';
 const LOCALE_PREFIX_REGEX = /^\/[a-z]{2}(\/|$)/;
 const LOCALE_CAPTURE_REGEX = /^\/([a-z]{2})(\/|$)/;
 
@@ -51,6 +53,17 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
     if (decision.isDenied()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
+  }
+
+  // Intercept OAuth callbacks that land at root instead of the callback path.
+  // LinuxDo's OAuth server may redirect to / instead of /api/auth/oauth2/callback/linuxdo.
+  const oauthCode = request.nextUrl.searchParams.get('code');
+  const oauthState = request.nextUrl.searchParams.get('state');
+  if (request.nextUrl.pathname === '/' && oauthCode && oauthState) {
+    const callbackUrl = new URL('/api/auth/oauth2/callback/linuxdo', request.url);
+    callbackUrl.searchParams.set('code', oauthCode);
+    callbackUrl.searchParams.set('state', oauthState);
+    return NextResponse.redirect(callbackUrl);
   }
 
   const { pathname } = request.nextUrl;
@@ -119,6 +132,19 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
     if (normalizedPath === ACCOUNT_DISABLED_PATH && authUser.status === UserStatus.ACTIVE) {
       const homeUrl = new URL('/', request.url);
       return NextResponse.redirect(homeUrl);
+    }
+
+    // Redirect active users with placeholder email to complete their profile
+    if (
+      authUser.status === UserStatus.ACTIVE &&
+      authUser.email?.endsWith(PLACEHOLDER_EMAIL_DOMAIN)
+    ) {
+      if (normalizedPath !== COMPLETE_PROFILE_PATH) {
+        if (matchesAnyPath(pathname, PROTECTED_PATHS) || normalizedPath === '/') {
+          const completeProfileUrl = new URL(COMPLETE_PROFILE_PATH, request.url);
+          return NextResponse.redirect(completeProfileUrl);
+        }
+      }
     }
   }
 
