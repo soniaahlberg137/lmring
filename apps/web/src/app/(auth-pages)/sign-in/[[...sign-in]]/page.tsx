@@ -5,7 +5,7 @@ import { getRequestLocale } from '@/libs/request-locale';
 import { getServerTranslations } from '@/libs/server-translations';
 
 type ISignInPageProps = {
-  searchParams: Promise<{ callbackUrl?: string }>;
+  searchParams: Promise<{ callbackUrl?: string; error?: string }>;
 };
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,7 +19,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SignInPage(props: ISignInPageProps) {
-  const { callbackUrl } = await props.searchParams;
+  const { callbackUrl, error } = await props.searchParams;
   const locale = await getRequestLocale();
   const t = await getServerTranslations(locale);
 
@@ -30,7 +30,7 @@ export default async function SignInPage(props: ISignInPageProps) {
         <p className="mt-2 text-sm text-muted-foreground">{t('SignIn.meta_description')}</p>
       </div>
 
-      <AuthFormWrapper type="signin" callbackUrl={callbackUrl || '/arena'} />
+      <AuthFormWrapper type="signin" callbackUrl={callbackUrl || '/arena'} error={error} />
 
       <div className="text-center text-sm">
         <span className="text-muted-foreground">Don't have an account? </span>

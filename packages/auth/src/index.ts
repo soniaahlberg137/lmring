@@ -68,3 +68,10 @@ export {
   getPasswordStrength,
 } from './password-validation';
 export type { PasswordRuleCheck, PasswordValidationResult } from './password-validation';
+
+// Export placeholder email utilities
+export { isPlaceholderEmail, PLACEHOLDER_EMAIL_DOMAIN } from './placeholder-email';
+
+// Export email service
+export { createEmailService } from './email';
+export type { EmailService, OTPType } from './email';

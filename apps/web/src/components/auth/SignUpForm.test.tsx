@@ -200,6 +200,7 @@ describe('SignUpForm', () => {
       expect(mocks.mockSignInSocial).toHaveBeenCalledWith({
         provider: 'github',
         callbackURL: '/arena',
+        errorCallbackURL: '/sign-in',
       });
     });
   });

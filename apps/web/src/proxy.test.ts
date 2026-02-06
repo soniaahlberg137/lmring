@@ -332,6 +332,94 @@ describe('proxy', () => {
     });
   });
 
+  describe('Placeholder Email Redirect', () => {
+    beforeEach(() => {
+      delete process.env.ARCJET_KEY;
+    });
+
+    it('should redirect active user with placeholder email from /arena to /complete-profile', async () => {
+      mockGetSession.mockResolvedValue({
+        user: {
+          id: 'user-linuxdo',
+          email: 'linuxdo_123@placeholder.local',
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/arena');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get('location')).toContain('/complete-profile');
+    });
+
+    it('should redirect active user with placeholder email from / to /complete-profile', async () => {
+      mockGetSession.mockResolvedValue({
+        user: {
+          id: 'user-linuxdo',
+          email: 'linuxdo_456@placeholder.local',
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(307);
+      expect(response.headers.get('location')).toContain('/complete-profile');
+    });
+
+    it('should allow active user with placeholder email to stay on /complete-profile', async () => {
+      mockGetSession.mockResolvedValue({
+        user: {
+          id: 'user-linuxdo',
+          email: 'linuxdo_123@placeholder.local',
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/complete-profile');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).not.toBe(307);
+    });
+
+    it('should not redirect active user with real email', async () => {
+      mockGetSession.mockResolvedValue({
+        user: {
+          id: 'user-real',
+          email: 'real@example.com',
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/arena');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).not.toBe(307);
+    });
+
+    it('should not redirect placeholder email user accessing non-protected paths', async () => {
+      mockGetSession.mockResolvedValue({
+        user: {
+          id: 'user-linuxdo',
+          email: 'linuxdo_123@placeholder.local',
+          status: UserStatus.ACTIVE,
+        },
+      });
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/about');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).not.toBe(307);
+    });
+  });
+
   describe('Auth Routes', () => {
     beforeEach(() => {
       delete process.env.ARCJET_KEY;
@@ -363,6 +451,64 @@ describe('proxy', () => {
       const response = await proxy(request, createMockEvent());
 
       expect(response.status).not.toBe(307);
+    });
+  });
+
+  describe('OAuth Callback Interception', () => {
+    beforeEach(() => {
+      delete process.env.ARCJET_KEY;
+    });
+
+    it('should redirect /?code=...&state=... to /api/auth/oauth2/callback/linuxdo', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/', {
+        searchParams: { code: 'test-code', state: 'test-state' },
+      });
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(307);
+      const location = response.headers.get('location');
+      expect(location).toContain('/api/auth/oauth2/callback/linuxdo');
+      expect(location).toContain('code=test-code');
+      expect(location).toContain('state=test-state');
+    });
+
+    it('should not intercept / without code param', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/', {
+        searchParams: { state: 'test-state' },
+      });
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should not intercept / without state param', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/', {
+        searchParams: { code: 'test-code' },
+      });
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(200);
+    });
+
+    it('should not intercept non-root paths with code and state', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/about', {
+        searchParams: { code: 'test-code', state: 'test-state' },
+      });
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).toBe(200);
     });
   });
 

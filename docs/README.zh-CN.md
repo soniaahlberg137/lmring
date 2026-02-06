@@ -22,11 +22,13 @@
 ## 功能特性
 
 - **竞技场模式** — 同时对比 2-5 个 AI 模型，实时流式输出
+- **视频生成** — 支持 7 家视频生成服务商对比（OpenAI Sora、Google Vevo、MiniMax、Kling、Seedance、Vidu 等）
 - **排行榜** — 模型排名，支持表格、柱状图和散点图视图
 - **投票系统** — 众包模型质量评估
 - **对话历史** — 保存、分享和回顾你的对比记录
+- **灵活认证** — 支持 GitHub、Google 和 Linux.do OAuth 登录，以及 Resend 邮箱 OTP 验证
 - **50+ 服务商** — OpenAI、Anthropic、Google、DeepSeek、Mistral 等
-- **多模态** — 支持文本和图像输入（针对具有视觉能力的模型）
+- **多模态** — 支持文本、图像和视频输入
 - **自托管** — 在自己的基础设施上完全掌控数据
 - **多语言** — 支持英语、法语和中文
 
@@ -95,6 +97,12 @@ docker compose up -d
 | `GITHUB_CLIENT_SECRET` | GitHub OAuth 客户端密钥 | 否 |
 | `GOOGLE_CLIENT_ID` | Google OAuth 客户端 ID | 否 |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth 客户端密钥 | 否 |
+| `NEXT_PUBLIC_LINUXDO_AUTH_ENABLED` | 启用 Linux.do OAuth | 否 |
+| `LINUXDO_CLIENT_ID` | Linux.do OAuth 客户端 ID | 否 |
+| `LINUXDO_CLIENT_SECRET` | Linux.do OAuth 客户端密钥 | 否 |
+| `NEXT_PUBLIC_EMAIL_ENABLED` | 启用邮箱 OTP 登录 | 否 |
+| `RESEND_API_KEY` | Resend API 密钥（用于邮箱 OTP） | 否 |
+| `EMAIL_FROM` | 发件人邮箱地址 | 否 |
 
 ## 技术栈
 
@@ -104,7 +112,7 @@ docker compose up -d
 | 样式 | Tailwind CSS 4, shadcn/ui |
 | 状态管理 | Zustand |
 | 数据库 | PostgreSQL, DrizzleORM |
-| 认证 | Better-Auth |
+| 认证 | Better-Auth, Resend |
 | AI | Vercel AI SDK |
 | 构建 | Turborepo, pnpm workspaces |
 

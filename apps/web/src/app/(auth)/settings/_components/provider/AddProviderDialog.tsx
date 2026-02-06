@@ -44,7 +44,7 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
 
     if (!name || !providerType || isSubmitting) return;

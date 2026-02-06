@@ -2,6 +2,29 @@ import type { ChatModelCard } from '../types';
 
 const anthropicModels: ChatModelCard[] = [
   {
+    id: 'claude-opus-4-6',
+    displayName: 'Claude Opus 4.6',
+    description:
+      'Claude Opus 4.6 是 Anthropic 最新旗舰模型，具备自适应思考、百万级上下文窗口和增强的编程代理能力。',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      vision: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+    },
+    pricing: {
+      input: 5,
+      output: 25,
+      cachedInput: 1.5,
+    },
+    releasedAt: '2026-02-05',
+  },
+  {
     id: 'claude-opus-4-5-20251101',
     displayName: 'Claude Opus 4.5',
     description: 'Claude Opus 4.5 是 Anthropic 最强大的模型，具备顶级推理、搜索和结构化输出能力。',

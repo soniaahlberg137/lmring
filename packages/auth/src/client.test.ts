@@ -18,18 +18,22 @@ describe('client', () => {
     it('creates auth client with baseURL', () => {
       const client = createClient({ baseURL: 'http://localhost:3000' });
 
-      expect(createAuthClient).toHaveBeenCalledWith({
-        baseURL: 'http://localhost:3000',
-      });
+      expect(createAuthClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseURL: 'http://localhost:3000',
+        })
+      );
       expect(client).toBeDefined();
     });
 
     it('passes different baseURL correctly', () => {
       createClient({ baseURL: 'https://example.com' });
 
-      expect(createAuthClient).toHaveBeenCalledWith({
-        baseURL: 'https://example.com',
-      });
+      expect(createAuthClient).toHaveBeenCalledWith(
+        expect.objectContaining({
+          baseURL: 'https://example.com',
+        })
+      );
     });
 
     it('returns auth client object', () => {

@@ -149,7 +149,7 @@ describe('server', () => {
       const betterAuthCall = (betterAuth as any).mock.calls[0][0];
       expect(betterAuthCall.account.accountLinking).toEqual({
         enabled: true,
-        trustedProviders: ['github', 'google'],
+        trustedProviders: ['github', 'google', 'linuxdo'],
       });
     });
 
