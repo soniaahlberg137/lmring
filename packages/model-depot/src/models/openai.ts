@@ -14,6 +14,21 @@ import type {
 
 const openaiChatModels: ChatModelCard[] = [
   {
+    id: 'gpt-5.3-codex',
+    displayName: 'GPT-5.3 Codex',
+    description: 'GPT-5.3 Codex 是 OpenAI 最强大的编程代理模型，结合前沿编码性能与通用推理能力。',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    releasedAt: '2026-02-05',
+  },
+  {
     id: 'gpt-5.2',
     displayName: 'GPT-5.2',
     description: 'GPT-5.2 是针对编码和 agent 工作流优化的旗舰模型，具备更强的推理和长上下文性能。',
