@@ -32,30 +32,7 @@ export default async function ForgotPasswordPage() {
         <p className="mt-2 text-sm text-muted-foreground">{t('ForgotPassword.meta_description')}</p>
       </div>
 
-      <ForgotPasswordForm
-        translations={{
-          emailLabel: t('ForgotPassword.email_label'),
-          emailPlaceholder: t('ForgotPassword.email_placeholder'),
-          sendCodeButton: t('ForgotPassword.send_code_button'),
-          sendingCodeButton: t('ForgotPassword.sending_code_button'),
-          verifyTitle: t('ForgotPassword.verify_title'),
-          verifyDescription: t('ForgotPassword.verify_description'),
-          otpLabel: t('ForgotPassword.otp_label'),
-          otpPlaceholder: t('ForgotPassword.otp_placeholder'),
-          newPasswordLabel: t('ForgotPassword.new_password_label'),
-          newPasswordPlaceholder: t('ForgotPassword.new_password_placeholder'),
-          confirmPasswordLabel: t('ForgotPassword.confirm_password_label'),
-          confirmPasswordPlaceholder: t('ForgotPassword.confirm_password_placeholder'),
-          resetButton: t('ForgotPassword.reset_button'),
-          resettingButton: t('ForgotPassword.resetting_button'),
-          resendCode: t('ForgotPassword.resend_code'),
-          resendingCode: t('ForgotPassword.resending_code'),
-          successTitle: t('ForgotPassword.success_title'),
-          successDescription: t('ForgotPassword.success_description'),
-          signInLink: t('ForgotPassword.sign_in_link'),
-          passwordsMismatch: t('ForgotPassword.passwords_mismatch'),
-        }}
-      />
+      <ForgotPasswordForm />
 
       <div className="text-center text-sm">
         <Link

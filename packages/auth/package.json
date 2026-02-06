@@ -13,6 +13,14 @@
     "./shared": {
       "types": "./src/shared.ts",
       "default": "./src/shared.ts"
+    },
+    "./placeholder-email": {
+      "types": "./src/placeholder-email.ts",
+      "default": "./src/placeholder-email.ts"
+    },
+    "./email": {
+      "types": "./src/email.ts",
+      "default": "./src/email.ts"
     }
   },
   "scripts": {

@@ -1,11 +1,14 @@
 'use server';
 
-import { createEmailService, isPlaceholderEmail } from '@lmring/auth';
+import { createEmailService } from '@lmring/auth/email';
+import { isPlaceholderEmail } from '@lmring/auth/placeholder-email';
 import { and, db, eq, ne, session as sessionTable, users, verification } from '@lmring/database';
 import { env } from '@lmring/env';
 import { headers } from 'next/headers';
 
 import { auth } from '@/libs/Auth';
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function sendProfileOTP(email: string): Promise<{ success: boolean; error?: string }> {
   const session = await auth.api.getSession({
@@ -20,8 +23,7 @@ export async function sendProfileOTP(email: string): Promise<{ success: boolean;
     return { success: false, error: 'Profile already completed' };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
+  if (!email || !EMAIL_REGEX.test(email)) {
     return { success: false, error: 'Invalid email address' };
   }
 
@@ -88,16 +90,13 @@ export async function verifyProfileOTP(
     return { success: false, error: 'Profile already completed' };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
+  if (!email || !EMAIL_REGEX.test(email)) {
     return { success: false, error: 'Invalid email address' };
   }
 
   if (!otp || otp.length !== 6) {
     return { success: false, error: 'Invalid verification code' };
   }
-
-  let verified = false;
 
   try {
     // Better-Auth email-otp stores identifier as `{type}-otp-{email}`
@@ -148,35 +147,30 @@ export async function verifyProfileOTP(
       return { success: false, error: 'This email address is already in use' };
     }
 
-    // Update user email - verified via OTP
-    await db
-      .update(users)
-      .set({
-        email: email.toLowerCase(),
-        emailVerified: true,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, session.user.id));
+    // Update user email and touch session in parallel
+    const now = new Date();
+    await Promise.all([
+      db
+        .update(users)
+        .set({
+          email: email.toLowerCase(),
+          emailVerified: true,
+          updatedAt: now,
+        })
+        .where(eq(users.id, session.user.id)),
+      db
+        .update(sessionTable)
+        .set({ updatedAt: now })
+        .where(eq(sessionTable.userId, session.user.id)),
+    ]);
 
-    // Touch session so middleware sees fresh data
-    await db
-      .update(sessionTable)
-      .set({ updatedAt: new Date() })
-      .where(eq(sessionTable.userId, session.user.id));
-
-    verified = true;
+    return { success: true };
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
-
-  if (verified) {
-    return { success: true };
-  }
-
-  return { success: false, error: 'An unexpected error occurred' };
 }
 
 export async function updateProfileEmail(
@@ -194,12 +188,9 @@ export async function updateProfileEmail(
     return { success: false, error: 'Profile already completed' };
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email || !emailRegex.test(email)) {
+  if (!email || !EMAIL_REGEX.test(email)) {
     return { success: false, error: 'Invalid email address' };
   }
-
-  let updated = false;
 
   try {
     // Check email uniqueness
@@ -212,33 +203,28 @@ export async function updateProfileEmail(
       return { success: false, error: 'This email address is already in use' };
     }
 
-    // Update user email without verification (email service not enabled)
-    await db
-      .update(users)
-      .set({
-        email: email.toLowerCase(),
-        emailVerified: false,
-        updatedAt: new Date(),
-      })
-      .where(eq(users.id, session.user.id));
+    // Update user email and touch session in parallel
+    const now = new Date();
+    await Promise.all([
+      db
+        .update(users)
+        .set({
+          email: email.toLowerCase(),
+          emailVerified: false,
+          updatedAt: now,
+        })
+        .where(eq(users.id, session.user.id)),
+      db
+        .update(sessionTable)
+        .set({ updatedAt: now })
+        .where(eq(sessionTable.userId, session.user.id)),
+    ]);
 
-    // Touch session so middleware sees fresh data
-    await db
-      .update(sessionTable)
-      .set({ updatedAt: new Date() })
-      .where(eq(sessionTable.userId, session.user.id));
-
-    updated = true;
+    return { success: true };
   } catch (error) {
     return {
       success: false,
       error: error instanceof Error ? error.message : 'An unexpected error occurred',
     };
   }
-
-  if (updated) {
-    return { success: true };
-  }
-
-  return { success: false, error: 'An unexpected error occurred' };
 }

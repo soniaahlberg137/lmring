@@ -22,19 +22,23 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function VerifyEmailPage(props: IVerifyEmailPageProps) {
-  const locale = await getRequestLocale();
-  const t = await getServerTranslations(locale);
-  const { email, callbackUrl } = await props.searchParams;
+  const [locale, hdrs, searchParams] = await Promise.all([
+    getRequestLocale(),
+    headers(),
+    props.searchParams,
+  ]);
+  const { email, callbackUrl } = searchParams;
 
   // If email is not enabled, redirect to sign-in
   if (env.NEXT_PUBLIC_EMAIL_ENABLED !== 'true') {
     redirect('/sign-in');
   }
 
-  // Get the current session to check if user is logged in
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // Get the current session and translations in parallel
+  const [t, session] = await Promise.all([
+    getServerTranslations(locale),
+    auth.api.getSession({ headers: hdrs }),
+  ]);
 
   // Use session email if available, otherwise use query param
   const userEmail = session?.user?.email || email;
@@ -56,20 +60,7 @@ export default async function VerifyEmailPage(props: IVerifyEmailPageProps) {
         <p className="mt-2 text-sm text-muted-foreground">{t('VerifyEmail.meta_description')}</p>
       </div>
 
-      <VerifyEmailForm
-        email={userEmail}
-        callbackUrl={callbackUrl || '/arena'}
-        translations={{
-          description: t('VerifyEmail.description'),
-          otpLabel: t('VerifyEmail.otp_label'),
-          otpPlaceholder: t('VerifyEmail.otp_placeholder'),
-          verifyButton: t('VerifyEmail.verify_button'),
-          verifyingButton: t('VerifyEmail.verifying_button'),
-          resendCode: t('VerifyEmail.resend_code'),
-          resendingCode: t('VerifyEmail.resending_code'),
-          codeSent: t('VerifyEmail.code_sent'),
-        }}
-      />
+      <VerifyEmailForm email={userEmail} callbackUrl={callbackUrl || '/arena'} />
     </div>
   );
 }

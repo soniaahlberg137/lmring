@@ -1,4 +1,4 @@
-import { isPlaceholderEmail } from '@lmring/auth';
+import { isPlaceholderEmail } from '@lmring/auth/placeholder-email';
 import type { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
@@ -18,13 +18,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function CompleteProfilePage() {
-  const locale = await getRequestLocale();
-  const t = await getServerTranslations(locale);
-
-  // Get the current session
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const [locale, hdrs] = await Promise.all([getRequestLocale(), headers()]);
+  const [t, session] = await Promise.all([
+    getServerTranslations(locale),
+    auth.api.getSession({ headers: hdrs }),
+  ]);
 
   // If not logged in, redirect to sign-in
   if (!session?.user) {
@@ -45,23 +43,7 @@ export default async function CompleteProfilePage() {
         </p>
       </div>
 
-      <CompleteProfileForm
-        userName={session.user.name || ''}
-        translations={{
-          emailLabel: t('CompleteProfile.email_label'),
-          emailPlaceholder: t('CompleteProfile.email_placeholder'),
-          submitButton: t('CompleteProfile.submit_button'),
-          submittingButton: t('CompleteProfile.submitting_button'),
-          verifyTitle: t('CompleteProfile.verify_title'),
-          verifyDescription: t('CompleteProfile.verify_description'),
-          otpLabel: t('CompleteProfile.otp_label'),
-          otpPlaceholder: t('CompleteProfile.otp_placeholder'),
-          verifyButton: t('CompleteProfile.verify_button'),
-          verifyingButton: t('CompleteProfile.verifying_button'),
-          resendCode: t('CompleteProfile.resend_code'),
-          resendingCode: t('CompleteProfile.resending_code'),
-        }}
-      />
+      <CompleteProfileForm userName={session.user.name || ''} />
     </div>
   );
 }

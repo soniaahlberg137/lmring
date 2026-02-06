@@ -2,27 +2,15 @@
 
 import { env } from '@lmring/env';
 import { useState } from 'react';
+import { useTranslations } from '@/hooks/use-translations';
 import { sendProfileOTP, updateProfileEmail, verifyProfileOTP } from './actions';
 
 interface CompleteProfileFormProps {
   userName: string;
-  translations: {
-    emailLabel: string;
-    emailPlaceholder: string;
-    submitButton: string;
-    submittingButton: string;
-    verifyTitle: string;
-    verifyDescription: string;
-    otpLabel: string;
-    otpPlaceholder: string;
-    verifyButton: string;
-    verifyingButton: string;
-    resendCode: string;
-    resendingCode: string;
-  };
 }
 
-export function CompleteProfileForm({ userName, translations }: CompleteProfileFormProps) {
+export function CompleteProfileForm({ userName }: CompleteProfileFormProps) {
+  const t = useTranslations();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
@@ -112,16 +100,16 @@ export function CompleteProfileForm({ userName, translations }: CompleteProfileF
     return (
       <div className="w-full max-w-md space-y-6">
         <div className="text-center">
-          <h2 className="text-xl font-semibold">{translations.verifyTitle}</h2>
+          <h2 className="text-xl font-semibold">{t('CompleteProfile.verify_title')}</h2>
           <p className="mt-2 text-sm text-muted-foreground">
-            {translations.verifyDescription.replace('{{email}}', email)}
+            {t('CompleteProfile.verify_description', { email })}
           </p>
         </div>
 
         <form onSubmit={handleVerifySubmit} className="space-y-4">
           <div>
             <label htmlFor="otp" className="block text-sm font-medium mb-2">
-              {translations.otpLabel}
+              {t('CompleteProfile.otp_label')}
             </label>
             <input
               id="otp"
@@ -131,24 +119,26 @@ export function CompleteProfileForm({ userName, translations }: CompleteProfileF
               required
               maxLength={6}
               className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring text-center text-2xl tracking-widest"
-              placeholder={translations.otpPlaceholder}
+              placeholder={t('CompleteProfile.otp_placeholder')}
               disabled={isSubmitting || isResending}
               autoComplete="one-time-code"
             />
           </div>
 
-          {error && (
+          {error ? (
             <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
               {error}
             </div>
-          )}
+          ) : null}
 
           <button
             type="submit"
             disabled={isSubmitting || otp.length !== 6}
             className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
           >
-            {isSubmitting ? translations.verifyingButton : translations.verifyButton}
+            {isSubmitting
+              ? t('CompleteProfile.verifying_button')
+              : t('CompleteProfile.verify_button')}
           </button>
 
           <div className="text-center">
@@ -158,7 +148,7 @@ export function CompleteProfileForm({ userName, translations }: CompleteProfileF
               disabled={isSubmitting || isResending}
               className="text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
             >
-              {isResending ? translations.resendingCode : translations.resendCode}
+              {isResending ? t('CompleteProfile.resending_code') : t('CompleteProfile.resend_code')}
             </button>
           </div>
         </form>
@@ -168,18 +158,18 @@ export function CompleteProfileForm({ userName, translations }: CompleteProfileF
 
   return (
     <div className="w-full max-w-md space-y-6">
-      {userName && (
+      {userName ? (
         <div className="text-center">
           <p className="text-sm text-muted-foreground">
             Welcome, <span className="font-medium text-foreground">{userName}</span>!
           </p>
         </div>
-      )}
+      ) : null}
 
       <form onSubmit={handleEmailSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-2">
-            {translations.emailLabel}
+            {t('CompleteProfile.email_label')}
           </label>
           <input
             id="email"
@@ -188,23 +178,25 @@ export function CompleteProfileForm({ userName, translations }: CompleteProfileF
             onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            placeholder={translations.emailPlaceholder}
+            placeholder={t('CompleteProfile.email_placeholder')}
             disabled={isSubmitting}
           />
         </div>
 
-        {error && (
+        {error ? (
           <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg">
             {error}
           </div>
-        )}
+        ) : null}
 
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-lg font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
         >
-          {isSubmitting ? translations.submittingButton : translations.submitButton}
+          {isSubmitting
+            ? t('CompleteProfile.submitting_button')
+            : t('CompleteProfile.submit_button')}
         </button>
       </form>
     </div>
