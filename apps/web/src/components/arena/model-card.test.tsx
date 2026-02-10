@@ -57,6 +57,10 @@ vi.mock('@/components/arena/chat/chat-list', () => ({
   ChatList: () => <div data-testid="chat-list" />,
 }));
 
+vi.mock('./vote-button', () => ({
+  VoteButton: () => <div data-testid="vote-button" />,
+}));
+
 describe('ModelCard', () => {
   const models: ModelOption[] = [
     {
@@ -82,35 +86,14 @@ describe('ModelCard', () => {
     expect(screen.getByText('Test description')).toBeInTheDocument();
   });
 
-  it('does not call onVoteClick when card is clicked (voting disabled)', () => {
-    const onVoteClick = vi.fn();
-
-    render(
-      <ModelCard
-        modelId="openai:gpt-4o"
-        models={models}
-        isVotable
-        voteState="none"
-        onVoteClick={onVoteClick}
-      />,
-    );
+  it('does not have card-level click voting behavior', () => {
+    render(<ModelCard modelId="openai:gpt-4o" models={models} voteState="none" />);
 
     fireEvent.click(screen.getByTestId('card'));
-    expect(onVoteClick).not.toHaveBeenCalled();
   });
 
-  it('does not bubble click from settings button to vote handler', () => {
-    const onVoteClick = vi.fn();
-
-    render(
-      <ModelCard
-        modelId="openai:gpt-4o"
-        models={models}
-        isVotable
-        voteState="none"
-        onVoteClick={onVoteClick}
-      />,
-    );
+  it('does not bubble click from settings button', () => {
+    render(<ModelCard modelId="openai:gpt-4o" models={models} voteState="none" />);
 
     const settingsIcon = screen.getByTestId('icon-SlidersHorizontalIcon');
     const settingsButton = settingsIcon.closest('button');
@@ -118,7 +101,6 @@ describe('ModelCard', () => {
     if (settingsButton) {
       fireEvent.click(settingsButton);
     }
-    expect(onVoteClick).not.toHaveBeenCalled();
   });
 
   it('calls onConfigChange when slider changes', () => {
