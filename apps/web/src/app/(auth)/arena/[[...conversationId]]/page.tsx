@@ -1689,6 +1689,10 @@ export default function ArenaPage() {
                     voteState={voteState}
                     hoverState={hoverState}
                     isVotable={isVotable}
+                    isVoteSubmitting={isVoteSubmitting}
+                    onVoteClick={() => handleVoteCardClick(comparison.id)}
+                    onVoteHover={() => handleVoteCardHover(comparison.id)}
+                    onVoteHoverLeave={handleVoteCardHoverLeave}
                     onModelSelect={(modelId) => handleModelSelect(index, modelId)}
                     onSyncToggle={(synced) => handleSyncToggle(index, synced)}
                     onConfigChange={(config) => handleConfigChange(index, config)}
@@ -1704,9 +1708,6 @@ export default function ArenaPage() {
                     }
                     onRetry={(messageId) => handleRetry(comparison.id, messageId)}
                     onMaximize={handleMaximize}
-                    onVoteClick={() => handleVoteCardClick(comparison.id)}
-                    onVoteHover={() => handleVoteCardHover(comparison.id)}
-                    onVoteHoverLeave={handleVoteCardHoverLeave}
                   />
                 </motion.div>
               );
@@ -1715,15 +1716,18 @@ export default function ArenaPage() {
         </div>
       </div>
 
-      <div className="border-t bg-background/95 backdrop-blur-sm flex-shrink-0">
-        <div className="p-4 space-y-4">
-          {isVotingAvailable && votingContext && votingContext.modelResponses.length >= 2 && (
-            <VoteBar
-              messageId={votingContext.messageId}
-              modelResponses={votingContext.modelResponses}
-              comparisonType="text"
-            />
-          )}
+      <div className="bg-background/95 backdrop-blur-sm flex-shrink-0">
+        <div className="px-4 pt-1 pb-4 space-y-2">
+          <VoteBar
+            messageId={votingContext?.messageId ?? ''}
+            modelResponses={votingContext?.modelResponses ?? []}
+            comparisonType="text"
+            disabled={
+              !isVotingAvailable ||
+              !votingContext ||
+              (votingContext?.modelResponses?.length ?? 0) < 2
+            }
+          />
           <PromptInput
             value={workflowGlobalPrompt}
             onChange={setWorkflowGlobalPrompt}
