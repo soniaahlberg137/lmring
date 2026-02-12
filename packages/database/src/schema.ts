@@ -66,6 +66,15 @@ export const voteOutcomeEnum = pgEnum('vote_outcome', [
 ]);
 export const userStatusEnum = pgEnum('user_status', ['active', 'disabled', 'pending']);
 
+// WebDev enums
+export const webdevStatusEnum = pgEnum('webdev_status', [
+  'generating',
+  'building',
+  'ready',
+  'error',
+  'expired',
+]);
+
 // Users table
 export const users = pgTable(
   'users',
@@ -395,6 +404,68 @@ export const sharedResults = pgTable(
   ],
 );
 
+// WebDev sessions
+export const webdevSessions = pgTable(
+  'webdev_sessions',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    prompt: text('prompt').notNull(),
+    status: webdevStatusEnum('status').default('generating').notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('webdev_sessions_user_id_idx').on(table.userId),
+  ],
+);
+
+// WebDev responses (one per model per session)
+export const webdevResponses = pgTable(
+  'webdev_responses',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    sessionId: uuid('session_id')
+      .references(() => webdevSessions.id, { onDelete: 'cascade' })
+      .notNull(),
+    modelId: text('model_id').notNull(),
+    keyId: uuid('key_id').notNull(),
+    status: webdevStatusEnum('status').default('generating').notNull(),
+    files: jsonb('files').$type<Record<string, string>>(),
+    sandboxId: text('sandbox_id'),
+    previewUrl: text('preview_url'),
+    generatedCode: text('generated_code'),
+    error: text('error'),
+    tokensUsed: integer('tokens_used'),
+    responseTimeMs: integer('response_time_ms'),
+    displayPosition: integer('display_position').default(0).notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('webdev_responses_session_id_idx').on(table.sessionId),
+  ],
+);
+
+// WebDev iterations (prompt history within a session for refine/iterate)
+export const webdevIterations = pgTable(
+  'webdev_iterations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    sessionId: uuid('session_id')
+      .references(() => webdevSessions.id, { onDelete: 'cascade' })
+      .notNull(),
+    prompt: text('prompt').notNull(),
+    version: integer('version').default(1).notNull(),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('webdev_iterations_session_id_idx').on(table.sessionId),
+  ],
+);
+
 // Session table
 export const session = pgTable(
   'session',
@@ -473,6 +544,7 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   files: many(files),
   sessions: many(session),
   accounts: many(account),
+  webdevSessions: many(webdevSessions),
 }));
 
 export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
@@ -581,6 +653,29 @@ export const sharedResultsRelations = relations(sharedResults, ({ one }) => ({
   }),
 }));
 
+export const webdevSessionsRelations = relations(webdevSessions, ({ one, many }) => ({
+  user: one(users, {
+    fields: [webdevSessions.userId],
+    references: [users.id],
+  }),
+  responses: many(webdevResponses),
+  iterations: many(webdevIterations),
+}));
+
+export const webdevResponsesRelations = relations(webdevResponses, ({ one }) => ({
+  session: one(webdevSessions, {
+    fields: [webdevResponses.sessionId],
+    references: [webdevSessions.id],
+  }),
+}));
+
+export const webdevIterationsRelations = relations(webdevIterations, ({ one }) => ({
+  session: one(webdevSessions, {
+    fields: [webdevIterations.sessionId],
+    references: [webdevSessions.id],
+  }),
+}));
+
 export const sessionRelations = relations(session, ({ one }) => ({
   user: one(users, {
     fields: [session.userId],
@@ -630,7 +725,14 @@ export type ComparisonVoteResult = typeof comparisonVoteResults.$inferSelect;
 export type NewComparisonVoteResult = typeof comparisonVoteResults.$inferInsert;
 export type ModelComparisonStat = typeof modelComparisonStats.$inferSelect;
 export type NewModelComparisonStat = typeof modelComparisonStats.$inferInsert;
+export type WebDevSession = typeof webdevSessions.$inferSelect;
+export type NewWebDevSession = typeof webdevSessions.$inferInsert;
+export type WebDevResponse = typeof webdevResponses.$inferSelect;
+export type NewWebDevResponse = typeof webdevResponses.$inferInsert;
+export type WebDevIteration = typeof webdevIterations.$inferSelect;
+export type NewWebDevIteration = typeof webdevIterations.$inferInsert;
 
 // Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
 export type VoteOutcome = (typeof voteOutcomeEnum.enumValues)[number];
+export type WebDevStatus = (typeof webdevStatusEnum.enumValues)[number];

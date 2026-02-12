@@ -4,6 +4,7 @@ import { ScrollArea, SidebarConversationSkeleton } from '@lmring/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ClockIcon,
+  CodeIcon,
   MenuIcon,
   MessageSquareIcon,
   MessageSquarePlusIcon,
@@ -30,7 +31,7 @@ interface RecentConversation {
 }
 
 interface NavItem {
-  titleKey: 'new_chat' | 'leaderboard' | 'history';
+  titleKey: 'new_chat' | 'leaderboard' | 'history' | 'web_dev';
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
@@ -41,6 +42,12 @@ const navItemsConfig: NavItem[] = [
     titleKey: 'new_chat',
     href: '/arena',
     icon: MessageSquarePlusIcon,
+  },
+  {
+    titleKey: 'web_dev',
+    href: '/webdev',
+    icon: CodeIcon,
+    badge: 'Beta',
   },
   {
     titleKey: 'leaderboard',

@@ -14,6 +14,18 @@ const { toastMock } = vi.hoisted(() => ({
 }));
 vi.mock('sonner', () => ({ toast: toastMock }));
 
+const { routerPushMock } = vi.hoisted(() => ({
+  routerPushMock: vi.fn(),
+}));
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: routerPushMock }),
+}));
+
+vi.mock('@/stores/arena-store', () => ({
+  useArenaStore: (selector: (s: { comparisons: Array<{ modelId: string }> }) => unknown) =>
+    selector({ comparisons: [{ modelId: 'model-1' }, { modelId: 'model-2' }] }),
+}));
+
 const { promptContextMock } = vi.hoisted(() => ({
   promptContextMock: vi.fn(),
 }));
@@ -36,6 +48,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode: vi.fn(),
+      value: '',
       uploadedImages: [],
       addImages,
       isLoading: false,
@@ -58,6 +71,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode: vi.fn(),
+      value: '',
       uploadedImages: [],
       addImages,
       isLoading: false,
@@ -81,6 +95,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode,
+      value: '',
       uploadedImages: [],
       addImages: vi.fn(),
       isLoading: false,
@@ -97,6 +112,28 @@ describe('prompt-input-features', () => {
     const imageButton = buttons[2];
     if (imageButton) fireEvent.click(imageButton);
     expect(setMode).toHaveBeenCalledWith('imageGenerate');
+  });
+
+  it('Code button navigates to /webdev with prompt and models', () => {
+    promptContextMock.mockReturnValue({
+      mode: 'default',
+      setMode: vi.fn(),
+      value: 'Build a todo app',
+      uploadedImages: [],
+      addImages: vi.fn(),
+      isLoading: false,
+      disabled: false,
+    });
+
+    render(<PromptInputFeatureButtons />);
+    const buttons = screen.getAllByRole('button');
+    // Code button is the last (index 4): upload, search, image, video, code
+    const codeButton = buttons[4];
+    if (codeButton) fireEvent.click(codeButton);
+
+    expect(routerPushMock).toHaveBeenCalledWith(
+      '/webdev?prompt=Build+a+todo+app&models=model-1%2Cmodel-2',
+    );
   });
 
   it('ModeChip renders and clears non-default modes', () => {

@@ -1,0 +1,180 @@
+/* WebDev Preview Theme - Warm OKLCH Color System */
+@reference "../../../styles/global.css";
+
+@layer theme {
+  /* Light mode - Warm beige palette */
+  :root {
+    /* WebDev warm surface colors */
+    --webdev-bg: oklch(0.965 0.01 60); /* #F5F0EB warm beige */
+    --webdev-bg-subtle: oklch(0.98 0.005 60); /* #FAFAF9 near-white */
+    --webdev-bg-hover: oklch(0.955 0.012 60); /* Slightly darker on hover */
+    --webdev-border: oklch(0.92 0.008 60); /* #E8E4DF warm border */
+    --webdev-input-bg: oklch(0.965 0.01 60); /* Same as bg for input fields */
+    --webdev-accent: oklch(0.51 0.24 285); /* #7C3AED violet-600, primary accent */
+
+    /* Code editor (always dark, not theme-dependent) */
+    --webdev-editor-bg: oklch(0.2 0.005 264); /* #1E1E1E */
+    --webdev-editor-sidebar: oklch(0.22 0.005 264); /* #252526 */
+    --webdev-editor-tab-active: oklch(0.2 0.005 264);
+    --webdev-editor-tab-inactive: oklch(0.22 0.005 264);
+    --webdev-editor-text: oklch(0.85 0.005 264); /* #CCCCCC */
+    --webdev-editor-text-muted: oklch(0.55 0 0); /* #858585 */
+
+    /* Option badge colors (WCAG AA compliant with white text) */
+    --webdev-option-a: oklch(0.51 0.24 285); /* #7C3AED violet-600 */
+    --webdev-option-b: oklch(0.52 0.13 65); /* #B45309 amber-700 */
+    --webdev-option-c: oklch(0.5 0.12 220); /* #0E7490 cyan-700 */
+    --webdev-option-d: oklch(0.47 0.2 350); /* #BE185D pink-700 */
+    --webdev-option-e: oklch(0.5 0.14 165); /* #047857 emerald-700 */
+
+    /* Status colors (WCAG AA on white) */
+    --webdev-status-complete: oklch(0.52 0.15 150); /* #15803D green-700 */
+    --webdev-status-generating: oklch(0.48 0.2 260); /* #1D4ED8 blue-700 */
+    --webdev-status-error: oklch(0.44 0.2 25); /* #B91C1C red-700 */
+  }
+
+  /* Dark mode - Cooler/darker warm palette */
+  .dark {
+    /* WebDev warm surface colors */
+    --webdev-bg: oklch(0.22 0.008 264);
+    --webdev-bg-subtle: oklch(0.2 0.005 264);
+    --webdev-bg-hover: oklch(0.25 0.01 264); /* Slightly lighter on hover */
+    --webdev-border: oklch(0.3 0.008 264);
+    --webdev-input-bg: oklch(0.25 0.008 264);
+    --webdev-accent: oklch(0.68 0.18 285); /* #A78BFA violet-400, primary accent */
+
+    /* Code editor (slightly darker in dark mode) */
+    --webdev-editor-bg: oklch(0.15 0.005 264);
+    --webdev-editor-sidebar: oklch(0.18 0.005 264);
+    --webdev-editor-tab-active: oklch(0.15 0.005 264);
+    --webdev-editor-tab-inactive: oklch(0.18 0.005 264);
+    --webdev-editor-text: oklch(0.85 0.005 264);
+    --webdev-editor-text-muted: oklch(0.55 0 0);
+
+    /* Option badge colors (lighter for dark backgrounds) */
+    --webdev-option-a: oklch(0.68 0.18 285); /* #A78BFA violet-400 */
+    --webdev-option-b: oklch(0.79 0.15 85); /* #FBBF24 amber-400 */
+    --webdev-option-c: oklch(0.75 0.12 200); /* #22D3EE cyan-400 */
+    --webdev-option-d: oklch(0.7 0.15 350); /* #F472B6 pink-400 */
+    --webdev-option-e: oklch(0.73 0.14 165); /* #34D399 emerald-400 */
+
+    /* Status colors (brighter for dark backgrounds) */
+    --webdev-status-complete: oklch(0.65 0.18 150); /* #22C55E green-500 */
+    --webdev-status-generating: oklch(0.65 0.2 255); /* #3B82F6 blue-500 */
+    --webdev-status-error: oklch(0.6 0.24 25); /* #EF4444 red-500 */
+  }
+}
+
+/* WebDev-specific utility classes */
+@layer utilities {
+  /* Building overlay animation */
+  .webdev-building-block {
+    animation: webdev-stack 1.2s ease-in-out infinite;
+  }
+
+  .webdev-building-block:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+
+  .webdev-building-block:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes webdev-stack {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: translateY(4px);
+    }
+    50% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Status dot pulse for generating/building state */
+  .webdev-status-pulse {
+    animation: webdev-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes webdev-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .webdev-building-block {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .webdev-status-pulse {
+      animation: none;
+      opacity: 1;
+    }
+  }
+}
+
+/* WebDev-specific component styles */
+@layer components {
+  /* Option card in left panel */
+  .webdev-option-card {
+    background-color: var(--card);
+    border: 1px solid var(--webdev-border);
+    border-radius: 0.75rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .webdev-option-card:hover {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.02),
+      0 4px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .dark .webdev-option-card:hover {
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.15),
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Toolbar button base */
+  .webdev-toolbar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    color: oklch(from var(--foreground) l c h / 0.6);
+  }
+
+  .webdev-toolbar-btn:hover {
+    background-color: var(--webdev-input-bg);
+    color: var(--foreground);
+  }
+
+  /* Code editor file tree item */
+  .webdev-file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+  }
+
+  .webdev-file-item:hover {
+    background-color: oklch(from var(--webdev-editor-bg) calc(l + 0.05) c h);
+  }
+
+  .webdev-file-item[data-active="true"] {
+    background-color: oklch(from var(--webdev-editor-bg) calc(l + 0.08) c h);
+  }
+}

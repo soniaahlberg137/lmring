@@ -12,16 +12,20 @@ import {
   Video,
   X,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/use-translations';
+import { useArenaStore } from '@/stores/arena-store';
 import type { InputMode } from '@/types/input-mode';
 import { MAX_IMAGE_SIZE_MB, MAX_IMAGES } from '@/types/input-mode';
 import { usePromptInput } from './prompt-input';
 
 export function PromptInputFeatureButtons() {
   const t = useTranslations();
-  const { mode, setMode, uploadedImages, addImages, isLoading, disabled } = usePromptInput();
+  const { mode, setMode, value, uploadedImages, addImages, isLoading, disabled } = usePromptInput();
+  const comparisons = useArenaStore((s) => s.comparisons);
+  const router = useRouter();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
@@ -41,9 +45,17 @@ export function PromptInputFeatureButtons() {
   };
 
   const handleCodeClick = () => {
-    toast.info(t('Arena.coming_soon'), {
-      description: t('Arena.build_apps_coming_soon'),
-    });
+    const params = new URLSearchParams();
+    const prompt = value.trim();
+    if (prompt) {
+      params.set('prompt', prompt);
+    }
+    const modelIds = comparisons.map((c) => c.modelId).filter(Boolean);
+    if (modelIds.length > 0) {
+      params.set('models', modelIds.join(','));
+    }
+    const query = params.toString();
+    router.push(`/webdev${query ? `?${query}` : ''}`);
   };
 
   const isActive = (checkMode: InputMode) => mode === checkMode;

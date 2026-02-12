@@ -1,3 +1,4 @@
+export type { WebDevStore } from '@/types/webdev';
 export type { ArenaActions, ArenaState, ArenaStore } from './arena-store';
 export {
   ArenaStoreProvider,
@@ -26,6 +27,12 @@ export type {
   VoteStore,
 } from './vote-store';
 export { useVoteStore, voteSelectors } from './vote-store';
+export {
+  useWebDevStore,
+  useWebDevStoreShallow,
+  WebDevStoreProvider,
+  webdevSelectors,
+} from './webdev-store';
 export type { WorkflowActions, WorkflowState, WorkflowStore } from './workflow-store';
 export {
   useWorkflowStore,
