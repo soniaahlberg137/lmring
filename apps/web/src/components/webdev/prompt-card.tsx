@@ -9,15 +9,9 @@ interface PromptCardProps {
 
 export function PromptCard({ prompt, className }: PromptCardProps) {
   return (
-    <div
-      className={cn(
-        'rounded-xl bg-[var(--webdev-bg)] p-4',
-        'border border-[var(--webdev-border)]',
-        className,
-      )}
-    >
-      <p className="text-xs font-medium text-muted-foreground mb-2">Your prompt</p>
-      <p className="text-sm leading-relaxed">{prompt}</p>
+    <div className={cn('rounded-xl bg-[#F5F0EB] p-4', className)}>
+      <p className="text-xs font-medium text-[#71717A]">Your prompt</p>
+      <p className="mt-2 text-sm leading-relaxed text-[#1A1A1A]">{prompt}</p>
     </div>
   );
 }

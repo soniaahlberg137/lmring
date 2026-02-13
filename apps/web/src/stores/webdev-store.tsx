@@ -31,6 +31,10 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
           set({ sessionId: id }, false, 'webdev/setSessionId');
         },
 
+        setConversationId: (id) => {
+          set({ conversationId: id }, false, 'webdev/setConversationId');
+        },
+
         setPhase: (phase) => {
           set({ phase }, false, 'webdev/setPhase');
         },
@@ -359,6 +363,7 @@ export function useWebDevStoreShallow<T>(selector: (state: WebDevStore) => T): T
 export const webdevSelectors = {
   phase: (state: WebDevStore) => state.phase,
   sessionId: (state: WebDevStore) => state.sessionId,
+  conversationId: (state: WebDevStore) => state.conversationId,
   prompt: (state: WebDevStore) => state.prompt,
   sandboxes: (state: WebDevStore) => state.sandboxes,
   activeWorkflowId: (state: WebDevStore) => state.activeWorkflowId,
@@ -402,6 +407,7 @@ export const webdevSelectors = {
   // Composite selector for actions
   webdevActions: (state: WebDevStore) => ({
     setSessionId: state.setSessionId,
+    setConversationId: state.setConversationId,
     setPhase: state.setPhase,
     resetSession: state.resetSession,
     initSandbox: state.initSandbox,

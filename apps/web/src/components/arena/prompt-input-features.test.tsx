@@ -14,18 +14,6 @@ const { toastMock } = vi.hoisted(() => ({
 }));
 vi.mock('sonner', () => ({ toast: toastMock }));
 
-const { routerPushMock } = vi.hoisted(() => ({
-  routerPushMock: vi.fn(),
-}));
-vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: routerPushMock }),
-}));
-
-vi.mock('@/stores/arena-store', () => ({
-  useArenaStore: (selector: (s: { comparisons: Array<{ modelId: string }> }) => unknown) =>
-    selector({ comparisons: [{ modelId: 'model-1' }, { modelId: 'model-2' }] }),
-}));
-
 const { promptContextMock } = vi.hoisted(() => ({
   promptContextMock: vi.fn(),
 }));
@@ -114,10 +102,11 @@ describe('prompt-input-features', () => {
     expect(setMode).toHaveBeenCalledWith('imageGenerate');
   });
 
-  it('Code button navigates to /webdev with prompt and models', () => {
+  it('Code button toggles webdev mode', () => {
+    const setMode = vi.fn();
     promptContextMock.mockReturnValue({
       mode: 'default',
-      setMode: vi.fn(),
+      setMode,
       value: 'Build a todo app',
       uploadedImages: [],
       addImages: vi.fn(),
@@ -131,9 +120,7 @@ describe('prompt-input-features', () => {
     const codeButton = buttons[4];
     if (codeButton) fireEvent.click(codeButton);
 
-    expect(routerPushMock).toHaveBeenCalledWith(
-      '/webdev?prompt=Build+a+todo+app&models=model-1%2Cmodel-2',
-    );
+    expect(setMode).toHaveBeenCalledWith('webdev');
   });
 
   it('ModeChip renders and clears non-default modes', () => {

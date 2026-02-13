@@ -1,6 +1,6 @@
 'use client';
 
-import { Button, cn, Textarea } from '@lmring/ui';
+import { cn } from '@lmring/ui';
 import { ArrowUp } from 'lucide-react';
 import * as React from 'react';
 import { useWebDevStore } from '@/stores/webdev-store';
@@ -22,7 +22,7 @@ export function PromptBar({
 }: PromptBarProps) {
   const prompt = useWebDevStore((s) => s.prompt);
   const setPrompt = useWebDevStore((s) => s.setPrompt);
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const [isComposing, setIsComposing] = React.useState(false);
 
   const handleSubmit = React.useCallback(() => {
@@ -32,8 +32,8 @@ export function PromptBar({
   }, [prompt, isLoading, disabled, onSubmit]);
 
   const handleKeyDown = React.useCallback(
-    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey && !isComposing && !e.nativeEvent.isComposing) {
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter' && !isComposing && !e.nativeEvent.isComposing) {
         e.preventDefault();
         handleSubmit();
       }
@@ -41,50 +41,42 @@ export function PromptBar({
     [handleSubmit, isComposing],
   );
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: prompt changes should trigger height recalculation
-  React.useEffect(() => {
-    const el = textareaRef.current;
-    if (!el) return;
-    el.style.height = 'auto';
-    const maxHeight = 120;
-    const scrollHeight = el.scrollHeight;
-    el.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
-    el.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
-  }, [prompt]);
-
   const canSubmit = prompt.trim().length > 0 && !isLoading && !disabled;
 
   return (
-    <div
-      className={cn(
-        'flex items-end gap-2 rounded-xl border border-[var(--webdev-border)] bg-[var(--webdev-input-bg)] p-2',
-        className,
-      )}
-    >
-      <Textarea
-        ref={textareaRef}
-        value={prompt}
-        onChange={(e) => setPrompt(e.target.value)}
-        onKeyDown={handleKeyDown}
-        onCompositionStart={() => setIsComposing(true)}
-        onCompositionEnd={() => setIsComposing(false)}
-        disabled={isLoading || disabled}
-        placeholder={placeholder}
-        rows={1}
-        className="min-h-[36px] flex-1 resize-none border-0 bg-transparent px-2 py-1.5 text-sm shadow-none focus-visible:ring-0"
-      />
-      <Button
-        size="icon"
+    <div className={cn('flex items-center gap-3', className)}>
+      <div className="flex h-10 flex-1 items-center rounded-lg bg-[#F5F0EB] px-3.5">
+        <input
+          ref={inputRef}
+          type="text"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onCompositionStart={() => setIsComposing(true)}
+          onCompositionEnd={() => setIsComposing(false)}
+          disabled={isLoading || disabled}
+          placeholder={placeholder}
+          className="flex-1 bg-transparent text-sm text-[#1A1A1A] placeholder:text-[#A1A1AA] outline-none"
+        />
+      </div>
+      <button
+        type="button"
+        className="rounded-md bg-[#F5F0EB] px-3 py-2 text-[13px] font-medium text-[#71717A]"
+      >
+        Code
+      </button>
+      <button
+        type="button"
         onClick={handleSubmit}
         disabled={!canSubmit}
         className={cn(
-          'h-8 w-8 shrink-0 rounded-full transition-opacity',
+          'rounded-lg bg-[#1A1A1A] p-2.5 transition-opacity',
           canSubmit ? 'opacity-100' : 'opacity-50',
         )}
       >
-        <ArrowUp className="h-4 w-4" />
+        <ArrowUp className="h-[18px] w-[18px] text-white" />
         <span className="sr-only">Send</span>
-      </Button>
+      </button>
     </div>
   );
 }

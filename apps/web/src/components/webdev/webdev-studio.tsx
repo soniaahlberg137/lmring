@@ -3,7 +3,10 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@lmring/ui';
 import * as React from 'react';
 import { useWebDevCleanup } from '@/hooks/use-webdev-cleanup';
+import { useWebDevGeneration } from '@/hooks/use-webdev-generation';
+import { useWebDevSandbox } from '@/hooks/use-webdev-sandbox';
 import { useWebDevStore, useWebDevStoreShallow, WebDevStoreProvider } from '@/stores/webdev-store';
+import { WorkflowStoreProvider } from '@/stores/workflow-store';
 import { ConfigModal } from './config-modal';
 import { LeftPanel } from './left-panel';
 import { RightPanel } from './right-panel';
@@ -40,6 +43,12 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   // Sandbox lifecycle management: beforeunload, heartbeat, unmount cleanup
   useWebDevCleanup();
 
+  // Generation orchestration: creates workflows, seeds system prompt, starts AI streaming
+  const { startGeneration, handleFollowUp, getResponseId } = useWebDevGeneration();
+
+  // Sandbox auto-creation: watches workflow completions, triggers sandbox build via SSE
+  const { resetProcessed } = useWebDevSandbox({ getResponseId });
+
   const { phase, featureConfig, sessionId } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
     featureConfig: s.featureConfig,
@@ -48,6 +57,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   const checkConfig = useWebDevStore((s) => s.checkConfig);
   const setSessionId = useWebDevStore((s) => s.setSessionId);
+  const setConversationId = useWebDevStore((s) => s.setConversationId);
+  const setPhase = useWebDevStore((s) => s.setPhase);
   const setPrompt = useWebDevStore((s) => s.setPrompt);
 
   // Check feature config on mount
@@ -62,6 +73,77 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     }
   }, [initialSessionId, sessionId, setSessionId]);
 
+  // Read init data from sessionStorage (passed from arena page)
+  const initDataReadRef = React.useRef(false);
+  React.useEffect(() => {
+    if (initDataReadRef.current) return;
+    initDataReadRef.current = true;
+
+    const raw = sessionStorage.getItem('webdev_init');
+    if (!raw) return;
+    sessionStorage.removeItem('webdev_init');
+
+    try {
+      const data = JSON.parse(raw) as {
+        prompt?: string;
+        models?: Array<{ modelId: string; keyId: string }>;
+        conversationId?: string;
+      };
+
+      if (data.conversationId) {
+        setConversationId(data.conversationId);
+      }
+
+      if (data.prompt && data.models?.length) {
+        const { prompt, models } = data;
+        setPhase('generating');
+        setPrompt(prompt);
+
+        const createSession = async () => {
+          try {
+            const res = await fetch('/api/webdev/session', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                prompt,
+                models,
+                ...(data.conversationId ? { conversationId: data.conversationId } : {}),
+              }),
+            });
+            if (!res.ok) {
+              setPhase('error');
+              return;
+            }
+            const result = (await res.json()) as {
+              sessionId: string;
+              responses: Array<{
+                id: string;
+                modelId: string;
+                displayPosition: number;
+              }>;
+            };
+            setSessionId(result.sessionId);
+
+            // Reset processed sandboxes for a fresh generation round
+            resetProcessed();
+
+            // Wire generation: create workflows, seed system prompt, start AI streaming
+            await startGeneration({
+              prompt,
+              models,
+              sessionResponses: result.responses,
+            });
+          } catch {
+            setPhase('error');
+          }
+        };
+        void createSession();
+      }
+    } catch {
+      // Invalid JSON, ignore
+    }
+  }, [setConversationId, setPhase, setPrompt, setSessionId, resetProcessed, startGeneration]);
+
   const [configModalOpen, setConfigModalOpen] = React.useState(false);
 
   // Show config modal when feature is disabled and config has loaded
@@ -71,10 +153,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     }
   }, [featureConfig]);
 
-  const handleFollowUp = React.useCallback((prompt: string) => {
-    // TODO: Wire to actual workflow execution in T16
-    console.log('Follow-up prompt:', prompt);
-  }, []);
+  const onFollowUp = React.useCallback(
+    (prompt: string) => {
+      resetProcessed();
+      void handleFollowUp(prompt);
+    },
+    [handleFollowUp, resetProcessed],
+  );
 
   const handleSelectPrompt = React.useCallback(
     (prompt: string) => {
@@ -105,7 +190,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           minSize={PANEL_MIN_SIZE_LEFT}
           className="flex flex-col"
         >
-          <LeftPanel onFollowUp={handleFollowUp} />
+          <LeftPanel onFollowUp={onFollowUp} />
         </ResizablePanel>
 
         <ResizableHandle withHandle />
@@ -128,8 +213,10 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
 export function WebDevStudio(props: WebDevStudioProps) {
   return (
-    <WebDevStoreProvider>
-      <WebDevStudioInner {...props} />
-    </WebDevStoreProvider>
+    <WorkflowStoreProvider>
+      <WebDevStoreProvider>
+        <WebDevStudioInner {...props} />
+      </WebDevStoreProvider>
+    </WorkflowStoreProvider>
   );
 }

@@ -412,6 +412,8 @@ export const webdevSessions = pgTable(
     userId: uuid('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
+    conversationId: uuid('conversation_id')
+      .references(() => conversations.id, { onDelete: 'set null' }),
     prompt: text('prompt').notNull(),
     status: webdevStatusEnum('status').default('generating').notNull(),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
@@ -419,6 +421,7 @@ export const webdevSessions = pgTable(
   },
   (table) => [
     index('webdev_sessions_user_id_idx').on(table.userId),
+    index('webdev_sessions_conversation_id_idx').on(table.conversationId),
   ],
 );
 
@@ -604,6 +607,7 @@ export const conversationsRelations = relations(conversations, ({ one, many }) =
   }),
   messages: many(messages),
   sharedResults: many(sharedResults),
+  webdevSessions: many(webdevSessions),
 }));
 
 export const messagesRelations = relations(messages, ({ one, many }) => ({
@@ -657,6 +661,10 @@ export const webdevSessionsRelations = relations(webdevSessions, ({ one, many })
   user: one(users, {
     fields: [webdevSessions.userId],
     references: [users.id],
+  }),
+  conversation: one(conversations, {
+    fields: [webdevSessions.conversationId],
+    references: [conversations.id],
   }),
   responses: many(webdevResponses),
   iterations: many(webdevIterations),

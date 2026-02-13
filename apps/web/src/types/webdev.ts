@@ -100,6 +100,8 @@ export interface ActivityLogEntry {
  */
 export interface WebDevState {
   sessionId: string | null;
+  /** Linked conversation ID from the arena page */
+  conversationId: string | null;
   phase: WebDevPhase;
   /** Map of workflowId to sandbox state (one per model) */
   sandboxes: Map<string, SandboxState>;
@@ -117,6 +119,7 @@ export interface WebDevState {
 export interface WebDevActions {
   // Session management
   setSessionId: (id: string | null) => void;
+  setConversationId: (id: string | null) => void;
   setPhase: (phase: WebDevPhase) => void;
   resetSession: () => void;
 
@@ -279,6 +282,7 @@ export const DEFAULT_SANDBOX_STATE: SandboxState = {
  */
 export const DEFAULT_WEBDEV_STATE: WebDevState = {
   sessionId: null,
+  conversationId: null,
   phase: 'idle',
   sandboxes: new Map(),
   activeWorkflowId: null,

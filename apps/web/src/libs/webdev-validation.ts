@@ -33,6 +33,7 @@ export const webdevGenerateSchema = z.object({
     .min(1, 'At least 1 model is required')
     .max(5, 'Maximum 5 models allowed'),
   sessionId: z.uuid('Invalid session ID').optional(),
+  conversationId: z.uuid('Invalid conversation ID').optional(),
 });
 
 /**

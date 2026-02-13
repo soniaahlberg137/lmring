@@ -140,16 +140,14 @@ export const OptionCard = React.memo(function OptionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        'w-full rounded-xl border p-4 text-left transition-colors',
-        isActive
-          ? 'border-[var(--webdev-accent)] bg-[var(--webdev-accent)]/5'
-          : 'border-[var(--webdev-border)] bg-background hover:border-[var(--webdev-accent)]/50',
+        'w-full rounded-xl border border-[#E8E4DF] bg-white p-4 text-left transition-colors',
+        isActive && 'ring-2 ring-[#E8E4DF]',
       )}
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-3">
         <OptionBadge index={index} />
-        <span className="text-sm font-medium truncate">{modelName}</span>
+        <span className="text-sm font-semibold text-[#1A1A1A] truncate">{modelName}</span>
         <span className="ml-auto flex items-center gap-1.5 shrink-0">
           {isActiveStatus(status) && (
             <Loader2 className={cn('h-3.5 w-3.5 animate-spin', getStatusColorClass(status))} />

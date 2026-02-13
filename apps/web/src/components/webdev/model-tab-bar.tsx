@@ -36,9 +36,9 @@ export function ModelTabBar() {
   if (entries.length <= 1) return null;
 
   return (
-    <div className="shrink-0 border-b border-[var(--webdev-border)] bg-background">
+    <div className="shrink-0 border-b border-[#E8E4DF] bg-[#F5F0EB]">
       <ScrollArea className="w-full">
-        <div className="flex items-stretch">
+        <div className="flex h-12 items-stretch">
           {entries.map(([workflowId, sandbox], index) => {
             const color = OPTION_COLORS[index];
             const isActive = activeWorkflowId === workflowId;
@@ -49,8 +49,10 @@ export function ModelTabBar() {
                 type="button"
                 onClick={() => setActiveWorkflowId(workflowId)}
                 className={cn(
-                  'relative flex items-center gap-2 px-4 py-2.5 text-sm transition-colors whitespace-nowrap',
-                  isActive ? 'text-foreground' : 'text-muted-foreground hover:text-foreground',
+                  'relative flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors',
+                  isActive
+                    ? 'font-semibold text-[#1A1A1A]'
+                    : 'font-medium text-[#71717A] hover:text-[#1A1A1A]',
                 )}
               >
                 {/* Badge letter */}
@@ -63,13 +65,13 @@ export function ModelTabBar() {
                   </span>
                 )}
 
-                {/* Model name (truncated) */}
+                {/* Model name */}
                 <span className="max-w-[120px] truncate">Option {color?.key ?? index + 1}</span>
 
                 {/* Status dot */}
                 <StatusDot status={sandbox.status} />
 
-                {/* Active indicator */}
+                {/* Active indicator - bottom border matching badge color */}
                 {isActive && color && (
                   <span
                     className="absolute bottom-0 left-0 right-0 h-0.5"

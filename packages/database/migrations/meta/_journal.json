@@ -120,6 +120,13 @@
       "when": 1770910708546,
       "tag": "0016_fresh_naoko",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1770964789714,
+      "tag": "0017_blue_daredevil",
+      "breakpoints": true
     }
   ]
 }

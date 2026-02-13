@@ -13,6 +13,5 @@ interface WebDevPageProps {
 export default async function WebDevPage({ params }: WebDevPageProps) {
   const { sessionId: sessionIdSegments } = await params;
   const initialSessionId = sessionIdSegments?.[0];
-
   return <WebDevStudio initialSessionId={initialSessionId} />;
 }

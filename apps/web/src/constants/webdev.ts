@@ -12,8 +12,8 @@ export const MAX_WEBDEV_MODELS = 5;
  * All contrast ratios >= 4.5:1 against white text.
  */
 export const OPTION_COLORS = [
-  { key: 'A', bg: '#7C3AED', tw: 'bg-violet-600', contrast: 7.2 },
-  { key: 'B', bg: '#B45309', tw: 'bg-amber-700', contrast: 5.1 },
+  { key: 'A', bg: '#8B5CF6', tw: 'bg-violet-500', contrast: 5.7 },
+  { key: 'B', bg: '#F59E0B', tw: 'bg-amber-500', contrast: 3.1 },
   { key: 'C', bg: '#0E7490', tw: 'bg-cyan-700', contrast: 5.0 },
   { key: 'D', bg: '#BE185D', tw: 'bg-pink-700', contrast: 6.2 },
   { key: 'E', bg: '#047857', tw: 'bg-emerald-700', contrast: 5.3 },
@@ -53,6 +53,37 @@ export const LOG_ICON_COLORS = {
   eye: 'text-blue-600 dark:text-blue-400',
   'circle-check': 'text-green-700 dark:text-green-500',
   'circle-x': 'text-red-700 dark:text-red-500',
+} as const;
+
+/**
+ * System prompt for WebDev AI generation.
+ * Instructs the model to output files using ---FILE: path--- / ---END FILE--- markers.
+ */
+export const WEBDEV_SYSTEM_PROMPT = `You are a frontend web developer. Generate a complete, runnable web application based on the user's request.
+
+Output EVERY file using this exact format:
+
+---FILE: path/to/file---
+file content here
+---END FILE---
+
+Requirements:
+- Include a package.json with a "dev" script (e.g. using Vite, Next.js, or a similar dev server)
+- Generate all necessary source files for a working application
+- Use modern TypeScript/JavaScript with best practices
+- Include proper imports and exports
+- Make the app visually polished with Tailwind CSS or inline styles
+- Ensure the app runs immediately with no additional setup beyond "npm install && npm run dev"
+
+Do NOT include any explanation text outside of file blocks. Output ONLY the file blocks.`;
+
+/**
+ * Workflow config overrides for WebDev code generation.
+ * Lower temperature for deterministic output; high maxTokens for full app generation.
+ */
+export const WEBDEV_WORKFLOW_CONFIG = {
+  temperature: 0.3,
+  maxTokens: 16384,
 } as const;
 
 export type OptionKey = (typeof OPTION_COLORS)[number]['key'];

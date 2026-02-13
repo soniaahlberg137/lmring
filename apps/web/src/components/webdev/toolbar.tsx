@@ -71,17 +71,17 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
 
   return (
     <TooltipProvider delayDuration={300}>
-      <div className="flex h-12 shrink-0 items-center gap-1 border-b border-[var(--webdev-border)] bg-background px-3">
+      <div className="flex h-12 shrink-0 items-center gap-3 border-b border-[#E8E4DF] bg-[#F5F0EB] px-3">
         {/* View toggle */}
-        <div className="flex items-center rounded-lg bg-[var(--webdev-input-bg)] p-0.5">
+        <div className="flex items-center rounded-lg bg-[#F5F0EB] p-0.5">
           <button
             type="button"
             onClick={() => onViewModeChange('preview')}
             className={cn(
               'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
               viewMode === 'preview'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'bg-white text-[#1A1A1A] shadow-sm'
+                : 'text-[#71717A] hover:text-[#1A1A1A]',
             )}
           >
             <Eye className="h-3.5 w-3.5" />
@@ -93,17 +93,14 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
             className={cn(
               'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
               viewMode === 'code'
-                ? 'bg-background text-foreground shadow-sm'
-                : 'text-muted-foreground hover:text-foreground',
+                ? 'bg-white text-[#1A1A1A] shadow-sm'
+                : 'text-[#71717A] hover:text-[#1A1A1A]',
             )}
           >
             <Code className="h-3.5 w-3.5" />
             Code
           </button>
         </div>
-
-        {/* Separator */}
-        <div className="mx-1 h-5 w-px bg-[var(--webdev-border)]" />
 
         {/* Refresh */}
         <ToolbarButton
@@ -114,11 +111,9 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
         />
 
         {/* URL bar */}
-        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md bg-[var(--webdev-input-bg)] px-3 py-1.5">
-          <Globe className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-          <span className="truncate text-xs text-muted-foreground">
-            {previewUrl ?? 'No preview available'}
-          </span>
+        <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md bg-[#F5F0EB] px-3 py-1.5">
+          <Globe className="h-3.5 w-3.5 shrink-0 text-[#71717A]" />
+          <span className="truncate text-xs text-[#71717A]">{previewUrl ?? 'localhost:3000'}</span>
         </div>
 
         {/* Action buttons */}
@@ -134,12 +129,24 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
           onClick={handleOpenExternal}
           disabled={!previewUrl}
         />
-        <ToolbarButton
-          icon={Download}
-          label="Download code"
-          onClick={handleDownload}
-          disabled={!isReady}
-        />
+
+        {/* Download button - dark bg */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={handleDownload}
+              disabled={!isReady}
+              className="flex items-center gap-1.5 rounded-md bg-[#1A1A1A] px-3 py-1.5 text-xs font-medium text-white disabled:pointer-events-none disabled:opacity-40"
+            >
+              <Download className="h-3.5 w-3.5" />
+              Download
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-xs">
+            Download code
+          </TooltipContent>
+        </Tooltip>
       </div>
     </TooltipProvider>
   );

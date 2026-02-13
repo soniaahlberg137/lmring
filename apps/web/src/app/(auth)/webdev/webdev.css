@@ -5,11 +5,14 @@
   /* Light mode - Warm beige palette */
   :root {
     /* WebDev warm surface colors */
-    --webdev-bg: oklch(0.965 0.01 60); /* #F5F0EB warm beige */
-    --webdev-bg-subtle: oklch(0.98 0.005 60); /* #FAFAF9 near-white */
+    --webdev-bg: #f5f0eb; /* warm beige */
+    --webdev-bg-subtle: #fafaf9; /* near-white */
     --webdev-bg-hover: oklch(0.955 0.012 60); /* Slightly darker on hover */
-    --webdev-border: oklch(0.92 0.008 60); /* #E8E4DF warm border */
-    --webdev-input-bg: oklch(0.965 0.01 60); /* Same as bg for input fields */
+    --webdev-border: #e8e4df; /* warm border */
+    --webdev-input-bg: #f5f0eb; /* Same as bg for input fields */
+    --webdev-card-bg: #ffffff; /* white card background */
+    --webdev-muted-bg: #f5f0eb; /* muted background for badges/pills */
+    --webdev-preview-bg: #fafaf9; /* preview area background */
     --webdev-accent: oklch(0.51 0.24 285); /* #7C3AED violet-600, primary accent */
 
     /* Code editor (always dark, not theme-dependent) */

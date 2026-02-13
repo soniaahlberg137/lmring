@@ -26,7 +26,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { prompt, models } = validationResult.data;
+    const { prompt, models, conversationId } = validationResult.data;
 
     // 1. Create session
     const [newSession] = await db
@@ -35,6 +35,7 @@ export async function POST(request: Request) {
         userId,
         prompt,
         status: 'generating',
+        ...(conversationId ? { conversationId } : {}),
       })
       .returning();
 

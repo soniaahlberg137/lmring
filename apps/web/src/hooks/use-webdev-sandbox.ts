@@ -171,6 +171,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
                   event.previewUrl,
                   event.expiresAt ?? null,
                 );
+                setPhase('ready');
 
                 // Auto-select first ready sandbox if no tab selected yet
                 if (!activeWorkflowIdRef.current) {
@@ -194,7 +195,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
         reader.releaseLock();
       }
     },
-    [updateSandboxStatus, setSandboxReady, setActiveWorkflowId],
+    [updateSandboxStatus, setSandboxReady, setActiveWorkflowId, setPhase],
   );
 
   /**

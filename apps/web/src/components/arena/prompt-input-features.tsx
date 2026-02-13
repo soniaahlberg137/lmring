@@ -12,20 +12,16 @@ import {
   Video,
   X,
 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { useTranslations } from '@/hooks/use-translations';
-import { useArenaStore } from '@/stores/arena-store';
 import type { InputMode } from '@/types/input-mode';
 import { MAX_IMAGE_SIZE_MB, MAX_IMAGES } from '@/types/input-mode';
 import { usePromptInput } from './prompt-input';
 
 export function PromptInputFeatureButtons() {
   const t = useTranslations();
-  const { mode, setMode, value, uploadedImages, addImages, isLoading, disabled } = usePromptInput();
-  const comparisons = useArenaStore((s) => s.comparisons);
-  const router = useRouter();
+  const { mode, setMode, uploadedImages, addImages, isLoading, disabled } = usePromptInput();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleUploadClick = () => {
@@ -42,20 +38,6 @@ export function PromptInputFeatureButtons() {
       addImages(files);
     }
     e.target.value = '';
-  };
-
-  const handleCodeClick = () => {
-    const params = new URLSearchParams();
-    const prompt = value.trim();
-    if (prompt) {
-      params.set('prompt', prompt);
-    }
-    const modelIds = comparisons.map((c) => c.modelId).filter(Boolean);
-    if (modelIds.length > 0) {
-      params.set('models', modelIds.join(','));
-    }
-    const query = params.toString();
-    router.push(`/webdev${query ? `?${query}` : ''}`);
   };
 
   const isActive = (checkMode: InputMode) => mode === checkMode;
@@ -157,8 +139,11 @@ export function PromptInputFeatureButtons() {
               type="button"
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-lg"
-              onClick={handleCodeClick}
+              className={cn(
+                'h-8 w-8 rounded-lg',
+                isActive('webdev') && 'bg-primary/10 text-primary border-primary',
+              )}
+              onClick={() => setMode('webdev')}
               disabled={isButtonDisabled}
             >
               <Code className="h-4 w-4" />
@@ -192,6 +177,11 @@ export function ModeChip() {
       icon: Video,
       label: t('Arena.video_generation'),
       colorClass: 'text-cyan-500',
+    },
+    webdev: {
+      icon: Code,
+      label: t('Arena.build_apps'),
+      colorClass: 'text-green-500',
     },
   };
 

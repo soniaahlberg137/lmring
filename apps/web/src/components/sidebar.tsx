@@ -4,7 +4,6 @@ import { ScrollArea, SidebarConversationSkeleton } from '@lmring/ui';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ClockIcon,
-  CodeIcon,
   MenuIcon,
   MessageSquareIcon,
   MessageSquarePlusIcon,
@@ -31,7 +30,7 @@ interface RecentConversation {
 }
 
 interface NavItem {
-  titleKey: 'new_chat' | 'leaderboard' | 'history' | 'web_dev';
+  titleKey: 'new_chat' | 'leaderboard' | 'history';
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
@@ -42,12 +41,6 @@ const navItemsConfig: NavItem[] = [
     titleKey: 'new_chat',
     href: '/arena',
     icon: MessageSquarePlusIcon,
-  },
-  {
-    titleKey: 'web_dev',
-    href: '/webdev',
-    icon: CodeIcon,
-    badge: 'Beta',
   },
   {
     titleKey: 'leaderboard',
@@ -316,7 +309,7 @@ export function Sidebar({ user }: SidebarProps) {
               {t('Sidebar.today')}
             </div>
             <ScrollArea className="max-h-[300px]">
-              {!conversationsLoaded || !mainContentReady ? (
+              {!conversationsLoaded || (currentPath.startsWith('/arena') && !mainContentReady) ? (
                 <SidebarConversationSkeleton count={5} />
               ) : recentConversations.length > 0 ? (
                 <div className="space-y-0.5">
