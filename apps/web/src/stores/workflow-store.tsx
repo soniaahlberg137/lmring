@@ -143,6 +143,9 @@ export type WorkflowActions = {
   getAllWorkflows: () => ArenaWorkflow[];
   getSyncedWorkflows: () => ArenaWorkflow[];
 
+  // Global prompt (getter for closure-safe access)
+  getGlobalPrompt: () => string;
+
   // Conversation management
   setConversationId: (id: string | null) => void;
   getConversationId: () => string | null;
@@ -230,7 +233,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               const newMap = new Map(state.workflows);
               newMap.set(id, createEmptyWorkflow(id, modelId, keyId, synced));
 
-              // Add workflow ID to workflowOrder to maintain creation order
               const newOrder = [...state.workflowOrder, id];
 
               return { workflows: newMap, workflowOrder: newOrder };
@@ -253,7 +255,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               const newMap = new Map(state.workflows);
               newMap.delete(id);
 
-              // Remove workflow ID from workflowOrder
               const newOrder = state.workflowOrder.filter((wfId) => wfId !== id);
 
               return { workflows: newMap, workflowOrder: newOrder };
@@ -374,7 +375,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 ...workflow,
                 status,
                 error: error ?? (status === 'failed' ? workflow.error : undefined),
-                // Only clear pendingResponse on cancel, preserve on failed to allow error display
                 pendingResponse: status === 'cancelled' ? undefined : workflow.pendingResponse,
                 updatedAt: new Date(),
               });
@@ -689,11 +689,9 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           const workflow = state.workflows.get(id);
           if (!workflow) return undefined;
 
-          // Find the last assistant message index
           const lastAssistantIndex = workflow.messages.findLastIndex((m) => m.role === 'assistant');
           if (lastAssistantIndex === -1) return undefined;
 
-          // Get the user message content that preceded this assistant message
           const userMessageIndex = lastAssistantIndex - 1;
           const userMessage =
             userMessageIndex >= 0 ? workflow.messages[userMessageIndex] : undefined;
@@ -704,7 +702,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
               const w = s.workflows.get(id);
               if (!w) return s;
 
-              // Remove the last assistant message
               const newMessages = w.messages.slice(0, lastAssistantIndex);
 
               const newMap = new Map(s.workflows);
@@ -737,6 +734,10 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           return Array.from(get().workflows.values()).filter((w) => w.synced);
         },
 
+        getGlobalPrompt: () => {
+          return get().globalPrompt;
+        },
+
         setConversationId: (id) => {
           set({ conversationId: id }, false, 'workflow/setConversationId');
         },
@@ -748,13 +749,9 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         loadConversationHistory: (data, modelKeyMap) => {
           const { messages } = data;
 
-          // Group messages and their model responses
-          // For each user message, find the corresponding model responses
           const newWorkflows = new Map<string, ArenaWorkflow>();
           const newMessageIdMap = new Map<string, string>();
 
-          // Initialize workflows for each model in the conversation
-          // Note: modelKeyMap uses key format "provider:model:position" but workflow IDs must be UUIDs
           const modelKeyToWorkflowId = new Map<string, string>();
           for (const [modelKey, { modelId, keyId }] of modelKeyMap) {
             const workflowId = generateId();
@@ -772,26 +769,22 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
             .map((modelKey) => modelKeyToWorkflowId.get(modelKey))
             .filter((id): id is string => id !== undefined);
 
-          // Process messages and distribute to workflows
           for (let i = 0; i < messages.length; i++) {
             const msg = messages[i];
             if (!msg) continue;
 
             if (msg.role === 'user') {
-              // Add user message to all workflows
               const workflowMessageId = generateId();
               newMessageIdMap.set(msg.id, workflowMessageId);
 
-              // Convert DB attachments to FileAttachment format
-              // Note: URLs will be fetched on-demand by the UI component using fileId
               const fileAttachments: FileAttachment[] | undefined = msg.attachments
                 ?.filter((att) => att.fileId)
                 .map((att) => ({
                   type: 'file' as const,
-                  url: '', // URL will be fetched on-demand using fileId
+                  url: '',
                   mediaType: att.mimeType,
                   filename: att.filename || 'attachment',
-                  fileId: att.fileId, // Include fileId for URL fetching
+                  fileId: att.fileId,
                 }));
 
               const userMessage: WorkflowMessage = {
@@ -812,17 +805,13 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 });
               }
 
-              // Add corresponding model responses as assistant messages
               if (msg.responses) {
                 for (const response of msg.responses) {
-                  // Find the workflow for this model using the modelKey -> workflowId mapping
-                  // Key format includes displayPosition: "provider:model:position"
                   const modelKey = `${response.providerName}:${response.modelName}:${response.displayPosition ?? 0}`;
                   const workflowId = modelKeyToWorkflowId.get(modelKey);
                   const workflow = workflowId ? newWorkflows.get(workflowId) : undefined;
 
                   if (workflow && workflowId) {
-                    // Extract video attachment if present
                     const videoAttachment = response.attachments?.find(
                       (att) => att.type === 'video',
                     );
@@ -869,7 +858,6 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         },
 
         resetConversation: () => {
-          // Abort all running workflows
           for (const [_id, controller] of abortControllers) {
             controller.abort();
           }
@@ -958,7 +946,6 @@ export function useWorkflowStore<T>(selector: (state: WorkflowStore) => T): T {
   return useStore(store, selector);
 }
 
-// Hook for composite selectors with shallow comparison
 export function useWorkflowStoreShallow<T>(selector: (state: WorkflowStore) => T): T {
   const store = useContext(WorkflowStoreContext);
   if (!store) {
@@ -986,7 +973,6 @@ export const workflowSelectors = {
   newConversation: (state: WorkflowStore) => state.newConversation,
   isCreatingConversation: (state: WorkflowStore) => state.isCreatingConversation,
 
-  // Composite selector for state values used in Arena page
   workflowState: (state: WorkflowStore) => ({
     workflows: state.workflows,
     workflowOrder: state.workflowOrder,
@@ -996,11 +982,11 @@ export const workflowSelectors = {
     isCreatingConversation: state.isCreatingConversation,
   }),
 
-  // Composite selector for actions used in Arena page
   workflowActions: (state: WorkflowStore) => ({
     createWorkflow: state.createWorkflow,
     deleteWorkflow: state.deleteWorkflow,
     setGlobalPrompt: state.setGlobalPrompt,
+    getGlobalPrompt: state.getGlobalPrompt,
     toggleWorkflowSync: state.toggleWorkflowSync,
     setWorkflowConfig: state.setWorkflowConfig,
     setCustomPrompt: state.setCustomPrompt,

@@ -6,6 +6,7 @@ import { BuildingOverlay } from './building-overlay';
 import { CodeView } from './code-view';
 import { ModelTabBar } from './model-tab-bar';
 import { PreviewView } from './preview-view';
+import { StreamingCodeView } from './streaming-code-view';
 import { Toolbar } from './toolbar';
 
 type ViewMode = 'preview' | 'code';
@@ -16,9 +17,10 @@ interface RightPanelProps {
 
 export function RightPanel({ className }: RightPanelProps) {
   const [viewMode, setViewMode] = React.useState<ViewMode>('preview');
-  const { sandboxes, activeWorkflowId } = useWebDevStoreShallow((s) => ({
+  const { sandboxes, activeWorkflowId, phase } = useWebDevStoreShallow((s) => ({
     sandboxes: s.sandboxes,
     activeWorkflowId: s.activeWorkflowId,
+    phase: s.phase,
   }));
 
   const activeSandbox = activeWorkflowId ? sandboxes.get(activeWorkflowId) : undefined;
@@ -45,7 +47,13 @@ export function RightPanel({ className }: RightPanelProps) {
       <Toolbar viewMode={viewMode} onViewModeChange={setViewMode} onRefresh={handleRefresh} />
 
       <div className="relative flex-1 overflow-hidden">
-        {viewMode === 'preview' ? <PreviewView iframeRefs={iframeRefs} /> : <CodeView />}
+        {phase === 'generating' ? (
+          <StreamingCodeView />
+        ) : viewMode === 'preview' ? (
+          <PreviewView iframeRefs={iframeRefs} />
+        ) : (
+          <CodeView />
+        )}
 
         {isBuilding && <BuildingOverlay />}
       </div>

@@ -1,11 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getWebDevConfig } from '../webdev-config';
+import { getSandboxCredentials, getWebDevConfig } from '../webdev-config';
 
 describe('getWebDevConfig', () => {
   const originalEnv = { ...process.env };
 
   beforeEach(() => {
-    // Clear all WebDev-related env vars
     delete process.env.VERCEL;
     delete process.env.VERCEL_ENV;
     delete process.env.VERCEL_OIDC_TOKEN;
@@ -15,7 +14,6 @@ describe('getWebDevConfig', () => {
   });
 
   afterEach(() => {
-    // Restore original env
     process.env = { ...originalEnv };
   });
 
@@ -72,7 +70,6 @@ describe('getWebDevConfig', () => {
 
       const config = getWebDevConfig();
 
-      // Should match Tier 1 (production limits = 300)
       expect(config.limits?.maxDurationMinutes).toBe(300);
     });
   });
@@ -97,7 +94,6 @@ describe('getWebDevConfig', () => {
 
       const config = getWebDevConfig();
 
-      // All return 45, but the path taken is Tier 2
       expect(config.enabled).toBe(true);
       expect(config.limits?.maxDurationMinutes).toBe(45);
     });
@@ -153,5 +149,58 @@ describe('getWebDevConfig', () => {
       expect(config.reason).toBe('VERCEL_SANDBOX_NOT_CONFIGURED');
       expect(config.limits).toBeUndefined();
     });
+  });
+});
+
+describe('getSandboxCredentials', () => {
+  const originalEnv = { ...process.env };
+
+  beforeEach(() => {
+    delete process.env.VERCEL_TOKEN;
+    delete process.env.VERCEL_TEAM_ID;
+    delete process.env.VERCEL_PROJECT_ID;
+  });
+
+  afterEach(() => {
+    process.env = { ...originalEnv };
+  });
+
+  it('should return credentials when all three env vars are set', () => {
+    process.env.VERCEL_TOKEN = 'my-token';
+    process.env.VERCEL_TEAM_ID = 'team-123';
+    process.env.VERCEL_PROJECT_ID = 'proj-456';
+
+    const creds = getSandboxCredentials();
+
+    expect(creds).toEqual({
+      token: 'my-token',
+      teamId: 'team-123',
+      projectId: 'proj-456',
+    });
+  });
+
+  it('should return undefined when VERCEL_TOKEN is missing', () => {
+    process.env.VERCEL_TEAM_ID = 'team-123';
+    process.env.VERCEL_PROJECT_ID = 'proj-456';
+
+    expect(getSandboxCredentials()).toBeUndefined();
+  });
+
+  it('should return undefined when VERCEL_TEAM_ID is missing', () => {
+    process.env.VERCEL_TOKEN = 'my-token';
+    process.env.VERCEL_PROJECT_ID = 'proj-456';
+
+    expect(getSandboxCredentials()).toBeUndefined();
+  });
+
+  it('should return undefined when VERCEL_PROJECT_ID is missing', () => {
+    process.env.VERCEL_TOKEN = 'my-token';
+    process.env.VERCEL_TEAM_ID = 'team-123';
+
+    expect(getSandboxCredentials()).toBeUndefined();
+  });
+
+  it('should return undefined when no env vars are set', () => {
+    expect(getSandboxCredentials()).toBeUndefined();
   });
 });

@@ -62,11 +62,9 @@ export function useWebDevGeneration() {
    */
   const startGeneration = useCallback(
     async ({ prompt, models, sessionResponses }: StartGenerationParams) => {
-      // Clean slate — remove any leftover workflows from Arena
       resetConversation();
       responseMapRef.current.clear();
 
-      // Create workflows and build the response map
       const workflowIds: string[] = [];
       for (let i = 0; i < models.length; i++) {
         const model = models[i];
@@ -80,7 +78,6 @@ export function useWebDevGeneration() {
           responseMapRef.current.set(workflowId, response.id);
         }
 
-        // Seed system prompt as first message in workflow history
         updateWorkflow(workflowId, {
           messages: [
             {
@@ -92,20 +89,14 @@ export function useWebDevGeneration() {
           ],
         });
 
-        // Set code-generation config (lower temp, higher maxTokens)
         setWorkflowConfig(workflowId, WEBDEV_WORKFLOW_CONFIG);
       }
 
-      // Set active tab to first workflow
       if (workflowIds[0]) {
         setActiveWorkflowId(workflowIds[0]);
       }
 
-      // Set the global prompt and fire off parallel AI streaming
       setGlobalPrompt(prompt);
-
-      // startAllSyncedWorkflows reads globalPrompt from store, but Zustand
-      // updates are synchronous so the value is already set above.
       await startAllSyncedWorkflows();
     },
     [

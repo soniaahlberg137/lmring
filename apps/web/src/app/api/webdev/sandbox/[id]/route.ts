@@ -4,6 +4,7 @@ import { Sandbox } from '@vercel/sandbox';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
+import { getSandboxCredentials } from '@/libs/webdev-config';
 
 /**
  * DELETE /api/webdev/sandbox/[id]
@@ -27,7 +28,6 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       return NextResponse.json({ error: 'Sandbox ID is required' }, { status: 400 });
     }
 
-    // Verify ownership: the sandbox must belong to a response in a session owned by this user
     const response = await db.query.webdevResponses.findFirst({
       where: eq(webdevResponses.sandboxId, sandboxId),
       with: {
@@ -41,16 +41,13 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
       return NextResponse.json({ error: 'Sandbox not found' }, { status: 404 });
     }
 
-    // Stop the sandbox
     try {
-      const sandbox = await Sandbox.get({ sandboxId });
+      const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
       await sandbox.stop();
     } catch (sandboxError) {
-      // Sandbox may already be stopped or expired — that's fine
       logError('WebDev sandbox stop warning', sandboxError, { sandboxId });
     }
 
-    // Update DB status
     await db
       .update(webdevResponses)
       .set({

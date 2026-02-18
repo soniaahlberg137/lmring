@@ -3,7 +3,7 @@
 import { cn, ScrollArea } from '@lmring/ui';
 import { ChevronDown, MoreHorizontal } from 'lucide-react';
 import { useWebDevStore, useWebDevStoreShallow } from '@/stores/webdev-store';
-import { useWorkflowStore } from '@/stores/workflow-store';
+import { useWorkflowStore, useWorkflowStoreShallow } from '@/stores/workflow-store';
 import { OptionCard } from './option-card';
 import { PromptBar } from './prompt-bar';
 import { PromptCard } from './prompt-card';
@@ -22,7 +22,13 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const sandboxes = useWebDevStore((s) => s.sandboxes);
 
-  const workflows = useWorkflowStore((s) => s.workflows);
+  const workflowModelIds = useWorkflowStoreShallow((s) => {
+    const result: Record<string, string> = {};
+    for (const [id, wf] of s.workflows) {
+      result[id] = wf.modelId;
+    }
+    return result;
+  });
   const workflowOrder = useWorkflowStore((s) => s.workflowOrder);
   const webdevPrompt = useWebDevStore((s) => s.prompt);
 
@@ -33,7 +39,6 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
 
   return (
     <div className={cn('flex h-full flex-col bg-white', className)}>
-      {/* Top Nav */}
       <div className="flex h-14 shrink-0 items-center border-b border-[#E8E4DF] px-4">
         <div className="flex items-center gap-2">
           <button
@@ -49,17 +54,16 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
         </div>
       </div>
 
-      {/* Scrollable content */}
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-4 p-4">
           {hasPrompt && <PromptCard prompt={displayPrompt} />}
 
           {showOptions &&
             workflowOrder.map((wfId, index) => {
-              const wf = workflows.get(wfId);
-              if (!wf) return null;
+              const modelId = workflowModelIds[wfId];
+              if (!modelId) return null;
 
-              const modelName = wf.modelId.split(':').pop() ?? wf.modelId;
+              const modelName = modelId.split(':').pop() ?? modelId;
 
               return (
                 <OptionCard
@@ -82,7 +86,6 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
         </div>
       </ScrollArea>
 
-      {/* Bottom prompt bar */}
       <div className="shrink-0 border-t border-[#E8E4DF] p-4">
         <PromptBar
           onSubmit={onFollowUp}

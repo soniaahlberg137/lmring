@@ -2,22 +2,15 @@ import { and, db, eq, gt, isNotNull, lt } from '@lmring/database';
 import { webdevResponses, webdevSessions } from '@lmring/database/schema';
 import { Sandbox } from '@vercel/sandbox';
 import { logError } from '@/libs/error-logging';
+import { getSandboxCredentials } from '@/libs/webdev-config';
 
-// ─── Constants ──────────────────────────────────────────────────────────────
-
-/** Maximum 1 active session per user at a time */
 const MAX_ACTIVE_SESSIONS_PER_USER = 1;
 
-/** Rate limit: max sandbox creations per user per 24h window */
 const MAX_SANDBOX_CREATIONS_PER_DAY = 50;
 
-/** Debounce interval for sandbox timeout extension (5 minutes) */
 const EXTEND_DEBOUNCE_MS = 5 * 60 * 1000;
 
-/** Extension amount added on each heartbeat (10 minutes) */
 const EXTEND_AMOUNT_MS = 10 * 60 * 1000;
-
-// ─── Active session check ───────────────────────────────────────────────────
 
 /**
  * Check if the user already has an active webdev session.
@@ -56,8 +49,6 @@ export async function canCreateSession(
   return { allowed: true };
 }
 
-// ─── Rate limiting ──────────────────────────────────────────────────────────
-
 /**
  * Check how many sandboxes a user has created in the last 24 hours.
  * Returns `{ allowed: true, remaining }` or `{ allowed: false, remaining: 0 }`.
@@ -89,9 +80,6 @@ export async function checkSandboxRateLimit(userId: string): Promise<{
   };
 }
 
-// ─── Sandbox timeout extension ──────────────────────────────────────────────
-
-/** In-memory debounce tracker for sandbox extensions (per sandboxId) */
 const lastExtendedAt = new Map<string, number>();
 
 /**
@@ -105,19 +93,18 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
   const lastTime = lastExtendedAt.get(sandboxId) ?? 0;
 
   if (now - lastTime < EXTEND_DEBOUNCE_MS) {
-    return false; // Debounced — skip
+    return false;
   }
 
   lastExtendedAt.set(sandboxId, now);
 
   try {
-    const sandbox = await Sandbox.get({ sandboxId });
+    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
     const currentTimeout = sandbox.timeout;
 
     if (currentTimeout > 0) {
       const newExpiry = new Date(Date.now() + currentTimeout + EXTEND_AMOUNT_MS);
 
-      // Update DB expiry
       await db
         .update(webdevResponses)
         .set({ expiresAt: newExpiry })
@@ -126,14 +113,11 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
 
     return true;
   } catch (error) {
-    // Sandbox may have expired or been stopped — clean up tracking
     lastExtendedAt.delete(sandboxId);
     logError('WebDev sandbox timeout extension failed', error, { sandboxId });
     return false;
   }
 }
-
-// ─── Cleanup utilities ──────────────────────────────────────────────────────
 
 /**
  * Stop a single sandbox and update its DB record.
@@ -141,13 +125,10 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
  */
 export async function cleanupSandbox(sandboxId: string): Promise<void> {
   try {
-    const sandbox = await Sandbox.get({ sandboxId });
+    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
     await sandbox.stop();
-  } catch {
-    // Sandbox may already be stopped or expired
-  }
+  } catch {}
 
-  // Update DB regardless (idempotent)
   await db
     .update(webdevResponses)
     .set({
@@ -157,7 +138,6 @@ export async function cleanupSandbox(sandboxId: string): Promise<void> {
     })
     .where(eq(webdevResponses.sandboxId, sandboxId));
 
-  // Clean up in-memory extension tracker
   lastExtendedAt.delete(sandboxId);
 }
 
@@ -205,8 +185,6 @@ export async function cleanupUserSandboxes(userId: string): Promise<number> {
 
   return results.filter((r) => r.status === 'fulfilled').length;
 }
-
-// ─── Stale sandbox cleanup (server-side cron/background job) ────────────────
 
 /**
  * Clean up stale sandboxes whose expiresAt has passed.

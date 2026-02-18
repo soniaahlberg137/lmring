@@ -38,7 +38,7 @@ describe('useWorkflowExecution', () => {
     getAbortController: vi.fn(),
     getWorkflow: vi.fn(),
     getSyncedWorkflows: vi.fn(),
-    globalPrompt: 'Test prompt',
+    getGlobalPrompt: vi.fn().mockReturnValue('Test prompt'),
     clearWorkflowHistory: vi.fn(),
     removeLastAssistantMessage: vi.fn(),
     getConversationId: vi.fn().mockReturnValue(null),
@@ -78,6 +78,7 @@ describe('useWorkflowExecution', () => {
     mockStoreFunctions.getSyncedWorkflows.mockReturnValue([mockWorkflow]);
     mockStoreFunctions.getAbortController.mockReturnValue(undefined);
     mockStoreFunctions.getConversationId.mockReturnValue(null);
+    mockStoreFunctions.getGlobalPrompt.mockReturnValue('Test prompt');
   });
 
   afterEach(() => {
@@ -357,10 +358,7 @@ describe('useWorkflowExecution', () => {
 
   describe('startAllSyncedWorkflows', () => {
     it('validates global prompt is not empty', async () => {
-      useWorkflowStoreSpy.mockImplementation((selector: (state: unknown) => unknown) => {
-        const state = { ...mockStoreFunctions, globalPrompt: '  ' };
-        return selector(state);
-      });
+      mockStoreFunctions.getGlobalPrompt.mockReturnValue('  ');
 
       const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 

@@ -1,17 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { useWebDevStore } from '@/stores/webdev-store';
+import { useWebDevStoreShallow } from '@/stores/webdev-store';
 
 interface PreviewViewProps {
   iframeRefs: React.RefObject<Map<string, HTMLIFrameElement>>;
 }
 
 export function PreviewView({ iframeRefs }: PreviewViewProps) {
-  const sandboxes = useWebDevStore((s) => s.sandboxes);
-  const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
+  const { sandboxes, activeWorkflowId } = useWebDevStoreShallow((s) => ({
+    sandboxes: s.sandboxes,
+    activeWorkflowId: s.activeWorkflowId,
+  }));
 
-  // Track which tabs have been selected at least once (for lazy mounting)
   const [mountedTabs, setMountedTabs] = React.useState<Set<string>>(new Set());
 
   React.useEffect(() => {
@@ -42,7 +43,6 @@ export function PreviewView({ iframeRefs }: PreviewViewProps) {
         const isMounted = mountedTabs.has(workflowId);
         const previewUrl = sandbox.previewUrl;
 
-        // Lazy mount: only create iframe when tab has been selected at least once
         if (!isMounted || !previewUrl) {
           return isActive && !previewUrl ? (
             <div key={workflowId} className="absolute inset-0 flex items-center justify-center">

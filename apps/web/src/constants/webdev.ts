@@ -73,6 +73,7 @@ Requirements:
 - Use modern TypeScript/JavaScript with best practices
 - Include proper imports and exports
 - Make the app visually polished with Tailwind CSS or inline styles
+- If using Vite, set server.allowedHosts to true in vite.config (e.g. defineConfig({ server: { allowedHosts: true }, ... }))
 - Ensure the app runs immediately with no additional setup beyond "npm install && npm run dev"
 
 Do NOT include any explanation text outside of file blocks. Output ONLY the file blocks.`;

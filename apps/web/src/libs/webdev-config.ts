@@ -25,19 +25,16 @@ export interface WebDevConfig {
  * 4. Not configured → feature disabled
  */
 export function getWebDevConfig(): WebDevConfig {
-  // 1. Running on Vercel — OIDC auto-available
   if (process.env.VERCEL) {
     return {
       enabled: true,
       provider: 'vercel-sandbox',
       limits: {
-        // Hobby = 45 min, Pro/Enterprise = 300 min (5 hr)
         maxDurationMinutes: process.env.VERCEL_ENV === 'production' ? 300 : 45,
       },
     };
   }
 
-  // 2. Local dev with pulled OIDC token (via `vercel env pull`)
   if (process.env.VERCEL_OIDC_TOKEN) {
     return {
       enabled: true,
@@ -46,7 +43,6 @@ export function getWebDevConfig(): WebDevConfig {
     };
   }
 
-  // 3. Explicit access token configuration
   if (process.env.VERCEL_TOKEN && process.env.VERCEL_TEAM_ID && process.env.VERCEL_PROJECT_ID) {
     return {
       enabled: true,
@@ -55,10 +51,26 @@ export function getWebDevConfig(): WebDevConfig {
     };
   }
 
-  // 4. Not configured
   return {
     enabled: false,
     provider: 'disabled',
     reason: 'VERCEL_SANDBOX_NOT_CONFIGURED',
   };
+}
+
+/**
+ * Return credentials for the `@vercel/sandbox` SDK when running with an
+ * explicit access token (Tier 3).  Returns `undefined` when the env vars
+ * are not set, which lets the SDK fall back to OIDC (Tiers 1 & 2).
+ */
+export function getSandboxCredentials():
+  | { token: string; teamId: string; projectId: string }
+  | undefined {
+  const token = process.env.VERCEL_TOKEN;
+  const teamId = process.env.VERCEL_TEAM_ID;
+  const projectId = process.env.VERCEL_PROJECT_ID;
+  if (token && teamId && projectId) {
+    return { token, teamId, projectId };
+  }
+  return undefined;
 }
