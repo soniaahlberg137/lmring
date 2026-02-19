@@ -1,12 +1,14 @@
 'use client';
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@lmring/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
+import { conversationsKeys } from '@/hooks/use-conversations-query';
 import { useWebDevCleanup } from '@/hooks/use-webdev-cleanup';
 import { useWebDevGeneration } from '@/hooks/use-webdev-generation';
 import { useWebDevSandbox } from '@/hooks/use-webdev-sandbox';
 import { useWebDevStore, useWebDevStoreShallow, WebDevStoreProvider } from '@/stores/webdev-store';
-import { WorkflowStoreProvider } from '@/stores/workflow-store';
+import { useWorkflowStore, WorkflowStoreProvider } from '@/stores/workflow-store';
 import { ConfigModal } from './config-modal';
 import { LeftPanel } from './left-panel';
 import { RightPanel } from './right-panel';
@@ -47,7 +49,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const { startGeneration, handleFollowUp, getResponseId } = useWebDevGeneration();
 
   // Sandbox auto-creation: watches workflow completions, triggers sandbox build via SSE
-  const { resetProcessed } = useWebDevSandbox({ getResponseId });
+  const { resetProcessed, rebuildSandboxFromFiles } = useWebDevSandbox({ getResponseId });
 
   const { phase, featureConfig, sessionId } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
@@ -60,6 +62,14 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const setConversationId = useWebDevStore((s) => s.setConversationId);
   const setPhase = useWebDevStore((s) => s.setPhase);
   const setPrompt = useWebDevStore((s) => s.setPrompt);
+  const initSandbox = useWebDevStore((s) => s.initSandbox);
+  const setSandboxFiles = useWebDevStore((s) => s.setSandboxFiles);
+  const setSandboxReady = useWebDevStore((s) => s.setSandboxReady);
+  const updateSandboxStatus = useWebDevStore((s) => s.updateSandboxStatus);
+  const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
+  const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
+  const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
+  const queryClient = useQueryClient();
 
   // Check feature config on mount
   React.useEffect(() => {
@@ -72,6 +82,143 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
       setSessionId(initialSessionId);
     }
   }, [initialSessionId, sessionId, setSessionId]);
+
+  // Load existing session from API
+  const sessionLoadedRef = React.useRef(false);
+  React.useEffect(() => {
+    if (!initialSessionId || sessionLoadedRef.current) return;
+    // Skip if init data exists (handled by creation flow)
+    const hasInitData = sessionStorage.getItem('webdev_init');
+    if (hasInitData) return;
+
+    sessionLoadedRef.current = true;
+
+    const loadSession = async () => {
+      try {
+        const res = await fetch(`/api/webdev/session/${initialSessionId}`);
+        if (!res.ok) {
+          setPhase('error');
+          return;
+        }
+        const data = (await res.json()) as {
+          session: {
+            id: string;
+            conversationId: string | null;
+            prompt: string;
+            status: string;
+          };
+          responses: Array<{
+            id: string;
+            modelId: string;
+            keyId: string;
+            status: string;
+            files: Record<string, string> | null;
+            sandboxId: string | null;
+            previewUrl: string | null;
+            expiresAt: string | null;
+          }>;
+        };
+
+        // Restore session-level state
+        setSessionId(data.session.id);
+        if (data.session.conversationId) {
+          setConversationId(data.session.conversationId);
+        }
+        setPrompt(data.session.prompt);
+
+        // Restore per-response state
+        let firstWorkflowId: string | null = null;
+        const sandboxesToRebuild: Array<{
+          workflowId: string;
+          files: Record<string, string>;
+          responseId: string;
+        }> = [];
+
+        for (const response of data.responses) {
+          const workflowId = createWorkflow(response.modelId, response.keyId);
+          setWorkflowStatus(workflowId, 'completed');
+
+          if (!firstWorkflowId) firstWorkflowId = workflowId;
+
+          initSandbox(workflowId);
+
+          if (response.files) {
+            setSandboxFiles(workflowId, response.files);
+          }
+
+          // Restore sandbox preview or queue rebuild for expired VMs
+          if (response.sandboxId && response.previewUrl) {
+            const isExpired =
+              response.expiresAt != null && new Date(response.expiresAt) <= new Date();
+
+            if (isExpired && response.files) {
+              updateSandboxStatus(workflowId, 'creating');
+              sandboxesToRebuild.push({
+                workflowId,
+                files: response.files,
+                responseId: response.id,
+              });
+            } else if (isExpired) {
+              updateSandboxStatus(workflowId, 'stopped');
+            } else {
+              setSandboxReady(
+                workflowId,
+                response.sandboxId,
+                response.previewUrl,
+                response.expiresAt,
+              );
+            }
+          } else if (response.files && response.status !== 'error') {
+            updateSandboxStatus(workflowId, 'creating');
+            sandboxesToRebuild.push({
+              workflowId,
+              files: response.files,
+              responseId: response.id,
+            });
+          } else if (response.status === 'error') {
+            updateSandboxStatus(workflowId, 'error');
+          } else {
+            updateSandboxStatus(workflowId, 'stopped');
+          }
+        }
+
+        if (firstWorkflowId) {
+          setActiveWorkflowId(firstWorkflowId);
+        }
+
+        if (sandboxesToRebuild.length > 0) {
+          setPhase('building');
+          for (const entry of sandboxesToRebuild) {
+            rebuildSandboxFromFiles(
+              entry.workflowId,
+              entry.files,
+              data.session.id,
+              entry.responseId,
+            );
+          }
+        } else {
+          setPhase('ready');
+        }
+      } catch {
+        setPhase('error');
+      }
+    };
+    void loadSession();
+  }, [
+    initialSessionId,
+    setSessionId,
+    setConversationId,
+    setPrompt,
+    setPhase,
+    createWorkflow,
+    setWorkflowStatus,
+    initSandbox,
+    setSandboxFiles,
+    setSandboxReady,
+    updateSandboxStatus,
+    setActiveWorkflowId,
+    rebuildSandboxFromFiles,
+  ]);
 
   // Read init data from sessionStorage (passed from arena page)
   const initDataReadRef = React.useRef(false);
@@ -124,10 +271,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             };
             setSessionId(result.sessionId);
 
-            // Reset processed sandboxes for a fresh generation round
+            window.history.replaceState(null, '', `/webdev/${result.sessionId}`);
+            window.dispatchEvent(new Event('url-replaced'));
+
+            void queryClient.invalidateQueries({ queryKey: conversationsKeys.all });
+
             resetProcessed();
 
-            // Wire generation: create workflows, seed system prompt, start AI streaming
             await startGeneration({
               prompt,
               models,
@@ -142,7 +292,15 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     } catch {
       // Invalid JSON, ignore
     }
-  }, [setConversationId, setPhase, setPrompt, setSessionId, resetProcessed, startGeneration]);
+  }, [
+    setConversationId,
+    setPhase,
+    setPrompt,
+    setSessionId,
+    resetProcessed,
+    startGeneration,
+    queryClient,
+  ]);
 
   const [configModalOpen, setConfigModalOpen] = React.useState(false);
 

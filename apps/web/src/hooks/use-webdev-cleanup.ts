@@ -57,30 +57,21 @@ export function useWebDevCleanup() {
 
   // ── Heartbeat: extend sandbox timeouts while user is active ──
   useEffect(() => {
-    // Collect active sandbox IDs
-    const activeSandboxIds: string[] = [];
-    for (const [, sandbox] of sandboxes) {
-      if (sandbox.sandboxId && sandbox.status === 'ready') {
-        activeSandboxIds.push(sandbox.sandboxId);
-      }
-    }
-
-    if (activeSandboxIds.length === 0) return;
-
     const interval = setInterval(() => {
-      for (const sandboxId of activeSandboxIds) {
-        void fetch('/api/webdev/sandbox/heartbeat', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sandboxId }),
-        }).catch(() => {
-          // Heartbeat failure is non-critical — sandbox will auto-expire
-        });
+      const currentSandboxes = sandboxesRef.current;
+      for (const [, sandbox] of currentSandboxes) {
+        if (sandbox.sandboxId && sandbox.status === 'ready') {
+          void fetch('/api/webdev/sandbox/heartbeat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sandboxId: sandbox.sandboxId }),
+          }).catch(() => {});
+        }
       }
     }, HEARTBEAT_INTERVAL_MS);
 
     return () => clearInterval(interval);
-  }, [sandboxes]);
+  }, []);
 
   // ── Unmount cleanup: destroy all sandboxes when leaving /webdev ──
   useEffect(() => {

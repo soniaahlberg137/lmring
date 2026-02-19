@@ -56,6 +56,7 @@ export interface ConversationData {
   firstMessage?: string;
   models?: ConversationModel[];
   voteInfo?: VoteInfoExtended;
+  webdevSessionId?: string;
 }
 
 export interface FullConversationData {

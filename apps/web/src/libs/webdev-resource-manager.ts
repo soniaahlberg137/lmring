@@ -100,16 +100,13 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
 
   try {
     const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
-    const currentTimeout = sandbox.timeout;
+    await sandbox.extendTimeout(EXTEND_AMOUNT_MS);
+    const newExpiry = new Date(Date.now() + sandbox.timeout);
 
-    if (currentTimeout > 0) {
-      const newExpiry = new Date(Date.now() + currentTimeout + EXTEND_AMOUNT_MS);
-
-      await db
-        .update(webdevResponses)
-        .set({ expiresAt: newExpiry })
-        .where(eq(webdevResponses.sandboxId, sandboxId));
-    }
+    await db
+      .update(webdevResponses)
+      .set({ expiresAt: newExpiry })
+      .where(eq(webdevResponses.sandboxId, sandboxId));
 
     return true;
   } catch (error) {

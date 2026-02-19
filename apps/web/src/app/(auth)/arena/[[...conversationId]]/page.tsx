@@ -1111,6 +1111,7 @@ export default function ArenaPage() {
         const conversation = await createConversation(title);
         if (conversation?.id) {
           webdevConversationId = conversation.id;
+          setNewConversation({ id: conversation.id, title, updatedAt: new Date().toISOString() });
         }
       } catch {
         // Navigate without conversationId
@@ -1169,16 +1170,19 @@ export default function ArenaPage() {
         }));
     }
 
-    setWorkflowGlobalPrompt('');
     handleClearImages();
     const currentInputMode = inputMode;
     setInputMode('default');
 
+    // Clear prompt after starting (startAll* reads it synchronously)
+    let workflowPromise: Promise<void>;
     if (currentInputMode === 'videoGenerate') {
-      await startAllSyncedVideoWorkflows();
+      workflowPromise = startAllSyncedVideoWorkflows();
     } else {
-      await startAllSyncedWorkflows(attachments, dbAttachments);
+      workflowPromise = startAllSyncedWorkflows(attachments, dbAttachments);
     }
+    setWorkflowGlobalPrompt('');
+    await workflowPromise;
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';

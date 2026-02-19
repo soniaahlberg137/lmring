@@ -193,7 +193,13 @@ export default function HistoryPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
             >
-              <Link href={`/arena/${conversation.id}`}>
+              <Link
+                href={
+                  conversation.webdevSessionId
+                    ? `/webdev/${conversation.webdevSessionId}`
+                    : `/arena/${conversation.id}`
+                }
+              >
                 <Card className="hover:shadow-lg transition-shadow duration-200 cursor-pointer group">
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">

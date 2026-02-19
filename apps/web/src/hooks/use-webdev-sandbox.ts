@@ -107,6 +107,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
   const setPhase = useWebDevStore((s) => s.setPhase);
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
+  const getSandbox = useWebDevStore((s) => s.getSandbox);
 
   const getWorkflow = useWorkflowStore((s) => s.getWorkflow);
   const workflows = useWorkflowStore((s) => s.workflows);
@@ -300,13 +301,16 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
       // Mark as processed immediately to avoid duplicate triggers
       processedRef.current.add(workflowId);
 
+      // Skip if sandbox already exists (e.g. restored from history)
+      if (getSandbox(workflowId)) continue;
+
       // Init sandbox entry in store (shows 'idle' state in UI)
       initSandbox(workflowId);
 
       // Queue sandbox creation through concurrency limiter
       void limiterRef.current(() => createSandboxForWorkflow(workflowId));
     }
-  }, [workflows, initSandbox, createSandboxForWorkflow]);
+  }, [workflows, initSandbox, createSandboxForWorkflow, getSandbox]);
 
   /**
    * Cancel a specific sandbox creation in progress.
@@ -328,6 +332,68 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
     }
     abortControllersRef.current.clear();
   }, []);
+
+  /**
+   * Rebuild a sandbox from stored files (e.g. after session reload
+   * when the original VM has expired).
+   */
+  const rebuildSandboxFromFiles = useCallback(
+    (
+      workflowId: string,
+      files: Record<string, string>,
+      targetSessionId: string,
+      responseId: string,
+    ) => {
+      // Prevent duplicate sandbox creation
+      processedRef.current.add(workflowId);
+
+      void limiterRef.current(async () => {
+        const fileArray = Object.entries(files).map(([path, content]) => ({ path, content }));
+
+        const abortController = new AbortController();
+        abortControllersRef.current.set(workflowId, abortController);
+
+        try {
+          const response = await fetch('/api/webdev/sandbox', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              files: fileArray,
+              sessionId: targetSessionId,
+              responseId,
+            }),
+            signal: abortController.signal,
+          });
+
+          if (!response.ok) {
+            let errorMessage = 'Sandbox rebuild failed';
+            try {
+              const errorData = await response.json();
+              if (typeof errorData.error === 'string') {
+                errorMessage = errorData.error;
+              }
+            } catch {
+              // ignore
+            }
+            updateSandboxStatus(workflowId, 'error', errorMessage);
+            return;
+          }
+
+          await consumeSandboxStream(workflowId, response);
+        } catch (error) {
+          if (error instanceof Error && error.name === 'AbortError') {
+            updateSandboxStatus(workflowId, 'stopped');
+          } else {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            updateSandboxStatus(workflowId, 'error', message);
+          }
+        } finally {
+          abortControllersRef.current.delete(workflowId);
+        }
+      });
+    },
+    [updateSandboxStatus, consumeSandboxStream],
+  );
 
   /**
    * Reset processed set (call when starting a new generation round).
@@ -352,5 +418,6 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
     cancelSandbox,
     cancelAllSandboxes,
     resetProcessed,
+    rebuildSandboxFromFiles,
   };
 }

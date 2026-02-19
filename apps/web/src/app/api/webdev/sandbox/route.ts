@@ -209,6 +209,7 @@ export async function POST(request: Request) {
                 previewUrl,
                 status: 'ready',
                 expiresAt: expiresAt ? new Date(expiresAt) : null,
+                files: Object.fromEntries(files.map((f) => [f.path, f.content])),
               })
               .where(eq(webdevResponses.id, responseId));
           } catch (dbError) {
