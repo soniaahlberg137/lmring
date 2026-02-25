@@ -3,8 +3,10 @@
 import { cn } from '@lmring/ui';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
-import { OPTION_COLORS, STATUS_COLORS } from '@/constants/webdev';
+import { ProviderIcon } from '@/components/arena/provider-icon';
+import { STATUS_COLORS } from '@/constants/webdev';
 import { useWebDevStore } from '@/stores/webdev-store';
+import { useWorkflowStore } from '@/stores/workflow-store';
 import type { SandboxStatus } from '@/types/webdev';
 import { ActivityLog, type ActivityLogItem } from './activity-log';
 
@@ -90,24 +92,6 @@ function buildActivityItems(
   return items;
 }
 
-interface OptionBadgeProps {
-  index: number;
-}
-
-function OptionBadge({ index }: OptionBadgeProps) {
-  const color = OPTION_COLORS[index];
-  if (!color) return null;
-
-  return (
-    <span
-      className="inline-flex h-6 w-6 items-center justify-center rounded-md text-xs font-bold text-white"
-      style={{ backgroundColor: color.bg }}
-    >
-      {color.key}
-    </span>
-  );
-}
-
 interface OptionCardProps {
   workflowId: string;
   index: number;
@@ -119,13 +103,16 @@ interface OptionCardProps {
 
 export const OptionCard = React.memo(function OptionCard({
   workflowId,
-  index,
+  index: _index,
   modelName,
   isActive,
   showVote: _showVote,
   onClick,
 }: OptionCardProps) {
   const sandbox = useWebDevStore((s) => s.sandboxes.get(workflowId));
+  const workflow = useWorkflowStore((s) => s.workflows.get(workflowId));
+  const modelId = workflow?.modelId ?? '';
+  const providerId = modelId.split(':')[0] ?? '';
   const status = sandbox?.status ?? 'idle';
   const files = sandbox?.files ?? {};
   const error = sandbox?.error ?? null;
@@ -144,9 +131,8 @@ export const OptionCard = React.memo(function OptionCard({
         isActive && 'ring-2 ring-[#E8E4DF]',
       )}
     >
-      {/* Header */}
       <div className="flex items-center gap-2.5 mb-3">
-        <OptionBadge index={index} />
+        <ProviderIcon providerId={providerId} size={20} type="avatar" />
         <span className="text-sm font-semibold text-[#1A1A1A] truncate">{modelName}</span>
         <span className="ml-auto flex items-center gap-1.5 shrink-0">
           {isActiveStatus(status) && (
@@ -158,7 +144,6 @@ export const OptionCard = React.memo(function OptionCard({
         </span>
       </div>
 
-      {/* Activity log */}
       <ActivityLog items={activityItems} />
     </button>
   );

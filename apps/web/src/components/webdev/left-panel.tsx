@@ -1,7 +1,6 @@
 'use client';
 
 import { cn, ScrollArea } from '@lmring/ui';
-import { ChevronDown, MoreHorizontal } from 'lucide-react';
 import { useWebDevStore, useWebDevStoreShallow } from '@/stores/webdev-store';
 import { useWorkflowStore, useWorkflowStoreShallow } from '@/stores/workflow-store';
 import { OptionCard } from './option-card';
@@ -30,7 +29,7 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
     return result;
   });
   const workflowOrder = useWorkflowStore((s) => s.workflowOrder);
-  const webdevPrompt = useWebDevStore((s) => s.prompt);
+  const webdevPrompt = useWebDevStore((s) => s.submittedPrompt);
 
   const displayPrompt = webdevPrompt.trim();
   const hasPrompt = phase !== 'idle' && displayPrompt.length > 0;
@@ -39,21 +38,6 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
 
   return (
     <div className={cn('flex h-full flex-col bg-white', className)}>
-      <div className="flex h-14 shrink-0 items-center border-b border-[#E8E4DF] px-4">
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="flex items-center gap-1.5 rounded-lg bg-[#F5F0EB] px-3 py-1.5"
-          >
-            <span className="text-sm font-semibold text-[#1A1A1A]">Battle</span>
-            <ChevronDown className="h-4 w-4 text-[#71717A]" />
-          </button>
-          <button type="button" className="rounded-lg bg-[#F5F0EB] p-2" aria-label="More options">
-            <MoreHorizontal className="h-[18px] w-[18px] text-[#71717A]" />
-          </button>
-        </div>
-      </div>
-
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-4 p-4">
           {hasPrompt && <PromptCard prompt={displayPrompt} />}

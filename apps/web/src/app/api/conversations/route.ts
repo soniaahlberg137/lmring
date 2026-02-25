@@ -5,6 +5,7 @@ import {
   conversations,
   messages,
   modelResponses,
+  webdevResponses,
   webdevSessions,
 } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
@@ -59,7 +60,6 @@ export async function GET(request: Request) {
       return NextResponse.json({ conversations: [] }, { status: 200 });
     }
 
-    // Always look up webdev sessions for routing
     const webdevSessionRows = await db
       .select({
         conversationId: webdevSessions.conversationId,
@@ -88,8 +88,7 @@ export async function GET(request: Request) {
       ...c,
     }));
 
-    // Parallelize conditional queries for better performance
-    const [firstMessages, modelsUsed, votesData] = await Promise.all([
+    const [firstMessages, modelsUsed, votesData, webdevModelsUsed] = await Promise.all([
       withFirstMessage
         ? db
             .select({
@@ -135,9 +134,18 @@ export async function GET(request: Request) {
               ),
             )
         : Promise.resolve([]),
+      withModels
+        ? db
+            .selectDistinct({
+              conversationId: webdevSessions.conversationId,
+              modelId: webdevResponses.modelId,
+            })
+            .from(webdevResponses)
+            .innerJoin(webdevSessions, eq(webdevResponses.sessionId, webdevSessions.id))
+            .where(inArray(webdevSessions.conversationId, conversationIds))
+        : Promise.resolve([]),
     ]);
 
-    // Process first messages
     if (withFirstMessage && firstMessages.length > 0) {
       const firstMessageMap = new Map<string, string>();
       for (const msg of firstMessages) {
@@ -154,7 +162,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Process models used
     if (withModels && modelsUsed.length > 0) {
       const modelsMap = new Map<string, Array<{ modelName: string; providerName: string }>>();
       for (const model of modelsUsed) {
@@ -172,7 +179,27 @@ export async function GET(request: Request) {
       }
     }
 
-    // Process votes
+    // Fill in webdev models for conversations without arena models
+    if (withModels && webdevModelsUsed.length > 0) {
+      for (const wm of webdevModelsUsed) {
+        if (!wm.conversationId) continue;
+        const conv = result.find((c) => c.id === wm.conversationId);
+        if (!conv) continue;
+        if (!conv.models || conv.models.length === 0) {
+          if (!conv.models) conv.models = [];
+          const parts = wm.modelId.split(':');
+          const providerName = parts[0] ?? wm.modelId;
+          const modelName = parts.slice(1).join(':') || wm.modelId;
+          const exists = conv.models.some(
+            (m) => m.modelName === modelName && m.providerName === providerName,
+          );
+          if (!exists) {
+            conv.models.push({ modelName, providerName });
+          }
+        }
+      }
+    }
+
     if (withVotes && votesData.length > 0) {
       const votesMap = new Map<string, VoteInfoExtended>();
       for (const vote of votesData) {
@@ -212,7 +239,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Apply webdev session mapping (already fetched above)
     for (const conv of result) {
       const sessionId = webdevMap.get(conv.id);
       if (sessionId) {

@@ -42,13 +42,8 @@ function useIsDesktop() {
 function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const isDesktop = useIsDesktop();
 
-  // Sandbox lifecycle management: beforeunload, heartbeat, unmount cleanup
   useWebDevCleanup();
-
-  // Generation orchestration: creates workflows, seeds system prompt, starts AI streaming
   const { startGeneration, handleFollowUp, getResponseId } = useWebDevGeneration();
-
-  // Sandbox auto-creation: watches workflow completions, triggers sandbox build via SSE
   const { resetProcessed, rebuildSandboxFromFiles } = useWebDevSandbox({ getResponseId });
 
   const { phase, featureConfig, sessionId } = useWebDevStoreShallow((s) => ({
@@ -62,6 +57,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const setConversationId = useWebDevStore((s) => s.setConversationId);
   const setPhase = useWebDevStore((s) => s.setPhase);
   const setPrompt = useWebDevStore((s) => s.setPrompt);
+  const setSubmittedPrompt = useWebDevStore((s) => s.setSubmittedPrompt);
   const initSandbox = useWebDevStore((s) => s.initSandbox);
   const setSandboxFiles = useWebDevStore((s) => s.setSandboxFiles);
   const setSandboxReady = useWebDevStore((s) => s.setSandboxReady);
@@ -71,23 +67,19 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
   const queryClient = useQueryClient();
 
-  // Check feature config on mount
   React.useEffect(() => {
     void checkConfig();
   }, [checkConfig]);
 
-  // Handle initialSessionId — load existing session if provided
   React.useEffect(() => {
     if (initialSessionId && initialSessionId !== sessionId) {
       setSessionId(initialSessionId);
     }
   }, [initialSessionId, sessionId, setSessionId]);
 
-  // Load existing session from API
   const sessionLoadedRef = React.useRef(false);
   React.useEffect(() => {
     if (!initialSessionId || sessionLoadedRef.current) return;
-    // Skip if init data exists (handled by creation flow)
     const hasInitData = sessionStorage.getItem('webdev_init');
     if (hasInitData) return;
 
@@ -119,14 +111,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           }>;
         };
 
-        // Restore session-level state
         setSessionId(data.session.id);
         if (data.session.conversationId) {
           setConversationId(data.session.conversationId);
         }
-        setPrompt(data.session.prompt);
+        setSubmittedPrompt(data.session.prompt);
+        setPrompt('');
 
-        // Restore per-response state
         let firstWorkflowId: string | null = null;
         const sandboxesToRebuild: Array<{
           workflowId: string;
@@ -146,7 +137,6 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             setSandboxFiles(workflowId, response.files);
           }
 
-          // Restore sandbox preview or queue rebuild for expired VMs
           if (response.sandboxId && response.previewUrl) {
             const isExpired =
               response.expiresAt != null && new Date(response.expiresAt) <= new Date();
@@ -208,6 +198,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     initialSessionId,
     setSessionId,
     setConversationId,
+    setSubmittedPrompt,
     setPrompt,
     setPhase,
     createWorkflow,
@@ -220,7 +211,6 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     rebuildSandboxFromFiles,
   ]);
 
-  // Read init data from sessionStorage (passed from arena page)
   const initDataReadRef = React.useRef(false);
   React.useEffect(() => {
     if (initDataReadRef.current) return;
@@ -244,7 +234,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
       if (data.prompt && data.models?.length) {
         const { prompt, models } = data;
         setPhase('generating');
-        setPrompt(prompt);
+        setSubmittedPrompt(prompt);
+        setPrompt('');
 
         const createSession = async () => {
           try {
@@ -289,12 +280,11 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
         };
         void createSession();
       }
-    } catch {
-      // Invalid JSON, ignore
-    }
+    } catch {}
   }, [
     setConversationId,
     setPhase,
+    setSubmittedPrompt,
     setPrompt,
     setSessionId,
     resetProcessed,
@@ -304,7 +294,6 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   const [configModalOpen, setConfigModalOpen] = React.useState(false);
 
-  // Show config modal when feature is disabled and config has loaded
   React.useEffect(() => {
     if (featureConfig && !featureConfig.enabled) {
       setConfigModalOpen(true);

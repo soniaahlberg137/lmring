@@ -13,9 +13,7 @@ import {
 } from '@/types/webdev';
 
 /**
- * Create the WebDev Store
- *
- * Layer 2 store: manages sandbox/preview state per model.
+ * WebDev Store (Layer 2): manages sandbox/preview state per model.
  * Layer 1 (WorkflowStore) handles AI generation, streaming, abort controllers.
  */
 export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE> = {}) => {
@@ -41,7 +39,6 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
 
         resetSession: () => {
           const { sandboxes } = get();
-          // Fire-and-forget cleanup of all sandboxes
           const destroyPromises: Promise<void>[] = [];
           for (const [, sandbox] of sandboxes) {
             if (sandbox.sandboxId) {
@@ -53,7 +50,6 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
               );
             }
           }
-          // Don't await — fire and forget
           if (destroyPromises.length > 0) {
             void Promise.allSettled(destroyPromises);
           }
@@ -226,9 +222,7 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
 
           try {
             await fetch(`/api/webdev/sandbox/${sandboxId}`, { method: 'DELETE' });
-          } catch {
-            // Best-effort cleanup — sandbox will auto-expire regardless
-          }
+          } catch {}
         },
 
         destroyAllSandboxes: async () => {
@@ -292,6 +286,10 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
 
         setPrompt: (prompt) => {
           set({ prompt }, false, 'webdev/setPrompt');
+        },
+
+        setSubmittedPrompt: (prompt) => {
+          set({ submittedPrompt: prompt }, false, 'webdev/setSubmittedPrompt');
         },
 
         // --- Selectors ---
@@ -358,7 +356,7 @@ export function useWebDevStoreShallow<T>(selector: (state: WebDevStore) => T): T
 }
 
 /**
- * Pre-defined selectors for common use cases
+ * Pre-defined selectors
  */
 export const webdevSelectors = {
   phase: (state: WebDevStore) => state.phase,
@@ -394,17 +392,16 @@ export const webdevSelectors = {
     return false;
   },
 
-  // Composite selector for WebDev studio page
   webdevState: (state: WebDevStore) => ({
     phase: state.phase,
     sessionId: state.sessionId,
     prompt: state.prompt,
+    submittedPrompt: state.submittedPrompt,
     sandboxes: state.sandboxes,
     activeWorkflowId: state.activeWorkflowId,
     featureConfig: state.featureConfig,
   }),
 
-  // Composite selector for actions
   webdevActions: (state: WebDevStore) => ({
     setSessionId: state.setSessionId,
     setConversationId: state.setConversationId,
@@ -423,5 +420,6 @@ export const webdevSelectors = {
     setFeatureConfig: state.setFeatureConfig,
     checkConfig: state.checkConfig,
     setPrompt: state.setPrompt,
+    setSubmittedPrompt: state.setSubmittedPrompt,
   }),
 };

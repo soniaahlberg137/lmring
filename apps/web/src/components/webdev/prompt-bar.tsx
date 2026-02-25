@@ -61,12 +61,6 @@ export function PromptBar({
       </div>
       <button
         type="button"
-        className="rounded-md bg-[#F5F0EB] px-3 py-2 text-[13px] font-medium text-[#71717A]"
-      >
-        Code
-      </button>
-      <button
-        type="button"
         onClick={handleSubmit}
         disabled={!canSubmit}
         className={cn(

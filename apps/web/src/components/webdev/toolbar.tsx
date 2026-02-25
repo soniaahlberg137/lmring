@@ -45,6 +45,14 @@ function ToolbarButton({
 }
 
 export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps) {
+  const [isSpinning, setIsSpinning] = React.useState(false);
+
+  const handleRefresh = React.useCallback(() => {
+    setIsSpinning(true);
+    onRefresh();
+    setTimeout(() => setIsSpinning(false), 400);
+  }, [onRefresh]);
+
   const activeSandbox = useWebDevStore((s) => {
     if (!s.activeWorkflowId) return undefined;
     return s.sandboxes.get(s.activeWorkflowId);
@@ -65,14 +73,11 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
     }
   }, [previewUrl]);
 
-  const handleDownload = React.useCallback(() => {
-    // Placeholder for download functionality
-  }, []);
+  const handleDownload = React.useCallback(() => {}, []);
 
   return (
     <TooltipProvider delayDuration={300}>
       <div className="flex h-12 shrink-0 items-center gap-3 border-b border-[#E8E4DF] bg-[#F5F0EB] px-3">
-        {/* View toggle */}
         <div className="flex items-center rounded-lg bg-[#F5F0EB] p-0.5">
           <button
             type="button"
@@ -102,21 +107,33 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
           </button>
         </div>
 
-        {/* Refresh */}
-        <ToolbarButton
-          icon={RefreshCw}
-          label="Refresh preview"
-          onClick={onRefresh}
-          disabled={!isReady}
-        />
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              type="button"
+              onClick={handleRefresh}
+              disabled={!isReady}
+              className="webdev-toolbar-btn disabled:pointer-events-none disabled:opacity-40"
+              aria-label="Refresh preview"
+            >
+              <RefreshCw
+                className={cn(
+                  'h-4 w-4 transition-transform duration-400',
+                  isSpinning && 'rotate-[360deg]',
+                )}
+              />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="text-xs">
+            Refresh preview
+          </TooltipContent>
+        </Tooltip>
 
-        {/* URL bar */}
         <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md bg-[#F5F0EB] px-3 py-1.5">
           <Globe className="h-3.5 w-3.5 shrink-0 text-[#71717A]" />
           <span className="truncate text-xs text-[#71717A]">{previewUrl ?? 'localhost:3000'}</span>
         </div>
 
-        {/* Action buttons */}
         <ToolbarButton
           icon={Copy}
           label="Copy URL"
@@ -130,7 +147,6 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
           disabled={!previewUrl}
         />
 
-        {/* Download button - dark bg */}
         <Tooltip>
           <TooltipTrigger asChild>
             <button
