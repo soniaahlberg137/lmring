@@ -74,6 +74,7 @@ export function Sidebar({ user }: SidebarProps) {
 
   // Track actual browser pathname — usePathname() doesn't update on replaceState
   const [browserPath, setBrowserPath] = React.useState('');
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname triggers re-sync with actual browser path on navigation
   React.useEffect(() => {
     setBrowserPath(window.location.pathname);
   }, [pathname]);

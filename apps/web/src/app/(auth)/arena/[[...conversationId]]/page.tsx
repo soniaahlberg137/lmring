@@ -1212,6 +1212,7 @@ export default function ArenaPage() {
     inputMode,
     createConversation,
     getKeyIdForModel,
+    setNewConversation,
   ]);
 
   const handleModelSelect = React.useCallback(

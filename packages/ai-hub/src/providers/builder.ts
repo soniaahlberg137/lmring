@@ -169,12 +169,7 @@ export const ProviderBuilder = {
       apiKey,
       baseURL,
     });
-    // @openrouter/ai-sdk-provider still uses V2 types, cast until package is updated
-    return attachProviderId(
-      'openrouter',
-      provider as unknown as { languageModel: ProviderInstance['languageModel'] },
-      { apiKey, baseURL },
-    );
+    return attachProviderId('openrouter', provider, { apiKey, baseURL });
   },
 
   compatible(
