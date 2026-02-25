@@ -465,5 +465,7 @@
   "WebDev.option_is_better": "{{option}} est meilleur",
   "WebDev.retry": "Reessayer",
   "WebDev.close": "Fermer",
-  "WebDev.learn_more": "En savoir plus"
+  "WebDev.learn_more": "En savoir plus",
+  "WebDev.no_files_to_download": "Aucun fichier a telecharger",
+  "WebDev.download_failed": "Echec du telechargement des fichiers"
 }

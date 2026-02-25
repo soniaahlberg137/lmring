@@ -3,6 +3,8 @@
 import { cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@lmring/ui';
 import { Code, Copy, Download, ExternalLink, Eye, Globe, RefreshCw } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { useWebDevStore } from '@/stores/webdev-store';
 
 type ViewMode = 'preview' | 'code';
@@ -46,6 +48,7 @@ function ToolbarButton({
 
 export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps) {
   const [isSpinning, setIsSpinning] = React.useState(false);
+  const { t } = useTranslation();
 
   const handleRefresh = React.useCallback(() => {
     setIsSpinning(true);
@@ -73,7 +76,23 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
     }
   }, [previewUrl]);
 
-  const handleDownload = React.useCallback(() => {}, []);
+  const submittedPrompt = useWebDevStore((s) => s.submittedPrompt);
+
+  const handleDownload = React.useCallback(async () => {
+    const files = activeSandbox?.files;
+    if (!files || Object.keys(files).length === 0) {
+      toast.error(t('WebDev.no_files_to_download'));
+      return;
+    }
+
+    try {
+      const { downloadFilesAsZip, promptToFilename } = await import('@/utils/download-zip');
+      const filename = `${promptToFilename(submittedPrompt)}.zip`;
+      downloadFilesAsZip(files, filename);
+    } catch {
+      toast.error(t('WebDev.download_failed'));
+    }
+  }, [activeSandbox?.files, submittedPrompt, t]);
 
   return (
     <TooltipProvider delayDuration={300}>

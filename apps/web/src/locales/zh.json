@@ -465,5 +465,7 @@
   "WebDev.option_is_better": "{{option}} 更好",
   "WebDev.retry": "重试",
   "WebDev.close": "关闭",
-  "WebDev.learn_more": "了解更多"
+  "WebDev.learn_more": "了解更多",
+  "WebDev.no_files_to_download": "没有可下载的文件",
+  "WebDev.download_failed": "文件下载失败"
 }
