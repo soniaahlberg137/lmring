@@ -179,23 +179,20 @@ export async function GET(request: Request) {
       }
     }
 
-    // Fill in webdev models for conversations without arena models
     if (withModels && webdevModelsUsed.length > 0) {
       for (const wm of webdevModelsUsed) {
         if (!wm.conversationId) continue;
         const conv = result.find((c) => c.id === wm.conversationId);
         if (!conv) continue;
-        if (!conv.models || conv.models.length === 0) {
-          if (!conv.models) conv.models = [];
-          const parts = wm.modelId.split(':');
-          const providerName = parts[0] ?? wm.modelId;
-          const modelName = parts.slice(1).join(':') || wm.modelId;
-          const exists = conv.models.some(
-            (m) => m.modelName === modelName && m.providerName === providerName,
-          );
-          if (!exists) {
-            conv.models.push({ modelName, providerName });
-          }
+        if (!conv.models) conv.models = [];
+        const parts = wm.modelId.split(':');
+        const providerName = parts[0] ?? wm.modelId;
+        const modelName = parts.slice(1).join(':') || wm.modelId;
+        const exists = conv.models.some(
+          (m) => m.modelName === modelName && m.providerName === providerName,
+        );
+        if (!exists) {
+          conv.models.push({ modelName, providerName });
         }
       }
     }

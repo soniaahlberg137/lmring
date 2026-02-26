@@ -58,6 +58,7 @@ export const webdevSandboxCreateSchema = z.object({
     .max(100, 'Maximum 100 files allowed'),
   sessionId: z.uuid('Invalid session ID'),
   responseId: z.uuid('Invalid response ID'),
+  snapshotId: z.string().trim().max(200, 'Snapshot ID too long').optional(),
 });
 
 /**

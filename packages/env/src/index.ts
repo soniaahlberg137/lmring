@@ -8,6 +8,11 @@ export const FILE_UPLOAD_CONFIG = {
   MAX_IMAGES: 10,
 } as const;
 
+// Compile-time constants for WebDev sandbox
+export const SANDBOX_CONFIG = {
+  SNAPSHOT_EXPIRATION_MS: 30 * 24 * 60 * 60 * 1000, // 30 days
+} as const;
+
 export const env = createEnv({
   server: {
     ARCJET_KEY: z.string().startsWith('ajkey_').or(z.literal('')).optional(),

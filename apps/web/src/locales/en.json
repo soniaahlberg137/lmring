@@ -439,6 +439,8 @@
   "WebDev.status_ready": "Ready",
   "WebDev.status_error": "Error",
   "WebDev.status_expired": "Expired",
+  "WebDev.status_snapshotting": "Saving snapshot...",
+  "WebDev.status_restoring": "Restoring from snapshot...",
   "WebDev.tab_code": "Code",
   "WebDev.tab_terminal": "Terminal",
   "WebDev.tab_preview": "Preview",

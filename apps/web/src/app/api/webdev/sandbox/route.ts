@@ -1,6 +1,7 @@
 import { db, eq } from '@lmring/database';
 import { webdevResponses } from '@lmring/database/schema';
-import { APIError, Sandbox } from '@vercel/sandbox';
+import { SANDBOX_CONFIG } from '@lmring/env';
+import { APIError, Sandbox, Snapshot } from '@vercel/sandbox';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
@@ -8,6 +9,18 @@ import { checkSandboxRateLimit } from '@/libs/webdev-resource-manager';
 import { webdevSandboxCreateSchema } from '@/libs/webdev-validation';
 
 const VITE_CONFIG_PATTERN = /(?:^|[\\/])vite\.config\.(js|ts|mjs|mts)$/;
+
+async function deleteOldSnapshot(snapshotId: string): Promise<void> {
+  try {
+    const snapshot = await Snapshot.get({
+      snapshotId,
+      ...getSandboxCredentials(),
+    });
+    await snapshot.delete();
+  } catch (error) {
+    logError('WebDev old snapshot delete failed (non-fatal)', error, { snapshotId });
+  }
+}
 
 /**
  * Ensures Vite config files have `server: { allowedHosts: true }` so the
@@ -131,7 +144,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { files, sessionId, responseId } = validationResult.data;
+    const { files, sessionId, responseId, snapshotId } = validationResult.data;
 
     const webdevConfig = getWebDevConfig();
     if (!webdevConfig.enabled) {
@@ -165,6 +178,86 @@ export async function POST(request: Request) {
         }
 
         try {
+          // --- TIER 1: Restore from snapshot (~0.4s + npm run dev) ---
+          if (snapshotId) {
+            try {
+              sendEvent({ type: 'sandbox-creating', responseId });
+
+              sandboxInstance = await Sandbox.create({
+                ...getSandboxCredentials(),
+                source: { type: 'snapshot', snapshotId },
+                timeout: 5 * 60 * 1000,
+                ports: [5173],
+              });
+
+              sendEvent({ type: 'sandbox-starting', responseId });
+
+              await sandboxInstance.runCommand({
+                cmd: 'npm',
+                args: ['run', 'dev'],
+                detached: true,
+              });
+
+              const previewUrl = sandboxInstance.domain(5173);
+              const newSandboxId = sandboxInstance.sandboxId;
+              const timeoutMs = sandboxInstance.timeout;
+              const expiresAt =
+                timeoutMs > 0 ? new Date(Date.now() + timeoutMs).toISOString() : null;
+
+              sendEvent({
+                type: 'sandbox-ready',
+                responseId,
+                sandboxId: newSandboxId,
+                previewUrl,
+                expiresAt,
+              });
+
+              sendEvent({ type: 'complete', responseId, sessionId });
+
+              try {
+                await db
+                  .update(webdevResponses)
+                  .set({
+                    sandboxId: newSandboxId,
+                    previewUrl,
+                    status: 'ready',
+                    expiresAt: expiresAt ? new Date(expiresAt) : null,
+                  })
+                  .where(eq(webdevResponses.id, responseId));
+              } catch (dbError) {
+                logError('WebDev snapshot restore DB update failed', dbError, {
+                  responseId,
+                  sandboxId: newSandboxId,
+                });
+              }
+
+              controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+              controller.close();
+              return;
+            } catch (snapshotError) {
+              logError('WebDev snapshot restore failed, falling back to rebuild', snapshotError, {
+                responseId,
+                snapshotId,
+              });
+
+              try {
+                await db
+                  .update(webdevResponses)
+                  .set({ snapshotId: null, snapshotExpiresAt: null })
+                  .where(eq(webdevResponses.id, responseId));
+              } catch (dbError) {
+                logError('WebDev clear snapshot DB failed', dbError, { responseId });
+              }
+            }
+          }
+
+          // --- TIER 2: Full rebuild from files ---
+
+          // Delete old snapshot if this is a follow-up iteration
+          if (snapshotId) {
+            void deleteOldSnapshot(snapshotId);
+          }
+
           sendEvent({ type: 'sandbox-creating', responseId });
 
           sandboxInstance = await Sandbox.create({
@@ -228,6 +321,75 @@ export async function POST(request: Request) {
               .where(eq(webdevResponses.id, responseId));
           } catch (dbError) {
             logError('WebDev sandbox DB update failed', dbError, { responseId, sandboxId });
+          }
+
+          // --- Create snapshot for future fast restores ---
+          sendEvent({ type: 'snapshot-creating', responseId });
+
+          try {
+            const snapshot = await sandboxInstance.snapshot({
+              expiration: SANDBOX_CONFIG.SNAPSHOT_EXPIRATION_MS,
+            });
+
+            const newSnapshotId = snapshot.snapshotId;
+            const snapshotExpiresAt = snapshot.expiresAt
+              ? snapshot.expiresAt.toISOString()
+              : new Date(Date.now() + SANDBOX_CONFIG.SNAPSHOT_EXPIRATION_MS).toISOString();
+
+            sandboxInstance = await Sandbox.create({
+              ...getSandboxCredentials(),
+              source: { type: 'snapshot', snapshotId: newSnapshotId },
+              timeout: 5 * 60 * 1000,
+              ports: [5173],
+            });
+
+            await sandboxInstance.runCommand({
+              cmd: 'npm',
+              args: ['run', 'dev'],
+              detached: true,
+            });
+
+            const newPreviewUrl = sandboxInstance.domain(5173);
+            const newSandboxId = sandboxInstance.sandboxId;
+            const newTimeoutMs = sandboxInstance.timeout;
+            const newExpiresAt =
+              newTimeoutMs > 0 ? new Date(Date.now() + newTimeoutMs).toISOString() : null;
+
+            sendEvent({
+              type: 'snapshot-ready',
+              responseId,
+              sandboxId: newSandboxId,
+              previewUrl: newPreviewUrl,
+              expiresAt: newExpiresAt,
+              snapshotId: newSnapshotId,
+            });
+
+            try {
+              await db
+                .update(webdevResponses)
+                .set({
+                  sandboxId: newSandboxId,
+                  previewUrl: newPreviewUrl,
+                  snapshotId: newSnapshotId,
+                  snapshotExpiresAt: new Date(snapshotExpiresAt),
+                  expiresAt: newExpiresAt ? new Date(newExpiresAt) : null,
+                })
+                .where(eq(webdevResponses.id, responseId));
+            } catch (dbError) {
+              logError('WebDev snapshot DB update failed', dbError, {
+                responseId,
+                snapshotId: newSnapshotId,
+              });
+            }
+          } catch (snapshotError) {
+            logError('WebDev snapshot creation failed (non-fatal)', snapshotError, {
+              responseId,
+            });
+            sendEvent({
+              type: 'snapshot-error',
+              responseId,
+              message: 'Snapshot creation failed, preview is still available',
+            });
           }
 
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));

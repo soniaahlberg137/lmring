@@ -225,6 +225,21 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
           } catch {}
         },
 
+        setSnapshotId: (workflowId, snapshotId) => {
+          set(
+            (state) => {
+              const sandbox = state.sandboxes.get(workflowId);
+              if (!sandbox) return state;
+
+              const newSandboxes = new Map(state.sandboxes);
+              newSandboxes.set(workflowId, { ...sandbox, snapshotId });
+              return { sandboxes: newSandboxes };
+            },
+            false,
+            'webdev/setSnapshotId',
+          );
+        },
+
         destroyAllSandboxes: async () => {
           const { sandboxes } = get();
           const promises: Promise<void>[] = [];
@@ -311,6 +326,8 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
               s.status === 'creating' ||
               s.status === 'installing' ||
               s.status === 'starting' ||
+              s.status === 'snapshotting' ||
+              s.status === 'restoring' ||
               s.status === 'ready'
             ) {
               return true;
@@ -385,7 +402,13 @@ export const webdevSelectors = {
 
   isAnyBuilding: (state: WebDevStore) => {
     for (const [, s] of state.sandboxes) {
-      if (s.status === 'creating' || s.status === 'installing' || s.status === 'starting') {
+      if (
+        s.status === 'creating' ||
+        s.status === 'installing' ||
+        s.status === 'starting' ||
+        s.status === 'snapshotting' ||
+        s.status === 'restoring'
+      ) {
         return true;
       }
     }
@@ -417,6 +440,7 @@ export const webdevSelectors = {
     destroySandbox: state.destroySandbox,
     destroyAllSandboxes: state.destroyAllSandboxes,
     setActiveWorkflowId: state.setActiveWorkflowId,
+    setSnapshotId: state.setSnapshotId,
     setFeatureConfig: state.setFeatureConfig,
     checkConfig: state.checkConfig,
     setPrompt: state.setPrompt,

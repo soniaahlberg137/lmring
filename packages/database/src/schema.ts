@@ -445,11 +445,14 @@ export const webdevResponses = pgTable(
     responseTimeMs: integer('response_time_ms'),
     displayPosition: integer('display_position').default(0).notNull(),
     expiresAt: timestamp('expires_at', { withTimezone: true }),
+    snapshotId: text('snapshot_id'),
+    snapshotExpiresAt: timestamp('snapshot_expires_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   },
   (table) => [
     index('webdev_responses_session_id_idx').on(table.sessionId),
     index('webdev_responses_sandbox_id_idx').on(table.sandboxId),
+    index('webdev_responses_snapshot_id_idx').on(table.snapshotId),
   ],
 );
 

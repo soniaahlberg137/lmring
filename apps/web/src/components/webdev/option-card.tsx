@@ -29,6 +29,10 @@ function getStatusKey(status: SandboxStatus): string {
       return 'WebDev.status_expired';
     case 'stopped':
       return 'WebDev.status_stopped';
+    case 'snapshotting':
+      return 'WebDev.status_snapshotting';
+    case 'restoring':
+      return 'WebDev.status_restoring';
   }
 }
 
@@ -39,6 +43,8 @@ function getStatusColorClass(status: SandboxStatus): string {
     case 'creating':
     case 'installing':
     case 'starting':
+    case 'snapshotting':
+    case 'restoring':
       return STATUS_COLORS.building.tw;
     case 'error':
     case 'expired':
@@ -50,7 +56,13 @@ function getStatusColorClass(status: SandboxStatus): string {
 }
 
 function isActiveStatus(status: SandboxStatus): boolean {
-  return status === 'creating' || status === 'installing' || status === 'starting';
+  return (
+    status === 'creating' ||
+    status === 'installing' ||
+    status === 'starting' ||
+    status === 'snapshotting' ||
+    status === 'restoring'
+  );
 }
 
 function buildActivityItems(
@@ -76,7 +88,9 @@ function buildActivityItems(
     status === 'creating' ||
     status === 'installing' ||
     status === 'starting' ||
-    status === 'ready'
+    status === 'ready' ||
+    status === 'snapshotting' ||
+    status === 'restoring'
   ) {
     items.push({ id: 'sandbox', icon: 'folder', text: t('WebDev.sandbox_created') });
   }
@@ -87,6 +101,14 @@ function buildActivityItems(
 
   if (status === 'ready') {
     items.push({ id: 'ready', icon: 'circle-check', text: t('WebDev.preview_ready') });
+  }
+
+  if (status === 'snapshotting') {
+    items.push({ id: 'snapshot', icon: 'pencil', text: t('WebDev.status_snapshotting') });
+  }
+
+  if (status === 'restoring') {
+    items.push({ id: 'restore', icon: 'folder', text: t('WebDev.status_restoring') });
   }
 
   if (status === 'error' && error) {

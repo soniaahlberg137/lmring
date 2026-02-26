@@ -52,12 +52,16 @@ interface SandboxSSEEvent {
     | 'sandbox-installing'
     | 'sandbox-starting'
     | 'sandbox-ready'
+    | 'snapshot-creating'
+    | 'snapshot-ready'
+    | 'snapshot-error'
     | 'error'
     | 'complete';
   responseId?: string;
   sandboxId?: string;
   previewUrl?: string;
   expiresAt?: string | null;
+  snapshotId?: string;
   message?: string;
   sessionId?: string;
 }
@@ -73,6 +77,8 @@ function sseEventToStatus(eventType: SandboxSSEEvent['type']): SandboxStatus | n
       return 'installing';
     case 'sandbox-starting':
       return 'starting';
+    case 'snapshot-creating':
+      return 'snapshotting';
     default:
       return null;
   }
@@ -108,6 +114,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
   const getSandbox = useWebDevStore((s) => s.getSandbox);
+  const setSnapshotId = useWebDevStore((s) => s.setSnapshotId);
 
   const getWorkflow = useWorkflowStore((s) => s.getWorkflow);
   const workflows = useWorkflowStore((s) => s.workflows);
@@ -180,6 +187,27 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
                 }
               }
 
+              if (event.type === 'snapshot-ready' && event.sandboxId && event.previewUrl) {
+                setSandboxReady(
+                  workflowId,
+                  event.sandboxId,
+                  event.previewUrl,
+                  event.expiresAt ?? null,
+                );
+                if (event.snapshotId) {
+                  setSnapshotId(workflowId, event.snapshotId);
+                }
+                setPhase('ready');
+
+                if (!activeWorkflowIdRef.current) {
+                  setActiveWorkflowId(workflowId);
+                }
+              }
+
+              if (event.type === 'snapshot-error') {
+                console.warn('[useWebDevSandbox] Snapshot error:', event.message);
+              }
+
               if (event.type === 'error') {
                 updateSandboxStatus(
                   workflowId,
@@ -196,7 +224,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
         reader.releaseLock();
       }
     },
-    [updateSandboxStatus, setSandboxReady, setActiveWorkflowId, setPhase],
+    [updateSandboxStatus, setSandboxReady, setActiveWorkflowId, setPhase, setSnapshotId],
   );
 
   /**
@@ -343,6 +371,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
       files: Record<string, string>,
       targetSessionId: string,
       responseId: string,
+      snapshotId?: string | null,
     ) => {
       // Prevent duplicate sandbox creation
       processedRef.current.add(workflowId);
@@ -361,6 +390,7 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
               files: fileArray,
               sessionId: targetSessionId,
               responseId,
+              ...(snapshotId ? { snapshotId } : {}),
             }),
             signal: abortController.signal,
           });

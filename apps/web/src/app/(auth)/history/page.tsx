@@ -217,15 +217,17 @@ export default function HistoryPage() {
                         >
                           <Trash2Icon className="h-4 w-4" />
                         </button>
-                        <button
-                          type="button"
-                          onClick={(e) => handleShare(e, conversation.id)}
-                          disabled={isLoading}
-                          className="p-2 hover:bg-accent rounded-lg transition-colors opacity-0 group-hover:opacity-100"
-                          aria-label={t('History.share_aria_label')}
-                        >
-                          <Share2Icon className="h-4 w-4" />
-                        </button>
+                        {!conversation.webdevSessionId && (
+                          <button
+                            type="button"
+                            onClick={(e) => handleShare(e, conversation.id)}
+                            disabled={isLoading}
+                            className="p-2 hover:bg-accent rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                            aria-label={t('History.share_aria_label')}
+                          >
+                            <Share2Icon className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
                     </div>
                   </CardHeader>

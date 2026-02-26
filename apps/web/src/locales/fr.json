@@ -439,6 +439,8 @@
   "WebDev.status_ready": "Pret",
   "WebDev.status_error": "Erreur",
   "WebDev.status_expired": "Expire",
+  "WebDev.status_snapshotting": "Sauvegarde de l'instantané...",
+  "WebDev.status_restoring": "Restauration depuis l'instantané...",
   "WebDev.tab_code": "Code",
   "WebDev.tab_terminal": "Terminal",
   "WebDev.tab_preview": "Apercu",

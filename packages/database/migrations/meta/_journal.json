@@ -127,6 +127,13 @@
       "when": 1770964789714,
       "tag": "0017_blue_daredevil",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1772084565482,
+      "tag": "0018_third_gwen_stacy",
+      "breakpoints": true
     }
   ]
 }

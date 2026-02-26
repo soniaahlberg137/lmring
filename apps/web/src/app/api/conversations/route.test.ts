@@ -281,6 +281,44 @@ describe('Conversations API', () => {
       expect(data.conversations[0].models).toHaveLength(2);
     });
 
+    it('should return all webdev models for a webdev conversation when withModels=true', async () => {
+      const mockWebdevModels = [
+        { conversationId: 'conv-123', modelId: 'anthropic:claude-sonnet-4-5-20250929' },
+        { conversationId: 'conv-123', modelId: 'openai:gpt-5.3-codex' },
+      ];
+
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.selectDistinct.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockReturnValueOnce(mockDbInstance) // webdev sessions query (chains to orderBy)
+        .mockResolvedValueOnce([]) // arena models query (terminal) - no arena models
+        .mockResolvedValueOnce(mockWebdevModels); // webdevModelsUsed query (terminal)
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockResolvedValueOnce([]); // webdev sessions query
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+      mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withModels=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations[0].models).toHaveLength(2);
+      expect(data.conversations[0].models).toEqual(
+        expect.arrayContaining([
+          { modelName: 'claude-sonnet-4-5-20250929', providerName: 'anthropic' },
+          { modelName: 'gpt-5.3-codex', providerName: 'openai' },
+        ]),
+      );
+    });
+
     it('should return conversations with vote info when withVotes=true', async () => {
       const mockVotesData = [
         {

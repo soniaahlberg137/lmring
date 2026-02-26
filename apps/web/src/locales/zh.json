@@ -439,6 +439,8 @@
   "WebDev.status_ready": "就绪",
   "WebDev.status_error": "错误",
   "WebDev.status_expired": "已过期",
+  "WebDev.status_snapshotting": "正在保存快照...",
+  "WebDev.status_restoring": "正在从快照恢复...",
   "WebDev.tab_code": "代码",
   "WebDev.tab_terminal": "终端",
   "WebDev.tab_preview": "预览",

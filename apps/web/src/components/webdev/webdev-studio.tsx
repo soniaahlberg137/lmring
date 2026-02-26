@@ -63,6 +63,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const setSandboxReady = useWebDevStore((s) => s.setSandboxReady);
   const updateSandboxStatus = useWebDevStore((s) => s.updateSandboxStatus);
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
+  const setSnapshotId = useWebDevStore((s) => s.setSnapshotId);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
   const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
   const queryClient = useQueryClient();
@@ -108,6 +109,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             sandboxId: string | null;
             previewUrl: string | null;
             expiresAt: string | null;
+            snapshotId: string | null;
+            snapshotExpiresAt: string | null;
           }>;
         };
 
@@ -123,6 +126,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           workflowId: string;
           files: Record<string, string>;
           responseId: string;
+          snapshotId?: string | null;
         }> = [];
 
         for (const response of data.responses) {
@@ -137,7 +141,24 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             setSandboxFiles(workflowId, response.files);
           }
 
-          if (response.sandboxId && response.previewUrl) {
+          if (response.snapshotId) {
+            setSnapshotId(workflowId, response.snapshotId);
+          }
+
+          // --- Restore priority ---
+          const hasValidSnapshot =
+            response.snapshotId &&
+            (!response.snapshotExpiresAt || new Date(response.snapshotExpiresAt) > new Date());
+
+          if (hasValidSnapshot) {
+            updateSandboxStatus(workflowId, 'restoring');
+            sandboxesToRebuild.push({
+              workflowId,
+              files: response.files ?? {},
+              responseId: response.id,
+              snapshotId: response.snapshotId,
+            });
+          } else if (response.sandboxId && response.previewUrl) {
             const isExpired =
               response.expiresAt != null && new Date(response.expiresAt) <= new Date();
 
@@ -184,6 +205,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
               entry.files,
               data.session.id,
               entry.responseId,
+              entry.snapshotId,
             );
           }
         } else {
@@ -208,6 +230,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     setSandboxReady,
     updateSandboxStatus,
     setActiveWorkflowId,
+    setSnapshotId,
     rebuildSandboxFromFiles,
   ]);
 

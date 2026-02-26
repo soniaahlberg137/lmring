@@ -13,6 +13,8 @@ export type SandboxStatus =
   | 'installing'
   | 'starting'
   | 'ready'
+  | 'snapshotting'
+  | 'restoring'
   | 'error'
   | 'expired'
   | 'stopped';
@@ -30,6 +32,7 @@ export interface WebDevConfig {
 export interface SandboxState {
   sandboxId: string | null;
   previewUrl: string | null;
+  snapshotId: string | null;
   status: SandboxStatus;
   files: Record<string, string>;
   activeFile: string | null;
@@ -97,6 +100,7 @@ export interface WebDevActions {
   destroySandbox: (workflowId: string) => Promise<void>;
   destroyAllSandboxes: () => Promise<void>;
   setActiveWorkflowId: (id: string | null) => void;
+  setSnapshotId: (workflowId: string, snapshotId: string | null) => void;
   setFeatureConfig: (config: WebDevConfig | null) => void;
   checkConfig: () => Promise<void>;
   setPrompt: (prompt: string) => void;
@@ -196,6 +200,7 @@ export type ModelBadgeColor = (typeof MODEL_BADGE_COLORS)[number];
 export const DEFAULT_SANDBOX_STATE: SandboxState = {
   sandboxId: null,
   previewUrl: null,
+  snapshotId: null,
   status: 'idle',
   files: {},
   activeFile: null,
