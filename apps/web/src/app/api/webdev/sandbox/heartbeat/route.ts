@@ -1,3 +1,5 @@
+import { db, eq } from '@lmring/database';
+import { webdevResponses } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { auth } from '@/libs/Auth';
@@ -13,6 +15,7 @@ const heartbeatSchema = z.object({
  *
  * Client calls this periodically (every ~4 min) to extend sandbox timeout.
  * The resource manager debounces calls to avoid excessive Sandbox API requests.
+ * Verifies that the requesting user owns the sandbox before extending.
  */
 export async function POST(request: Request) {
   try {
@@ -29,6 +32,20 @@ export async function POST(request: Request) {
 
     if (!result.success) {
       return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
+
+    // Verify ownership: sandbox must belong to the authenticated user
+    const response = await db.query.webdevResponses.findFirst({
+      where: eq(webdevResponses.sandboxId, result.data.sandboxId),
+      with: {
+        session: {
+          columns: { userId: true },
+        },
+      },
+    });
+
+    if (!response || response.session.userId !== session.user.id) {
+      return NextResponse.json({ error: 'Sandbox not found' }, { status: 404 });
     }
 
     const extended = await extendSandboxTimeout(result.data.sandboxId);

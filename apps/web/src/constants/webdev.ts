@@ -13,7 +13,7 @@ export const MAX_WEBDEV_MODELS = 5;
  */
 export const OPTION_COLORS = [
   { key: 'A', bg: '#8B5CF6', tw: 'bg-violet-500', contrast: 5.7 },
-  { key: 'B', bg: '#F59E0B', tw: 'bg-amber-500', contrast: 3.1 },
+  { key: 'B', bg: '#B45309', tw: 'bg-amber-700', contrast: 5.9 },
   { key: 'C', bg: '#0E7490', tw: 'bg-cyan-700', contrast: 5.0 },
   { key: 'D', bg: '#BE185D', tw: 'bg-pink-700', contrast: 6.2 },
   { key: 'E', bg: '#047857', tw: 'bg-emerald-700', contrast: 5.3 },

@@ -1,8 +1,9 @@
-import { db, eq } from '@lmring/database';
+import { and, db, eq } from '@lmring/database';
 import { webdevIterations, webdevResponses, webdevSessions } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
+import { cleanupSessionSandboxes } from '@/libs/webdev-resource-manager';
 import { webdevGenerateSchema } from '@/libs/webdev-validation';
 
 export async function POST(request: Request) {
@@ -27,6 +28,19 @@ export async function POST(request: Request) {
     }
 
     const { prompt, models, conversationId } = validationResult.data;
+
+    const staleSessions = await db.query.webdevSessions.findMany({
+      where: and(eq(webdevSessions.userId, userId), eq(webdevSessions.status, 'generating')),
+      columns: { id: true },
+    });
+
+    for (const stale of staleSessions) {
+      await cleanupSessionSandboxes(stale.id);
+      await db
+        .update(webdevSessions)
+        .set({ status: 'ready' })
+        .where(eq(webdevSessions.id, stale.id));
+    }
 
     // 1. Create session
     const [newSession] = await db

@@ -4,6 +4,7 @@ import { APIError, Sandbox } from '@vercel/sandbox';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
+import { checkSandboxRateLimit } from '@/libs/webdev-resource-manager';
 import { webdevSandboxCreateSchema } from '@/libs/webdev-validation';
 
 const VITE_CONFIG_PATTERN = /(?:^|[\\/])vite\.config\.(js|ts|mjs|mts)$/;
@@ -140,6 +141,19 @@ export async function POST(request: Request) {
           reason: webdevConfig.reason,
         }),
         { status: 400, headers: { 'Content-Type': 'application/json' } },
+      );
+    }
+
+    // Enforce sandbox creation rate limit
+    const rateLimit = await checkSandboxRateLimit(session.user.id);
+    if (!rateLimit.allowed) {
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          remaining: rateLimit.remaining,
+          limit: rateLimit.limit,
+        }),
+        { status: 429, headers: { 'Content-Type': 'application/json' } },
       );
     }
 

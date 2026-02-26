@@ -449,6 +449,7 @@ export const webdevResponses = pgTable(
   },
   (table) => [
     index('webdev_responses_session_id_idx').on(table.sessionId),
+    index('webdev_responses_sandbox_id_idx').on(table.sandboxId),
   ],
 );
 

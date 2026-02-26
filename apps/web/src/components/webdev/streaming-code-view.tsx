@@ -3,6 +3,7 @@
 import { cn, ScrollArea } from '@lmring/ui';
 import { FileCode, FileJson, FileText, Loader2 } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWebDevStore } from '@/stores/webdev-store';
 import { useWorkflowStore } from '@/stores/workflow-store';
 
@@ -61,6 +62,7 @@ function getFileName(path: string): string {
 }
 
 export function StreamingCodeView() {
+  const { t } = useTranslation();
   const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
 
   const streamingContent = useWorkflowStore((s) => {
@@ -120,7 +122,7 @@ export function StreamingCodeView() {
             style={{ color: 'var(--webdev-editor-text-muted)' }}
           />
           <span className="text-xs" style={{ color: 'var(--webdev-editor-text-muted)' }}>
-            Generating code...
+            {t('WebDev.generating_code')}
           </span>
         </div>
         <ScrollArea className="flex-1">
@@ -201,7 +203,7 @@ export function StreamingCodeView() {
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm" style={{ color: 'var(--webdev-editor-text-muted)' }}>
-              Select a file to view
+              {t('WebDev.select_file')}
             </p>
           </div>
         )}

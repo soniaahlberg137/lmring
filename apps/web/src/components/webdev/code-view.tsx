@@ -3,6 +3,7 @@
 import { cn, ScrollArea } from '@lmring/ui';
 import { FileCode, FileJson, FileText } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWebDevStore } from '@/stores/webdev-store';
 
 const FILE_TREE_WIDTH = 240;
@@ -100,6 +101,7 @@ function FileTree({ files, activeFile, onSelectFile }: FileTreeProps) {
 }
 
 export function CodeView() {
+  const { t } = useTranslation();
   const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
   const sandbox = useWebDevStore((s) => {
     if (!s.activeWorkflowId) return undefined;
@@ -128,7 +130,7 @@ export function CodeView() {
         style={{ backgroundColor: 'var(--webdev-editor-bg)' }}
       >
         <p className="text-sm" style={{ color: 'var(--webdev-editor-text-muted)' }}>
-          No files generated yet
+          {t('WebDev.no_files_yet')}
         </p>
       </div>
     );
@@ -161,7 +163,7 @@ export function CodeView() {
         ) : (
           <div className="flex h-full items-center justify-center">
             <p className="text-sm" style={{ color: 'var(--webdev-editor-text-muted)' }}>
-              Select a file to view
+              {t('WebDev.select_file')}
             </p>
           </div>
         )}

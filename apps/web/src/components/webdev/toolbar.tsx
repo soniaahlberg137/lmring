@@ -109,7 +109,7 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
             )}
           >
             <Eye className="h-3.5 w-3.5" />
-            Preview
+            {t('WebDev.tab_preview_label')}
           </button>
           <button
             type="button"
@@ -122,7 +122,7 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
             )}
           >
             <Code className="h-3.5 w-3.5" />
-            Code
+            {t('WebDev.tab_code_label')}
           </button>
         </div>
 
@@ -133,7 +133,7 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
               onClick={handleRefresh}
               disabled={!isReady}
               className="webdev-toolbar-btn disabled:pointer-events-none disabled:opacity-40"
-              aria-label="Refresh preview"
+              aria-label={t('WebDev.refresh_preview_label')}
             >
               <RefreshCw
                 className={cn(
@@ -144,7 +144,7 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="text-xs">
-            Refresh preview
+            {t('WebDev.refresh_preview_label')}
           </TooltipContent>
         </Tooltip>
 
@@ -155,13 +155,13 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
 
         <ToolbarButton
           icon={Copy}
-          label="Copy URL"
+          label={t('WebDev.copy_url')}
           onClick={handleCopyUrl}
           disabled={!previewUrl}
         />
         <ToolbarButton
           icon={ExternalLink}
-          label="Open in new tab"
+          label={t('WebDev.open_new_tab')}
           onClick={handleOpenExternal}
           disabled={!previewUrl}
         />
@@ -175,11 +175,11 @@ export function Toolbar({ viewMode, onViewModeChange, onRefresh }: ToolbarProps)
               className="flex items-center gap-1.5 rounded-md bg-[#1A1A1A] px-3 py-1.5 text-xs font-medium text-white disabled:pointer-events-none disabled:opacity-40"
             >
               <Download className="h-3.5 w-3.5" />
-              Download
+              {t('WebDev.download_label')}
             </button>
           </TooltipTrigger>
           <TooltipContent side="bottom" className="text-xs">
-            Download code
+            {t('WebDev.download_code_label')}
           </TooltipContent>
         </Tooltip>
       </div>

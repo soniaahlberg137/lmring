@@ -3,6 +3,7 @@
 import { cn } from '@lmring/ui';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { STATUS_COLORS } from '@/constants/webdev';
 import { useWebDevStore } from '@/stores/webdev-store';
@@ -10,24 +11,24 @@ import { useWorkflowStore } from '@/stores/workflow-store';
 import type { SandboxStatus } from '@/types/webdev';
 import { ActivityLog, type ActivityLogItem } from './activity-log';
 
-function getStatusLabel(status: SandboxStatus): string {
+function getStatusKey(status: SandboxStatus): string {
   switch (status) {
     case 'idle':
-      return 'Waiting';
+      return 'WebDev.status_waiting';
     case 'creating':
-      return 'Creating sandbox...';
+      return 'WebDev.status_creating_sandbox';
     case 'installing':
-      return 'Installing deps...';
+      return 'WebDev.status_installing_deps';
     case 'starting':
-      return 'Starting server...';
+      return 'WebDev.status_starting_server';
     case 'ready':
-      return 'Ready';
+      return 'WebDev.status_ready';
     case 'error':
-      return 'Error';
+      return 'WebDev.status_error';
     case 'expired':
-      return 'Expired';
+      return 'WebDev.status_expired';
     case 'stopped':
-      return 'Stopped';
+      return 'WebDev.status_stopped';
   }
 }
 
@@ -56,6 +57,7 @@ function buildActivityItems(
   status: SandboxStatus,
   files: Record<string, string>,
   error: string | null,
+  t: (key: string, options?: Record<string, unknown>) => string,
 ): ActivityLogItem[] {
   const items: ActivityLogItem[] = [];
 
@@ -64,7 +66,9 @@ function buildActivityItems(
     items.push({
       id: 'files',
       icon: 'file-plus',
-      text: `${fileCount} file${fileCount > 1 ? 's' : ''} generated`,
+      text: t(fileCount > 1 ? 'WebDev.files_generated_plural' : 'WebDev.files_generated', {
+        count: fileCount,
+      }),
     });
   }
 
@@ -74,15 +78,15 @@ function buildActivityItems(
     status === 'starting' ||
     status === 'ready'
   ) {
-    items.push({ id: 'sandbox', icon: 'folder', text: 'Sandbox created' });
+    items.push({ id: 'sandbox', icon: 'folder', text: t('WebDev.sandbox_created') });
   }
 
   if (status === 'installing' || status === 'starting' || status === 'ready') {
-    items.push({ id: 'install', icon: 'pencil', text: 'Dependencies installed' });
+    items.push({ id: 'install', icon: 'pencil', text: t('WebDev.dependencies_installed') });
   }
 
   if (status === 'ready') {
-    items.push({ id: 'ready', icon: 'circle-check', text: 'Preview ready' });
+    items.push({ id: 'ready', icon: 'circle-check', text: t('WebDev.preview_ready') });
   }
 
   if (status === 'error' && error) {
@@ -103,12 +107,11 @@ interface OptionCardProps {
 
 export const OptionCard = React.memo(function OptionCard({
   workflowId,
-  index: _index,
   modelName,
   isActive,
-  showVote: _showVote,
   onClick,
 }: OptionCardProps) {
+  const { t } = useTranslation();
   const sandbox = useWebDevStore((s) => s.sandboxes.get(workflowId));
   const workflow = useWorkflowStore((s) => s.workflows.get(workflowId));
   const modelId = workflow?.modelId ?? '';
@@ -118,8 +121,8 @@ export const OptionCard = React.memo(function OptionCard({
   const error = sandbox?.error ?? null;
 
   const activityItems = React.useMemo(
-    () => buildActivityItems(status, files, error),
-    [status, files, error],
+    () => buildActivityItems(status, files, error, t),
+    [status, files, error, t],
   );
 
   return (
@@ -139,7 +142,7 @@ export const OptionCard = React.memo(function OptionCard({
             <Loader2 className={cn('h-3.5 w-3.5 animate-spin', getStatusColorClass(status))} />
           )}
           <span className={cn('text-xs font-medium', getStatusColorClass(status))}>
-            {getStatusLabel(status)}
+            {t(getStatusKey(status))}
           </span>
         </span>
       </div>

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useWebDevStoreShallow } from '@/stores/webdev-store';
 
 interface PreviewViewProps {
@@ -8,6 +9,7 @@ interface PreviewViewProps {
 }
 
 export function PreviewView({ iframeRefs }: PreviewViewProps) {
+  const { t } = useTranslation();
   const { sandboxes, activeWorkflowId } = useWebDevStoreShallow((s) => ({
     sandboxes: s.sandboxes,
     activeWorkflowId: s.activeWorkflowId,
@@ -31,7 +33,7 @@ export function PreviewView({ iframeRefs }: PreviewViewProps) {
   if (entries.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-sm text-muted-foreground">No preview available</p>
+        <p className="text-sm text-muted-foreground">{t('WebDev.no_preview')}</p>
       </div>
     );
   }
@@ -47,7 +49,9 @@ export function PreviewView({ iframeRefs }: PreviewViewProps) {
           return isActive && !previewUrl ? (
             <div key={workflowId} className="absolute inset-0 flex items-center justify-center">
               <p className="text-sm text-muted-foreground">
-                {sandbox.status === 'idle' ? 'Waiting for generation...' : 'Building preview...'}
+                {sandbox.status === 'idle'
+                  ? t('WebDev.waiting_generation')
+                  : t('WebDev.building_preview')}
               </p>
             </div>
           ) : null;

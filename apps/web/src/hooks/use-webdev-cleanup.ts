@@ -24,30 +24,35 @@ export function useWebDevCleanup() {
   const destroyAllRef = useRef(destroyAllSandboxes);
   destroyAllRef.current = destroyAllSandboxes;
 
-  // ── beforeunload: fire-and-forget DELETE on page close ──
+  // ── beforeunload: fire-and-forget cleanup on page close ──
   useEffect(() => {
     function handleBeforeUnload() {
       const currentSandboxes = sandboxesRef.current;
+      const sandboxIds: string[] = [];
       for (const [, sandbox] of currentSandboxes) {
         if (sandbox.sandboxId) {
-          // Use sendBeacon for reliability during page unload
-          // Falls back to fetch with keepalive if sendBeacon unavailable
-          const url = `/api/webdev/sandbox/${sandbox.sandboxId}`;
-          const sent = navigator.sendBeacon(
-            url,
-            new Blob([JSON.stringify({ method: 'DELETE' })], {
-              type: 'application/json',
-            }),
-          );
-
-          if (!sent) {
-            // Fallback: fetch with keepalive flag
-            void fetch(url, {
-              method: 'DELETE',
-              keepalive: true,
-            });
-          }
+          sandboxIds.push(sandbox.sandboxId);
         }
+      }
+
+      if (sandboxIds.length === 0) return;
+
+      // Use sendBeacon with POST to the cleanup endpoint
+      const sent = navigator.sendBeacon(
+        '/api/webdev/sandbox/cleanup',
+        new Blob([JSON.stringify({ sandboxIds })], {
+          type: 'application/json',
+        }),
+      );
+
+      if (!sent) {
+        // Fallback: fetch with keepalive flag
+        void fetch('/api/webdev/sandbox/cleanup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sandboxIds }),
+          keepalive: true,
+        });
       }
     }
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { cn, ScrollArea } from '@lmring/ui';
+import { useTranslation } from 'react-i18next';
 import { useWebDevStore, useWebDevStoreShallow } from '@/stores/webdev-store';
 import { useWorkflowStore, useWorkflowStoreShallow } from '@/stores/workflow-store';
 import { OptionCard } from './option-card';
@@ -14,6 +15,7 @@ interface LeftPanelProps {
 }
 
 export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPanelProps) {
+  const { t } = useTranslation();
   const { phase, activeWorkflowId } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
     activeWorkflowId: s.activeWorkflowId,
@@ -64,7 +66,7 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
 
           {!hasPrompt && !showOptions && (
             <div className="flex flex-1 items-center justify-center py-16">
-              <p className="text-sm text-muted-foreground">Enter a prompt to start generating</p>
+              <p className="text-sm text-muted-foreground">{t('WebDev.enter_prompt')}</p>
             </div>
           )}
         </div>
@@ -75,7 +77,9 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
           onSubmit={onFollowUp}
           isLoading={isLoading}
           disabled={phase === 'idle'}
-          placeholder={phase === 'idle' ? 'Describe your web app...' : 'Ask a follow up...'}
+          placeholder={
+            phase === 'idle' ? t('WebDev.placeholder_idle') : t('WebDev.placeholder_followup')
+          }
         />
       </div>
     </div>
