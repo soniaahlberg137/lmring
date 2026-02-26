@@ -142,7 +142,7 @@ describe('Sidebar', () => {
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/conversations?limit=10&withFirstMessage=true',
+        '/api/conversations?limit=10&offset=0&withFirstMessage=true',
       );
     });
   });

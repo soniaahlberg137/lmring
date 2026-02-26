@@ -5,6 +5,8 @@ import {
   conversations,
   messages,
   modelResponses,
+  webdevResponses,
+  webdevSessions,
 } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
@@ -21,6 +23,7 @@ interface ConversationWithExtras {
   firstMessage?: string;
   models?: Array<{ modelName: string; providerName: string }>;
   voteInfo?: VoteInfoExtended;
+  webdevSessionId?: string;
 }
 
 export async function GET(request: Request) {
@@ -51,22 +54,41 @@ export async function GET(request: Request) {
       .limit(limit)
       .offset(offset);
 
-    if (!withFirstMessage && !withModels && !withVotes) {
-      return NextResponse.json({ conversations: userConversations }, { status: 200 });
-    }
-
     const conversationIds = userConversations.map((c) => c.id);
 
     if (conversationIds.length === 0) {
       return NextResponse.json({ conversations: [] }, { status: 200 });
     }
 
+    const webdevSessionRows = await db
+      .select({
+        conversationId: webdevSessions.conversationId,
+        sessionId: webdevSessions.id,
+      })
+      .from(webdevSessions)
+      .where(inArray(webdevSessions.conversationId, conversationIds))
+      .orderBy(desc(webdevSessions.createdAt));
+
+    const webdevMap = new Map<string, string>();
+    for (const row of webdevSessionRows) {
+      if (row.conversationId && !webdevMap.has(row.conversationId)) {
+        webdevMap.set(row.conversationId, row.sessionId);
+      }
+    }
+
+    if (!withFirstMessage && !withModels && !withVotes) {
+      const convs = userConversations.map((c) => ({
+        ...c,
+        webdevSessionId: webdevMap.get(c.id),
+      }));
+      return NextResponse.json({ conversations: convs }, { status: 200 });
+    }
+
     const result: ConversationWithExtras[] = userConversations.map((c) => ({
       ...c,
     }));
 
-    // Parallelize all three conditional queries for better performance
-    const [firstMessages, modelsUsed, votesData] = await Promise.all([
+    const [firstMessages, modelsUsed, votesData, webdevModelsUsed] = await Promise.all([
       withFirstMessage
         ? db
             .select({
@@ -112,9 +134,18 @@ export async function GET(request: Request) {
               ),
             )
         : Promise.resolve([]),
+      withModels
+        ? db
+            .selectDistinct({
+              conversationId: webdevSessions.conversationId,
+              modelId: webdevResponses.modelId,
+            })
+            .from(webdevResponses)
+            .innerJoin(webdevSessions, eq(webdevResponses.sessionId, webdevSessions.id))
+            .where(inArray(webdevSessions.conversationId, conversationIds))
+        : Promise.resolve([]),
     ]);
 
-    // Process first messages
     if (withFirstMessage && firstMessages.length > 0) {
       const firstMessageMap = new Map<string, string>();
       for (const msg of firstMessages) {
@@ -131,7 +162,6 @@ export async function GET(request: Request) {
       }
     }
 
-    // Process models used
     if (withModels && modelsUsed.length > 0) {
       const modelsMap = new Map<string, Array<{ modelName: string; providerName: string }>>();
       for (const model of modelsUsed) {
@@ -149,7 +179,24 @@ export async function GET(request: Request) {
       }
     }
 
-    // Process votes
+    if (withModels && webdevModelsUsed.length > 0) {
+      for (const wm of webdevModelsUsed) {
+        if (!wm.conversationId) continue;
+        const conv = result.find((c) => c.id === wm.conversationId);
+        if (!conv) continue;
+        if (!conv.models) conv.models = [];
+        const parts = wm.modelId.split(':');
+        const providerName = parts[0] ?? wm.modelId;
+        const modelName = parts.slice(1).join(':') || wm.modelId;
+        const exists = conv.models.some(
+          (m) => m.modelName === modelName && m.providerName === providerName,
+        );
+        if (!exists) {
+          conv.models.push({ modelName, providerName });
+        }
+      }
+    }
+
     if (withVotes && votesData.length > 0) {
       const votesMap = new Map<string, VoteInfoExtended>();
       for (const vote of votesData) {
@@ -186,6 +233,13 @@ export async function GET(request: Request) {
     } else if (withVotes) {
       for (const conv of result) {
         conv.voteInfo = { hasVotes: false };
+      }
+    }
+
+    for (const conv of result) {
+      const sessionId = webdevMap.get(conv.id);
+      if (sessionId) {
+        conv.webdevSessionId = sessionId;
       }
     }
 

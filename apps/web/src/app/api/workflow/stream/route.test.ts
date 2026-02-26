@@ -56,6 +56,10 @@ vi.mock('@/libs/provider-factory', () => ({
 
 vi.mock('@lmring/ai-hub', () => ({
   streamText: mockStreamText,
+  APICallError: {
+    isInstance: (error: unknown) =>
+      error instanceof Error && 'statusCode' in error && 'url' in error,
+  },
 }));
 
 vi.mock('@lmring/model-depot', () => ({
@@ -898,6 +902,241 @@ describe('Workflow Stream API', () => {
       expect(allData).toContain('"chunk":"Hello "');
       expect(allData).toContain('"chunk":"World!"');
       expect(allData).toContain('"type":"complete"');
+      expect(allData).toContain('[DONE]');
+    });
+
+    it('should forward error event from fullStream as SSE error event', async () => {
+      const mockKeyData = {
+        providerName: 'openai',
+        apiKey: 'sk-test123',
+        proxyUrl: null,
+        isCustom: false,
+        providerType: null,
+      };
+
+      mockFetchUserApiKeys.mockResolvedValueOnce(new Map([[validUUID, mockKeyData]]));
+      mockCreateProvider.mockReturnValue({
+        languageModel: vi.fn().mockReturnValue({}),
+      });
+
+      const mockFullStream = (async function* () {
+        yield { type: 'error', error: new Error('API key is disabled') };
+      })();
+
+      mockStreamText.mockReturnValue({
+        fullStream: mockFullStream,
+        usage: Promise.resolve({ totalTokens: 0, inputTokens: 0, outputTokens: 0 }),
+      });
+
+      const request = createMockRequest('POST', 'http://localhost:3000/api/workflow/stream', {
+        workflowId: validUUID,
+        modelId: 'gpt-4',
+        keyId: validUUID,
+        messages: [{ role: 'user', content: 'Hello' }],
+        config: { temperature: 0.7, maxTokens: 1000 },
+      });
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      const chunks: string[] = [];
+      let done = false;
+      while (!done) {
+        const result = await reader?.read();
+        if (result?.done) {
+          done = true;
+        } else if (result?.value) {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const allData = chunks.join('');
+      expect(allData).toContain('"type":"error"');
+      expect(allData).toContain('"error":"API key is disabled"');
+      expect(allData).toContain('[DONE]');
+      // Should NOT contain complete event since error terminates the stream
+      expect(allData).not.toContain('"type":"complete"');
+    });
+
+    it('should handle error event after partial text in fullStream', async () => {
+      const mockKeyData = {
+        providerName: 'openai',
+        apiKey: 'sk-test123',
+        proxyUrl: null,
+        isCustom: false,
+        providerType: null,
+      };
+
+      mockFetchUserApiKeys.mockResolvedValueOnce(new Map([[validUUID, mockKeyData]]));
+      mockCreateProvider.mockReturnValue({
+        languageModel: vi.fn().mockReturnValue({}),
+      });
+
+      const mockFullStream = (async function* () {
+        yield { type: 'text-delta', text: 'Partial response' };
+        yield { type: 'error', error: new Error('Stream interrupted') };
+      })();
+
+      mockStreamText.mockReturnValue({
+        fullStream: mockFullStream,
+        usage: Promise.resolve({ totalTokens: 5, inputTokens: 3, outputTokens: 2 }),
+      });
+
+      const request = createMockRequest('POST', 'http://localhost:3000/api/workflow/stream', {
+        workflowId: validUUID,
+        modelId: 'gpt-4',
+        keyId: validUUID,
+        messages: [{ role: 'user', content: 'Hello' }],
+        config: { temperature: 0.7, maxTokens: 1000 },
+      });
+      const response = await POST(request);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      const chunks: string[] = [];
+      let done = false;
+      while (!done) {
+        const result = await reader?.read();
+        if (result?.done) {
+          done = true;
+        } else if (result?.value) {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const allData = chunks.join('');
+      // Should have the partial text chunk
+      expect(allData).toContain('"type":"chunk"');
+      expect(allData).toContain('"chunk":"Partial response"');
+      // Should have the error event
+      expect(allData).toContain('"type":"error"');
+      expect(allData).toContain('"error":"Stream interrupted"');
+      expect(allData).toContain('[DONE]');
+    });
+
+    it('should produce structured error JSON for APICallError in error event', async () => {
+      const mockKeyData = {
+        providerName: 'openai',
+        apiKey: 'sk-disabled',
+        proxyUrl: null,
+        isCustom: false,
+        providerType: null,
+      };
+
+      mockFetchUserApiKeys.mockResolvedValueOnce(new Map([[validUUID, mockKeyData]]));
+      mockCreateProvider.mockReturnValue({
+        languageModel: vi.fn().mockReturnValue({}),
+      });
+
+      // Create an error that mimics APICallError shape
+      const apiError = Object.assign(new Error('401 Unauthorized'), {
+        statusCode: 401,
+        url: 'https://api.openai.com/v1/chat/completions',
+        responseBody: JSON.stringify({ error: { message: 'API key is disabled' } }),
+        isRetryable: false,
+      });
+
+      const mockFullStream = (async function* () {
+        yield { type: 'error', error: apiError };
+      })();
+
+      mockStreamText.mockReturnValue({
+        fullStream: mockFullStream,
+        usage: Promise.resolve({ totalTokens: 0, inputTokens: 0, outputTokens: 0 }),
+      });
+
+      const request = createMockRequest('POST', 'http://localhost:3000/api/workflow/stream', {
+        workflowId: validUUID,
+        modelId: 'gpt-4',
+        keyId: validUUID,
+        messages: [{ role: 'user', content: 'Hello' }],
+        config: { temperature: 0.7, maxTokens: 1000 },
+      });
+      const response = await POST(request);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      const chunks: string[] = [];
+      let done = false;
+      while (!done) {
+        const result = await reader?.read();
+        if (result?.done) {
+          done = true;
+        } else if (result?.value) {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const allData = chunks.join('');
+      expect(allData).toContain('"type":"error"');
+
+      // Parse the error event to verify structured error JSON
+      const errorLine = allData
+        .split('\n')
+        .find((line) => line.startsWith('data: ') && line.includes('"type":"error"'));
+      expect(errorLine).toBeDefined();
+      const errorPayload = JSON.parse(errorLine?.replace('data: ', '') ?? '');
+      // The error field should be a JSON string (structured error from extractApiErrorMessage)
+      const structuredError = JSON.parse(errorPayload.error);
+      expect(structuredError.statusCode).toBe(401);
+      expect(structuredError.detail).toBe('API key is disabled');
+      expect(structuredError.provider).toBe('api.openai.com');
+      expect(allData).toContain('[DONE]');
+    });
+
+    it('should send [DONE] marker when catch block handles thrown errors', async () => {
+      const mockKeyData = {
+        providerName: 'openai',
+        apiKey: 'sk-test123',
+        proxyUrl: null,
+        isCustom: false,
+        providerType: null,
+      };
+
+      mockFetchUserApiKeys.mockResolvedValueOnce(new Map([[validUUID, mockKeyData]]));
+      mockCreateProvider.mockReturnValue({
+        languageModel: vi.fn().mockReturnValue({}),
+      });
+
+      // biome-ignore lint/correctness/useYield: mock generator that throws before yielding
+      const mockFullStream = (async function* () {
+        throw new Error('Network failure');
+      })();
+
+      mockStreamText.mockReturnValue({
+        fullStream: mockFullStream,
+        usage: Promise.resolve({ totalTokens: 0, inputTokens: 0, outputTokens: 0 }),
+      });
+
+      const request = createMockRequest('POST', 'http://localhost:3000/api/workflow/stream', {
+        workflowId: validUUID,
+        modelId: 'gpt-4',
+        keyId: validUUID,
+        messages: [{ role: 'user', content: 'Hello' }],
+        config: { temperature: 0.7, maxTokens: 1000 },
+      });
+      const response = await POST(request);
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+
+      const chunks: string[] = [];
+      let done = false;
+      while (!done) {
+        const result = await reader?.read();
+        if (result?.done) {
+          done = true;
+        } else if (result?.value) {
+          chunks.push(decoder.decode(result.value));
+        }
+      }
+
+      const allData = chunks.join('');
+      expect(allData).toContain('"type":"error"');
       expect(allData).toContain('[DONE]');
     });
   });

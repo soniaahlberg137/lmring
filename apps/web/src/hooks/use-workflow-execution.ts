@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { buildVideoStreamRequest, streamVideoWorkflow } from '@/libs/video-workflow-api';
 import { buildWorkflowStreamRequest, streamWorkflow } from '@/libs/workflow-api';
 import { useWorkflowStore } from '@/stores/workflow-store';
@@ -24,7 +24,7 @@ export interface ResponseAttachmentForSave {
   mimeType: string;
   filename?: string;
   sizeBytes?: number;
-  url?: string; // External URL for resources not stored in our storage (e.g., video URLs)
+  url?: string;
 }
 
 export interface WorkflowPersistenceCallbacks {
@@ -58,7 +58,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
   const getAbortController = useWorkflowStore((s) => s.getAbortController);
   const getWorkflow = useWorkflowStore((s) => s.getWorkflow);
   const getSyncedWorkflows = useWorkflowStore((s) => s.getSyncedWorkflows);
-  const globalPrompt = useWorkflowStore((s) => s.globalPrompt);
+  const getGlobalPrompt = useWorkflowStore((s) => s.getGlobalPrompt);
   const clearWorkflowHistory = useWorkflowStore((s) => s.clearWorkflowHistory);
   const removeLastAssistantMessage = useWorkflowStore((s) => s.removeLastAssistantMessage);
   const getConversationId = useWorkflowStore((s) => s.getConversationId);
@@ -67,6 +67,38 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
   const completeVideoResponse = useWorkflowStore((s) => s.completeVideoResponse);
 
   const currentDbMessageIdRef = useRef<string | null>(null);
+
+  const chunkBufferRef = useRef<Map<string, string>>(new Map());
+  const rafIdRef = useRef(0);
+
+  const flushChunkBuffer = useCallback(() => {
+    rafIdRef.current = 0;
+    const buffer = chunkBufferRef.current;
+    if (buffer.size === 0) return;
+    for (const [workflowId, text] of buffer) {
+      appendPendingResponse(workflowId, text);
+    }
+    buffer.clear();
+  }, [appendPendingResponse]);
+
+  const bufferChunk = useCallback(
+    (workflowId: string, chunk: string) => {
+      const existing = chunkBufferRef.current.get(workflowId) ?? '';
+      chunkBufferRef.current.set(workflowId, existing + chunk);
+      if (!rafIdRef.current) {
+        rafIdRef.current = requestAnimationFrame(flushChunkBuffer);
+      }
+    },
+    [flushChunkBuffer],
+  );
+
+  useEffect(() => {
+    return () => {
+      if (rafIdRef.current) {
+        cancelAnimationFrame(rafIdRef.current);
+      }
+    };
+  }, []);
 
   const conversationCreationPromiseRef = useRef<Promise<{
     conversationId: string;
@@ -184,7 +216,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
               }
             }
 
-            appendPendingResponse(id, event.chunk);
+            bufferChunk(id, event.chunk);
             finalContent += event.chunk;
           } else if (event.type === 'reasoning' && event.reasoning) {
             appendPendingReasoning(id, event.reasoning);
@@ -197,6 +229,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
           }
         }
 
+        flushChunkBuffer();
         completePendingResponse(id, metrics);
         setAbortController(id, undefined);
 
@@ -229,7 +262,8 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     [
       addUserMessage,
       startPendingResponse,
-      appendPendingResponse,
+      bufferChunk,
+      flushChunkBuffer,
       appendPendingReasoning,
       completePendingResponse,
       setWorkflowStatus,
@@ -355,7 +389,8 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
   const startAllSyncedWorkflows = useCallback(
     async (attachments?: WorkflowImageAttachment[], dbAttachments?: MessageAttachmentForSave[]) => {
-      if (!globalPrompt.trim()) {
+      const prompt = getGlobalPrompt();
+      if (!prompt.trim()) {
         console.warn('Empty global prompt');
         return;
       }
@@ -372,14 +407,14 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       const isNewConversation = !existingConversationId;
 
       conversationCreationPromiseRef.current = null;
-      pendingPromptRef.current = globalPrompt;
+      pendingPromptRef.current = prompt;
       pendingAttachmentsRef.current = dbAttachments;
 
       let existingDbMessageId: string | undefined;
       if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
         const messageId = await persistenceCallbacks.onSaveUserMessage(
           existingConversationId,
-          globalPrompt,
+          prompt,
           dbAttachments,
         );
         if (messageId) {
@@ -390,7 +425,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
       await Promise.all(
         runnableWorkflows.map((w) =>
-          executeWorkflowStream(w, globalPrompt, {
+          executeWorkflowStream(w, prompt, {
             isNewConversation,
             existingDbMessageId,
             attachments,
@@ -399,7 +434,7 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       );
     },
     [
-      globalPrompt,
+      getGlobalPrompt,
       getSyncedWorkflows,
       executeWorkflowStream,
       persistenceCallbacks,
@@ -464,7 +499,6 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
       try {
         for await (const event of streamVideoWorkflow(request, abortController.signal)) {
           if (event.type === 'heartbeat') {
-            // Handle conversation creation on first event for new conversations
             if (isFirstEvent && isNewConversation && persistenceCallbacks) {
               isFirstEvent = false;
 
@@ -512,13 +546,12 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
               `[video](${videoResult.url})`,
               undefined,
               metrics?.totalTime,
-              // Pass video attachment for persistence
               [
                 {
                   type: 'video',
-                  key: videoResult.storagePath || videoResult.url, // Use storagePath for storage key
+                  key: videoResult.storagePath || videoResult.url,
                   mimeType: videoResult.mimeType,
-                  url: videoResult.url, // External URL
+                  url: videoResult.url,
                 },
               ],
             );
@@ -548,7 +581,8 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
   );
 
   const startAllSyncedVideoWorkflows = useCallback(async () => {
-    if (!globalPrompt.trim()) {
+    const prompt = getGlobalPrompt();
+    if (!prompt.trim()) {
       console.warn('Empty global prompt');
       return;
     }
@@ -565,14 +599,14 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
     const isNewConversation = !existingConversationId;
 
     conversationCreationPromiseRef.current = null;
-    pendingPromptRef.current = globalPrompt;
+    pendingPromptRef.current = prompt;
     pendingAttachmentsRef.current = undefined;
 
     let existingDbMessageId: string | undefined;
     if (existingConversationId && persistenceCallbacks?.onSaveUserMessage) {
       const messageId = await persistenceCallbacks.onSaveUserMessage(
         existingConversationId,
-        globalPrompt,
+        prompt,
       );
       if (messageId) {
         existingDbMessageId = messageId;
@@ -582,14 +616,14 @@ export function useWorkflowExecution(persistenceCallbacks?: WorkflowPersistenceC
 
     await Promise.all(
       runnableWorkflows.map((w) =>
-        executeVideoWorkflowStream(w, globalPrompt, {
+        executeVideoWorkflowStream(w, prompt, {
           isNewConversation,
           existingDbMessageId,
         }),
       ),
     );
   }, [
-    globalPrompt,
+    getGlobalPrompt,
     getSyncedWorkflows,
     executeVideoWorkflowStream,
     persistenceCallbacks,

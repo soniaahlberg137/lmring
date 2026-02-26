@@ -3,6 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage, cn, ResponseViewer } from '@lmring/ui';
 import { UserIcon } from 'lucide-react';
 import { useSession } from '@/libs/AuthClient';
+import { formatErrorForDisplay } from '@/libs/format-api-error';
 import type { WorkflowMessage, WorkflowStatus } from '@/types/workflow';
 import { ProviderIcon } from '../provider-icon';
 import { MessageActions } from './message-actions';
@@ -89,6 +90,7 @@ export function Message({
                     isStreaming={isStreaming}
                     status={status}
                     error={error}
+                    formatError={formatErrorForDisplay}
                     className="overflow-x-auto custom-scrollbar"
                   />
                   {isAssistant && !isStreaming && (

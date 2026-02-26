@@ -1,0 +1,3 @@
+ALTER TABLE "webdev_sessions" ADD COLUMN "conversation_id" uuid;--> statement-breakpoint
+ALTER TABLE "webdev_sessions" ADD CONSTRAINT "webdev_sessions_conversation_id_conversations_id_fk" FOREIGN KEY ("conversation_id") REFERENCES "public"."conversations"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
+CREATE INDEX "webdev_sessions_conversation_id_idx" ON "webdev_sessions" USING btree ("conversation_id");

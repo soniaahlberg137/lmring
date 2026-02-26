@@ -89,7 +89,7 @@ describe('AnimatedHero', () => {
     expect(screen.queryByText('New Feature')).not.toBeInTheDocument();
   });
 
-  it('should render scroll indicator', async () => {
+  it('should not render scroll indicator', async () => {
     const { AnimatedHero } = await import('./animated-hero');
     render(
       <AnimatedHero
@@ -99,7 +99,7 @@ describe('AnimatedHero', () => {
       />,
     );
 
-    expect(screen.getByText('Scroll')).toBeInTheDocument();
+    expect(screen.queryByText('Scroll')).not.toBeInTheDocument();
   });
 
   it('should render multiple actions', async () => {

@@ -94,7 +94,11 @@ export {
 } from './components/command';
 export { Collapsible, CollapsibleTrigger, CollapsibleContent } from './components/collapsible';
 export { ScrollArea, ScrollBar } from './components/scroll-area';
-export { ResponseViewer, type ResponseViewerStatus } from './components/response-viewer';
+export {
+  ResponseViewer,
+  type ResponseViewerStatus,
+  type FormattedErrorInfo,
+} from './components/response-viewer';
 export { Shimmer } from './components/shimmer';
 export { StreamingCursor } from './components/streaming-cursor';
 export { Skeleton } from './components/skeleton';

@@ -107,6 +107,16 @@ vi.mock('@lmring/database/schema', () => ({
     providerName: 'providerName',
     outcome: 'outcome',
   },
+  webdevSessions: {
+    id: 'id',
+    conversationId: 'conversationId',
+    createdAt: 'createdAt',
+  },
+  webdevResponses: {
+    id: 'id',
+    sessionId: 'sessionId',
+    modelId: 'modelId',
+  },
 }));
 
 setupTestEnvironment();
@@ -160,7 +170,9 @@ describe('Conversations API', () => {
       mockDbInstance.select.mockReturnValue(mockDbInstance);
       mockDbInstance.from.mockReturnValue(mockDbInstance);
       mockDbInstance.where.mockReturnValue(mockDbInstance);
-      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance) // conversations query (chains to limit)
+        .mockResolvedValueOnce([]); // webdev sessions query (terminal)
       mockDbInstance.limit.mockReturnValue(mockDbInstance);
       mockDbInstance.offset.mockResolvedValue([mockConversation]);
 
@@ -196,7 +208,7 @@ describe('Conversations API', () => {
       mockDbInstance.select.mockReturnValue(mockDbInstance);
       mockDbInstance.from.mockReturnValue(mockDbInstance);
       mockDbInstance.where.mockReturnValue(mockDbInstance);
-      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce([]);
       mockDbInstance.limit.mockReturnValue(mockDbInstance);
       mockDbInstance.offset.mockResolvedValue([mockConversation]);
 
@@ -217,8 +229,9 @@ describe('Conversations API', () => {
       mockDbInstance.from.mockReturnValue(mockDbInstance);
       mockDbInstance.where.mockReturnValue(mockDbInstance);
       mockDbInstance.orderBy
-        .mockReturnValueOnce(mockDbInstance)
-        .mockResolvedValueOnce(mockFirstMessages);
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockResolvedValueOnce([]) // webdev sessions query
+        .mockResolvedValueOnce(mockFirstMessages); // first messages query
       mockDbInstance.limit.mockReturnValue(mockDbInstance);
       mockDbInstance.offset.mockResolvedValue([mockConversation]);
 
@@ -243,8 +256,14 @@ describe('Conversations API', () => {
       mockDbInstance.select.mockReturnValue(mockDbInstance);
       mockDbInstance.selectDistinct.mockReturnValue(mockDbInstance);
       mockDbInstance.from.mockReturnValue(mockDbInstance);
-      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce(mockModels);
-      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockReturnValueOnce(mockDbInstance) // webdev sessions query (chains to orderBy)
+        .mockResolvedValueOnce(mockModels) // models query (terminal)
+        .mockResolvedValueOnce([]); // webdevModelsUsed query (terminal)
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockResolvedValueOnce([]); // webdev sessions query
       mockDbInstance.limit.mockReturnValue(mockDbInstance);
       mockDbInstance.offset.mockResolvedValue([mockConversation]);
       mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
@@ -260,6 +279,44 @@ describe('Conversations API', () => {
       expect(data.conversations).toBeDefined();
       expect(data.conversations[0].models).toBeDefined();
       expect(data.conversations[0].models).toHaveLength(2);
+    });
+
+    it('should return all webdev models for a webdev conversation when withModels=true', async () => {
+      const mockWebdevModels = [
+        { conversationId: 'conv-123', modelId: 'anthropic:claude-sonnet-4-5-20250929' },
+        { conversationId: 'conv-123', modelId: 'openai:gpt-5.3-codex' },
+      ];
+
+      mockDbInstance.select.mockReturnValue(mockDbInstance);
+      mockDbInstance.selectDistinct.mockReturnValue(mockDbInstance);
+      mockDbInstance.from.mockReturnValue(mockDbInstance);
+      mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockReturnValueOnce(mockDbInstance) // webdev sessions query (chains to orderBy)
+        .mockResolvedValueOnce([]) // arena models query (terminal) - no arena models
+        .mockResolvedValueOnce(mockWebdevModels); // webdevModelsUsed query (terminal)
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockResolvedValueOnce([]); // webdev sessions query
+      mockDbInstance.limit.mockReturnValue(mockDbInstance);
+      mockDbInstance.offset.mockResolvedValue([mockConversation]);
+      mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/conversations?withModels=true',
+      );
+      const response = await GET_LIST(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data.conversations[0].models).toHaveLength(2);
+      expect(data.conversations[0].models).toEqual(
+        expect.arrayContaining([
+          { modelName: 'claude-sonnet-4-5-20250929', providerName: 'anthropic' },
+          { modelName: 'gpt-5.3-codex', providerName: 'openai' },
+        ]),
+      );
     });
 
     it('should return conversations with vote info when withVotes=true', async () => {
@@ -282,8 +339,13 @@ describe('Conversations API', () => {
 
       mockDbInstance.select.mockReturnValue(mockDbInstance);
       mockDbInstance.from.mockReturnValue(mockDbInstance);
-      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce(mockVotesData);
-      mockDbInstance.orderBy.mockReturnValue(mockDbInstance);
+      mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockReturnValueOnce(mockDbInstance) // webdev sessions query (chains to orderBy)
+        .mockResolvedValueOnce(mockVotesData); // votes query (terminal)
+      mockDbInstance.orderBy
+        .mockReturnValueOnce(mockDbInstance) // conversations query
+        .mockResolvedValueOnce([]); // webdev sessions query
       mockDbInstance.limit.mockReturnValue(mockDbInstance);
       mockDbInstance.offset.mockResolvedValue([mockConversation]);
       mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);

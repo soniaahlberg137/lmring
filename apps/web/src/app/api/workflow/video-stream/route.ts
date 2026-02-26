@@ -4,6 +4,7 @@ import { createStorageService } from '@lmring/storage';
 import type { VideoRuntimeProvider } from '@lmring/video-runtime';
 import { z } from 'zod';
 import { auth } from '@/libs/Auth';
+import { extractApiErrorMessage } from '@/libs/api-error-utils';
 import { logError } from '@/libs/error-logging';
 import { fetchUserApiKeys } from '@/libs/provider-factory';
 
@@ -163,7 +164,7 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage = extractApiErrorMessage(error);
           const errorEvent = JSON.stringify({
             type: 'error',
             workflowId,
