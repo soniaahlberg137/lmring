@@ -112,6 +112,11 @@ vi.mock('@lmring/database/schema', () => ({
     conversationId: 'conversationId',
     createdAt: 'createdAt',
   },
+  webdevResponses: {
+    id: 'id',
+    sessionId: 'sessionId',
+    modelId: 'modelId',
+  },
 }));
 
 setupTestEnvironment();
@@ -254,7 +259,8 @@ describe('Conversations API', () => {
       mockDbInstance.where
         .mockReturnValueOnce(mockDbInstance) // conversations query
         .mockReturnValueOnce(mockDbInstance) // webdev sessions query (chains to orderBy)
-        .mockResolvedValueOnce(mockModels); // models query (terminal)
+        .mockResolvedValueOnce(mockModels) // models query (terminal)
+        .mockResolvedValueOnce([]); // webdevModelsUsed query (terminal)
       mockDbInstance.orderBy
         .mockReturnValueOnce(mockDbInstance) // conversations query
         .mockResolvedValueOnce([]); // webdev sessions query
