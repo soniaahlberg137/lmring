@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_SANDBOX_STATE } from '@/types/webdev';
-import { createWebDevStore, webdevSelectors } from '../webdev-store';
+import { createWebDevStore, webdevSelectors } from './webdev-store';
 
 // Mock fetch using stubGlobal so the store module picks it up
 const fetchMock = vi.fn<typeof fetch>();
