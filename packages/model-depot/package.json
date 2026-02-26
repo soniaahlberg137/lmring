@@ -1,6 +1,6 @@
 {
   "name": "@lmring/model-depot",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "description": "Model Depot - Centralized AI Model Definitions and Metadata",
   "main": "./src/index.ts",
