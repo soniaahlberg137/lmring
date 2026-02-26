@@ -6,6 +6,7 @@ import * as React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { STATUS_COLORS } from '@/constants/webdev';
+import { formatErrorForDisplay } from '@/libs/format-api-error';
 import { useWebDevStore } from '@/stores/webdev-store';
 import { useWorkflowStore } from '@/stores/workflow-store';
 import type { SandboxStatus } from '@/types/webdev';
@@ -112,7 +113,8 @@ function buildActivityItems(
   }
 
   if (status === 'error' && error) {
-    items.push({ id: 'error', icon: 'circle-x', text: error });
+    const formatted = formatErrorForDisplay(error);
+    items.push({ id: 'error', icon: 'circle-x', text: `${formatted.title}: ${formatted.detail}` });
   }
 
   return items;

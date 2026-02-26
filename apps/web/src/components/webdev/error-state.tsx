@@ -3,6 +3,7 @@
 import { Button, cn } from '@lmring/ui';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatErrorForDisplay } from '@/libs/format-api-error';
 
 interface ErrorStateProps {
   message?: string;
@@ -12,6 +13,7 @@ interface ErrorStateProps {
 
 export function ErrorState({ message, onRetry, className }: ErrorStateProps) {
   const { t } = useTranslation();
+  const errorInfo = formatErrorForDisplay(message);
 
   return (
     <div className={cn('flex flex-col items-center justify-center gap-4 p-8', className)}>
@@ -20,10 +22,15 @@ export function ErrorState({ message, onRetry, className }: ErrorStateProps) {
       </div>
 
       <div className="text-center space-y-1">
-        <h3 className="text-sm font-medium">{t('WebDev.status_error')}</h3>
+        <h3 className="text-sm font-medium">{errorInfo.title || t('WebDev.status_error')}</h3>
         <p className="text-sm text-muted-foreground max-w-sm">
-          {message || t('WebDev.error_generation_failed')}
+          {errorInfo.detail || t('WebDev.error_generation_failed')}
         </p>
+        {errorInfo.isRetryable && (
+          <p className="text-xs text-muted-foreground italic">
+            This error may be temporary. Try again.
+          </p>
+        )}
       </div>
 
       {onRetry && (

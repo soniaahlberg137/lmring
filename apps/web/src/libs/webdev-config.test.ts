@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { getSandboxCredentials, getWebDevConfig } from '../webdev-config';
+import { getSandboxCredentials, getWebDevConfig } from './webdev-config';
 
 describe('getWebDevConfig', () => {
   const originalEnv = { ...process.env };

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filesToRecord, parseGeneratedFiles } from '../parse-generated-files';
+import { filesToRecord, parseGeneratedFiles } from './parse-generated-files';
 
 describe('parseGeneratedFiles', () => {
   it('should parse a single file block', () => {

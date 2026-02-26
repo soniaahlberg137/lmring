@@ -4,7 +4,7 @@ import {
   webdevGenerateSchema,
   webdevSandboxCreateSchema,
   webdevSandboxDeleteSchema,
-} from '../webdev-validation';
+} from './webdev-validation';
 
 describe('webdevGenerateSchema', () => {
   const validUUID = '550e8400-e29b-41d4-a716-446655440000';
