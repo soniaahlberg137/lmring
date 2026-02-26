@@ -1,6 +1,7 @@
 import { type ModelMessage, streamText } from '@lmring/ai-hub';
 import { detectReasoningByModelId, getModel } from '@lmring/model-depot';
 import { auth } from '@/libs/Auth';
+import { extractApiErrorMessage } from '@/libs/api-error-utils';
 import { logError } from '@/libs/error-logging';
 import { createProvider, fetchUserApiKeys } from '@/libs/provider-factory';
 import { type SupportedProvider, workflowStreamSchema } from '@/libs/validation';
@@ -225,6 +226,17 @@ export async function POST(request: Request) {
                 reasoning: part.text,
               });
               controller.enqueue(encoder.encode(`data: ${reasoningEvent}\n\n`));
+            } else if (part.type === 'error') {
+              const errorMessage = extractApiErrorMessage(part.error);
+              const errorEvent = JSON.stringify({
+                type: 'error',
+                workflowId,
+                error: errorMessage,
+              });
+              controller.enqueue(encoder.encode(`data: ${errorEvent}\n\n`));
+              controller.enqueue(encoder.encode('data: [DONE]\n\n'));
+              controller.close();
+              return;
             }
           }
 
@@ -250,13 +262,14 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          const errorMessage = extractApiErrorMessage(error);
           const errorEvent = JSON.stringify({
             type: 'error',
             workflowId,
             error: errorMessage,
           });
           controller.enqueue(encoder.encode(`data: ${errorEvent}\n\n`));
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         }
       },

@@ -40,12 +40,6 @@ export function PromptInputFeatureButtons() {
     e.target.value = '';
   };
 
-  const handleCodeClick = () => {
-    toast.info(t('Arena.coming_soon'), {
-      description: t('Arena.build_apps_coming_soon'),
-    });
-  };
-
   const isActive = (checkMode: InputMode) => mode === checkMode;
   const isButtonDisabled = isLoading || disabled;
 
@@ -145,8 +139,11 @@ export function PromptInputFeatureButtons() {
               type="button"
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-lg"
-              onClick={handleCodeClick}
+              className={cn(
+                'h-8 w-8 rounded-lg',
+                isActive('webdev') && 'bg-primary/10 text-primary border-primary',
+              )}
+              onClick={() => setMode('webdev')}
               disabled={isButtonDisabled}
             >
               <Code className="h-4 w-4" />
@@ -180,6 +177,11 @@ export function ModeChip() {
       icon: Video,
       label: t('Arena.video_generation'),
       colorClass: 'text-cyan-500',
+    },
+    webdev: {
+      icon: Code,
+      label: t('Arena.build_apps'),
+      colorClass: 'text-green-500',
     },
   };
 

@@ -121,13 +121,13 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "framer-motion": "^12.29.2",
-    "lucide-react": "^0.562.0",
+    "framer-motion": "^12.34.3",
+    "lucide-react": "^0.575.0",
     "radix-ui": "^1.4.3",
-    "react-resizable-panels": "^4.2.1",
-    "rehype-harden": "^1.1.7",
-    "streamdown": "^1.6.11",
-    "tailwind-merge": "^3.4.0"
+    "react-resizable-panels": "^4.6.5",
+    "rehype-harden": "^1.1.8",
+    "streamdown": "^2.3.0",
+    "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
     "react": "^19.2.4"
@@ -136,13 +136,13 @@
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.1",
-    "@types/react": "^19.2.10",
-    "@vitest/coverage-v8": "^4.0.17",
-    "happy-dom": "20.3.4",
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@vitest/coverage-v8": "^4.0.18",
+    "happy-dom": "20.7.0",
     "react": "^19.2.4",
-    "tsdown": "0.19.0-beta.2",
+    "tsdown": "0.20.3",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.17"
+    "vitest": "^4.0.18"
   }
 }

@@ -24,11 +24,18 @@ const permissiveRehypePlugins = [
 
 export type ResponseViewerStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
 
+export interface FormattedErrorInfo {
+  title: string;
+  detail: string;
+  isRetryable: boolean;
+}
+
 interface ResponseViewerProps {
   content: string;
   isStreaming?: boolean;
   status?: ResponseViewerStatus;
   error?: string;
+  formatError?: (error: string) => FormattedErrorInfo;
   className?: string;
 }
 
@@ -37,6 +44,7 @@ function ResponseViewer({
   isStreaming = false,
   status,
   error,
+  formatError,
   className,
 }: ResponseViewerProps) {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -50,6 +58,8 @@ function ResponseViewer({
   }, [isStreaming, content]);
 
   if (status === 'failed') {
+    const errorInfo = formatError && error ? formatError(error) : null;
+
     return (
       <div className="space-y-2">
         {content && (
@@ -67,8 +77,21 @@ function ResponseViewer({
         <div className="flex items-start gap-2 text-sm text-destructive">
           <StopCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
           <div className="flex-1">
-            <div className="font-medium">Request failed</div>
-            {error && <div className="text-xs mt-1 opacity-90">{error}</div>}
+            <div className="font-medium">{errorInfo?.title ?? 'Request failed'}</div>
+            {errorInfo ? (
+              <>
+                {errorInfo.detail && (
+                  <div className="text-xs mt-1 opacity-90">{errorInfo.detail}</div>
+                )}
+                {errorInfo.isRetryable && (
+                  <div className="text-xs mt-1 opacity-70 italic">
+                    This error may be temporary. Try again.
+                  </div>
+                )}
+              </>
+            ) : (
+              error && <div className="text-xs mt-1 opacity-90">{error}</div>
+            )}
           </div>
         </div>
       </div>

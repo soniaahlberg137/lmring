@@ -1,6 +1,7 @@
 'use client';
 
 import { ScrollArea, SidebarConversationSkeleton } from '@lmring/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ClockIcon,
@@ -16,18 +17,16 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import { usePrefetchConversations } from '@/hooks/use-conversations-query';
+import type { ConversationData } from '@/hooks/use-conversation';
+import {
+  conversationsKeys,
+  usePrefetchConversations,
+  useRecentConversations,
+} from '@/hooks/use-conversations-query';
 import { usePrefetchLeaderboard } from '@/hooks/use-leaderboard-query';
 import { useTranslations } from '@/hooks/use-translations';
 import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } from '@/stores';
 import { UserMenu } from './user-menu';
-
-interface RecentConversation {
-  id: string;
-  title: string;
-  firstMessage?: string;
-  updatedAt: string;
-}
 
 interface NavItem {
   titleKey: 'new_chat' | 'leaderboard' | 'history';
@@ -67,9 +66,24 @@ export function Sidebar({ user }: SidebarProps) {
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isLogoHovered, setIsLogoHovered] = React.useState(false);
-  const [recentConversations, setRecentConversations] = React.useState<RecentConversation[]>([]);
-  const [conversationsLoaded, setConversationsLoaded] = React.useState(false);
   const pathname = usePathname();
+
+  const { data: recentConversations = [], isLoading: conversationsLoading } =
+    useRecentConversations(10);
+  const queryClient = useQueryClient();
+
+  // Track actual browser pathname — usePathname() doesn't update on replaceState
+  const [browserPath, setBrowserPath] = React.useState('');
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pathname triggers re-sync with actual browser path on navigation
+  React.useEffect(() => {
+    setBrowserPath(window.location.pathname);
+  }, [pathname]);
+
+  React.useEffect(() => {
+    const handler = () => setBrowserPath(window.location.pathname);
+    window.addEventListener('url-replaced', handler);
+    return () => window.removeEventListener('url-replaced', handler);
+  }, []);
 
   const newConversation = useWorkflowStore(workflowSelectors.newConversation);
   const clearNewConversation = useWorkflowStore((state) => state.clearNewConversation);
@@ -82,7 +96,7 @@ export function Sidebar({ user }: SidebarProps) {
   const { prefetchLeaderboard } = usePrefetchLeaderboard();
   const { prefetchHistoryConversations } = usePrefetchConversations();
 
-  const currentPath = pathname;
+  const currentPath = browserPath || pathname;
 
   const isSettingsPage = currentPath.startsWith('/settings');
 
@@ -93,42 +107,24 @@ export function Sidebar({ user }: SidebarProps) {
   }, [isSettingsPage]);
 
   React.useEffect(() => {
-    const fetchRecentConversations = async () => {
-      if (collapsed || conversationsLoaded) return;
-
-      try {
-        const response = await fetch('/api/conversations?limit=10&withFirstMessage=true');
-        if (response.ok) {
-          const data = await response.json();
-          setRecentConversations(data.conversations || []);
-        }
-      } catch (error) {
-        console.error('Failed to fetch recent conversations:', error);
-      } finally {
-        setConversationsLoaded(true);
-      }
-    };
-
-    fetchRecentConversations();
-  }, [collapsed, conversationsLoaded]);
-
-  React.useEffect(() => {
-    if (newConversation && conversationsLoaded) {
+    if (newConversation) {
       const exists = recentConversations.some((conv) => conv.id === newConversation.id);
       if (!exists) {
-        setRecentConversations((prev) => [
+        queryClient.setQueryData<ConversationData[]>(conversationsKeys.recent(10), (old = []) => [
           {
             id: newConversation.id,
+            userId: '',
             title: newConversation.title,
             firstMessage: newConversation.title,
+            createdAt: newConversation.updatedAt,
             updatedAt: newConversation.updatedAt,
           },
-          ...prev.slice(0, 9),
+          ...old.slice(0, 9),
         ]);
       }
       clearNewConversation();
     }
-  }, [newConversation, conversationsLoaded, recentConversations, clearNewConversation]);
+  }, [newConversation, recentConversations, clearNewConversation, queryClient]);
 
   const sidebarWidth = collapsed ? 'w-16' : 'w-64';
 
@@ -309,23 +305,21 @@ export function Sidebar({ user }: SidebarProps) {
               {t('Sidebar.today')}
             </div>
             <ScrollArea className="max-h-[300px]">
-              {!conversationsLoaded || !mainContentReady ? (
+              {conversationsLoading || (currentPath.startsWith('/arena') && !mainContentReady) ? (
                 <SidebarConversationSkeleton count={5} />
               ) : recentConversations.length > 0 ? (
                 <div className="space-y-0.5">
                   {recentConversations.map((conv) => {
-                    const isConvActive = currentPath === `/arena/${conv.id}`;
+                    const convHref = conv.webdevSessionId
+                      ? `/webdev/${conv.webdevSessionId}`
+                      : `/arena/${conv.id}`;
+                    const isConvActive = currentPath === convHref;
                     const displayText = conv.firstMessage
                       ? truncateText(conv.firstMessage, 20)
                       : truncateText(conv.title, 20);
 
                     return (
-                      <Link
-                        key={conv.id}
-                        href={`/arena/${conv.id}`}
-                        prefetch={false}
-                        className="block"
-                      >
+                      <Link key={conv.id} href={convHref} prefetch={false} className="block">
                         <motion.div
                           whileHover={{ x: 2 }}
                           whileTap={{ scale: 0.98 }}

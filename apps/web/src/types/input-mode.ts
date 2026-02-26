@@ -1,6 +1,12 @@
 import { FILE_UPLOAD_CONFIG } from '@lmring/env';
 
-export type InputMode = 'default' | 'search' | 'imageGenerate' | 'videoGenerate' | 'upload';
+export type InputMode =
+  | 'default'
+  | 'search'
+  | 'imageGenerate'
+  | 'videoGenerate'
+  | 'upload'
+  | 'webdev';
 
 export interface UploadedImage {
   id: string;

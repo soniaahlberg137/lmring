@@ -36,6 +36,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode: vi.fn(),
+      value: '',
       uploadedImages: [],
       addImages,
       isLoading: false,
@@ -58,6 +59,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode: vi.fn(),
+      value: '',
       uploadedImages: [],
       addImages,
       isLoading: false,
@@ -81,6 +83,7 @@ describe('prompt-input-features', () => {
     promptContextMock.mockReturnValue({
       mode: 'default',
       setMode,
+      value: '',
       uploadedImages: [],
       addImages: vi.fn(),
       isLoading: false,
@@ -97,6 +100,27 @@ describe('prompt-input-features', () => {
     const imageButton = buttons[2];
     if (imageButton) fireEvent.click(imageButton);
     expect(setMode).toHaveBeenCalledWith('imageGenerate');
+  });
+
+  it('Code button toggles webdev mode', () => {
+    const setMode = vi.fn();
+    promptContextMock.mockReturnValue({
+      mode: 'default',
+      setMode,
+      value: 'Build a todo app',
+      uploadedImages: [],
+      addImages: vi.fn(),
+      isLoading: false,
+      disabled: false,
+    });
+
+    render(<PromptInputFeatureButtons />);
+    const buttons = screen.getAllByRole('button');
+    // Code button is the last (index 4): upload, search, image, video, code
+    const codeButton = buttons[4];
+    if (codeButton) fireEvent.click(codeButton);
+
+    expect(setMode).toHaveBeenCalledWith('webdev');
   });
 
   it('ModeChip renders and clears non-default modes', () => {

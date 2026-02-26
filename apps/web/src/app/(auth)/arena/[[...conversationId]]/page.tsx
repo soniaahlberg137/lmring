@@ -1098,6 +1098,40 @@ export default function ArenaPage() {
       return;
     }
 
+    // Check if webdev mode is active — route to /webdev instead of running arena workflows
+    if (inputMode === 'webdev') {
+      const prompt = workflowGlobalPrompt.trim();
+      const modelEntries = syncedComparisons
+        .map((c) => ({ modelId: c.modelId, keyId: getKeyIdForModel(c.modelId) }))
+        .filter((e): e is { modelId: string; keyId: string } => Boolean(e.modelId && e.keyId));
+
+      let webdevConversationId: string | undefined;
+      try {
+        const title = prompt.length > 80 ? `${prompt.slice(0, 80)}...` : prompt;
+        const conversation = await createConversation(title);
+        if (conversation?.id) {
+          webdevConversationId = conversation.id;
+          setNewConversation({ id: conversation.id, title, updatedAt: new Date().toISOString() });
+        }
+      } catch {
+        // Navigate without conversationId
+      }
+
+      sessionStorage.setItem(
+        'webdev_init',
+        JSON.stringify({
+          prompt,
+          models: modelEntries,
+          conversationId: webdevConversationId,
+        }),
+      );
+
+      setWorkflowGlobalPrompt('');
+      setInputMode('default');
+      router.push('/webdev');
+      return;
+    }
+
     let attachments: WorkflowImageAttachment[] | undefined;
     let dbAttachments: MessageAttachmentForSave[] | undefined;
     if (uploadedImages.length > 0) {
@@ -1136,16 +1170,19 @@ export default function ArenaPage() {
         }));
     }
 
-    setWorkflowGlobalPrompt('');
     handleClearImages();
     const currentInputMode = inputMode;
     setInputMode('default');
 
+    // Clear prompt after starting (startAll* reads it synchronously)
+    let workflowPromise: Promise<void>;
     if (currentInputMode === 'videoGenerate') {
-      await startAllSyncedVideoWorkflows();
+      workflowPromise = startAllSyncedVideoWorkflows();
     } else {
-      await startAllSyncedWorkflows(attachments, dbAttachments);
+      workflowPromise = startAllSyncedWorkflows(attachments, dbAttachments);
     }
+    setWorkflowGlobalPrompt('');
+    await workflowPromise;
     if (isNewConversationSubmit) {
       const convId = getWorkflowConversationId();
       const currentWindowPath = typeof window !== 'undefined' ? window.location.pathname : '';
@@ -1173,6 +1210,9 @@ export default function ArenaPage() {
     uploadedImages,
     handleClearImages,
     inputMode,
+    createConversation,
+    getKeyIdForModel,
+    setNewConversation,
   ]);
 
   const handleModelSelect = React.useCallback(

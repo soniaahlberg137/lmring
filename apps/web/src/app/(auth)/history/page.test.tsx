@@ -169,4 +169,27 @@ describe('HistoryPage', () => {
       expect(screen.queryByText('Hello world')).not.toBeInTheDocument();
     });
   });
+
+  it('hides share button for webdev conversations', async () => {
+    mockIsPending.value = false;
+    mockHistoryConversations.data = [
+      {
+        id: 'conv-webdev',
+        userId: 'user-1',
+        title: 'Webdev Session',
+        createdAt: new Date('2024-01-01T00:00:00.000Z').toISOString(),
+        updatedAt: new Date('2024-01-02T00:00:00.000Z').toISOString(),
+        firstMessage: 'Build me a landing page',
+        models: [{ modelName: 'gpt-4o', providerName: 'openai' }],
+        webdevSessionId: 'session-123',
+      },
+    ];
+
+    render(<HistoryPage />, { wrapper: createWrapper() });
+    expect(await screen.findByText('Build me a landing page')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'History.delete_aria_label' })).toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'History.share_aria_label' }),
+    ).not.toBeInTheDocument();
+  });
 });
