@@ -41,7 +41,7 @@ export function RightPanel({ className }: RightPanelProps) {
   }, [activeWorkflowId]);
 
   return (
-    <div className={`flex h-full flex-col bg-[#F5F0EB] ${className ?? ''}`}>
+    <div className={`flex h-full flex-col bg-[var(--webdev-bg)] ${className ?? ''}`}>
       {sandboxes.size > 1 && <ModelTabBar />}
 
       <Toolbar viewMode={viewMode} onViewModeChange={setViewMode} onRefresh={handleRefresh} />

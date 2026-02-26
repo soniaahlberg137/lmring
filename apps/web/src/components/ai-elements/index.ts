@@ -34,12 +34,3 @@ export {
   TerminalStatus,
   TerminalTitle,
 } from './terminal';
-
-export {
-  WebPreview,
-  WebPreviewBody,
-  WebPreviewConsole,
-  WebPreviewNavigation,
-  WebPreviewNavigationButton,
-  WebPreviewUrl,
-} from './web-preview';

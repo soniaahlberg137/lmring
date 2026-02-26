@@ -45,7 +45,7 @@ export function PromptBar({
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="flex h-10 flex-1 items-center rounded-lg bg-[#F5F0EB] px-3.5">
+      <div className="flex h-10 flex-1 items-center rounded-lg bg-[var(--webdev-input-bg)] px-3.5">
         <input
           ref={inputRef}
           type="text"
@@ -56,7 +56,7 @@ export function PromptBar({
           onCompositionEnd={() => setIsComposing(false)}
           disabled={isLoading || disabled}
           placeholder={placeholder}
-          className="flex-1 bg-transparent text-sm text-[#1A1A1A] placeholder:text-[#A1A1AA] outline-none"
+          className="flex-1 bg-transparent text-sm text-[var(--webdev-text)] placeholder:text-[var(--webdev-text-placeholder)] outline-none"
         />
       </div>
       <button
@@ -64,11 +64,11 @@ export function PromptBar({
         onClick={handleSubmit}
         disabled={!canSubmit}
         className={cn(
-          'rounded-lg bg-[#1A1A1A] p-2.5 transition-opacity',
+          'rounded-lg bg-[var(--webdev-btn-primary)] p-2.5 transition-opacity',
           canSubmit ? 'opacity-100' : 'opacity-50',
         )}
       >
-        <ArrowUp className="h-[18px] w-[18px] text-white" />
+        <ArrowUp className="h-[18px] w-[18px] text-[var(--webdev-btn-primary-text)]" />
         <span className="sr-only">Send</span>
       </button>
     </div>

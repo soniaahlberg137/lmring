@@ -1,11 +1,20 @@
 'use client';
 
-import { cn, ScrollArea } from '@lmring/ui';
-import { FileCode, FileJson, FileText, Loader2 } from 'lucide-react';
+import { ScrollArea } from '@lmring/ui';
+import { FileIcon, Loader2 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 import * as React from 'react';
 import { useTranslation } from 'react-i18next';
+import { CodeBlockContent } from '@/components/ai-elements/code-block';
+import { FileTree, FileTreeFile, FileTreeFolder } from '@/components/ai-elements/file-tree';
 import { useWebDevStore } from '@/stores/webdev-store';
 import { useWorkflowStore } from '@/stores/workflow-store';
+import {
+  buildFileTree,
+  type FileTreeNode,
+  getAllFolderPaths,
+  getLanguageFromPath,
+} from './utils/file-tree-utils';
 
 const FILE_TREE_WIDTH = 240;
 
@@ -15,10 +24,6 @@ interface StreamingFile {
   isStreaming: boolean;
 }
 
-/**
- * Progressively parse `---FILE:---` / `---END FILE---` markers from streaming content.
- * Returns completed files and the currently-streaming file (if any).
- */
 function parseStreamingContent(content: string): {
   files: StreamingFile[];
   currentFile: StreamingFile | null;
@@ -45,24 +50,40 @@ function parseStreamingContent(content: string): {
   return { files, currentFile };
 }
 
-function getFileIcon(path: string) {
-  if (path.endsWith('.json')) return FileJson;
-  if (
-    path.endsWith('.ts') ||
-    path.endsWith('.tsx') ||
-    path.endsWith('.js') ||
-    path.endsWith('.jsx')
-  )
-    return FileCode;
-  return FileText;
-}
+function renderStreamingTreeNodes(
+  nodes: FileTreeNode[],
+  streamingPaths: Set<string>,
+): React.ReactNode {
+  return nodes.map((node) => {
+    if (node.type === 'folder') {
+      return (
+        <FileTreeFolder key={node.path} path={node.path} name={node.name}>
+          {node.children && renderStreamingTreeNodes(node.children, streamingPaths)}
+        </FileTreeFolder>
+      );
+    }
 
-function getFileName(path: string): string {
-  return path.split('/').pop() ?? path;
+    if (streamingPaths.has(node.path)) {
+      return (
+        <FileTreeFile key={node.path} path={node.path} name={node.name}>
+          <span className="w-3.5 shrink-0" />
+          <span className="flex shrink-0 items-center">
+            <FileIcon className="size-4 text-muted-foreground" />
+          </span>
+          <span className="truncate">{node.name}</span>
+          <Loader2 className="ml-auto size-3 shrink-0 animate-spin text-muted-foreground" />
+        </FileTreeFile>
+      );
+    }
+
+    return <FileTreeFile key={node.path} path={node.path} name={node.name} />;
+  });
 }
 
 export function StreamingCodeView() {
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
+  const codeTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
   const activeWorkflowId = useWebDevStore((s) => s.activeWorkflowId);
 
   const streamingContent = useWorkflowStore((s) => {
@@ -110,12 +131,29 @@ export function StreamingCodeView() {
 
   const hasFiles = allFiles.length > 0;
 
+  const filePaths = React.useMemo(() => allFiles.map((f) => f.path), [allFiles]);
+  const treeNodes = React.useMemo(() => buildFileTree(filePaths), [filePaths]);
+  const streamingPaths = React.useMemo(
+    () => new Set(allFiles.filter((f) => f.isStreaming).map((f) => f.path)),
+    [allFiles],
+  );
+
+  const [expanded, setExpanded] = React.useState<Set<string>>(new Set());
+  React.useEffect(() => {
+    const allDirs = getAllFolderPaths(filePaths);
+    setExpanded((prev) => {
+      const merged = new Set(prev);
+      for (const d of allDirs) merged.add(d);
+      return merged.size === prev.size ? prev : merged;
+    });
+  }, [filePaths]);
+
   if (!hasFiles) {
     return (
       <div className="flex h-full flex-col" style={{ backgroundColor: 'var(--webdev-editor-bg)' }}>
         <div
           className="flex items-center gap-2 border-b px-4 py-2"
-          style={{ borderColor: 'oklch(0.3 0 0 / 0.3)' }}
+          style={{ borderColor: 'var(--webdev-editor-border)' }}
         >
           <Loader2
             className="h-3.5 w-3.5 animate-spin"
@@ -138,66 +176,52 @@ export function StreamingCodeView() {
     );
   }
 
+  const language = getLanguageFromPath(activeFile ?? '');
+
   return (
-    <div className="flex h-full" style={{ backgroundColor: 'var(--webdev-editor-bg)' }}>
+    <div
+      className="webdev-editor-scope flex h-full"
+      style={{ backgroundColor: 'var(--webdev-editor-bg)' }}
+    >
       <div
         className="shrink-0 border-r"
         style={{
           backgroundColor: 'var(--webdev-editor-sidebar)',
-          borderColor: 'oklch(0.3 0 0 / 0.3)',
+          borderColor: 'var(--webdev-editor-border)',
           width: FILE_TREE_WIDTH,
         }}
       >
         <ScrollArea className="h-full">
-          <div className="py-2">
-            {allFiles.map((file) => {
-              const Icon = getFileIcon(file.path);
-              const isActive = file.path === activeFile;
-
-              return (
-                <button
-                  key={file.path}
-                  type="button"
-                  onClick={() => setSelectedFile(file.path)}
-                  data-active={isActive}
-                  className="webdev-file-item w-full text-left"
-                >
-                  <Icon
-                    className="h-3.5 w-3.5 shrink-0"
-                    style={{ color: 'var(--webdev-editor-text-muted)' }}
-                  />
-                  <span
-                    className={cn('truncate text-xs', isActive ? 'font-medium' : '')}
-                    style={{
-                      color: isActive
-                        ? 'var(--webdev-editor-text)'
-                        : 'var(--webdev-editor-text-muted)',
-                    }}
-                  >
-                    {getFileName(file.path)}
-                  </span>
-                  {file.isStreaming && (
-                    <Loader2
-                      className="ml-auto h-3 w-3 shrink-0 animate-spin"
-                      style={{ color: 'var(--webdev-editor-text-muted)' }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
+          <FileTree
+            expanded={expanded}
+            onExpandedChange={setExpanded}
+            selectedPath={activeFile ?? undefined}
+            onSelect={setSelectedFile}
+            className="rounded-none border-0 bg-transparent text-xs"
+          >
+            {renderStreamingTreeNodes(treeNodes, streamingPaths)}
+          </FileTree>
         </ScrollArea>
       </div>
 
       <div className="flex-1 overflow-auto">
         {activeFileData ? (
           <ScrollArea className="h-full w-full">
-            <pre
-              className="p-4 text-xs leading-relaxed"
-              style={{ color: 'var(--webdev-editor-text)' }}
-            >
-              <code>{activeFileData.content}</code>
-            </pre>
+            {activeFileData.isStreaming ? (
+              <pre
+                className="p-4 text-xs leading-relaxed"
+                style={{ color: 'var(--webdev-editor-text)' }}
+              >
+                <code>{activeFileData.content}</code>
+              </pre>
+            ) : (
+              <CodeBlockContent
+                code={activeFileData.content}
+                language={language}
+                showLineNumbers
+                theme={codeTheme}
+              />
+            )}
             <div ref={bottomRef} />
           </ScrollArea>
         ) : (

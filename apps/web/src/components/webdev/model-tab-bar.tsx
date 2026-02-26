@@ -39,7 +39,7 @@ export function ModelTabBar() {
   if (entries.length <= 1) return null;
 
   return (
-    <div className="shrink-0 border-b border-[#E8E4DF] bg-[#F5F0EB]">
+    <div className="shrink-0 border-b border-[var(--webdev-border)] bg-[var(--webdev-bg)]">
       <ScrollArea className="w-full">
         <div className="flex h-12 items-stretch">
           {entries.map(([workflowId, sandbox], index) => {
@@ -58,8 +58,8 @@ export function ModelTabBar() {
                 className={cn(
                   'relative flex items-center gap-2 px-4 py-2.5 text-sm whitespace-nowrap transition-colors',
                   isActive
-                    ? 'font-semibold text-[#1A1A1A]'
-                    : 'font-medium text-[#71717A] hover:text-[#1A1A1A]',
+                    ? 'font-semibold text-[var(--webdev-text)]'
+                    : 'font-medium text-[var(--webdev-text-muted)] hover:text-[var(--webdev-text)]',
                 )}
               >
                 <ProviderIcon providerId={providerId} size={18} type="avatar" />

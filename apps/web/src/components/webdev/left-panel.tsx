@@ -39,7 +39,7 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
   const showVote = sandboxes.size > 1;
 
   return (
-    <div className={cn('flex h-full flex-col bg-white', className)}>
+    <div className={cn('flex h-full flex-col bg-[var(--webdev-card-bg)]', className)}>
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-4 p-4">
           {hasPrompt && <PromptCard prompt={displayPrompt} />}
@@ -72,7 +72,7 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
         </div>
       </ScrollArea>
 
-      <div className="shrink-0 border-t border-[#E8E4DF] p-4">
+      <div className="shrink-0 border-t border-[var(--webdev-border)] p-4">
         <PromptBar
           onSubmit={onFollowUp}
           isLoading={isLoading}

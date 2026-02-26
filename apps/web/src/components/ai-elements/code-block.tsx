@@ -113,10 +113,10 @@ const tokensCache = new Map<string, TokenizedCode>();
 // Subscribers for async token updates
 const subscribers = new Map<string, Set<(result: TokenizedCode) => void>>();
 
-const getTokensCacheKey = (code: string, language: BundledLanguage) => {
+const getTokensCacheKey = (code: string, language: BundledLanguage, theme?: 'light' | 'dark') => {
   const start = code.slice(0, 100);
   const end = code.length > 100 ? code.slice(-100) : '';
-  return `${language}:${code.length}:${start}:${end}`;
+  return `${language}:${theme ?? 'dual'}:${code.length}:${start}:${end}`;
 };
 
 const getHighlighter = (
@@ -152,13 +152,24 @@ const createRawTokens = (code: string): TokenizedCode => ({
   ),
 });
 
+const themeMap = { light: 'github-light', dark: 'github-dark' } as const;
+
 // Synchronous highlight with callback for async results
+// Supports overloaded call patterns:
+//   highlightCode(code, language)
+//   highlightCode(code, language, callback)
+//   highlightCode(code, language, theme)
+//   highlightCode(code, language, theme, callback)
 export const highlightCode = (
   code: string,
   language: BundledLanguage,
-  callback?: (result: TokenizedCode) => void,
+  themeOrCallback?: 'light' | 'dark' | ((result: TokenizedCode) => void),
+  maybeCallback?: (result: TokenizedCode) => void,
 ): TokenizedCode | null => {
-  const tokensCacheKey = getTokensCacheKey(code, language);
+  const theme = typeof themeOrCallback === 'string' ? themeOrCallback : undefined;
+  const callback = typeof themeOrCallback === 'function' ? themeOrCallback : maybeCallback;
+
+  const tokensCacheKey = getTokensCacheKey(code, language, theme);
 
   // Return cached result if available
   const cached = tokensCache.get(tokensCacheKey);
@@ -180,13 +191,18 @@ export const highlightCode = (
       const availableLangs = highlighter.getLoadedLanguages();
       const langToUse = availableLangs.includes(language) ? language : 'text';
 
-      const result = highlighter.codeToTokens(code, {
-        lang: langToUse,
-        themes: {
-          dark: 'github-dark',
-          light: 'github-light',
-        },
-      });
+      const result = theme
+        ? highlighter.codeToTokens(code, {
+            lang: langToUse,
+            theme: themeMap[theme],
+          })
+        : highlighter.codeToTokens(code, {
+            lang: langToUse,
+            themes: {
+              dark: 'github-dark',
+              light: 'github-light',
+            },
+          });
 
       const tokenized: TokenizedCode = {
         bg: result.bg ?? 'transparent',
@@ -336,25 +352,29 @@ export const CodeBlockContent = ({
   code,
   language,
   showLineNumbers = false,
+  theme,
 }: {
   code: string;
   language: BundledLanguage;
   showLineNumbers?: boolean;
+  theme?: 'light' | 'dark';
 }) => {
   // Memoized raw tokens for immediate display
   const rawTokens = useMemo(() => createRawTokens(code), [code]);
 
   // Try to get cached result synchronously, otherwise use raw tokens
-  const [tokenized, setTokenized] = useState(() => highlightCode(code, language) ?? rawTokens);
+  const [tokenized, setTokenized] = useState(
+    () => highlightCode(code, language, theme) ?? rawTokens,
+  );
 
   useEffect(() => {
     let cancelled = false;
 
     // Reset to raw tokens when code changes (shows current code, not stale tokens)
-    setTokenized(highlightCode(code, language) ?? rawTokens);
+    setTokenized(highlightCode(code, language, theme) ?? rawTokens);
 
     // Subscribe to async highlighting result
-    highlightCode(code, language, (result) => {
+    highlightCode(code, language, theme, (result) => {
       if (!cancelled) {
         setTokenized(result);
       }
@@ -363,7 +383,7 @@ export const CodeBlockContent = ({
     return () => {
       cancelled = true;
     };
-  }, [code, language, rawTokens]);
+  }, [code, language, theme, rawTokens]);
 
   return (
     <CodeBlockContainer language={language}>

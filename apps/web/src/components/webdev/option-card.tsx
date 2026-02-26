@@ -152,13 +152,15 @@ export const OptionCard = React.memo(function OptionCard({
       type="button"
       onClick={onClick}
       className={cn(
-        'w-full rounded-xl border border-[#E8E4DF] bg-white p-4 text-left transition-colors',
-        isActive && 'ring-2 ring-[#E8E4DF]',
+        'w-full rounded-xl border border-[var(--webdev-border)] bg-[var(--webdev-card-bg)] p-4 text-left transition-colors',
+        isActive && 'ring-2 ring-[var(--webdev-border)]',
       )}
     >
       <div className="flex items-center gap-2.5 mb-3">
         <ProviderIcon providerId={providerId} size={20} type="avatar" />
-        <span className="text-sm font-semibold text-[#1A1A1A] truncate">{modelName}</span>
+        <span className="text-sm font-semibold text-[var(--webdev-text)] truncate">
+          {modelName}
+        </span>
         <span className="ml-auto flex items-center gap-1.5 shrink-0">
           {isActiveStatus(status) && (
             <Loader2 className={cn('h-3.5 w-3.5 animate-spin', getStatusColorClass(status))} />

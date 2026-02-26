@@ -13,15 +13,32 @@
     --webdev-card-bg: #ffffff; /* white card background */
     --webdev-muted-bg: #f5f0eb; /* muted background for badges/pills */
     --webdev-preview-bg: #fafaf9; /* preview area background */
+
+    /* Text colors */
+    --webdev-text: #1a1a1a;
+    --webdev-text-muted: #71717a;
+    --webdev-text-placeholder: #a1a1aa;
+
+    /* Button colors */
+    --webdev-btn-primary: #1a1a1a;
+    --webdev-btn-primary-text: #ffffff;
+
+    /* Building block decorative colors */
+    --webdev-block-light: #d4d4d8;
+    --webdev-block-mid: #a1a1aa;
+    --webdev-block-dark: #71717a;
+
     --webdev-accent: oklch(0.51 0.24 285); /* #7C3AED violet-600, primary accent */
 
-    /* Code editor (always dark, not theme-dependent) */
-    --webdev-editor-bg: oklch(0.2 0.005 264); /* #1E1E1E */
-    --webdev-editor-sidebar: oklch(0.22 0.005 264); /* #252526 */
-    --webdev-editor-tab-active: oklch(0.2 0.005 264);
-    --webdev-editor-tab-inactive: oklch(0.22 0.005 264);
-    --webdev-editor-text: oklch(0.85 0.005 264); /* #CCCCCC */
-    --webdev-editor-text-muted: oklch(0.55 0 0); /* #858585 */
+    /* Code editor (matches current theme) */
+    --webdev-editor-bg: oklch(0.99 0.002 60); /* near-white, warm tint */
+    --webdev-editor-sidebar: oklch(0.965 0.006 60); /* slightly warmer sidebar */
+    --webdev-editor-tab-active: oklch(0.99 0.002 60);
+    --webdev-editor-tab-inactive: oklch(0.965 0.006 60);
+    --webdev-editor-text: oklch(0.2 0.01 264); /* dark text */
+    --webdev-editor-text-muted: oklch(0.45 0.01 264); /* medium gray */
+    --webdev-editor-border: oklch(0.88 0.01 60); /* warm light border */
+    --webdev-editor-muted: oklch(0.95 0.008 60); /* slightly darker than bg */
 
     /* Option badge colors (WCAG AA compliant with white text) */
     --webdev-option-a: oklch(0.51 0.24 285); /* #7C3AED violet-600 */
@@ -44,15 +61,35 @@
     --webdev-bg-hover: oklch(0.25 0.01 264); /* Slightly lighter on hover */
     --webdev-border: oklch(0.3 0.008 264);
     --webdev-input-bg: oklch(0.25 0.008 264);
+    --webdev-card-bg: oklch(0.2 0.005 264);
+    --webdev-muted-bg: oklch(0.22 0.008 264);
+    --webdev-preview-bg: oklch(0.18 0.005 264);
+
+    /* Text colors */
+    --webdev-text: oklch(0.93 0.005 264);
+    --webdev-text-muted: oklch(0.65 0 0);
+    --webdev-text-placeholder: oklch(0.5 0 0);
+
+    /* Button colors (inverted: light on dark) */
+    --webdev-btn-primary: oklch(0.93 0.005 264);
+    --webdev-btn-primary-text: oklch(0.15 0.005 264);
+
+    /* Building block decorative colors */
+    --webdev-block-light: oklch(0.4 0.005 264);
+    --webdev-block-mid: oklch(0.5 0 0);
+    --webdev-block-dark: oklch(0.6 0 0);
+
     --webdev-accent: oklch(0.68 0.18 285); /* #A78BFA violet-400, primary accent */
 
-    /* Code editor (slightly darker in dark mode) */
+    /* Code editor (dark in dark mode) */
     --webdev-editor-bg: oklch(0.15 0.005 264);
     --webdev-editor-sidebar: oklch(0.18 0.005 264);
     --webdev-editor-tab-active: oklch(0.15 0.005 264);
     --webdev-editor-tab-inactive: oklch(0.18 0.005 264);
     --webdev-editor-text: oklch(0.85 0.005 264);
     --webdev-editor-text-muted: oklch(0.55 0 0);
+    --webdev-editor-border: oklch(0.3 0 0 / 0.3); /* dark border */
+    --webdev-editor-muted: oklch(0.23 0.005 264); /* slightly lighter than bg */
 
     /* Option badge colors (lighter for dark backgrounds) */
     --webdev-option-a: oklch(0.68 0.18 285); /* #A78BFA violet-400 */
@@ -163,21 +200,28 @@
     color: var(--foreground);
   }
 
-  /* Code editor file tree item */
-  .webdev-file-item {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem 0.75rem;
-    transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
+  /* Theme scope: forces ai-elements to use webdev editor colors */
+  .webdev-editor-scope {
+    --card: var(--webdev-editor-bg);
+    --card-foreground: var(--webdev-editor-text);
+    --muted: var(--webdev-editor-muted);
+    --muted-foreground: var(--webdev-editor-text-muted);
+    --border: var(--webdev-editor-border);
   }
 
-  .webdev-file-item:hover {
-    background-color: oklch(from var(--webdev-editor-bg) calc(l + 0.05) c h);
+  .dark .webdev-editor-scope {
+    color-scheme: dark;
   }
+}
 
-  .webdev-file-item[data-active="true"] {
-    background-color: oklch(from var(--webdev-editor-bg) calc(l + 0.08) c h);
-  }
+/* Remove code block container chrome inside webdev editor */
+.webdev-editor-scope [data-language] {
+  border-radius: 0;
+  border: none;
+  background: transparent;
+}
+
+.webdev-editor-scope [data-language] pre {
+  /* biome-ignore lint/complexity/noImportantStyles: override Shiki inline backgroundColor */
+  background-color: transparent !important;
 }
