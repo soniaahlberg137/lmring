@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { ResponseViewer } from './index';
@@ -36,7 +37,6 @@ describe('ResponseViewer', () => {
 
   it('shows streaming cursor when streaming', () => {
     const { container } = render(<ResponseViewer content="Streaming..." isStreaming />);
-    const cursor = container.querySelector('[data-testid="streamdown"]')?.parentElement?.querySelector('.streaming-cursor');
     // The cursor component exists in DOM
     expect(container.firstChild).toBeInTheDocument();
   });
@@ -67,6 +67,51 @@ describe('ResponseViewer', () => {
   it('renders with default streaming false', () => {
     render(<ResponseViewer content="Content" />);
     expect(screen.getByText('Content')).toBeInTheDocument();
+  });
+
+  it('strips complete think block (tags + content)', () => {
+    render(<ResponseViewer content="<think>internal reasoning</think>Visible answer" />);
+    expect(screen.getByText('Visible answer')).toBeInTheDocument();
+    expect(screen.queryByText(/internal reasoning/)).not.toBeInTheDocument();
+  });
+
+  it('strips unclosed think tag during streaming', () => {
+    render(<ResponseViewer content="<think>streaming reasoning" isStreaming />);
+    // Content is fully stripped, so we should see the waiting shimmer
+    expect(screen.getByText('Waiting for response...')).toBeInTheDocument();
+    expect(screen.queryByText(/streaming reasoning/)).not.toBeInTheDocument();
+  });
+
+  it('strips think block with visible content before it', () => {
+    render(<ResponseViewer content="Visible<think>reasoning content</think>" />);
+    expect(screen.getByText('Visible')).toBeInTheDocument();
+    expect(screen.queryByText(/reasoning content/)).not.toBeInTheDocument();
+  });
+
+  it('handles content that is only a think block', () => {
+    render(<ResponseViewer content="<think>only reasoning</think>" />);
+    // No visible content after stripping, shows waiting shimmer
+    expect(screen.getByText('Waiting for response...')).toBeInTheDocument();
+  });
+
+  it('strips multiple think blocks', () => {
+    render(
+      <ResponseViewer content="Hello<think>first</think> world<think>second</think>!" />,
+    );
+    expect(screen.getByText('Hello world!')).toBeInTheDocument();
+    expect(screen.queryByText(/first/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/second/)).not.toBeInTheDocument();
+  });
+
+  it('strips <thinking> variant', () => {
+    render(<ResponseViewer content="<thinking>deep thought</thinking>Answer" />);
+    expect(screen.getByText('Answer')).toBeInTheDocument();
+    expect(screen.queryByText(/deep thought/)).not.toBeInTheDocument();
+  });
+
+  it('passes through content without think tags unchanged', () => {
+    render(<ResponseViewer content="Normal content with <b>HTML</b>" />);
+    expect(screen.getByText(/Normal content with/)).toBeInTheDocument();
   });
 });
 

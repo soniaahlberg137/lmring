@@ -3,11 +3,11 @@ import type { ChatModelCard } from '../types';
 const deepseekModels: ChatModelCard[] = [
   {
     id: 'deepseek-chat',
-    displayName: 'DeepSeek Chat',
-    description: 'DeepSeek Chat 是通用对话模型，具有优秀的中英文能力。',
+    displayName: 'DeepSeek V3.2',
+    description: 'DeepSeek V3.2 是 DeepSeek 最新的通用对话模型，具备更强的推理和编码能力。',
     type: 'chat',
-    contextWindowTokens: 65_536,
-    maxOutput: 8_192,
+    contextWindowTokens: 131_072,
+    maxOutput: 16_384,
     enabled: true,
     abilities: {
       functionCall: true,
@@ -38,11 +38,11 @@ const deepseekModels: ChatModelCard[] = [
   },
   {
     id: 'deepseek-reasoner',
-    displayName: 'DeepSeek Reasoner',
-    description: 'DeepSeek Reasoner 是具有强大推理能力的模型。',
+    displayName: 'DeepSeek V3.2 Thinking',
+    description: 'DeepSeek V3.2 Thinking 是具有强大推理能力的深度思考模型。',
     type: 'chat',
-    contextWindowTokens: 65_536,
-    maxOutput: 8_192,
+    contextWindowTokens: 131_072,
+    maxOutput: 16_384,
     abilities: {
       reasoning: true,
       functionCall: true,

@@ -13,6 +13,22 @@ vi.mock('@lmring/ai-hub', () => ({
   },
 }));
 
+vi.mock('@lmring/model-depot/providers', () => ({
+  PROVIDER_ENDPOINTS: {
+    openai: { baseURL: 'https://api.openai.com/v1' },
+    anthropic: { baseURL: 'https://api.anthropic.com' },
+    google: { baseURL: 'https://generativelanguage.googleapis.com' },
+    groq: { baseURL: 'https://api.groq.com/openai/v1' },
+    zhipu: { baseURL: 'https://open.bigmodel.cn/api/paas/v4' },
+    minimax: { baseURL: 'https://api.minimax.chat/v1' },
+    cohere: { baseURL: 'https://api.cohere.com/v2' },
+    togetherai: { baseURL: 'https://api.together.xyz/v1' },
+    perplexity: { baseURL: 'https://api.perplexity.ai' },
+    dashscope: { baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1' },
+    moonshot: { baseURL: 'https://api.moonshot.cn/v1' },
+  },
+}));
+
 vi.mock('@lmring/database', () => ({
   db: {
     select: vi.fn(() => ({
@@ -69,7 +85,7 @@ describe('provider-factory', () => {
         type: 'compatible',
         name: 'google',
         key: 'google-key',
-        baseURL: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+        baseURL: 'https://generativelanguage.googleapis.com',
       });
     });
 
@@ -79,15 +95,15 @@ describe('provider-factory', () => {
         type: 'compatible',
         name: 'cohere',
         key: 'cohere-key',
-        baseURL: 'https://api.cohere.ai/v1',
+        baseURL: 'https://api.cohere.com/v2',
       });
     });
 
-    it('should create together provider as compatible', () => {
-      const provider = createProvider('together', 'together-key');
+    it('should create togetherai provider as compatible', () => {
+      const provider = createProvider('togetherai', 'together-key');
       expect(provider).toEqual({
         type: 'compatible',
-        name: 'together',
+        name: 'togetherai',
         key: 'together-key',
         baseURL: 'https://api.together.xyz/v1',
       });
@@ -103,10 +119,50 @@ describe('provider-factory', () => {
       });
     });
 
-    it('should throw for unsupported provider', () => {
-      expect(() => createProvider('unsupported' as 'openai', 'key')).toThrow(
-        'Unsupported provider: unsupported',
+    it('should create minimax provider as compatible', () => {
+      const provider = createProvider('minimax', 'minimax-key');
+      expect(provider).toEqual({
+        type: 'compatible',
+        name: 'minimax',
+        key: 'minimax-key',
+        baseURL: 'https://api.minimax.chat/v1',
+      });
+    });
+
+    it('should create groq provider as compatible', () => {
+      const provider = createProvider('groq', 'groq-key');
+      expect(provider).toEqual({
+        type: 'compatible',
+        name: 'groq',
+        key: 'groq-key',
+        baseURL: 'https://api.groq.com/openai/v1',
+      });
+    });
+
+    it('should create dashscope provider as compatible', () => {
+      const provider = createProvider('dashscope', 'dashscope-key');
+      expect(provider).toEqual({
+        type: 'compatible',
+        name: 'dashscope',
+        key: 'dashscope-key',
+        baseURL: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      });
+    });
+
+    it('should throw for unsupported provider without proxy URL', () => {
+      expect(() => createProvider('unsupported', 'key')).toThrow(
+        'Unsupported provider: unsupported. Please provide a proxy URL.',
       );
+    });
+
+    it('should create unknown provider with proxy URL as compatible', () => {
+      const provider = createProvider('custom-provider', 'key', 'https://custom.api.com');
+      expect(provider).toEqual({
+        type: 'compatible',
+        name: 'custom-provider',
+        key: 'key',
+        baseURL: 'https://custom.api.com/v1',
+      });
     });
 
     it('should normalize proxy URL without version', () => {
