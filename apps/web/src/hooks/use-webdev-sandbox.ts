@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useRef } from 'react';
+import { toast } from 'sonner';
 import { filesToRecord, parseGeneratedFiles } from '@/libs/parse-generated-files';
 import { useWebDevStore } from '@/stores/webdev-store';
 import { useWorkflowStore } from '@/stores/workflow-store';
@@ -319,26 +320,43 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
 
   /**
    * Watch workflow status changes and trigger sandbox creation
-   * when a workflow completes.
+   * when a workflow completes, or surface errors when it fails.
    */
   useEffect(() => {
     for (const [workflowId, workflow] of workflows) {
-      if (workflow.status !== 'completed') continue;
       if (processedRef.current.has(workflowId)) continue;
 
-      // Mark as processed immediately to avoid duplicate triggers
-      processedRef.current.add(workflowId);
+      if (workflow.status === 'completed') {
+        processedRef.current.add(workflowId);
 
-      // Skip if sandbox already exists (e.g. restored from history)
-      if (getSandbox(workflowId)) continue;
+        if (getSandbox(workflowId)) continue;
 
-      // Init sandbox entry in store (shows 'idle' state in UI)
-      initSandbox(workflowId);
+        initSandbox(workflowId);
 
-      // Queue sandbox creation through concurrency limiter
-      void limiterRef.current(() => createSandboxForWorkflow(workflowId));
+        void limiterRef.current(() => createSandboxForWorkflow(workflowId));
+      } else if (workflow.status === 'failed') {
+        processedRef.current.add(workflowId);
+
+        initSandbox(workflowId);
+        updateSandboxStatus(workflowId, 'error', workflow.error ?? 'Generation failed');
+
+        const modelName = workflow.modelId.split(':').slice(1).join(':') || workflow.modelId;
+        toast.error(`${modelName}: ${workflow.error ?? 'Generation failed'}`);
+      }
     }
-  }, [workflows, initSandbox, createSandboxForWorkflow, getSandbox]);
+
+    // Check if all workflows have reached a terminal state with none completed.
+    // This prevents the phase from being stuck at 'generating' forever.
+    if (workflows.size > 0) {
+      const terminalStates = new Set(['failed', 'cancelled', 'completed']);
+      const allTerminal = [...workflows.values()].every((w) => terminalStates.has(w.status));
+      const anyCompleted = [...workflows.values()].some((w) => w.status === 'completed');
+
+      if (allTerminal && !anyCompleted) {
+        setPhase('error');
+      }
+    }
+  }, [workflows, initSandbox, createSandboxForWorkflow, getSandbox, updateSandboxStatus, setPhase]);
 
   /**
    * Cancel a specific sandbox creation in progress.
