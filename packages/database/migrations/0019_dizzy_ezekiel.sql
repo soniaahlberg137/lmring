@@ -1,0 +1,2 @@
+ALTER TABLE "webdev_responses" ADD COLUMN "iteration_id" uuid;--> statement-breakpoint
+ALTER TABLE "webdev_responses" ADD CONSTRAINT "webdev_responses_iteration_id_webdev_iterations_id_fk" FOREIGN KEY ("iteration_id") REFERENCES "public"."webdev_iterations"("id") ON DELETE set null ON UPDATE no action;

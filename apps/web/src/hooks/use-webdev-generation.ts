@@ -16,6 +16,13 @@ interface StartGenerationParams {
   prompt: string;
   models: Array<{ modelId: string; keyId: string }>;
   sessionResponses: SessionResponse[];
+  iteration?: { id: string; version: number };
+}
+
+interface IterationRef {
+  id: string;
+  version: number;
+  prompt: string;
 }
 
 /**
@@ -36,12 +43,17 @@ export function useWebDevGeneration() {
 
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const setPhase = useWebDevStore((s) => s.setPhase);
-  const destroyAllSandboxes = useWebDevStore((s) => s.destroyAllSandboxes);
+  const initSandbox = useWebDevStore((s) => s.initSandbox);
+  const snapshotCurrentIteration = useWebDevStore((s) => s.snapshotCurrentIteration);
+  const sessionId = useWebDevStore((s) => s.sessionId);
 
   const { startAllSyncedWorkflows, continueAllSyncedWorkflows } = useWorkflowExecution();
 
   /** Maps workflowId -> responseId (DB record) for sandbox creation */
   const responseMapRef = useRef<Map<string, string>>(new Map());
+
+  /** Tracks the current iteration for snapshotting on follow-up */
+  const iterationRef = useRef<IterationRef>({ id: '', version: 0, prompt: '' });
 
   /**
    * Look up the DB responseId for a given workflowId.
@@ -61,9 +73,14 @@ export function useWebDevGeneration() {
    * 5. Set global prompt and start all synced workflows
    */
   const startGeneration = useCallback(
-    async ({ prompt, models, sessionResponses }: StartGenerationParams) => {
+    async ({ prompt, models, sessionResponses, iteration }: StartGenerationParams) => {
       resetConversation();
       responseMapRef.current.clear();
+
+      // Track current iteration
+      if (iteration) {
+        iterationRef.current = { id: iteration.id, version: iteration.version, prompt };
+      }
 
       const workflowIds: string[] = [];
       for (let i = 0; i < models.length; i++) {
@@ -113,19 +130,73 @@ export function useWebDevGeneration() {
   /**
    * Handle follow-up prompts (iterate on existing generation).
    *
-   * 1. Destroy existing sandboxes (new code will be generated)
-   * 2. Set phase back to 'generating'
-   * 3. Continue all synced workflows with the follow-up prompt
+   * 1. Snapshot current sandboxes into iteration history
+   * 2. Create new iteration via PATCH API
+   * 3. Update responseMapRef with new response IDs
+   * 4. Reset sandboxes for new iteration
+   * 5. Continue all synced workflows (preserves message history)
    */
   const handleFollowUp = useCallback(
     async (prompt: string) => {
       if (!prompt.trim()) return;
+      if (!sessionId) return;
 
-      await destroyAllSandboxes();
+      // 1. Snapshot current iteration
+      const { id: iterationId, version, prompt: iterationPrompt } = iterationRef.current;
+      if (iterationId) {
+        snapshotCurrentIteration(iterationId, version, iterationPrompt, responseMapRef.current);
+      }
+
+      // 2. Create new iteration via API
+      const res = await fetch('/api/webdev/session', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId, prompt }),
+      });
+
+      if (!res.ok) {
+        setPhase('error');
+        return;
+      }
+
+      const data = (await res.json()) as {
+        iteration: { id: string; version: number; prompt: string };
+        responses: Array<{ id: string; modelId: string; displayPosition: number }>;
+      };
+
+      // 3. Update iteration tracking
+      iterationRef.current = {
+        id: data.iteration.id,
+        version: data.iteration.version,
+        prompt: data.iteration.prompt,
+      };
+
+      // 4. Update responseMapRef — match by displayPosition order
+      const workflowIds = [...responseMapRef.current.keys()];
+      const sortedResponses = [...data.responses].sort(
+        (a, b) => a.displayPosition - b.displayPosition,
+      );
+      responseMapRef.current.clear();
+      for (let i = 0; i < workflowIds.length && i < sortedResponses.length; i++) {
+        const wfId = workflowIds[i];
+        const resp = sortedResponses[i];
+        if (wfId && resp) {
+          responseMapRef.current.set(wfId, resp.id);
+        }
+      }
+
+      // 5. Reset sandboxes for new iteration (don't destroy — they're snapshotted)
+      for (const wfId of workflowIds) {
+        if (wfId) {
+          initSandbox(wfId);
+        }
+      }
+
+      // 6. Generate
       setPhase('generating');
       await continueAllSyncedWorkflows(prompt);
     },
-    [destroyAllSandboxes, setPhase, continueAllSyncedWorkflows],
+    [sessionId, snapshotCurrentIteration, initSandbox, setPhase, continueAllSyncedWorkflows],
   );
 
   return {

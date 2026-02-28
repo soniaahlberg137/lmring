@@ -495,5 +495,11 @@
   "WebDev.placeholder_followup": "Posez une question de suivi...",
   "WebDev.no_preview": "Aucun aperçu disponible",
   "WebDev.waiting_generation": "En attente de la génération...",
-  "WebDev.building_preview": "Construction de l'aperçu..."
+  "WebDev.building_preview": "Construction de l'aperçu...",
+  "WebDev.iteration_v": "v{{version}}",
+  "WebDev.iteration_current": "Actuelle",
+  "WebDev.iteration_history": "Historique des prompts",
+  "WebDev.iteration_switch": "Passer à la v{{version}}",
+  "WebDev.follow_up_creating": "Création du suivi...",
+  "WebDev.switch_to_latest": "Passez à la dernière version pour continuer"
 }

@@ -76,6 +76,11 @@ Requirements:
 - If using Vite, set server.allowedHosts to true in vite.config (e.g. defineConfig({ server: { allowedHosts: true }, ... }))
 - Ensure the app runs immediately with no additional setup beyond "npm install && npm run dev"
 
+When the user sends a follow-up message, treat it as a refinement of the previous output:
+- Re-output ALL files (the complete application), incorporating the requested changes
+- Maintain consistency with previous code structure and styling
+- Only modify what the user asks for; keep everything else intact
+
 Do NOT include any explanation text outside of file blocks. Output ONLY the file blocks.`;
 
 /**

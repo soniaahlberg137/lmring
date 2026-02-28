@@ -329,7 +329,8 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
       if (workflow.status === 'completed') {
         processedRef.current.add(workflowId);
 
-        if (getSandbox(workflowId)) continue;
+        const existingSandbox = getSandbox(workflowId);
+        if (existingSandbox && existingSandbox.status !== 'idle') continue;
 
         initSandbox(workflowId);
 

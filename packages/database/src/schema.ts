@@ -435,6 +435,7 @@ export const webdevResponses = pgTable(
       .notNull(),
     modelId: text('model_id').notNull(),
     keyId: uuid('key_id').notNull(),
+    iterationId: uuid('iteration_id').references(() => webdevIterations.id, { onDelete: 'set null' }),
     status: webdevStatusEnum('status').default('generating').notNull(),
     files: jsonb('files').$type<Record<string, string>>(),
     sandboxId: text('sandbox_id'),
@@ -679,13 +680,18 @@ export const webdevResponsesRelations = relations(webdevResponses, ({ one }) => 
     fields: [webdevResponses.sessionId],
     references: [webdevSessions.id],
   }),
+  iteration: one(webdevIterations, {
+    fields: [webdevResponses.iterationId],
+    references: [webdevIterations.id],
+  }),
 }));
 
-export const webdevIterationsRelations = relations(webdevIterations, ({ one }) => ({
+export const webdevIterationsRelations = relations(webdevIterations, ({ one, many }) => ({
   session: one(webdevSessions, {
     fields: [webdevIterations.sessionId],
     references: [webdevSessions.id],
   }),
+  responses: many(webdevResponses),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

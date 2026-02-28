@@ -44,7 +44,9 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   useWebDevCleanup();
   const { startGeneration, handleFollowUp, getResponseId } = useWebDevGeneration();
-  const { resetProcessed, rebuildSandboxFromFiles } = useWebDevSandbox({ getResponseId });
+  const { resetProcessed, rebuildSandboxFromFiles, cancelAllSandboxes } = useWebDevSandbox({
+    getResponseId,
+  });
 
   const { phase, featureConfig, sessionId } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
@@ -64,6 +66,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const updateSandboxStatus = useWebDevStore((s) => s.updateSandboxStatus);
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const setSnapshotId = useWebDevStore((s) => s.setSnapshotId);
+  const addIteration = useWebDevStore((s) => s.addIteration);
+  const setActiveIterationVersion = useWebDevStore((s) => s.setActiveIterationVersion);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
   const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
   const queryClient = useQueryClient();
@@ -111,6 +115,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             expiresAt: string | null;
             snapshotId: string | null;
             snapshotExpiresAt: string | null;
+            iterationId: string | null;
+            displayPosition: number;
+          }>;
+          iterations: Array<{
+            id: string;
+            prompt: string;
+            version: number;
           }>;
         };
 
@@ -121,7 +132,36 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
         setSubmittedPrompt(data.session.prompt);
         setPrompt('');
 
+        // --- Rebuild iterations from DB ---
+        const sortedIterations = [...data.iterations].sort((a, b) => a.version - b.version);
+        const latestIteration = sortedIterations.at(-1);
+        const latestIterationId = latestIteration?.id ?? null;
+
+        // Separate latest-iteration responses from past-iteration responses
+        const latestResponses: typeof data.responses = [];
+        const pastResponsesByIterationId = new Map<string, typeof data.responses>();
+
+        for (const response of data.responses) {
+          const isLatest =
+            response.iterationId === latestIterationId ||
+            (!response.iterationId && sortedIterations.length <= 1);
+
+          if (isLatest) {
+            latestResponses.push(response);
+          } else {
+            // Group by iteration: null iterationId → first iteration (v1)
+            const key = response.iterationId ?? sortedIterations[0]?.id;
+            if (key) {
+              const group = pastResponsesByIterationId.get(key) ?? [];
+              group.push(response);
+              pastResponsesByIterationId.set(key, group);
+            }
+          }
+        }
+
+        // Create workflows for the latest iteration only
         let firstWorkflowId: string | null = null;
+        const workflowIdByPosition = new Map<number, string>();
         const sandboxesToRebuild: Array<{
           workflowId: string;
           files: Record<string, string>;
@@ -129,9 +169,10 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           snapshotId?: string | null;
         }> = [];
 
-        for (const response of data.responses) {
+        for (const response of latestResponses) {
           const workflowId = createWorkflow(response.modelId, response.keyId);
           setWorkflowStatus(workflowId, 'completed');
+          workflowIdByPosition.set(response.displayPosition, workflowId);
 
           if (!firstWorkflowId) firstWorkflowId = workflowId;
 
@@ -193,6 +234,49 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           }
         }
 
+        // Build iteration snapshots for past iterations
+        for (const iteration of sortedIterations) {
+          if (iteration.id === latestIterationId) continue;
+
+          const iterationResponses = pastResponsesByIterationId.get(iteration.id);
+          if (!iterationResponses?.length) continue;
+
+          const snapshotSandboxes = new Map<
+            string,
+            {
+              files: Record<string, string>;
+              sandboxId: string | null;
+              snapshotId: string | null;
+              previewUrl: string | null;
+              expiresAt: string | null;
+            }
+          >();
+          const responseMap = new Map<string, string>();
+
+          for (const resp of iterationResponses) {
+            const wfId = workflowIdByPosition.get(resp.displayPosition);
+            if (!wfId) continue;
+            snapshotSandboxes.set(wfId, {
+              files: resp.files ?? {},
+              sandboxId: resp.sandboxId,
+              snapshotId: resp.snapshotId,
+              previewUrl: resp.previewUrl,
+              expiresAt: resp.expiresAt,
+            });
+            responseMap.set(wfId, resp.id);
+          }
+
+          addIteration({
+            id: iteration.id,
+            version: iteration.version,
+            prompt: iteration.prompt,
+            sandboxes: snapshotSandboxes,
+            responseMap,
+          });
+        }
+
+        setActiveIterationVersion(0);
+
         if (firstWorkflowId) {
           setActiveWorkflowId(firstWorkflowId);
         }
@@ -231,6 +315,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     updateSandboxStatus,
     setActiveWorkflowId,
     setSnapshotId,
+    addIteration,
+    setActiveIterationVersion,
     rebuildSandboxFromFiles,
   ]);
 
@@ -277,6 +363,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             }
             const result = (await res.json()) as {
               sessionId: string;
+              iteration: { id: string; version: number; prompt: string } | null;
               responses: Array<{
                 id: string;
                 modelId: string;
@@ -296,6 +383,9 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
               prompt,
               models,
               sessionResponses: result.responses,
+              ...(result.iteration
+                ? { iteration: { id: result.iteration.id, version: result.iteration.version } }
+                : {}),
             });
           } catch {
             setPhase('error');
@@ -325,10 +415,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   const onFollowUp = React.useCallback(
     (prompt: string) => {
+      setSubmittedPrompt(prompt);
+      setPrompt('');
+      cancelAllSandboxes();
       resetProcessed();
       void handleFollowUp(prompt);
     },
-    [handleFollowUp, resetProcessed],
+    [handleFollowUp, cancelAllSandboxes, resetProcessed, setPrompt, setSubmittedPrompt],
   );
 
   const handleSelectPrompt = React.useCallback(
