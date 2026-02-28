@@ -248,10 +248,37 @@
 }
 
 @layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+
+  .prose,
+  [data-content] {
+    max-width: 75ch;
+  }
+
+  .theme-transitioning,
+  .theme-transitioning * {
+    transition:
+      color 300ms var(--ease-smooth, ease),
+      background-color 300ms var(--ease-smooth, ease),
+      border-color 300ms var(--ease-smooth, ease);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-transitioning,
+  .theme-transitioning * {
+    transition: none !important;
   }
 }

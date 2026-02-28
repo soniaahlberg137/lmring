@@ -7,6 +7,9 @@
     ".": "./shared-styles.css",
     "./postcss": "./postcss.config.js"
   },
+  "dependencies": {
+    "@lmring/theme": "workspace:*"
+  },
   "devDependencies": {
     "postcss": "^8.5.6",
     "tailwindcss": "^4.2.1"

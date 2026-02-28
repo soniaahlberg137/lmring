@@ -45,6 +45,17 @@ export interface MessageAttachment {
   sizeBytes?: number;
 }
 
+// Theme config persisted for user theme sync
+export interface ThemeConfigJson {
+  mode: 'light' | 'dark' | 'system';
+  seedColor: {
+    l: number;
+    c: number;
+    h: number;
+  };
+  presetName: string | null;
+}
+
 // Enums
 export const configSourceEnum = pgEnum('config_source', ['manual', 'cherry-studio', 'newapi']);
 export const roleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
@@ -118,6 +129,7 @@ export const userPreferences = pgTable(
       .notNull()
       .unique(),
     theme: text('theme').default('system'),
+    themeConfig: jsonb('theme_config').$type<ThemeConfigJson>(),
     language: text('language').default('en'),
     defaultModels: jsonb('default_models').$type<string[]>(),
     configSource: configSourceEnum('config_source').default('manual'),

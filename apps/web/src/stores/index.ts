@@ -18,6 +18,8 @@ export {
   settingsSelectors,
   useSettingsStore,
 } from './settings-store';
+export type { ThemeActions, ThemeState, ThemeStore } from './theme-store';
+export { themeSelectors, useThemeStore } from './theme-store';
 export type {
   ComparisonVoteData,
   HoveredVote,

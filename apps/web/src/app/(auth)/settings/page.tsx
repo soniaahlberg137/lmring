@@ -88,8 +88,8 @@ import {
   TwitterIcon,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useTheme } from 'next-themes';
 import * as React from 'react';
+import { ThemeCustomizer } from '@/components/theme-customizer';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
 import { isSupportedLocale } from '@/libs/locale-utils';
@@ -171,9 +171,7 @@ const LANGUAGE_NAMES: Record<Locale, string> = {
 };
 
 export default function SettingsPage() {
-  const { theme, setTheme } = useTheme();
   const t = useTranslations();
-  const [mounted, setMounted] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<Tab>('general');
   const [telemetryEnabled, setTelemetryEnabled] = React.useState(false);
   const providerMetadata = useProviderMetadata();
@@ -194,10 +192,6 @@ export default function SettingsPage() {
     }
     setLanguage(newLocale);
   };
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Load API keys from store (shared with arena page)
   React.useEffect(() => {
@@ -499,76 +493,7 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="space-y-6">
-                      <div className="space-y-4">
-                        <Label className="text-base">{t('Settings.general_theme')}</Label>
-                        <div className="grid grid-cols-3 gap-4 max-w-md">
-                          <button
-                            type="button"
-                            className="cursor-pointer group text-left"
-                            onClick={() => setTheme('light')}
-                          >
-                            <div
-                              className={`border-2 rounded-lg p-1 mb-2 group-hover:border-primary transition-colors overflow-hidden ${
-                                mounted && theme === 'light' ? 'border-primary' : 'border-muted'
-                              }`}
-                            >
-                              <div className="bg-[#f4f4f5] h-16 rounded w-full relative">
-                                <div className="absolute top-2 left-2 w-8 h-2 bg-white rounded-sm shadow-sm" />
-                                <div className="absolute top-6 left-2 w-12 h-8 bg-white rounded-sm shadow-sm" />
-                              </div>
-                            </div>
-                            <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
-                              <span className="text-muted-foreground">☀</span>{' '}
-                              {t('Settings.general_theme_light')}
-                            </div>
-                          </button>
-                          <button
-                            type="button"
-                            className="cursor-pointer group text-left"
-                            onClick={() => setTheme('dark')}
-                          >
-                            <div
-                              className={`border-2 rounded-lg p-1 mb-2 group-hover:border-primary transition-colors overflow-hidden ${
-                                mounted && theme === 'dark' ? 'border-primary' : 'border-muted'
-                              }`}
-                            >
-                              <div className="bg-[#18181b] h-16 rounded w-full relative">
-                                <div className="absolute top-2 left-2 w-8 h-2 bg-zinc-800 rounded-sm" />
-                                <div className="absolute top-6 left-2 w-12 h-8 bg-zinc-800 rounded-sm" />
-                              </div>
-                            </div>
-                            <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
-                              <span className="text-muted-foreground">🌙</span>{' '}
-                              {t('Settings.general_theme_dark')}
-                            </div>
-                          </button>
-                          <button
-                            type="button"
-                            className="cursor-pointer group text-left"
-                            onClick={() => setTheme('system')}
-                          >
-                            <div
-                              className={`border-2 rounded-lg p-1 mb-2 group-hover:border-primary transition-colors overflow-hidden ${
-                                mounted && theme === 'system' ? 'border-primary' : 'border-muted'
-                              }`}
-                            >
-                              <div className="bg-gradient-to-br from-[#f4f4f5] to-[#18181b] h-16 rounded w-full flex relative">
-                                <div className="w-1/2 h-full relative">
-                                  <div className="absolute top-2 left-2 w-4 h-2 bg-white rounded-sm shadow-sm" />
-                                </div>
-                                <div className="w-1/2 h-full relative">
-                                  <div className="absolute top-2 right-2 w-4 h-2 bg-zinc-800 rounded-sm" />
-                                </div>
-                              </div>
-                            </div>
-                            <div className="text-center text-sm font-medium flex items-center justify-center gap-1">
-                              <span className="text-muted-foreground">💻</span>{' '}
-                              {t('Settings.general_theme_auto')}
-                            </div>
-                          </button>
-                        </div>
-                      </div>
-
+                      <ThemeCustomizer />
                       <div className="space-y-4">
                         <Label className="text-base">{t('Settings.general_language')}</Label>
                         <div className="max-w-md">

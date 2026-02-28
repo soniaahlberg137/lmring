@@ -1,8 +1,16 @@
 import { cleanup, render, screen } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from './theme-provider';
 
+const setThemeMock = vi.fn();
+const fetchMock = vi.fn();
+
 vi.mock('next-themes', () => ({
+  useTheme: () => ({
+    theme: 'system',
+    resolvedTheme: 'light',
+    setTheme: setThemeMock,
+  }),
   ThemeProvider: ({ children, ...props }: { children: React.ReactNode }) => (
     <div data-testid="theme-provider" data-props={JSON.stringify(props)}>
       {children}
@@ -11,7 +19,18 @@ vi.mock('next-themes', () => ({
 }));
 
 describe('ThemeProvider', () => {
+  beforeEach(() => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ themeConfig: null, updatedAt: null }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+  });
+
   afterEach(() => {
+    vi.unstubAllGlobals();
     cleanup();
   });
 
