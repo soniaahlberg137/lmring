@@ -151,64 +151,63 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    // Get latest iteration version
-    const [latestIteration] = await db
-      .select({ version: webdevIterations.version })
-      .from(webdevIterations)
-      .where(eq(webdevIterations.sessionId, sessionId))
-      .orderBy(desc(webdevIterations.version))
-      .limit(1);
+    const { newIteration, newResponses } = await db.transaction(async (tx) => {
+      const [latestIteration] = await tx
+        .select({ version: webdevIterations.version })
+        .from(webdevIterations)
+        .where(eq(webdevIterations.sessionId, sessionId))
+        .orderBy(desc(webdevIterations.version))
+        .limit(1);
 
-    const nextVersion = (latestIteration?.version ?? 0) + 1;
+      const nextVersion = (latestIteration?.version ?? 0) + 1;
 
-    // Create new iteration
-    const [newIteration] = await db
-      .insert(webdevIterations)
-      .values({ sessionId, prompt, version: nextVersion })
-      .returning();
+      const [newIteration] = await tx
+        .insert(webdevIterations)
+        .values({ sessionId, prompt, version: nextVersion })
+        .returning();
 
-    if (!newIteration) {
-      throw new Error('Failed to create iteration');
-    }
+      if (!newIteration) {
+        throw new Error('Failed to create iteration');
+      }
 
-    // Get original responses for model info (deduplicate by displayPosition)
-    const originalResponses = await db
-      .select({
-        modelId: webdevResponses.modelId,
-        keyId: webdevResponses.keyId,
-        displayPosition: webdevResponses.displayPosition,
-      })
-      .from(webdevResponses)
-      .where(eq(webdevResponses.sessionId, sessionId))
-      .orderBy(asc(webdevResponses.displayPosition));
+      const originalResponses = await tx
+        .select({
+          modelId: webdevResponses.modelId,
+          keyId: webdevResponses.keyId,
+          displayPosition: webdevResponses.displayPosition,
+        })
+        .from(webdevResponses)
+        .where(eq(webdevResponses.sessionId, sessionId))
+        .orderBy(asc(webdevResponses.displayPosition));
 
-    const seenPositions = new Set<number>();
-    const uniqueModels = originalResponses.filter((r) => {
-      if (seenPositions.has(r.displayPosition)) return false;
-      seenPositions.add(r.displayPosition);
-      return true;
+      const seenPositions = new Set<number>();
+      const uniqueModels = originalResponses.filter((r) => {
+        if (seenPositions.has(r.displayPosition)) return false;
+        seenPositions.add(r.displayPosition);
+        return true;
+      });
+
+      const newResponses = await tx
+        .insert(webdevResponses)
+        .values(
+          uniqueModels.map((r) => ({
+            sessionId,
+            iterationId: newIteration.id,
+            modelId: r.modelId,
+            keyId: r.keyId,
+            status: 'generating' as const,
+            displayPosition: r.displayPosition,
+          })),
+        )
+        .returning();
+
+      await tx
+        .update(webdevSessions)
+        .set({ prompt, status: 'generating', updatedAt: new Date() })
+        .where(eq(webdevSessions.id, sessionId));
+
+      return { newIteration, newResponses };
     });
-
-    // Create new responses for this iteration
-    const newResponses = await db
-      .insert(webdevResponses)
-      .values(
-        uniqueModels.map((r) => ({
-          sessionId,
-          iterationId: newIteration.id,
-          modelId: r.modelId,
-          keyId: r.keyId,
-          status: 'generating' as const,
-          displayPosition: r.displayPosition,
-        })),
-      )
-      .returning();
-
-    // Update session
-    await db
-      .update(webdevSessions)
-      .set({ prompt, status: 'generating', updatedAt: new Date() })
-      .where(eq(webdevSessions.id, sessionId));
 
     return NextResponse.json({
       iteration: {

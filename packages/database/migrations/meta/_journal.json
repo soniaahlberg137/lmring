@@ -141,6 +141,13 @@
       "when": 1772265618645,
       "tag": "0019_dizzy_ezekiel",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1772273865957,
+      "tag": "0020_living_black_widow",
+      "breakpoints": true
     }
   ]
 }

@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   index,
+  uniqueIndex,
   integer,
   jsonb,
   pgEnum,
@@ -471,6 +472,7 @@ export const webdevIterations = pgTable(
   },
   (table) => [
     index('webdev_iterations_session_id_idx').on(table.sessionId),
+    uniqueIndex('webdev_iterations_session_version_idx').on(table.sessionId, table.version),
   ],
 );
 
