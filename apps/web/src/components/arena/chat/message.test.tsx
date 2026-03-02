@@ -78,7 +78,8 @@ describe('Message', () => {
     render(<Message message={message} providerId="openai" isStreaming={false} />);
 
     expect(screen.getByTestId('provider-icon')).toHaveTextContent('openai');
-    expect(screen.getByTestId('response-viewer')).toHaveTextContent('Hi');
+    const viewers = screen.getAllByTestId('response-viewer');
+    expect(viewers.find((el) => el.textContent === 'Hi')).toBeInTheDocument();
     expect(screen.getByTestId('reasoning')).toHaveTextContent('Thinking...');
     expect(screen.getByText('123ms')).toBeInTheDocument();
     expect(screen.getByText('45 tokens')).toBeInTheDocument();

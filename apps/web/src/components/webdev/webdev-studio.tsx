@@ -3,6 +3,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@lmring/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
+import { WEBDEV_SYSTEM_PROMPT } from '@/constants/webdev';
 import { conversationsKeys } from '@/hooks/use-conversations-query';
 import { useWebDevCleanup } from '@/hooks/use-webdev-cleanup';
 import { useWebDevGeneration } from '@/hooks/use-webdev-generation';
@@ -44,7 +45,9 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   useWebDevCleanup();
   const { startGeneration, handleFollowUp, getResponseId } = useWebDevGeneration();
-  const { resetProcessed, rebuildSandboxFromFiles } = useWebDevSandbox({ getResponseId });
+  const { resetProcessed, rebuildSandboxFromFiles, cancelAllSandboxes } = useWebDevSandbox({
+    getResponseId,
+  });
 
   const { phase, featureConfig, sessionId } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
@@ -64,7 +67,10 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const updateSandboxStatus = useWebDevStore((s) => s.updateSandboxStatus);
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
   const setSnapshotId = useWebDevStore((s) => s.setSnapshotId);
+  const addIteration = useWebDevStore((s) => s.addIteration);
+  const setActiveIterationVersion = useWebDevStore((s) => s.setActiveIterationVersion);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
+  const updateWorkflow = useWorkflowStore((s) => s.updateWorkflow);
   const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
   const queryClient = useQueryClient();
 
@@ -111,6 +117,15 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             expiresAt: string | null;
             snapshotId: string | null;
             snapshotExpiresAt: string | null;
+            iterationId: string | null;
+            displayPosition: number;
+            content: string | null;
+          }>;
+          iterations: Array<{
+            id: string;
+            prompt: string;
+            version: number;
+            createdAt: string;
           }>;
         };
 
@@ -121,7 +136,36 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
         setSubmittedPrompt(data.session.prompt);
         setPrompt('');
 
+        // --- Rebuild iterations from DB ---
+        const sortedIterations = [...data.iterations].sort((a, b) => a.version - b.version);
+        const latestIteration = sortedIterations.at(-1);
+        const latestIterationId = latestIteration?.id ?? null;
+
+        // Separate latest-iteration responses from past-iteration responses
+        const latestResponses: typeof data.responses = [];
+        const pastResponsesByIterationId = new Map<string, typeof data.responses>();
+
+        for (const response of data.responses) {
+          const isLatest =
+            response.iterationId === latestIterationId ||
+            (!response.iterationId && sortedIterations.length <= 1);
+
+          if (isLatest) {
+            latestResponses.push(response);
+          } else {
+            // Group by iteration: null iterationId → first iteration (v1)
+            const key = response.iterationId ?? sortedIterations[0]?.id;
+            if (key) {
+              const group = pastResponsesByIterationId.get(key) ?? [];
+              group.push(response);
+              pastResponsesByIterationId.set(key, group);
+            }
+          }
+        }
+
+        // Create workflows for the latest iteration only
         let firstWorkflowId: string | null = null;
+        const workflowIdByPosition = new Map<number, string>();
         const sandboxesToRebuild: Array<{
           workflowId: string;
           files: Record<string, string>;
@@ -129,9 +173,10 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           snapshotId?: string | null;
         }> = [];
 
-        for (const response of data.responses) {
+        for (const response of latestResponses) {
           const workflowId = createWorkflow(response.modelId, response.keyId);
           setWorkflowStatus(workflowId, 'completed');
+          workflowIdByPosition.set(response.displayPosition, workflowId);
 
           if (!firstWorkflowId) firstWorkflowId = workflowId;
 
@@ -193,6 +238,111 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           }
         }
 
+        // Reconstruct conversation messages for each workflow
+        const contentByIteration = new Map<string, Map<number, string>>();
+        for (const response of data.responses) {
+          if (!response.content) continue;
+          const iterKey = response.iterationId ?? sortedIterations[0]?.id;
+          if (!iterKey) continue;
+          let posMap = contentByIteration.get(iterKey);
+          if (!posMap) {
+            posMap = new Map();
+            contentByIteration.set(iterKey, posMap);
+          }
+          posMap.set(response.displayPosition, response.content);
+        }
+
+        for (const [displayPosition, workflowId] of workflowIdByPosition) {
+          const messages: Array<{
+            id: string;
+            role: 'system' | 'user' | 'assistant';
+            content: string;
+            timestamp: Date;
+          }> = [
+            {
+              id: crypto.randomUUID(),
+              role: 'system',
+              content: WEBDEV_SYSTEM_PROMPT,
+              timestamp: new Date(),
+            },
+          ];
+
+          for (const iteration of sortedIterations) {
+            const prompt = iteration.version === 1 ? data.session.prompt : iteration.prompt;
+            messages.push({
+              id: crypto.randomUUID(),
+              role: 'user',
+              content: prompt,
+              timestamp: new Date(iteration.createdAt),
+            });
+
+            const content = contentByIteration.get(iteration.id)?.get(displayPosition);
+            if (content) {
+              messages.push({
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content,
+                timestamp: new Date(iteration.createdAt),
+              });
+            }
+          }
+
+          // For v1 responses with null iterationId and no iterations
+          if (sortedIterations.length === 0) {
+            messages.push({
+              id: crypto.randomUUID(),
+              role: 'user',
+              content: data.session.prompt,
+              timestamp: new Date(),
+            });
+          }
+
+          updateWorkflow(workflowId, { messages });
+        }
+
+        // Build iteration snapshots for past iterations
+        for (const iteration of sortedIterations) {
+          if (iteration.id === latestIterationId) continue;
+
+          const iterationResponses = pastResponsesByIterationId.get(iteration.id);
+          if (!iterationResponses?.length) continue;
+
+          const snapshotSandboxes = new Map<
+            string,
+            {
+              files: Record<string, string>;
+              sandboxId: string | null;
+              snapshotId: string | null;
+              previewUrl: string | null;
+              expiresAt: string | null;
+            }
+          >();
+          const responseMap = new Map<string, string>();
+
+          for (const resp of iterationResponses) {
+            const wfId = workflowIdByPosition.get(resp.displayPosition);
+            if (!wfId) continue;
+            snapshotSandboxes.set(wfId, {
+              files: resp.files ?? {},
+              sandboxId: resp.sandboxId,
+              snapshotId: resp.snapshotId,
+              previewUrl: resp.previewUrl,
+              expiresAt: resp.expiresAt,
+            });
+            responseMap.set(wfId, resp.id);
+          }
+
+          addIteration({
+            id: iteration.id,
+            version: iteration.version,
+            prompt: iteration.prompt,
+            sandboxes: snapshotSandboxes,
+            responseMap,
+          });
+        }
+
+        setActiveIterationVersion(0);
+
         if (firstWorkflowId) {
           setActiveWorkflowId(firstWorkflowId);
         }
@@ -224,6 +374,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     setPrompt,
     setPhase,
     createWorkflow,
+    updateWorkflow,
     setWorkflowStatus,
     initSandbox,
     setSandboxFiles,
@@ -231,6 +382,8 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     updateSandboxStatus,
     setActiveWorkflowId,
     setSnapshotId,
+    addIteration,
+    setActiveIterationVersion,
     rebuildSandboxFromFiles,
   ]);
 
@@ -277,6 +430,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             }
             const result = (await res.json()) as {
               sessionId: string;
+              iteration: { id: string; version: number; prompt: string } | null;
               responses: Array<{
                 id: string;
                 modelId: string;
@@ -296,6 +450,9 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
               prompt,
               models,
               sessionResponses: result.responses,
+              ...(result.iteration
+                ? { iteration: { id: result.iteration.id, version: result.iteration.version } }
+                : {}),
             });
           } catch {
             setPhase('error');
@@ -325,10 +482,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
 
   const onFollowUp = React.useCallback(
     (prompt: string) => {
+      setSubmittedPrompt(prompt);
+      setPrompt('');
+      cancelAllSandboxes();
       resetProcessed();
       void handleFollowUp(prompt);
     },
-    [handleFollowUp, resetProcessed],
+    [handleFollowUp, cancelAllSandboxes, resetProcessed, setPrompt, setSubmittedPrompt],
   );
 
   const handleSelectPrompt = React.useCallback(

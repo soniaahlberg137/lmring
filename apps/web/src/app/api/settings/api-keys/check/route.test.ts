@@ -38,6 +38,14 @@ vi.mock('@/libs/Auth', () => ({
   auth: mockAuthInstance,
 }));
 
+vi.mock('@lmring/database', () => ({
+  db: {},
+  eq: vi.fn(),
+  and: vi.fn(),
+  inArray: vi.fn(),
+  decrypt: vi.fn(),
+}));
+
 vi.mock('@lmring/ai-hub', () => ({
   streamText: mockStreamText,
   generateText: vi.fn(),

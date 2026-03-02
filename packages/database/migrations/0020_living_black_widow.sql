@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX "webdev_iterations_session_version_idx" ON "webdev_iterations" USING btree ("session_id","version");

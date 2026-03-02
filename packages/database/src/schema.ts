@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import {
   boolean,
   index,
+  uniqueIndex,
   integer,
   jsonb,
   pgEnum,
@@ -435,11 +436,13 @@ export const webdevResponses = pgTable(
       .notNull(),
     modelId: text('model_id').notNull(),
     keyId: uuid('key_id').notNull(),
+    iterationId: uuid('iteration_id').references(() => webdevIterations.id, { onDelete: 'set null' }),
     status: webdevStatusEnum('status').default('generating').notNull(),
     files: jsonb('files').$type<Record<string, string>>(),
     sandboxId: text('sandbox_id'),
     previewUrl: text('preview_url'),
     generatedCode: text('generated_code'),
+    content: text('content'),
     error: text('error'),
     tokensUsed: integer('tokens_used'),
     responseTimeMs: integer('response_time_ms'),
@@ -470,6 +473,7 @@ export const webdevIterations = pgTable(
   },
   (table) => [
     index('webdev_iterations_session_id_idx').on(table.sessionId),
+    uniqueIndex('webdev_iterations_session_version_idx').on(table.sessionId, table.version),
   ],
 );
 
@@ -679,13 +683,18 @@ export const webdevResponsesRelations = relations(webdevResponses, ({ one }) => 
     fields: [webdevResponses.sessionId],
     references: [webdevSessions.id],
   }),
+  iteration: one(webdevIterations, {
+    fields: [webdevResponses.iterationId],
+    references: [webdevIterations.id],
+  }),
 }));
 
-export const webdevIterationsRelations = relations(webdevIterations, ({ one }) => ({
+export const webdevIterationsRelations = relations(webdevIterations, ({ one, many }) => ({
   session: one(webdevSessions, {
     fields: [webdevIterations.sessionId],
     references: [webdevSessions.id],
   }),
+  responses: many(webdevResponses),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({

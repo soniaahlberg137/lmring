@@ -29,11 +29,14 @@ Built with modern technologies:
 - `packages/` - Shared packages
   - `ai-hub/` - AI provider integration
   - `auth/` - Authentication
+  - `config/` - Shared config (biome, tailwind, typescript, vitest)
   - `database/` - DrizzleORM schemas
+  - `env/` - Environment variable management
   - `i18n/` - Internationalization
   - `model-depot/` - AI model definitions (60+ providers)
   - `storage/` - File storage (S3, Supabase)
   - `ui/` - UI components
+  - `video-runtime/` - Video generation runtime
 
 ## Development Workflow
 
@@ -42,7 +45,7 @@ Built with modern technologies:
 - Use rebase for git pull
 - Git commit messages should prefix with gitmoji
 - Git branch name format: `<type>/<feature-name>`
-- Use `.github/PULL_REQUEST_TEMPLATE.md` for PR descriptions
+- Use `.github/pull_request_template.md` for PR descriptions
 - PR titles starting with `✨ feat/` or `🐛 fix` trigger release workflow
 
 ### Package Management
@@ -114,7 +117,7 @@ Built with modern technologies:
 ## Important Notes
 
 - **Node.js**: v24.11.1+
-- **Package Manager**: pnpm 10.25.0
+- **Package Manager**: pnpm 10.28.2
 - **Deployment Modes**: SaaS (OAuth) or self-hosted (email/password)
 
 ## Resources
