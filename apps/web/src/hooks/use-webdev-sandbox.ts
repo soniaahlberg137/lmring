@@ -253,6 +253,13 @@ export function useWebDevSandbox({ getResponseId }: UseWebDevSandboxOptions) {
         return;
       }
 
+      // Save raw AI content to DB (fire-and-forget)
+      fetch(`/api/webdev/session/${sessionId}/response/${responseId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: lastAssistant.content }),
+      }).catch(() => {});
+
       // Parse files from AI output
       const files = parseGeneratedFiles(lastAssistant.content);
       if (files.length === 0) {

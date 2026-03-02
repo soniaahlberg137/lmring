@@ -148,6 +148,13 @@
       "when": 1772273865957,
       "tag": "0020_living_black_widow",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1772443932998,
+      "tag": "0021_hard_the_twelve",
+      "breakpoints": true
     }
   ]
 }

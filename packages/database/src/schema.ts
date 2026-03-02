@@ -442,6 +442,7 @@ export const webdevResponses = pgTable(
     sandboxId: text('sandbox_id'),
     previewUrl: text('preview_url'),
     generatedCode: text('generated_code'),
+    content: text('content'),
     error: text('error'),
     tokensUsed: integer('tokens_used'),
     responseTimeMs: integer('response_time_ms'),

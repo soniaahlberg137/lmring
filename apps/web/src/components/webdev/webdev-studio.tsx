@@ -3,6 +3,7 @@
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@lmring/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
+import { WEBDEV_SYSTEM_PROMPT } from '@/constants/webdev';
 import { conversationsKeys } from '@/hooks/use-conversations-query';
 import { useWebDevCleanup } from '@/hooks/use-webdev-cleanup';
 import { useWebDevGeneration } from '@/hooks/use-webdev-generation';
@@ -69,6 +70,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
   const addIteration = useWebDevStore((s) => s.addIteration);
   const setActiveIterationVersion = useWebDevStore((s) => s.setActiveIterationVersion);
   const createWorkflow = useWorkflowStore((s) => s.createWorkflow);
+  const updateWorkflow = useWorkflowStore((s) => s.updateWorkflow);
   const setWorkflowStatus = useWorkflowStore((s) => s.setWorkflowStatus);
   const queryClient = useQueryClient();
 
@@ -117,11 +119,13 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
             snapshotExpiresAt: string | null;
             iterationId: string | null;
             displayPosition: number;
+            content: string | null;
           }>;
           iterations: Array<{
             id: string;
             prompt: string;
             version: number;
+            createdAt: string;
           }>;
         };
 
@@ -234,6 +238,68 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
           }
         }
 
+        // Reconstruct conversation messages for each workflow
+        const contentByIteration = new Map<string, Map<number, string>>();
+        for (const response of data.responses) {
+          if (!response.content) continue;
+          const iterKey = response.iterationId ?? sortedIterations[0]?.id;
+          if (!iterKey) continue;
+          let posMap = contentByIteration.get(iterKey);
+          if (!posMap) {
+            posMap = new Map();
+            contentByIteration.set(iterKey, posMap);
+          }
+          posMap.set(response.displayPosition, response.content);
+        }
+
+        for (const [displayPosition, workflowId] of workflowIdByPosition) {
+          const messages: Array<{
+            id: string;
+            role: 'system' | 'user' | 'assistant';
+            content: string;
+            timestamp: Date;
+          }> = [
+            {
+              id: crypto.randomUUID(),
+              role: 'system',
+              content: WEBDEV_SYSTEM_PROMPT,
+              timestamp: new Date(),
+            },
+          ];
+
+          for (const iteration of sortedIterations) {
+            const prompt = iteration.version === 1 ? data.session.prompt : iteration.prompt;
+            messages.push({
+              id: crypto.randomUUID(),
+              role: 'user',
+              content: prompt,
+              timestamp: new Date(iteration.createdAt),
+            });
+
+            const content = contentByIteration.get(iteration.id)?.get(displayPosition);
+            if (content) {
+              messages.push({
+                id: crypto.randomUUID(),
+                role: 'assistant',
+                content,
+                timestamp: new Date(iteration.createdAt),
+              });
+            }
+          }
+
+          // For v1 responses with null iterationId and no iterations
+          if (sortedIterations.length === 0) {
+            messages.push({
+              id: crypto.randomUUID(),
+              role: 'user',
+              content: data.session.prompt,
+              timestamp: new Date(),
+            });
+          }
+
+          updateWorkflow(workflowId, { messages });
+        }
+
         // Build iteration snapshots for past iterations
         for (const iteration of sortedIterations) {
           if (iteration.id === latestIterationId) continue;
@@ -308,6 +374,7 @@ function WebDevStudioInner({ initialSessionId }: WebDevStudioProps) {
     setPrompt,
     setPhase,
     createWorkflow,
+    updateWorkflow,
     setWorkflowStatus,
     initSandbox,
     setSandboxFiles,
