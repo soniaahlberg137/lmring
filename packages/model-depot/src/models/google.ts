@@ -6,6 +6,30 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const googleChatModels: ChatModelCard[] = [
   {
+    id: 'gemini-3.1-pro-preview',
+    displayName: 'Gemini 3.1 Pro Preview',
+    description:
+      'Gemini 3.1 Pro 是 Google 最新的旗舰模型，具备增强的推理、结构化输出和多模态理解能力。',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: {
+      input: 2,
+      output: 12,
+      cachedInput: 0.5,
+    },
+    releasedAt: '2026-02-19',
+  },
+  {
     id: 'gemini-pro-latest',
     displayName: 'Gemini Pro Latest',
     description: 'Latest release of Gemini Pro',
@@ -116,6 +140,7 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
+    enabled: true,
     abilities: {
       functionCall: true,
       reasoning: true,

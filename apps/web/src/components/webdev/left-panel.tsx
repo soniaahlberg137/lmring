@@ -2,11 +2,11 @@
 
 import { cn, ScrollArea } from '@lmring/ui';
 import { useTranslation } from 'react-i18next';
-import { useWebDevStore, useWebDevStoreShallow } from '@/stores/webdev-store';
+import { useWebDevStore, useWebDevStoreShallow, webdevSelectors } from '@/stores/webdev-store';
 import { useWorkflowStore, useWorkflowStoreShallow } from '@/stores/workflow-store';
+import { IterationTimeline } from './iteration-timeline';
 import { OptionCard } from './option-card';
 import { PromptBar } from './prompt-bar';
-import { PromptCard } from './prompt-card';
 
 interface LeftPanelProps {
   onFollowUp: (prompt: string) => void;
@@ -16,12 +16,16 @@ interface LeftPanelProps {
 
 export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPanelProps) {
   const { t } = useTranslation();
-  const { phase, activeWorkflowId } = useWebDevStoreShallow((s) => ({
+  const { phase, activeWorkflowId, activeIterationVersion } = useWebDevStoreShallow((s) => ({
     phase: s.phase,
     activeWorkflowId: s.activeWorkflowId,
+    activeIterationVersion: s.activeIterationVersion,
   }));
   const setActiveWorkflowId = useWebDevStore((s) => s.setActiveWorkflowId);
+  const setActiveIterationVersion = useWebDevStore((s) => s.setActiveIterationVersion);
   const sandboxes = useWebDevStore((s) => s.sandboxes);
+  const iterations = useWebDevStore((s) => s.iterations);
+  const isLatestIteration = useWebDevStore(webdevSelectors.isLatestIteration);
 
   const workflowModelIds = useWorkflowStoreShallow((s) => {
     const result: Record<string, string> = {};
@@ -38,13 +42,33 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
   const showOptions = sandboxes.size > 0 || (workflowOrder.length > 0 && phase === 'generating');
   const showVote = sandboxes.size > 1;
 
+  // Compute the current version (latest = max iteration version + 1, or 1 if no iterations)
+  const currentVersion =
+    iterations.length > 0 ? Math.max(...iterations.map((it) => it.version)) + 1 : 1;
+
+  // Disable timeline clicks during generation to prevent race conditions
+  const timelineDisabled = phase === 'generating';
+
   return (
     <div className={cn('flex h-full flex-col bg-[var(--webdev-card-bg)]', className)}>
       <ScrollArea className="flex-1">
         <div className="flex flex-col gap-4 p-4">
-          {hasPrompt && <PromptCard prompt={displayPrompt} />}
+          {hasPrompt && (
+            <IterationTimeline
+              iterations={iterations.map((it) => ({
+                version: it.version,
+                prompt: it.prompt,
+              }))}
+              currentPrompt={displayPrompt}
+              currentVersion={currentVersion}
+              activeVersion={activeIterationVersion || currentVersion}
+              onSelectVersion={setActiveIterationVersion}
+              disabled={timelineDisabled}
+            />
+          )}
 
           {showOptions &&
+            isLatestIteration &&
             workflowOrder.map((wfId, index) => {
               const modelId = workflowModelIds[wfId];
               if (!modelId) return null;
@@ -76,9 +100,15 @@ export function LeftPanel({ onFollowUp, isLoading = false, className }: LeftPane
         <PromptBar
           onSubmit={onFollowUp}
           isLoading={isLoading}
-          disabled={phase === 'idle'}
+          disabled={
+            phase === 'idle' || phase === 'generating' || phase === 'building' || !isLatestIteration
+          }
           placeholder={
-            phase === 'idle' ? t('WebDev.placeholder_idle') : t('WebDev.placeholder_followup')
+            !isLatestIteration
+              ? t('WebDev.switch_to_latest')
+              : phase === 'idle'
+                ? t('WebDev.placeholder_idle')
+                : t('WebDev.placeholder_followup')
           }
         />
       </div>

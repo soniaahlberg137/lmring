@@ -21,10 +21,10 @@ const mistralModels: ChatModelCard[] = [
   },
   {
     id: 'magistral-medium-latest',
-    displayName: 'Magistral Medium',
+    displayName: 'Magistral Medium 1.2',
     description: 'Magistral Medium 是 Mistral 的旗舰推理模型，专为复杂推理任务设计。',
     type: 'chat',
-    contextWindowTokens: 40_000,
+    contextWindowTokens: 128_000,
     maxOutput: 32_000,
     abilities: {
       functionCall: true,
@@ -182,11 +182,11 @@ const mistralModels: ChatModelCard[] = [
   },
   {
     id: 'codestral-latest',
-    displayName: 'Codestral',
+    displayName: 'Codestral 2508',
     description: 'Codestral 专门针对代码生成和理解优化。',
     type: 'chat',
-    contextWindowTokens: 32_768,
-    maxOutput: 4_096,
+    contextWindowTokens: 256_000,
+    maxOutput: 8_192,
     enabled: true,
     abilities: {
       functionCall: true,
@@ -195,6 +195,7 @@ const mistralModels: ChatModelCard[] = [
       input: 0.2,
       output: 0.6,
     },
+    releasedAt: '2025-07-30',
   },
   {
     id: 'codestral-2501',

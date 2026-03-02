@@ -71,8 +71,14 @@ function buildActivityItems(
   files: Record<string, string>,
   error: string | null,
   t: (key: string, options?: Record<string, unknown>) => string,
+  workflowStatus?: string,
 ): ActivityLogItem[] {
   const items: ActivityLogItem[] = [];
+
+  if (workflowStatus === 'running' && status === 'idle') {
+    items.push({ id: 'generating', icon: 'pencil', text: t('WebDev.generating_code') });
+    return items;
+  }
 
   const fileCount = Object.keys(files).length;
   if (fileCount > 0) {
@@ -140,13 +146,14 @@ export const OptionCard = React.memo(function OptionCard({
   const workflow = useWorkflowStore((s) => s.workflows.get(workflowId));
   const modelId = workflow?.modelId ?? '';
   const providerId = modelId.split(':')[0] ?? '';
+  const workflowStatus = workflow?.status;
   const status = sandbox?.status ?? 'idle';
   const files = sandbox?.files ?? {};
   const error = sandbox?.error ?? null;
 
   const activityItems = React.useMemo(
-    () => buildActivityItems(status, files, error, t),
-    [status, files, error, t],
+    () => buildActivityItems(status, files, error, t, workflowStatus),
+    [status, files, error, t, workflowStatus],
   );
 
   return (

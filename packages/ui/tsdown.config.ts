@@ -30,7 +30,4 @@ export default defineConfig({
   clean: true,
   minify: false,
   sourcemap: true,
-  exports: {
-    all: true,
-  },
 });

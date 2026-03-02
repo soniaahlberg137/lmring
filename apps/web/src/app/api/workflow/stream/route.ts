@@ -4,7 +4,8 @@ import { auth } from '@/libs/Auth';
 import { extractApiErrorMessage } from '@/libs/api-error-utils';
 import { logError } from '@/libs/error-logging';
 import { createProvider, fetchUserApiKeys } from '@/libs/provider-factory';
-import { type SupportedProvider, workflowStreamSchema } from '@/libs/validation';
+import { createThinkTagParser } from '@/libs/think-tag-parser';
+import { workflowStreamSchema } from '@/libs/validation';
 
 /**
  * Check if a model has reasoning capability.
@@ -134,7 +135,7 @@ export async function POST(request: Request) {
         ? keyData.providerType.toLowerCase()
         : keyData.providerName.toLowerCase();
 
-    const providerName = effectiveProvider as SupportedProvider;
+    const providerName = effectiveProvider;
     const provider = createProvider(providerName, keyData.apiKey, keyData.proxyUrl ?? undefined);
 
     // Check model capabilities
@@ -197,6 +198,10 @@ export async function POST(request: Request) {
             ...(reasoningOptions && { providerOptions: reasoningOptions }),
           });
 
+          // For reasoning models, intercept <think> tags in text-delta and
+          // redirect them as reasoning SSE events
+          const thinkParser = hasReasoning ? createThinkTagParser() : null;
+
           for await (const part of result.fullStream) {
             const isText = part.type === 'text-delta';
             const isReasoningDelta = part.type === 'reasoning-delta';
@@ -212,12 +217,32 @@ export async function POST(request: Request) {
             }
 
             if (isText) {
-              const chunkEvent = JSON.stringify({
-                type: 'chunk',
-                workflowId,
-                chunk: part.text,
-              });
-              controller.enqueue(encoder.encode(`data: ${chunkEvent}\n\n`));
+              if (thinkParser) {
+                const { text, reasoning } = thinkParser.process(part.text);
+                if (text) {
+                  const chunkEvent = JSON.stringify({
+                    type: 'chunk',
+                    workflowId,
+                    chunk: text,
+                  });
+                  controller.enqueue(encoder.encode(`data: ${chunkEvent}\n\n`));
+                }
+                if (reasoning) {
+                  const reasoningEvent = JSON.stringify({
+                    type: 'reasoning',
+                    workflowId,
+                    reasoning,
+                  });
+                  controller.enqueue(encoder.encode(`data: ${reasoningEvent}\n\n`));
+                }
+              } else {
+                const chunkEvent = JSON.stringify({
+                  type: 'chunk',
+                  workflowId,
+                  chunk: part.text,
+                });
+                controller.enqueue(encoder.encode(`data: ${chunkEvent}\n\n`));
+              }
             } else if (isReasoningDelta) {
               // Streaming reasoning delta
               const reasoningEvent = JSON.stringify({
@@ -237,6 +262,27 @@ export async function POST(request: Request) {
               controller.enqueue(encoder.encode('data: [DONE]\n\n'));
               controller.close();
               return;
+            }
+          }
+
+          // Flush any remaining buffered content from the think-tag parser
+          if (thinkParser) {
+            const { text, reasoning } = thinkParser.flush();
+            if (text) {
+              const chunkEvent = JSON.stringify({
+                type: 'chunk',
+                workflowId,
+                chunk: text,
+              });
+              controller.enqueue(encoder.encode(`data: ${chunkEvent}\n\n`));
+            }
+            if (reasoning) {
+              const reasoningEvent = JSON.stringify({
+                type: 'reasoning',
+                workflowId,
+                reasoning,
+              });
+              controller.enqueue(encoder.encode(`data: ${reasoningEvent}\n\n`));
             }
           }
 

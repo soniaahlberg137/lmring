@@ -1,0 +1,1 @@
+ALTER TABLE "webdev_responses" ADD COLUMN "content" text;
