@@ -923,7 +923,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
 
 type WorkflowStoreApi = ReturnType<typeof createWorkflowStore>;
 
-const WorkflowStoreContext = createContext<WorkflowStoreApi | null>(null);
+export const WorkflowStoreContext = createContext<WorkflowStoreApi | null>(null);
 
 export function WorkflowStoreProvider({ children }: { children: ReactNode }) {
   const storeRef = useRef<WorkflowStoreApi | null>(null);

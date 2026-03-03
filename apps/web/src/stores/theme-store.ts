@@ -41,6 +41,7 @@ export type ThemeStore = ThemeState & ThemeActions;
 const FALLBACK_PRESET_NAME = 'ocean-blue';
 
 function getDefaultPreset(): { name: string; hue: number; chroma: number; lightness: number } {
+  // biome-ignore lint/style/noNonNullAssertion: presets array is guaranteed non-empty
   return presets.find((preset) => preset.name === FALLBACK_PRESET_NAME) ?? presets[0]!;
 }
 

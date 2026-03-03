@@ -13,9 +13,11 @@ import {
 } from '@lmring/ui';
 import { LayoutDashboardIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useContext } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
 import { authClient } from '@/libs/AuthClient';
-import { useArenaStore, useWorkflowStore } from '@/stores';
+import { ArenaStoreContext } from '@/stores/arena-store';
+import { WorkflowStoreContext } from '@/stores/workflow-store';
 
 interface UserMenuProps {
   user?: {
@@ -29,12 +31,12 @@ interface UserMenuProps {
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
   const t = useTranslations();
   const router = useRouter();
-  const resetConversation = useWorkflowStore((state) => state.resetConversation);
-  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
+  const workflowStore = useContext(WorkflowStoreContext);
+  const arenaStore = useContext(ArenaStoreContext);
 
   const handleGoToArena = () => {
-    resetConversation();
-    setModelsLastLoadedAt(null);
+    workflowStore?.getState().resetConversation();
+    arenaStore?.getState().setModelsLastLoadedAt(null);
     router.push('/arena');
   };
 

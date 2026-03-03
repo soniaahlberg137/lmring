@@ -2,6 +2,7 @@
 
 import { cn } from '@lmring/ui';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 
 import { AppConfig } from '@/utils/AppConfig';
@@ -30,16 +31,14 @@ export function FrostedHeader({ rightNav, className }: FrostedHeaderProps) {
         className="absolute inset-0 overflow-hidden rounded-2xl"
         style={{ filter: 'url(#displacementFilter)' }}
       >
-        <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-xl" />
-        <div className="absolute inset-0 border border-white/10 rounded-2xl" />
+        <div className="absolute inset-0 bg-white/80 backdrop-blur-xl" />
+        <div className="absolute inset-0 border border-gray-200/60 rounded-2xl" />
       </div>
 
       {/* Logo */}
       <a href="/" className="relative z-10 flex cursor-pointer items-center justify-center gap-2">
-        <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 to-indigo-600 shadow-lg shadow-indigo-500/20">
-          <span className="text-sm font-bold text-white">{AppConfig.name.charAt(0)}</span>
-        </div>
-        <span className="text-lg font-bold text-white">{AppConfig.name}</span>
+        <Image src="/athena-black.svg" alt={AppConfig.name} width={32} height={32} />
+        <span className="text-lg font-bold text-gray-900">{AppConfig.name}</span>
       </a>
 
       {/* Right nav */}

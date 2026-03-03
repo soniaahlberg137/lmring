@@ -279,6 +279,7 @@
 @media (prefers-reduced-motion: reduce) {
   .theme-transitioning,
   .theme-transitioning * {
+    /* biome-ignore lint/complexity/noImportantStyles: required to override all child transitions during theme switch */
     transition: none !important;
   }
 }

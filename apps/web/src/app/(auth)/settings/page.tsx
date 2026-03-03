@@ -665,7 +665,9 @@ export default function SettingsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h3 className="font-bold text-lg">LMRing</h3>
-                          <p className="text-sm text-muted-foreground">v2.0.0-next.135</p>
+                          <p className="text-sm text-muted-foreground">
+                            v{process.env.NEXT_PUBLIC_APP_VERSION}
+                          </p>
                         </div>
                         <a
                           href="https://github.com/llm-ring/lmring/releases"
@@ -750,7 +752,7 @@ export default function SettingsPage() {
                             {t('Settings.about_terms')} <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                           <a
-                            href="https://github.com/llm-ring/lmring/blob/main/PRIVACY.md"
+                            href="https://github.com/llm-ring/lmring/blob/main/SECURITY.md"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"

@@ -7,6 +7,12 @@ vi.mock('@/utils/AppConfig', () => ({
   },
 }));
 
+vi.mock('next/image', () => ({
+  // biome-ignore lint/a11y/useAltText: test mock for next/image
+  // biome-ignore lint/performance/noImgElement: test mock for next/image
+  default: (props: React.ComponentProps<'img'>) => <img {...props} />,
+}));
+
 describe('FrostedHeader', () => {
   afterEach(() => {
     cleanup();
@@ -16,8 +22,9 @@ describe('FrostedHeader', () => {
     const { FrostedHeader } = await import('./frosted-header');
     render(<FrostedHeader />);
 
-    // App logo shows first letter
-    expect(screen.getByText('L')).toBeInTheDocument();
+    const logo = screen.getByAltText('LMRing');
+    expect(logo).toBeInTheDocument();
+    expect(logo).toHaveAttribute('src', '/athena-black.svg');
   });
 
   it('should render app name', async () => {

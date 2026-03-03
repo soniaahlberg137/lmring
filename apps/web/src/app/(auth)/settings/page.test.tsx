@@ -85,6 +85,45 @@ const { setLanguageMock } = vi.hoisted(() => ({
   setLanguageMock: vi.fn(),
 }));
 
+const { themeState, setModeMock, setSeedColorMock, setPresetMock, resetThemeMock } = vi.hoisted(
+  () => {
+    const themeState = {
+      mode: 'system' as 'light' | 'dark' | 'system',
+      seedColor: { l: 0.5, c: 0.15, h: 240 },
+      presetName: 'ocean-blue' as string | null,
+      palette: {
+        light: { primary: { l: 0.5, c: 0.15, h: 240 } },
+        dark: { primary: { l: 0.5, c: 0.15, h: 240 } },
+      },
+      hydrated: true,
+    };
+
+    const setModeMock = vi.fn((mode: 'light' | 'dark' | 'system') => {
+      themeState.mode = mode;
+    });
+    const setSeedColorMock = vi.fn((seedColor: { l: number; c: number; h: number }) => {
+      themeState.seedColor = seedColor;
+      themeState.presetName = null;
+    });
+    const setPresetMock = vi.fn((presetName: string) => {
+      themeState.presetName = presetName;
+    });
+    const resetThemeMock = vi.fn(() => {
+      themeState.mode = 'system';
+      themeState.seedColor = { l: 0.5, c: 0.15, h: 240 };
+      themeState.presetName = 'ocean-blue';
+    });
+
+    return {
+      themeState,
+      setModeMock,
+      setSeedColorMock,
+      setPresetMock,
+      resetThemeMock,
+    };
+  },
+);
+
 let capturedProviderLayoutProps: {
   providers: unknown[];
   isLoading: boolean;
@@ -129,6 +168,54 @@ vi.mock('@/stores/language-store', () => ({
     selector: (state: { language: string; setLanguage: (l: string) => void }) => unknown,
   ) => selector({ language: 'en', setLanguage: setLanguageMock }),
 }));
+
+vi.mock('@/stores/theme-store', () => {
+  const state = {
+    get mode() {
+      return themeState.mode;
+    },
+    get seedColor() {
+      return themeState.seedColor;
+    },
+    get presetName() {
+      return themeState.presetName;
+    },
+    get palette() {
+      return themeState.palette;
+    },
+    get hydrated() {
+      return themeState.hydrated;
+    },
+    setMode: setModeMock,
+    setSeedColor: setSeedColorMock,
+    setPreset: setPresetMock,
+    resetTheme: resetThemeMock,
+    hydrateFromLocal: vi.fn(),
+  };
+
+  const useThemeStore = ((selector?: (s: typeof state) => unknown) =>
+    selector ? selector(state) : state) as {
+    (selector?: (s: typeof state) => unknown): unknown;
+    getState: () => typeof state;
+  };
+
+  useThemeStore.getState = () => state;
+
+  const themeSelectors = {
+    mode: (s: typeof state) => s.mode,
+    seedColor: (s: typeof state) => s.seedColor,
+    presetName: (s: typeof state) => s.presetName,
+    palette: (s: typeof state) => s.palette,
+    hydrated: (s: typeof state) => s.hydrated,
+    setMode: (s: typeof state) => s.setMode,
+    setSeedColor: (s: typeof state) => s.setSeedColor,
+    setPreset: (s: typeof state) => s.setPreset,
+    hydrateFromLocal: (s: typeof state) => s.hydrateFromLocal,
+    resetTheme: (s: typeof state) => s.resetTheme,
+  };
+
+  return { useThemeStore, themeSelectors };
+});
 
 vi.mock('./_components/provider/ProviderLayout', () => ({
   ProviderLayout: (props: {
@@ -252,6 +339,24 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+// Mock theme-storage to avoid async fetch operations during store initialization
+vi.mock('@/libs/theme-storage', () => ({
+  THEME_STORAGE_KEY: 'lmring-theme-config',
+  themePersistStorage: {
+    getItem: () => null,
+    setItem: () => {},
+    removeItem: () => {},
+  },
+  fetchThemeConfigFromServer: async () => null,
+  isServerSnapshotNewer: () => false,
+  loadLocalThemeSnapshot: () => null,
+  saveThemeConfigToServer: async () => null,
+  saveToLocal: () => {},
+  loadFromLocal: () => null,
+  clearFromLocal: () => {},
+}));
+
+// @lmring/theme is mocked globally via alias in vitest.config.mts (avoids culori ESM hanging)
 // @lmring/ui is mocked globally via alias in vitest.config.mts
 
 describe('SettingsPage', () => {
