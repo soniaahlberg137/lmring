@@ -73,11 +73,11 @@ function generateLightPalette(seed: OklchColor): SemanticPalette {
 function generateDarkPalette(seed: OklchColor): SemanticPalette {
   const h = normalizeHue(seed.h);
 
-  const primary = oklch(0.65, seed.c * 1.1, h);
+  const primary = oklch(0.45, seed.c * 0.9, h);
 
   return {
     primary,
-    primaryForeground: oklch(0.15, seed.c * 0.05, h),
+    primaryForeground: oklch(0.98, 0.005, h),
     secondary: oklch(0.25, 0.01, h),
     secondaryForeground: oklch(0.90, 0.005, h),
     accent: oklch(0.28, 0.015, h),
