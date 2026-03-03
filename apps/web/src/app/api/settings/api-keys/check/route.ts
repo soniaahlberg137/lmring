@@ -1,83 +1,10 @@
-import { generateText, ProviderBuilder, streamText } from '@lmring/ai-hub';
+import { generateText, streamText } from '@lmring/ai-hub';
 import { isVideoModel } from '@lmring/model-depot';
 import { NextResponse } from 'next/server';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
+import { createProvider } from '@/libs/provider-factory';
 import { connectionCheckSchema } from '@/libs/validation';
-
-/**
- * Normalize proxy URL to ensure it has proper format
- */
-function normalizeProxyUrl(proxyUrl: string): string {
-  const trimmed = proxyUrl.replace(/\/+$/, '');
-  if (trimmed.endsWith('#')) {
-    return trimmed;
-  }
-  // Check if URL already has API version path
-  const versionRegex = /\/v\d+(?:alpha|beta)?(?=\/|$)/i;
-  try {
-    const parsedUrl = new URL(trimmed);
-    if (versionRegex.test(parsedUrl.pathname)) {
-      return trimmed;
-    }
-  } catch {
-    if (versionRegex.test(trimmed)) {
-      return trimmed;
-    }
-  }
-  return `${trimmed}/v1`;
-}
-
-/**
- * Map of providers that need special handling
- */
-const COMPATIBLE_PROVIDERS: Record<string, string> = {
-  google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  gemini: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  vertex: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  cohere: 'https://api.cohere.ai/v1',
-  together: 'https://api.together.xyz/v1',
-  perplexity: 'https://api.perplexity.ai',
-};
-
-/**
- * Create a provider instance for connection testing
- */
-function createTestProvider(
-  providerId: string,
-  apiKey: string,
-  proxyUrl?: string,
-): ReturnType<typeof ProviderBuilder.openai> {
-  const baseURL = proxyUrl ? normalizeProxyUrl(proxyUrl) : undefined;
-
-  switch (providerId) {
-    case 'openai':
-      return ProviderBuilder.openai(apiKey, baseURL);
-    case 'anthropic':
-      return ProviderBuilder.anthropic(apiKey, baseURL);
-    case 'deepseek':
-      return ProviderBuilder.deepseek(apiKey, baseURL);
-    case 'mistral':
-      return ProviderBuilder.mistral(apiKey, baseURL);
-    case 'xai':
-      return ProviderBuilder.xai(apiKey, baseURL);
-    case 'openrouter':
-      return ProviderBuilder.openrouter(apiKey, baseURL);
-  }
-
-  // For compatible providers, use OpenAI-compatible interface
-  const defaultUrl = COMPATIBLE_PROVIDERS[providerId];
-  if (defaultUrl) {
-    return ProviderBuilder.compatible(providerId, apiKey, baseURL || defaultUrl);
-  }
-
-  // For unknown providers, try as OpenAI-compatible with custom baseURL
-  if (baseURL) {
-    return ProviderBuilder.compatible(providerId, apiKey, baseURL);
-  }
-
-  throw new Error(`Unsupported provider: ${providerId}. Please provide a proxy URL.`);
-}
 
 /**
  * POST /api/settings/api-keys/check
@@ -115,9 +42,9 @@ export async function POST(request: Request) {
       });
     }
 
-    let provider: ReturnType<typeof ProviderBuilder.openai>;
+    let provider: ReturnType<typeof createProvider>;
     try {
-      provider = createTestProvider(providerType || providerName, apiKey, proxyUrl);
+      provider = createProvider(providerType || providerName, apiKey, proxyUrl);
     } catch (error) {
       return NextResponse.json(
         {

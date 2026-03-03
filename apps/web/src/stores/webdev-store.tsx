@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/shallow';
 import {
   DEFAULT_SANDBOX_STATE,
   DEFAULT_WEBDEV_STATE,
+  type IterationSnapshot,
   type SandboxStatus,
   type WebDevConfig,
   type WebDevStore,
@@ -58,6 +59,7 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
             {
               ...DEFAULT_WEBDEV_STATE,
               featureConfig: get().featureConfig, // preserve config cache
+              iterations: [], // explicitly clear iteration history
             },
             false,
             'webdev/resetSession',
@@ -335,6 +337,71 @@ export const createWebDevStore = (initState: Partial<typeof DEFAULT_WEBDEV_STATE
           }
           return false;
         },
+
+        // --- Iteration management ---
+
+        addIteration: (iteration: IterationSnapshot) => {
+          set(
+            (state) => ({ iterations: [...state.iterations, iteration] }),
+            false,
+            'webdev/addIteration',
+          );
+        },
+
+        setActiveIterationVersion: (version: number) => {
+          set({ activeIterationVersion: version }, false, 'webdev/setActiveIterationVersion');
+        },
+
+        getActiveIteration: () => {
+          const { iterations, activeIterationVersion } = get();
+          return iterations.find((it) => it.version === activeIterationVersion);
+        },
+
+        snapshotCurrentIteration: (
+          iterationId: string,
+          version: number,
+          prompt: string,
+          responseMap: Map<string, string>,
+        ) => {
+          const { sandboxes } = get();
+
+          // Extract lightweight snapshot data from current sandboxes
+          const snapshotSandboxes = new Map<
+            string,
+            {
+              files: Record<string, string>;
+              sandboxId: string | null;
+              snapshotId: string | null;
+              previewUrl: string | null;
+              expiresAt: string | null;
+            }
+          >();
+          for (const [workflowId, sandbox] of sandboxes) {
+            snapshotSandboxes.set(workflowId, {
+              files: { ...sandbox.files },
+              sandboxId: sandbox.sandboxId,
+              snapshotId: sandbox.snapshotId,
+              previewUrl: sandbox.previewUrl,
+              expiresAt: sandbox.expiresAt,
+            });
+          }
+
+          const snapshot: IterationSnapshot = {
+            id: iterationId,
+            version,
+            prompt,
+            sandboxes: snapshotSandboxes,
+            responseMap: new Map(responseMap),
+          };
+
+          set(
+            (state) => ({
+              iterations: [...state.iterations, snapshot],
+            }),
+            false,
+            'webdev/snapshotCurrentIteration',
+          );
+        },
       }),
       { name: 'webdev-store', enabled: process.env.NODE_ENV === 'development' },
     ),
@@ -384,6 +451,14 @@ export const webdevSelectors = {
   activeWorkflowId: (state: WebDevStore) => state.activeWorkflowId,
   featureConfig: (state: WebDevStore) => state.featureConfig,
   isEnabled: (state: WebDevStore) => state.featureConfig?.enabled === true,
+  iterations: (state: WebDevStore) => state.iterations,
+  activeIterationVersion: (state: WebDevStore) => state.activeIterationVersion,
+  isLatestIteration: (state: WebDevStore) => {
+    if (state.activeIterationVersion === 0) return true;
+    if (state.iterations.length === 0) return true;
+    const maxVersion = Math.max(...state.iterations.map((it) => it.version));
+    return state.activeIterationVersion > maxVersion;
+  },
 
   activeSandbox: (state: WebDevStore) => {
     if (!state.activeWorkflowId) return undefined;
@@ -423,6 +498,8 @@ export const webdevSelectors = {
     sandboxes: state.sandboxes,
     activeWorkflowId: state.activeWorkflowId,
     featureConfig: state.featureConfig,
+    iterations: state.iterations,
+    activeIterationVersion: state.activeIterationVersion,
   }),
 
   webdevActions: (state: WebDevStore) => ({
@@ -445,5 +522,8 @@ export const webdevSelectors = {
     checkConfig: state.checkConfig,
     setPrompt: state.setPrompt,
     setSubmittedPrompt: state.setSubmittedPrompt,
+    addIteration: state.addIteration,
+    setActiveIterationVersion: state.setActiveIterationVersion,
+    snapshotCurrentIteration: state.snapshotCurrentIteration,
   }),
 };

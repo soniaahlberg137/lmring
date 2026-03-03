@@ -515,5 +515,11 @@
   "WebDev.placeholder_followup": "提出后续问题...",
   "WebDev.no_preview": "暂无预览",
   "WebDev.waiting_generation": "等待生成中...",
-  "WebDev.building_preview": "正在构建预览..."
+  "WebDev.building_preview": "正在构建预览...",
+  "WebDev.iteration_v": "v{{version}}",
+  "WebDev.iteration_current": "当前",
+  "WebDev.iteration_history": "提示历史",
+  "WebDev.iteration_switch": "切换到 v{{version}}",
+  "WebDev.follow_up_creating": "正在创建后续...",
+  "WebDev.switch_to_latest": "切换到最新版本以继续"
 }

@@ -1,6 +1,6 @@
 {
-  "id": "6afe9b2a-66bb-4065-a268-53a523a9e316",
-  "prevId": "9399855e-8afb-43f1-af64-4bd7021692b0",
+  "id": "980a1f01-e391-4a14-8986-1b3ca95ed5db",
+  "prevId": "6afe9b2a-66bb-4065-a268-53a523a9e316",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -2083,6 +2083,27 @@
             }
           ],
           "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "webdev_iterations_session_version_idx": {
+          "name": "webdev_iterations_session_version_idx",
+          "columns": [
+            {
+              "expression": "session_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "version",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
           "concurrently": false,
           "method": "btree",
           "with": {}

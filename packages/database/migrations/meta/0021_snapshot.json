@@ -1,6 +1,6 @@
 {
-  "id": "6afe9b2a-66bb-4065-a268-53a523a9e316",
-  "prevId": "9399855e-8afb-43f1-af64-4bd7021692b0",
+  "id": "9f08f7f2-538a-4707-a41b-9ba0b7b990cc",
+  "prevId": "980a1f01-e391-4a14-8986-1b3ca95ed5db",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -2086,6 +2086,27 @@
           "concurrently": false,
           "method": "btree",
           "with": {}
+        },
+        "webdev_iterations_session_version_idx": {
+          "name": "webdev_iterations_session_version_idx",
+          "columns": [
+            {
+              "expression": "session_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "version",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
@@ -2172,6 +2193,12 @@
         },
         "generated_code": {
           "name": "generated_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "content": {
+          "name": "content",
           "type": "text",
           "primaryKey": false,
           "notNull": false

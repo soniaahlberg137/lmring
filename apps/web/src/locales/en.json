@@ -515,5 +515,11 @@
   "WebDev.placeholder_followup": "Ask a follow up...",
   "WebDev.no_preview": "No preview available",
   "WebDev.waiting_generation": "Waiting for generation...",
-  "WebDev.building_preview": "Building preview..."
+  "WebDev.building_preview": "Building preview...",
+  "WebDev.iteration_v": "v{{version}}",
+  "WebDev.iteration_current": "Current",
+  "WebDev.iteration_history": "Prompt History",
+  "WebDev.iteration_switch": "Switch to v{{version}}",
+  "WebDev.follow_up_creating": "Creating follow-up...",
+  "WebDev.switch_to_latest": "Switch to latest version to continue"
 }

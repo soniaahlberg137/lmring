@@ -16,7 +16,6 @@ import {
   modelOverrideSchema,
   modelResponseSchema,
   responseAttachmentSchema,
-  SUPPORTED_PROVIDERS,
   shareSchema,
   userPreferencesSchema,
   voteSchema,
@@ -24,19 +23,6 @@ import {
 } from './validation';
 
 describe('validation', () => {
-  describe('SUPPORTED_PROVIDERS', () => {
-    it('should contain expected providers', () => {
-      expect(SUPPORTED_PROVIDERS).toContain('openai');
-      expect(SUPPORTED_PROVIDERS).toContain('anthropic');
-      expect(SUPPORTED_PROVIDERS).toContain('deepseek');
-      expect(SUPPORTED_PROVIDERS).toContain('google');
-    });
-
-    it('should have correct length', () => {
-      expect(SUPPORTED_PROVIDERS.length).toBeGreaterThan(0);
-    });
-  });
-
   describe('conversationSchema', () => {
     it('should accept valid title', () => {
       const result = conversationSchema.safeParse({ title: 'Test Conversation' });

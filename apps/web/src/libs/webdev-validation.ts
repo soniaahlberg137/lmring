@@ -87,3 +87,17 @@ export type WebdevFileEntry = z.infer<typeof webdevFileSchema>;
 export type WebdevSandboxCreateInput = z.infer<typeof webdevSandboxCreateSchema>;
 export type WebdevSandboxDeleteInput = z.infer<typeof webdevSandboxDeleteSchema>;
 export type WebdevConfigInput = z.infer<typeof webdevConfigSchema>;
+
+/**
+ * PATCH /api/webdev/session — Follow-up on an existing session
+ */
+export const webdevFollowUpSchema = z.object({
+  sessionId: z.uuid('Invalid session ID'),
+  prompt: z
+    .string()
+    .trim()
+    .min(1, 'Prompt is required')
+    .max(50000, 'Prompt must be less than 50000 characters'),
+});
+
+export type WebdevFollowUpInput = z.infer<typeof webdevFollowUpSchema>;

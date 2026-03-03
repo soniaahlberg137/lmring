@@ -75,7 +75,13 @@ export function Message({
             {message.reasoning && (
               <Reasoning isStreaming={isStreaming}>
                 <ReasoningTrigger />
-                <ReasoningContent>{message.reasoning}</ReasoningContent>
+                <ReasoningContent>
+                  <ResponseViewer
+                    content={message.reasoning}
+                    isStreaming={isStreaming}
+                    className="text-muted-foreground"
+                  />
+                </ReasoningContent>
               </Reasoning>
             )}
             {/* Hide text content when video attachment exists (content is just "[video](url)") */}

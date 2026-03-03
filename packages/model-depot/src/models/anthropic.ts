@@ -20,9 +20,32 @@ const anthropicModels: ChatModelCard[] = [
     pricing: {
       input: 5,
       output: 25,
-      cachedInput: 1.5,
+      cachedInput: 0.5,
     },
     releasedAt: '2026-02-05',
+  },
+  {
+    id: 'claude-sonnet-4-6',
+    displayName: 'Claude Sonnet 4.6',
+    description:
+      'Claude Sonnet 4.6 是最新的 Sonnet 系列模型，在智能和速度之间取得最佳平衡，支持自适应思考和推理。',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 64_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      vision: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+    },
+    pricing: {
+      input: 3,
+      output: 15,
+      cachedInput: 0.3,
+    },
+    releasedAt: '2026-02-17',
   },
   {
     id: 'claude-opus-4-5-20251101',

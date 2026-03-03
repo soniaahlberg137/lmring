@@ -1,22 +1,5 @@
 import { z } from 'zod';
 
-export const SUPPORTED_PROVIDERS = [
-  'openai',
-  'anthropic',
-  'deepseek',
-  'mistral',
-  'xai',
-  'openrouter',
-  'google',
-  'gemini',
-  'vertex',
-  'cohere',
-  'together',
-  'perplexity',
-] as const;
-
-export type SupportedProvider = (typeof SUPPORTED_PROVIDERS)[number];
-
 export const conversationSchema = z.object({
   title: z
     .string()

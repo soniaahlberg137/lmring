@@ -69,6 +69,24 @@ export interface ActivityLogEntry {
   timestamp: number;
 }
 
+/** Lightweight sandbox data stored per iteration (no ephemeral UI state) */
+export interface SandboxSnapshot {
+  files: Record<string, string>;
+  sandboxId: string | null;
+  snapshotId: string | null;
+  previewUrl: string | null;
+  expiresAt: string | null;
+}
+
+/** Snapshot of a single iteration for history browsing */
+export interface IterationSnapshot {
+  id: string;
+  version: number;
+  prompt: string;
+  sandboxes: Map<string, SandboxSnapshot>;
+  responseMap: Map<string, string>; // workflowId → responseId
+}
+
 export interface WebDevState {
   sessionId: string | null;
   conversationId: string | null;
@@ -78,6 +96,8 @@ export interface WebDevState {
   featureConfig: WebDevConfig | null;
   prompt: string;
   submittedPrompt: string;
+  iterations: IterationSnapshot[];
+  activeIterationVersion: number;
 }
 
 export interface WebDevActions {
@@ -108,6 +128,15 @@ export interface WebDevActions {
   getSandbox: (workflowId: string) => SandboxState | undefined;
   getActiveSandbox: () => SandboxState | undefined;
   isAnyBuildingOrReady: () => boolean;
+  addIteration: (iteration: IterationSnapshot) => void;
+  setActiveIterationVersion: (version: number) => void;
+  getActiveIteration: () => IterationSnapshot | undefined;
+  snapshotCurrentIteration: (
+    iterationId: string,
+    version: number,
+    prompt: string,
+    responseMap: Map<string, string>,
+  ) => void;
 }
 
 export type WebDevStore = WebDevState & WebDevActions;
@@ -218,4 +247,6 @@ export const DEFAULT_WEBDEV_STATE: WebDevState = {
   featureConfig: null,
   prompt: '',
   submittedPrompt: '',
+  iterations: [],
+  activeIterationVersion: 0,
 };

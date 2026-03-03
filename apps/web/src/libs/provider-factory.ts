@@ -1,18 +1,7 @@
 import { ProviderBuilder } from '@lmring/ai-hub';
 import { and, db, decrypt, eq, inArray } from '@lmring/database';
 import { apiKeys } from '@lmring/database/schema';
-import type { SupportedProvider } from './validation';
-
-export type { SupportedProvider };
-
-const COMPATIBLE_PROVIDERS: Record<string, string> = {
-  google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  gemini: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  vertex: 'https://generativelanguage.googleapis.com/v1beta/openai/',
-  cohere: 'https://api.cohere.ai/v1',
-  together: 'https://api.together.xyz/v1',
-  perplexity: 'https://api.perplexity.ai',
-};
+import { PROVIDER_ENDPOINTS } from '@lmring/model-depot/providers';
 
 function hasApiVersion(url: string): boolean {
   const versionRegex = /\/v\d+(?:alpha|beta)?(?=\/|$)/i;
@@ -98,7 +87,7 @@ export async function fetchUserApiKeys(
 }
 
 export function createProvider(
-  providerId: SupportedProvider,
+  providerId: string,
   apiKey: string,
   proxyUrl?: string,
 ): ReturnType<typeof ProviderBuilder.openai> {
@@ -119,12 +108,16 @@ export function createProvider(
       return ProviderBuilder.openrouter(apiKey, baseURL);
   }
 
-  const defaultUrl = COMPATIBLE_PROVIDERS[providerId];
-  if (defaultUrl) {
-    return ProviderBuilder.compatible(providerId, apiKey, baseURL || defaultUrl);
+  const endpoint = PROVIDER_ENDPOINTS[providerId];
+  if (endpoint) {
+    return ProviderBuilder.compatible(providerId, apiKey, baseURL || endpoint.baseURL);
   }
 
-  throw new Error(`Unsupported provider: ${providerId}`);
+  if (baseURL) {
+    return ProviderBuilder.compatible(providerId, apiKey, baseURL);
+  }
+
+  throw new Error(`Unsupported provider: ${providerId}. Please provide a proxy URL.`);
 }
 
 export interface ProviderConfig {
@@ -170,7 +163,7 @@ export function buildProviderConfigs(
     }
 
     const provider = createProvider(
-      keyData.providerName as SupportedProvider,
+      keyData.providerName,
       keyData.apiKey,
       keyData.proxyUrl ?? undefined,
     );

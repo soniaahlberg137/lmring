@@ -23,10 +23,14 @@ lmring/
 └── packages/         # Shared packages
     ├── ai-hub/       # AI provider integration
     ├── auth/         # Authentication
+    ├── config/       # Shared config (biome, tailwind, typescript, vitest)
     ├── database/     # DrizzleORM schemas
+    ├── env/          # Environment variable management
     ├── i18n/         # Internationalization
     ├── model-depot/  # AI model definitions
-    └── ui/           # UI components
+    ├── storage/      # File storage (S3, Supabase)
+    ├── ui/           # UI components
+    └── video-runtime/ # Video generation runtime
 ```
 
 ## Development
@@ -36,7 +40,7 @@ lmring/
 - Use rebase for git pull
 - Git commit message should prefix with gitmoji
 - Git branch name format: `<type>/<feature-name>`
-- Use `.github/PULL_REQUEST_TEMPLATE.md` for PR description
+- Use `.github/pull_request_template.md` for PR description
 - PR titles starting with `✨ feat/` or `🐛 fix` trigger release workflow
 
 ### Package Management
@@ -107,5 +111,5 @@ pnpm test:e2e         # Run E2E tests
 ## Important Notes
 
 - **Node.js**: v24.11.1+
-- **Package Manager**: pnpm 10.25.0
+- **Package Manager**: pnpm 10.28.2
 - **Dev Server**: Turbopack
