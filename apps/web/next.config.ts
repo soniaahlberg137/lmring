@@ -1,13 +1,22 @@
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import withBundleAnalyzer from '@next/bundle-analyzer';
 import { withSentryConfig } from '@sentry/nextjs';
 import type { NextConfig } from 'next';
 import '@lmring/env/config';
 import { env } from '@lmring/env';
 
+const appVersion = JSON.parse(
+  readFileSync(resolve(import.meta.dirname, '../../package.json'), 'utf-8'),
+).version;
+
 const baseConfig: NextConfig = {
   output: 'standalone',
   poweredByHeader: false,
   reactStrictMode: true,
+  env: {
+    NEXT_PUBLIC_APP_VERSION: appVersion,
+  },
   experimental: {
     optimizePackageImports: [
       'lucide-react',

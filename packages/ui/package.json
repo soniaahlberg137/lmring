@@ -121,10 +121,10 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "framer-motion": "^12.34.3",
-    "lucide-react": "^0.575.0",
+    "framer-motion": "^12.34.5",
+    "lucide-react": "^0.577.0",
     "radix-ui": "^1.4.3",
-    "react-resizable-panels": "^4.6.5",
+    "react-resizable-panels": "^4.7.1",
     "rehype-harden": "^1.1.8",
     "streamdown": "^2.3.0",
     "tailwind-merge": "^3.5.0"
@@ -139,9 +139,9 @@
     "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@vitest/coverage-v8": "^4.0.18",
-    "happy-dom": "20.7.0",
+    "happy-dom": "20.8.3",
     "react": "^19.2.4",
-    "tsdown": "0.21.0-beta.2",
+    "tsdown": "0.20.3",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }

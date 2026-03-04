@@ -1,6 +1,7 @@
 import { Button } from '@lmring/ui';
-import { CheckCircle, Keyboard, MessageCircle, Trophy, Users } from 'lucide-react';
+import { CheckCircle, Keyboard, MessageCircle, Sparkles, Trophy } from 'lucide-react';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { getRequestLocale } from '@/libs/request-locale';
@@ -49,45 +50,41 @@ export default async function HowItWorksPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <section className="relative flex flex-col items-center justify-center bg-background px-4 py-20 text-center">
-        <h1 className="max-w-4xl text-3xl font-normal tracking-tight text-foreground sm:text-4xl md:text-5xl">
+      <section className="flex flex-col items-center justify-center gap-6 px-4 pt-24 pb-16 text-center">
+        <Link href="/">
+          <Image src="/athena-black.svg" alt="Athena" width={56} height={56} />
+        </Link>
+        <span className="inline-flex items-center gap-2 rounded-full border border-blue-600/20 bg-blue-600/10 px-4 py-1.5 text-sm font-medium text-blue-600">
+          <Sparkles className="h-4 w-4" />4 Simple Steps
+        </span>
+        <h1 className="max-w-4xl text-3xl font-extrabold tracking-tight text-zinc-900 md:text-5xl">
           {t('HowItWorks.hero_title')}
         </h1>
-        <p className="mt-6 max-w-2xl text-xl text-muted-foreground">
+        <p className="max-w-xl text-lg text-zinc-600 md:text-xl">
           {t('HowItWorks.hero_description')}
         </p>
-        <div className="mt-10">
-          <a
-            href="https://github.com/llm-ring/lmring"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <Users className="h-4 w-4" />
-            {t('HowItWorks.about_us')}
-          </a>
-        </div>
       </section>
 
       <section className="container mx-auto px-4 py-12 sm:py-16">
         <div className="mx-auto max-w-3xl">
           {steps.map((step, index) => {
             const Icon = step.icon;
+            const isLast = index === steps.length - 1;
             return (
-              <div key={step.number} className="relative flex gap-8">
-                {index < steps.length - 1 && (
-                  <div className="absolute left-8 top-20 h-full w-0.5 bg-border" />
-                )}
-
-                <div className="flex-none">
-                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800">
-                    <Icon className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+              <div key={step.number} className="flex gap-8">
+                <div className="flex flex-col items-center">
+                  <div className="flex h-16 w-16 flex-none items-center justify-center rounded-full bg-blue-50">
+                    <Icon className="h-8 w-8 text-blue-600" />
                   </div>
+                  {!isLast && <div className="w-0.5 flex-1 bg-zinc-200" />}
                 </div>
 
-                <div className="flex-1 pb-16">
-                  <h3 className="mb-3 text-2xl font-semibold">{step.title}</h3>
-                  <p className="text-lg text-muted-foreground">{step.description}</p>
+                <div className={`flex-1 pt-3 ${isLast ? 'pb-0' : 'pb-12'}`}>
+                  <span className="text-xs font-semibold uppercase tracking-widest text-blue-600">
+                    STEP {step.number}
+                  </span>
+                  <h3 className="mt-2 mb-3 text-xl font-bold text-zinc-900">{step.title}</h3>
+                  <p className="text-base leading-relaxed text-zinc-500">{step.description}</p>
                 </div>
               </div>
             );
@@ -95,10 +92,10 @@ export default async function HowItWorksPage() {
         </div>
       </section>
 
-      <section className="container mx-auto px-4 pb-24">
-        <div className="rounded-xl border bg-card p-12 text-center shadow-sm">
-          <h2 className="mb-4 text-2xl font-bold text-foreground">{t('HowItWorks.cta_title')}</h2>
-          <p className="mx-auto mb-8 max-w-2xl text-muted-foreground">
+      <section className="container mx-auto px-4 pb-20">
+        <div className="rounded-2xl border border-zinc-200 bg-slate-50 py-16 px-12 text-center md:px-20">
+          <h2 className="mb-4 text-2xl font-bold text-zinc-900">{t('HowItWorks.cta_title')}</h2>
+          <p className="mx-auto mb-8 max-w-2xl text-base text-zinc-500">
             {t('HowItWorks.cta_description')}
           </p>
           <div className="flex flex-col justify-center gap-4 sm:flex-row">

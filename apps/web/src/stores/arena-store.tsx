@@ -333,7 +333,7 @@ export const createArenaStore = (initState: Partial<ArenaState> = {}) => {
 
 type ArenaStoreApi = ReturnType<typeof createArenaStore>;
 
-const ArenaStoreContext = createContext<ArenaStoreApi | null>(null);
+export const ArenaStoreContext = createContext<ArenaStoreApi | null>(null);
 
 export function ArenaStoreProvider({ children }: { children: ReactNode }) {
   const storeRef = useRef<ArenaStoreApi | null>(null);
