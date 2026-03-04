@@ -21,6 +21,7 @@ body:
         - "packages/i18n"
         - "packages/model-depot"
         - "packages/storage"
+        - "packages/theme"
         - "packages/ui"
         - "Other"
     validations:
@@ -35,68 +36,31 @@ body:
         - "Self-hosted"
         - "Both"
         - "Not sure"
-    validations:
-      required: true
 
   - type: textarea
     id: description
     attributes:
       label: "Bug Description"
-      description: "Clear description of the bug"
-      placeholder: "What happened?"
-    validations:
-      required: true
-
-  - type: textarea
-    id: reproduction
-    attributes:
-      label: "Steps to Reproduce"
-      description: "How can we reproduce this?"
+      description: "What happened? Include steps to reproduce if possible."
       placeholder: |
+        What happened:
+
+        Steps to reproduce:
         1. Go to '...'
         2. Click on '...'
         3. See error
-    validations:
-      required: true
 
-  - type: textarea
-    id: expected
-    attributes:
-      label: "Expected Behavior"
-      placeholder: "What should happen?"
-    validations:
-      required: true
-
-  - type: textarea
-    id: actual
-    attributes:
-      label: "Actual Behavior"
-      placeholder: "What actually happens?"
+        Expected: ...
+        Actual: ...
     validations:
       required: true
 
   - type: textarea
     id: environment
     attributes:
-      label: "Environment"
-      description: "Your environment details"
+      label: "Environment / Logs / Screenshots (Optional)"
+      description: "Any helpful context: environment details, error logs, screenshots, etc."
       placeholder: |
         - Node.js: v24.x
-        - pnpm: 10.x
-        - OS: macOS / Windows / Linux
         - Browser: Chrome / Safari / Firefox
-      render: markdown
-    validations:
-      required: true
-
-  - type: textarea
-    id: logs
-    attributes:
-      label: "Logs / Screenshots (Optional)"
-      description: "Any relevant logs or screenshots"
-      render: shell
-
-  - type: textarea
-    id: additional
-    attributes:
-      label: "Additional Context (Optional)"
+        - OS: macOS / Windows / Linux

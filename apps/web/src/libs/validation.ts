@@ -167,6 +167,16 @@ export const userPreferencesSchema = z.object({
   configSource: z.enum(['manual', 'cherry-studio', 'newapi']).optional(),
 });
 
+export const themeConfigSchema = z.object({
+  mode: z.enum(['light', 'dark', 'system']),
+  seedColor: z.object({
+    l: z.number().min(0).max(1),
+    c: z.number().min(0).max(0.4),
+    h: z.number().min(0).max(360),
+  }),
+  presetName: z.string().max(100).nullable(),
+});
+
 export const shareSchema = z.object({
   expiresInDays: z.number().int().min(1).max(365).optional(),
 });
@@ -220,6 +230,7 @@ export type ConnectionCheckInput = z.infer<typeof connectionCheckSchema>;
 export type ModelEnableInput = z.infer<typeof modelEnableSchema>;
 export type CustomModelInput = z.infer<typeof customModelSchema>;
 export type UserPreferencesInput = z.infer<typeof userPreferencesSchema>;
+export type ThemeConfigInput = z.infer<typeof themeConfigSchema>;
 export type ShareInput = z.infer<typeof shareSchema>;
 export type ImageAttachmentInput = z.infer<typeof imageAttachmentSchema>;
 export type WorkflowStreamInput = z.infer<typeof workflowStreamSchema>;

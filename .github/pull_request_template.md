@@ -35,6 +35,7 @@ Closes #
 - [ ] `packages/i18n`
 - [ ] `packages/model-depot`
 - [ ] `packages/storage`
+- [ ] `packages/theme`
 - [ ] `packages/ui`
 - [ ] `packages/video-runtime`
 

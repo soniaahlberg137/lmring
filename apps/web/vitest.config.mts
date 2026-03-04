@@ -9,6 +9,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'framer-motion': path.resolve(__dirname, 'src/__mocks__/framer-motion.ts'),
+      '@lmring/theme': path.resolve(__dirname, 'src/__mocks__/@lmring/theme.ts'),
       '@lmring/ui': path.resolve(__dirname, 'src/__mocks__/@lmring/ui.tsx'),
     },
   },

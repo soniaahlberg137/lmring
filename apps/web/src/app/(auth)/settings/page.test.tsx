@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+﻿import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type React from 'react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -12,9 +12,10 @@ function createWrapper() {
   };
 }
 
-const { setThemeMock, setLanguageMock } = vi.hoisted(() => ({
+const { setThemeMock, setLanguageMock, setModeMock } = vi.hoisted(() => ({
   setThemeMock: vi.fn(),
   setLanguageMock: vi.fn(),
+  setModeMock: vi.fn(),
 }));
 
 let capturedProviderLayoutProps: {
@@ -28,6 +29,22 @@ let capturedProviderLayoutProps: {
 
 vi.mock('next-themes', () => ({
   useTheme: () => ({ theme: 'system', setTheme: setThemeMock }),
+}));
+
+vi.mock('@/components/theme-customizer', () => ({
+  ThemeCustomizer: () => (
+    <div data-testid="theme-customizer">
+      <button type="button" onClick={() => setModeMock('light')}>
+        Settings.theme_mode_light
+      </button>
+      <button type="button" onClick={() => setModeMock('dark')}>
+        Settings.theme_mode_dark
+      </button>
+      <button type="button" onClick={() => setModeMock('system')}>
+        Settings.theme_mode_system
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('@lmring/i18n', () => ({
@@ -216,8 +233,8 @@ describe('SettingsPage', () => {
     fireEvent.click(screen.getByText('中文'));
     expect(setLanguageMock).toHaveBeenCalledWith('zh');
 
-    fireEvent.click(screen.getByText('Settings.general_theme_light'));
-    expect(setThemeMock).toHaveBeenCalledWith('light');
+    fireEvent.click(screen.getByText('Settings.theme_mode_light'));
+    expect(setModeMock).toHaveBeenCalledWith('light');
   });
 
   it('switches between main tabs', () => {
@@ -271,15 +288,15 @@ describe('SettingsPage', () => {
   it('shows all theme options', () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
-    expect(screen.getByText('Settings.general_theme_light')).toBeInTheDocument();
-    expect(screen.getByText('Settings.general_theme_dark')).toBeInTheDocument();
-    expect(screen.getByText('Settings.general_theme_auto')).toBeInTheDocument();
+    expect(screen.getByText('Settings.theme_mode_light')).toBeInTheDocument();
+    expect(screen.getByText('Settings.theme_mode_dark')).toBeInTheDocument();
+    expect(screen.getByText('Settings.theme_mode_system')).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('Settings.general_theme_dark'));
-    expect(setThemeMock).toHaveBeenCalledWith('dark');
+    fireEvent.click(screen.getByText('Settings.theme_mode_dark'));
+    expect(setModeMock).toHaveBeenCalledWith('dark');
 
-    fireEvent.click(screen.getByText('Settings.general_theme_auto'));
-    expect(setThemeMock).toHaveBeenCalledWith('system');
+    fireEvent.click(screen.getByText('Settings.theme_mode_system'));
+    expect(setModeMock).toHaveBeenCalledWith('system');
   });
 
   it('renders about tab with telemetry toggle', () => {
