@@ -6,7 +6,7 @@ import { Resend } from 'resend';
 import type { AuthLogger } from './logger';
 import { authLogger as defaultLogger } from './logger';
 
-export type OTPType = 'sign-in' | 'email-verification' | 'forget-password';
+export type OTPType = 'sign-in' | 'email-verification' | 'forget-password' | 'change-email';
 
 interface EmailConfig {
   resendApiKey: string;
@@ -30,6 +30,8 @@ export function createEmailService(config: EmailConfig, logger: AuthLogger = def
         return 'Verify Your LMRing Email';
       case 'forget-password':
         return 'Reset Your LMRing Password';
+      case 'change-email':
+        return 'Verify Your New LMRing Email';
       default:
         return 'Your LMRing Verification Code';
     }
@@ -44,6 +46,7 @@ export function createEmailService(config: EmailConfig, logger: AuthLogger = def
       'sign-in': `You're signing in to your LMRing account.\n\n${baseText}`,
       'email-verification': `Please verify your email address to complete your LMRing account setup.\n\n${baseText}`,
       'forget-password': `You requested to reset your LMRing password.\n\n${baseText}`,
+      'change-email': `You requested to change your LMRing email address.\n\n${baseText}`,
     };
 
     const text = typeSpecificText[type] || baseText;
@@ -75,14 +78,16 @@ export function createEmailService(config: EmailConfig, logger: AuthLogger = def
           <tr>
             <td style="padding: 24px 32px 32px 32px;">
               <h2 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #1E293B;">
-                ${type === 'sign-in' ? 'Sign-in Verification' : type === 'email-verification' ? 'Email Verification' : 'Password Reset'}
+                ${type === 'sign-in' ? 'Sign-in Verification' : type === 'email-verification' ? 'Email Verification' : type === 'change-email' ? 'Email Change Verification' : 'Password Reset'}
               </h2>
               <p style="margin: 0 0 24px 0; font-size: 15px; line-height: 1.6; color: #64748B;">
                 ${type === 'sign-in'
                   ? "You're signing in to your LMRing account."
                   : type === 'email-verification'
                     ? 'Please verify your email address to complete your account setup.'
-                    : 'You requested to reset your password.'}
+                    : type === 'change-email'
+                      ? 'Please verify your new email address.'
+                      : 'You requested to reset your password.'}
               </p>
               <div style="background-color: #F1F5F9; border-radius: 8px; padding: 20px; text-align: center; margin-bottom: 24px;">
                 <p style="margin: 0 0 6px 0; font-size: 13px; color: #64748B;">Your verification code</p>

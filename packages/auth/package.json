@@ -27,10 +27,11 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@better-auth/drizzle-adapter": "^1.5.3",
     "@lmring/database": "workspace:*",
-    "better-auth": "^1.4.19",
+    "better-auth": "^1.5.3",
     "drizzle-orm": "^0.45.1",
-    "resend": "^6.9.2"
+    "resend": "^6.9.3"
   },
   "peerDependencies": {
     "react": "^19.2.4"
