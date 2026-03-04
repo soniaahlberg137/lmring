@@ -13,7 +13,7 @@ vi.mock('better-auth/api', () => ({
   createAuthMiddleware: vi.fn((handler) => handler),
 }));
 
-vi.mock('better-auth/adapters/drizzle', () => ({
+vi.mock('@better-auth/drizzle-adapter', () => ({
   drizzleAdapter: vi.fn(() => ({})),
 }));
 
@@ -28,7 +28,7 @@ vi.mock('@lmring/database', () => ({
 
 import { createAuth } from './server';
 import { betterAuth } from 'better-auth';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 
 describe('server', () => {
   const validSecret = 'a'.repeat(32);

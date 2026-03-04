@@ -4,7 +4,7 @@
 
 import { betterAuth, generateId } from 'better-auth';
 import { createAuthMiddleware } from 'better-auth/api';
-import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 import { genericOAuth } from 'better-auth/plugins';
 import { emailOTP } from 'better-auth/plugins';
 import {
