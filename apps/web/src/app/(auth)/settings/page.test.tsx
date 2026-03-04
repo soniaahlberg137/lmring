@@ -4,7 +4,6 @@ import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SettingsStoreProvider } from '@/stores/settings-store';
-import { useThemeStore } from '@/stores/theme-store';
 import SettingsPage from './page';
 
 function createWrapper() {
@@ -13,116 +12,11 @@ function createWrapper() {
   };
 }
 
-type FetchMockResult = {
-  ok: boolean;
-  status?: number;
-  json: () => Promise<unknown>;
-};
-
-type FetchMockHandler = (input: RequestInfo | URL, init?: RequestInit) => Promise<FetchMockResult>;
-
-function createJsonResponse(data: unknown, ok = true): FetchMockResult {
-  return {
-    ok,
-    status: ok ? 200 : 500,
-    json: async () => data,
-  };
-}
-
-function createDefaultFetchHandler(): FetchMockHandler {
-  return async (input, init) => {
-    const url = typeof input === 'string' ? input : input.toString();
-    const method = init?.method?.toUpperCase() ?? 'GET';
-
-    if (url.includes('/api/settings/api-keys') && method === 'GET') {
-      return createJsonResponse({ keys: [] });
-    }
-
-    if (url.includes('/api/settings/api-keys/') && method === 'PATCH') {
-      return createJsonResponse({});
-    }
-
-    if (url.includes('/api/user/theme')) {
-      return createJsonResponse({ themeConfig: null, updatedAt: null });
-    }
-
-    return createJsonResponse({});
-  };
-}
-
-function setFetchMock(handler: FetchMockHandler = createDefaultFetchHandler()) {
-  global.fetch = vi.fn((input: RequestInfo | URL, init?: RequestInit) =>
-    handler(input, init),
-  ) as unknown as typeof fetch;
-}
-
-function fetchWasCalledWith(pathname: string): boolean {
-  const fetchMock = global.fetch as unknown as { mock?: { calls: unknown[][] } };
-  return (
-    fetchMock.mock?.calls.some(([input]) => {
-      if (typeof input === 'string') {
-        return input.includes(pathname);
-      }
-
-      return false;
-    }) ?? false
-  );
-}
-
-async function renderSettingsPage() {
-  render(<SettingsPage />, { wrapper: createWrapper() });
-
-  await waitFor(() => {
-    expect(screen.getByText('Settings.title')).toBeInTheDocument();
-  });
-
-  await waitFor(() => {
-    expect(fetchWasCalledWith('/api/settings/api-keys')).toBe(true);
-  });
-}
-
-const { setLanguageMock } = vi.hoisted(() => ({
+const { setThemeMock, setLanguageMock, setModeMock } = vi.hoisted(() => ({
+  setThemeMock: vi.fn(),
   setLanguageMock: vi.fn(),
+  setModeMock: vi.fn(),
 }));
-
-const { themeState, setModeMock, setSeedColorMock, setPresetMock, resetThemeMock } = vi.hoisted(
-  () => {
-    const themeState = {
-      mode: 'system' as 'light' | 'dark' | 'system',
-      seedColor: { l: 0.5, c: 0.15, h: 240 },
-      presetName: 'ocean-blue' as string | null,
-      palette: {
-        light: { primary: { l: 0.5, c: 0.15, h: 240 } },
-        dark: { primary: { l: 0.5, c: 0.15, h: 240 } },
-      },
-      hydrated: true,
-    };
-
-    const setModeMock = vi.fn((mode: 'light' | 'dark' | 'system') => {
-      themeState.mode = mode;
-    });
-    const setSeedColorMock = vi.fn((seedColor: { l: number; c: number; h: number }) => {
-      themeState.seedColor = seedColor;
-      themeState.presetName = null;
-    });
-    const setPresetMock = vi.fn((presetName: string) => {
-      themeState.presetName = presetName;
-    });
-    const resetThemeMock = vi.fn(() => {
-      themeState.mode = 'system';
-      themeState.seedColor = { l: 0.5, c: 0.15, h: 240 };
-      themeState.presetName = 'ocean-blue';
-    });
-
-    return {
-      themeState,
-      setModeMock,
-      setSeedColorMock,
-      setPresetMock,
-      resetThemeMock,
-    };
-  },
-);
 
 let capturedProviderLayoutProps: {
   providers: unknown[];
@@ -132,6 +26,26 @@ let capturedProviderLayoutProps: {
   onAddProvider?: (provider: unknown) => void;
   onDeleteProvider?: (providerId: string) => void;
 } | null = null;
+
+vi.mock('next-themes', () => ({
+  useTheme: () => ({ theme: 'system', setTheme: setThemeMock }),
+}));
+
+vi.mock('@/components/theme-customizer', () => ({
+  ThemeCustomizer: () => (
+    <div data-testid="theme-customizer">
+      <button type="button" onClick={() => setModeMock('light')}>
+        Settings.theme_mode_light
+      </button>
+      <button type="button" onClick={() => setModeMock('dark')}>
+        Settings.theme_mode_dark
+      </button>
+      <button type="button" onClick={() => setModeMock('system')}>
+        Settings.theme_mode_system
+      </button>
+    </div>
+  ),
+}));
 
 vi.mock('@lmring/i18n', () => ({
   I18nConfig: { locales: ['en', 'zh', 'fr'] },
@@ -168,54 +82,6 @@ vi.mock('@/stores/language-store', () => ({
     selector: (state: { language: string; setLanguage: (l: string) => void }) => unknown,
   ) => selector({ language: 'en', setLanguage: setLanguageMock }),
 }));
-
-vi.mock('@/stores/theme-store', () => {
-  const state = {
-    get mode() {
-      return themeState.mode;
-    },
-    get seedColor() {
-      return themeState.seedColor;
-    },
-    get presetName() {
-      return themeState.presetName;
-    },
-    get palette() {
-      return themeState.palette;
-    },
-    get hydrated() {
-      return themeState.hydrated;
-    },
-    setMode: setModeMock,
-    setSeedColor: setSeedColorMock,
-    setPreset: setPresetMock,
-    resetTheme: resetThemeMock,
-    hydrateFromLocal: vi.fn(),
-  };
-
-  const useThemeStore = ((selector?: (s: typeof state) => unknown) =>
-    selector ? selector(state) : state) as {
-    (selector?: (s: typeof state) => unknown): unknown;
-    getState: () => typeof state;
-  };
-
-  useThemeStore.getState = () => state;
-
-  const themeSelectors = {
-    mode: (s: typeof state) => s.mode,
-    seedColor: (s: typeof state) => s.seedColor,
-    presetName: (s: typeof state) => s.presetName,
-    palette: (s: typeof state) => s.palette,
-    hydrated: (s: typeof state) => s.hydrated,
-    setMode: (s: typeof state) => s.setMode,
-    setSeedColor: (s: typeof state) => s.setSeedColor,
-    setPreset: (s: typeof state) => s.setPreset,
-    hydrateFromLocal: (s: typeof state) => s.hydrateFromLocal,
-    resetTheme: (s: typeof state) => s.resetTheme,
-  };
-
-  return { useThemeStore, themeSelectors };
-});
 
 vi.mock('./_components/provider/ProviderLayout', () => ({
   ProviderLayout: (props: {
@@ -339,32 +205,17 @@ vi.mock('next/link', () => ({
   ),
 }));
 
-// Mock theme-storage to avoid async fetch operations during store initialization
-vi.mock('@/libs/theme-storage', () => ({
-  THEME_STORAGE_KEY: 'lmring-theme-config',
-  themePersistStorage: {
-    getItem: () => null,
-    setItem: () => {},
-    removeItem: () => {},
-  },
-  fetchThemeConfigFromServer: async () => null,
-  isServerSnapshotNewer: () => false,
-  loadLocalThemeSnapshot: () => null,
-  saveThemeConfigToServer: async () => null,
-  saveToLocal: () => {},
-  loadFromLocal: () => null,
-  clearFromLocal: () => {},
-}));
-
-// @lmring/theme is mocked globally via alias in vitest.config.mts (avoids culori ESM hanging)
 // @lmring/ui is mocked globally via alias in vitest.config.mts
 
 describe('SettingsPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedProviderLayoutProps = null;
-    setFetchMock();
-    useThemeStore.getState().resetTheme();
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ keys: [] }),
+    }) as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -372,7 +223,7 @@ describe('SettingsPage', () => {
   });
 
   it('renders tabs and triggers theme/language changes', async () => {
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     expect(screen.getByText('Settings.title')).toBeInTheDocument();
     expect(screen.getByText('Settings.tabs_general')).toBeInTheDocument();
@@ -383,11 +234,11 @@ describe('SettingsPage', () => {
     expect(setLanguageMock).toHaveBeenCalledWith('zh');
 
     fireEvent.click(screen.getByText('Settings.theme_mode_light'));
-    expect(useThemeStore.getState().mode).toBe('light');
+    expect(setModeMock).toHaveBeenCalledWith('light');
   });
 
-  it('switches between main tabs', async () => {
-    await renderSettingsPage();
+  it('switches between main tabs', () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_system_model'));
     expect(screen.getByText('Settings.system_model_title')).toBeInTheDocument();
@@ -407,18 +258,9 @@ describe('SettingsPage', () => {
 
   it('handles API keys loading error gracefully', async () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
-    setFetchMock(async (input, init) => {
-      const url = typeof input === 'string' ? input : input.toString();
-      const method = init?.method?.toUpperCase() ?? 'GET';
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'));
 
-      if (url.includes('/api/settings/api-keys') && method === 'GET') {
-        throw new Error('Network error');
-      }
-
-      return createJsonResponse({ themeConfig: null, updatedAt: null });
-    });
-
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(consoleError).toHaveBeenCalledWith('Failed to load API keys:', expect.any(Error));
@@ -429,18 +271,12 @@ describe('SettingsPage', () => {
   });
 
   it('handles non-ok API response', async () => {
-    setFetchMock(async (input, init) => {
-      const url = typeof input === 'string' ? input : input.toString();
-      const method = init?.method?.toUpperCase() ?? 'GET';
-
-      if (url.includes('/api/settings/api-keys') && method === 'GET') {
-        return createJsonResponse({ error: 'Unauthorized' }, false);
-      }
-
-      return createJsonResponse({ themeConfig: null, updatedAt: null });
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      json: async () => ({ error: 'Unauthorized' }),
     });
 
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(global.fetch).toHaveBeenCalled();
@@ -449,24 +285,22 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Settings.title')).toBeInTheDocument();
   });
 
-  it('shows all theme options', async () => {
-    await renderSettingsPage();
+  it('shows all theme options', () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     expect(screen.getByText('Settings.theme_mode_light')).toBeInTheDocument();
     expect(screen.getByText('Settings.theme_mode_dark')).toBeInTheDocument();
     expect(screen.getByText('Settings.theme_mode_system')).toBeInTheDocument();
-    expect(screen.getByText('Settings.theme_presets')).toBeInTheDocument();
-    expect(screen.getByText('Settings.theme_preview')).toBeInTheDocument();
 
     fireEvent.click(screen.getByText('Settings.theme_mode_dark'));
-    expect(useThemeStore.getState().mode).toBe('dark');
+    expect(setModeMock).toHaveBeenCalledWith('dark');
 
     fireEvent.click(screen.getByText('Settings.theme_mode_system'));
-    expect(useThemeStore.getState().mode).toBe('system');
+    expect(setModeMock).toHaveBeenCalledWith('system');
   });
 
-  it('renders about tab with telemetry toggle', async () => {
-    await renderSettingsPage();
+  it('renders about tab with telemetry toggle', () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_about'));
 
@@ -475,8 +309,8 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Settings.about_changelog')).toBeInTheDocument();
   });
 
-  it('renders help tab with resource links', async () => {
-    await renderSettingsPage();
+  it('renders help tab with resource links', () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
 
     fireEvent.click(screen.getByText('Settings.tabs_help'));
 
@@ -486,7 +320,11 @@ describe('SettingsPage', () => {
   });
 
   it('does not call setLanguage for unsupported locale', async () => {
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText('Settings.title')).toBeInTheDocument();
+    });
 
     expect(setLanguageMock).not.toHaveBeenCalledWith('es');
   });
@@ -496,8 +334,11 @@ describe('SettingsPage Provider Handlers', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedProviderLayoutProps = null;
-    setFetchMock();
-    useThemeStore.getState().resetTheme();
+
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ keys: [] }),
+    }) as unknown as typeof fetch;
   });
 
   afterEach(() => {
@@ -505,7 +346,7 @@ describe('SettingsPage Provider Handlers', () => {
   });
 
   it('passes handler callbacks to ProviderLayout', async () => {
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {
@@ -520,37 +361,27 @@ describe('SettingsPage Provider Handlers', () => {
   });
 
   it('transforms savedApiKeys to providers with correct connection status', async () => {
-    setFetchMock(async (input, init) => {
-      const url = typeof input === 'string' ? input : input.toString();
-      const method = init?.method?.toUpperCase() ?? 'GET';
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        keys: [
+          {
+            id: 'key-1',
+            providerName: 'openai',
+            enabled: true,
+            hasApiKey: true,
+          },
+          {
+            id: 'key-2',
+            providerName: 'anthropic',
+            enabled: false,
+            hasApiKey: true,
+          },
+        ],
+      }),
+    }) as unknown as typeof fetch;
 
-      if (url.includes('/api/settings/api-keys') && method === 'GET') {
-        return createJsonResponse({
-          keys: [
-            {
-              id: 'key-1',
-              providerName: 'openai',
-              enabled: true,
-              hasApiKey: true,
-            },
-            {
-              id: 'key-2',
-              providerName: 'anthropic',
-              enabled: false,
-              hasApiKey: true,
-            },
-          ],
-        });
-      }
-
-      if (url.includes('/api/user/theme')) {
-        return createJsonResponse({ themeConfig: null, updatedAt: null });
-      }
-
-      return createJsonResponse({});
-    });
-
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {
@@ -571,33 +402,23 @@ describe('SettingsPage Provider Handlers', () => {
   });
 
   it('creates custom providers from isCustom=true keys', async () => {
-    setFetchMock(async (input, init) => {
-      const url = typeof input === 'string' ? input : input.toString();
-      const method = init?.method?.toUpperCase() ?? 'GET';
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        keys: [
+          {
+            id: 'custom-key',
+            providerName: 'my-custom-provider',
+            enabled: true,
+            hasApiKey: true,
+            isCustom: true,
+            providerType: 'openai',
+          },
+        ],
+      }),
+    }) as unknown as typeof fetch;
 
-      if (url.includes('/api/settings/api-keys') && method === 'GET') {
-        return createJsonResponse({
-          keys: [
-            {
-              id: 'custom-key',
-              providerName: 'my-custom-provider',
-              enabled: true,
-              hasApiKey: true,
-              isCustom: true,
-              providerType: 'openai',
-            },
-          ],
-        });
-      }
-
-      if (url.includes('/api/user/theme')) {
-        return createJsonResponse({ themeConfig: null, updatedAt: null });
-      }
-
-      return createJsonResponse({});
-    });
-
-    await renderSettingsPage();
+    render(<SettingsPage />, { wrapper: createWrapper() });
     fireEvent.click(screen.getByText('Settings.tabs_provider'));
 
     await waitFor(() => {

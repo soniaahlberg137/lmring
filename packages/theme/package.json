@@ -20,6 +20,7 @@
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
+    "@vitest/coverage-v8": "^4.0.18",
     "fast-check": "^4.1.1",
     "tsdown": "0.20.3",
     "typescript": "^5.9.3",
