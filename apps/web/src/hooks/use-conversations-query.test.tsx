@@ -146,7 +146,7 @@ describe('useRecentConversations', () => {
 
     expect(result.current.data).toEqual([mockConversation]);
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      '/api/conversations?limit=10&offset=0&withFirstMessage=true',
+      '/api/conversations?limit=10&offset=0&withFirstMessage=true&excludeCleared=true',
     );
   });
 
@@ -165,7 +165,7 @@ describe('useRecentConversations', () => {
     });
 
     expect(globalThis.fetch).toHaveBeenCalledWith(
-      '/api/conversations?limit=5&offset=0&withFirstMessage=true',
+      '/api/conversations?limit=5&offset=0&withFirstMessage=true&excludeCleared=true',
     );
   });
 
