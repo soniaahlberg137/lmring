@@ -124,6 +124,31 @@ vi.mock('@lmring/database/schema', () => ({
     providerName: 'providerName',
     outcome: 'outcome',
   },
+  webdevSessions: {
+    id: 'id',
+    conversationId: 'conversationId',
+    prompt: 'prompt',
+    status: 'status',
+    createdAt: 'createdAt',
+  },
+  webdevIterations: {
+    id: 'id',
+    sessionId: 'sessionId',
+    version: 'version',
+    prompt: 'prompt',
+    createdAt: 'createdAt',
+  },
+  webdevResponses: {
+    id: 'id',
+    sessionId: 'sessionId',
+    modelId: 'modelId',
+    files: 'files',
+    status: 'status',
+    displayPosition: 'displayPosition',
+    snapshotId: 'snapshotId',
+    snapshotExpiresAt: 'snapshotExpiresAt',
+    content: 'content',
+  },
 }));
 
 vi.mock('nanoid', () => ({
@@ -350,8 +375,12 @@ describe('Share and Shared Results API', () => {
       mockDbInstance.from.mockReturnValue(mockDbInstance);
       mockDbInstance.leftJoin.mockReturnValue(mockDbInstance);
       mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
-      mockDbInstance.orderBy.mockResolvedValueOnce(mockMessages).mockResolvedValueOnce([]);
+      mockDbInstance.orderBy
+        .mockResolvedValueOnce(mockMessages) // messages query
+        .mockReturnValueOnce(mockDbInstance) // webdev session query (chainable → limit)
+        .mockResolvedValueOnce([]); // model responses query
       mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
@@ -359,7 +388,8 @@ describe('Share and Shared Results API', () => {
         .mockResolvedValueOnce([]);
       mockDbInstance.limit
         .mockResolvedValueOnce([mockSharedResult])
-        .mockResolvedValueOnce([mockConversationWithUser]);
+        .mockResolvedValueOnce([mockConversationWithUser])
+        .mockResolvedValueOnce([]); // webdev session query
 
       const request = createMockRequest('GET', 'http://localhost:3000/api/shared/test-token-123');
 
@@ -383,8 +413,12 @@ describe('Share and Shared Results API', () => {
       mockDbInstance.from.mockReturnValue(mockDbInstance);
       mockDbInstance.leftJoin.mockReturnValue(mockDbInstance);
       mockDbInstance.innerJoin.mockReturnValue(mockDbInstance);
-      mockDbInstance.orderBy.mockResolvedValueOnce(mockMessages).mockResolvedValueOnce([]);
+      mockDbInstance.orderBy
+        .mockResolvedValueOnce(mockMessages) // messages query
+        .mockReturnValueOnce(mockDbInstance) // webdev session query (chainable → limit)
+        .mockResolvedValueOnce([]); // model responses query
       mockDbInstance.where
+        .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
         .mockReturnValueOnce(mockDbInstance)
@@ -392,7 +426,8 @@ describe('Share and Shared Results API', () => {
         .mockResolvedValueOnce([]);
       mockDbInstance.limit
         .mockResolvedValueOnce([mockSharedResult])
-        .mockResolvedValueOnce([mockConversationWithUser]);
+        .mockResolvedValueOnce([mockConversationWithUser])
+        .mockResolvedValueOnce([]); // webdev session query
 
       const request = createMockRequest('GET', 'http://localhost:3000/api/shared/test-token-123');
 

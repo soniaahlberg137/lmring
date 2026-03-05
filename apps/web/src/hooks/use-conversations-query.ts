@@ -8,6 +8,7 @@ interface FetchConversationsParams {
   withFirstMessage?: boolean;
   withModels?: boolean;
   withVotes?: boolean;
+  excludeCleared?: boolean;
 }
 
 export async function fetchConversations(
@@ -19,6 +20,7 @@ export async function fetchConversations(
     withFirstMessage = true,
     withModels = false,
     withVotes = false,
+    excludeCleared = false,
   } = params;
 
   const searchParams = new URLSearchParams({
@@ -32,6 +34,9 @@ export async function fetchConversations(
   }
   if (withVotes) {
     searchParams.set('withVotes', 'true');
+  }
+  if (excludeCleared) {
+    searchParams.set('excludeCleared', 'true');
   }
 
   const response = await fetch(`/api/conversations?${searchParams.toString()}`);
@@ -65,6 +70,7 @@ export function useRecentConversations(limit = 10) {
         withFirstMessage: true,
         withModels: false,
         withVotes: false,
+        excludeCleared: true,
       }),
     staleTime: 2 * 60 * 1000, // 2 minutes - recent conversations may change more often
     gcTime: 5 * 60 * 1000, // 5 minutes garbage collection
@@ -108,6 +114,7 @@ export function usePrefetchConversations() {
             withFirstMessage: true,
             withModels: false,
             withVotes: false,
+            excludeCleared: true,
           }),
         staleTime: 2 * 60 * 1000,
       });

@@ -101,3 +101,14 @@ export const webdevFollowUpSchema = z.object({
 });
 
 export type WebdevFollowUpInput = z.infer<typeof webdevFollowUpSchema>;
+
+/**
+ * POST /api/webdev/sandbox/shared — Create sandbox for a shared session (no auth)
+ */
+export const webdevSharedSandboxSchema = z.object({
+  shareToken: z.string().min(1, 'Share token is required'),
+  responseId: z.uuid('Invalid response ID'),
+  snapshotId: z.string().trim().max(200, 'Snapshot ID too long').optional(),
+});
+
+export type WebdevSharedSandboxInput = z.infer<typeof webdevSharedSandboxSchema>;

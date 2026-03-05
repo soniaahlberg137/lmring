@@ -1,9 +1,9 @@
-import { Input, ProviderSidebarSkeleton, Separator } from '@lmring/ui';
-import { BoxIcon, SearchIcon } from 'lucide-react';
+import { Input } from '@lmring/ui';
+import { SearchIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
 import { AddProviderDialog } from './AddProviderDialog';
-import { ProviderDetail } from './ProviderDetail';
+import { ProviderDetailSheet } from './ProviderDetailSheet';
 import { ProviderGrid } from './ProviderGrid';
 import type { Provider } from './types';
 
@@ -27,12 +27,13 @@ export function ProviderLayout({
   const t = useTranslations();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
 
   const filteredProviders = providers.filter((p) =>
     p.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const selectedProvider = selectedId ? providers.find((p) => p.id === selectedId) : null;
+  const selectedProvider = selectedId ? (providers.find((p) => p.id === selectedId) ?? null) : null;
 
   const handleAddProvider = (provider: Provider) => {
     onAddProvider(provider);
@@ -45,92 +46,51 @@ export function ProviderLayout({
   };
 
   return (
-    <div className="h-full flex items-stretch">
-      <div className="w-64 flex-none border-r bg-muted/40 flex flex-col">
-        <div className="p-4 space-y-4">
+    <div className="h-full flex flex-col overflow-hidden">
+      <div className="flex items-center justify-between px-8 pt-8 pb-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">{t('Settings.tabs_provider')}</h2>
+          <p className="text-sm text-muted-foreground mt-1">{t('Settings.description')}</p>
+        </div>
+        <div className="flex items-center gap-3">
           <div className="relative">
             <SearchIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               id="provider-search"
               name="provider-search"
               placeholder={t('Provider.search_placeholder')}
-              className="pl-8 bg-background"
+              className="pl-8 w-64 bg-background"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               autoComplete="off"
             />
           </div>
-        </div>
-        <div className="flex-1 overflow-y-auto px-2 pb-4">
-          <div className="space-y-0.5">
-            <button
-              type="button"
-              onClick={() => setSelectedId(null)}
-              className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors ${
-                selectedId === null
-                  ? 'bg-secondary text-secondary-foreground font-medium'
-                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-              }`}
-            >
-              <div className="h-8 w-8 rounded-md flex items-center justify-center bg-background border">
-                <BoxIcon className="h-4 w-4" />
-              </div>
-              <span>{t('Provider.all_providers')}</span>
-            </button>
-
-            <Separator className="my-2" />
-
-            {isLoading ? (
-              <ProviderSidebarSkeleton count={8} />
-            ) : (
-              filteredProviders.map((provider) => {
-                const Icon = provider.Icon;
-                return (
-                  <button
-                    key={provider.id}
-                    type="button"
-                    onClick={() => setSelectedId(provider.id)}
-                    className={`w-full flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-colors ${
-                      selectedId === provider.id
-                        ? 'bg-secondary text-secondary-foreground font-medium'
-                        : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-                    }`}
-                  >
-                    <div className="h-8 w-8 rounded-md flex items-center justify-center bg-background shrink-0">
-                      {Icon ? <Icon size={24} className="" /> : <span>{provider.name[0]}</span>}
-                    </div>
-                    <span className="truncate text-left flex-1">{provider.name}</span>
-                    {provider.connected && (
-                      <div className="h-2 w-2 rounded-full bg-green-500 shrink-0" />
-                    )}
-                  </button>
-                );
-              })
-            )}
-          </div>
-        </div>
-        <div className="p-4 bg-background/50 backdrop-blur-sm">
-          <AddProviderDialog onAdd={handleAddProvider} />
+          <AddProviderDialog
+            onAdd={handleAddProvider}
+            open={addDialogOpen}
+            onOpenChange={setAddDialogOpen}
+          />
         </div>
       </div>
 
-      <div className="flex-1 h-full overflow-y-auto bg-background">
-        {selectedProvider ? (
-          <ProviderDetail
-            provider={selectedProvider}
-            onToggle={onToggleProvider}
-            onSave={onSaveProvider}
-            onDelete={handleDeleteProvider}
-          />
-        ) : (
-          <ProviderGrid
-            providers={filteredProviders}
-            isLoading={isLoading}
-            onToggle={onToggleProvider}
-            onSelect={setSelectedId}
-          />
-        )}
+      <div className="flex-1 overflow-y-auto px-8 pb-8">
+        <ProviderGrid
+          providers={filteredProviders}
+          isLoading={isLoading}
+          onToggle={onToggleProvider}
+          onSelect={setSelectedId}
+          onAddCustom={() => setAddDialogOpen(true)}
+        />
       </div>
+
+      <ProviderDetailSheet
+        provider={selectedProvider}
+        open={!!selectedId}
+        onOpenChange={(open) => !open && setSelectedId(null)}
+        onToggle={onToggleProvider}
+        onSave={onSaveProvider}
+        onDelete={handleDeleteProvider}
+      />
     </div>
   );
 }

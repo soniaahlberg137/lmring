@@ -20,6 +20,7 @@ vi.mock('@lmring/database', () => ({
   db: mockDbInstance,
   eq: vi.fn(),
   asc: vi.fn(),
+  desc: vi.fn(),
   inArray: vi.fn(),
 }));
 
@@ -68,6 +69,31 @@ vi.mock('@lmring/database/schema', () => ({
     modelName: 'modelName',
     providerName: 'providerName',
     outcome: 'outcome',
+  },
+  webdevSessions: {
+    id: 'id',
+    conversationId: 'conversationId',
+    prompt: 'prompt',
+    status: 'status',
+    createdAt: 'createdAt',
+  },
+  webdevIterations: {
+    id: 'id',
+    sessionId: 'sessionId',
+    version: 'version',
+    prompt: 'prompt',
+    createdAt: 'createdAt',
+  },
+  webdevResponses: {
+    id: 'id',
+    sessionId: 'sessionId',
+    modelId: 'modelId',
+    files: 'files',
+    status: 'status',
+    displayPosition: 'displayPosition',
+    snapshotId: 'snapshotId',
+    snapshotExpiresAt: 'snapshotExpiresAt',
+    content: 'content',
   },
 }));
 
@@ -187,6 +213,13 @@ describe('Shared API', () => {
       mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.orderBy.mockReturnValueOnce(Promise.resolve([mockMessage]));
 
+      // webdev session query → empty
+      mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.limit.mockResolvedValueOnce([]);
+
       mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
@@ -242,6 +275,13 @@ describe('Shared API', () => {
       mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.orderBy.mockReturnValueOnce(Promise.resolve(mockMessages));
 
+      // webdev session query → empty
+      mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.limit.mockResolvedValueOnce([]);
+
       mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.innerJoin.mockReturnValueOnce(mockDbInstance);
@@ -289,6 +329,13 @@ describe('Shared API', () => {
       mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.orderBy.mockReturnValueOnce(Promise.resolve([mockMessage]));
+
+      // webdev session query → empty
+      mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.orderBy.mockReturnValueOnce(mockDbInstance);
+      mockDbInstance.limit.mockResolvedValueOnce([]);
 
       mockDbInstance.select.mockReturnValueOnce(mockDbInstance);
       mockDbInstance.from.mockReturnValueOnce(mockDbInstance);
