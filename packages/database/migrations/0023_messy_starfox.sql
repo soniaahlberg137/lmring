@@ -1,0 +1,1 @@
+ALTER TABLE "user_preferences" ADD COLUMN "today_cleared_at" timestamp with time zone;

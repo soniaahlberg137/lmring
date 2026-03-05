@@ -1,10 +1,11 @@
-import { and, asc, db, desc, eq, inArray } from '@lmring/database';
+import { and, asc, db, desc, eq, gt, inArray } from '@lmring/database';
 import {
   comparisonVoteResults,
   comparisonVotes,
   conversations,
   messages,
   modelResponses,
+  userPreferences,
   webdevResponses,
   webdevSessions,
 } from '@lmring/database/schema';
@@ -45,11 +46,27 @@ export async function GET(request: Request) {
     const withFirstMessage = searchParams.get('withFirstMessage') === 'true';
     const withModels = searchParams.get('withModels') === 'true';
     const withVotes = searchParams.get('withVotes') === 'true';
+    const excludeCleared = searchParams.get('excludeCleared') === 'true';
+
+    // Build where conditions
+    const conditions = [eq(conversations.userId, userId)];
+
+    if (excludeCleared) {
+      const [prefs] = await db
+        .select({ todayClearedAt: userPreferences.todayClearedAt })
+        .from(userPreferences)
+        .where(eq(userPreferences.userId, userId))
+        .limit(1);
+
+      if (prefs?.todayClearedAt) {
+        conditions.push(gt(conversations.updatedAt, prefs.todayClearedAt));
+      }
+    }
 
     const userConversations = await db
       .select()
       .from(conversations)
-      .where(eq(conversations.userId, userId))
+      .where(and(...conditions))
       .orderBy(desc(conversations.updatedAt))
       .limit(limit)
       .offset(offset);
