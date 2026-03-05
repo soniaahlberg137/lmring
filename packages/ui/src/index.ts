@@ -111,3 +111,14 @@ export {
   ModelCardSkeleton,
 } from './components/skeletons';
 export { FloatingCard, type FloatingCardProps } from './components/floating-card';
+export {
+  Sheet,
+  SheetPortal,
+  SheetClose,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from './components/sheet';

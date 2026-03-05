@@ -24,11 +24,19 @@ import type { Provider } from './types';
 
 interface AddProviderDialogProps {
   onAdd: (provider: Provider) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
+export function AddProviderDialog({
+  onAdd,
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
+}: AddProviderDialogProps) {
   const t = useTranslations();
-  const [open, setOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const open = controlledOpen ?? internalOpen;
+  const setOpen = controlledOnOpenChange ?? setInternalOpen;
   const [name, setName] = useState('');
   const [providerType, setProviderType] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,12 +118,7 @@ export function AddProviderDialog({ onAdd }: AddProviderDialogProps) {
 
   return (
     <>
-      <Button
-        type="button"
-        variant="outline"
-        className="w-full gap-2"
-        onClick={() => setOpen(true)}
-      >
+      <Button type="button" variant="outline" className="gap-2" onClick={() => setOpen(true)}>
         <PlusIcon className="h-4 w-4" />
         <span>{t('Provider.add_provider')}</span>
       </Button>

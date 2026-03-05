@@ -12,6 +12,12 @@ const { createMockIcon } = vi.hoisted(() => ({
   },
 }));
 
+vi.mock('framer-motion', () => ({
+  motion: { div: ({ children, ...props }: any) => <div {...props}>{children}</div> },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
+  LayoutGroup: ({ children }: any) => <>{children}</>,
+}));
+
 vi.mock('@/hooks/use-translations', () => ({
   useTranslations: () => (key: string) => key,
 }));
@@ -25,6 +31,7 @@ vi.mock('@lobehub/icons', () => ({
 describe('ProviderGrid', () => {
   const mockOnToggle = vi.fn();
   const mockOnSelect = vi.fn();
+  const mockOnAddCustom = vi.fn();
 
   const MockIcon = createMockIcon('TestProvider');
 
@@ -53,13 +60,14 @@ describe('ProviderGrid', () => {
   beforeEach(() => {
     mockOnToggle.mockClear();
     mockOnSelect.mockClear();
+    mockOnAddCustom.mockClear();
   });
 
   afterEach(() => {
     cleanup();
   });
 
-  it('should render enabled section heading', async () => {
+  it('should render section headers', async () => {
     const { ProviderGrid } = await import('./ProviderGrid');
     render(
       <ProviderGrid
@@ -67,40 +75,12 @@ describe('ProviderGrid', () => {
         isLoading={false}
         onToggle={mockOnToggle}
         onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
       />,
     );
 
-    expect(screen.getByText('Provider.enabled')).toBeInTheDocument();
-  });
-
-  it('should render disabled section heading', async () => {
-    const { ProviderGrid } = await import('./ProviderGrid');
-    render(
-      <ProviderGrid
-        providers={providers}
-        isLoading={false}
-        onToggle={mockOnToggle}
-        onSelect={mockOnSelect}
-      />,
-    );
-
-    expect(screen.getByText('Provider.disabled')).toBeInTheDocument();
-  });
-
-  it('should show provider count badges', async () => {
-    const { ProviderGrid } = await import('./ProviderGrid');
-    render(
-      <ProviderGrid
-        providers={providers}
-        isLoading={false}
-        onToggle={mockOnToggle}
-        onSelect={mockOnSelect}
-      />,
-    );
-
-    // Should show count of providers (1 enabled, 1 disabled)
-    const counts = screen.getAllByText('1');
-    expect(counts).toHaveLength(2);
+    expect(screen.getByText('Provider.section_enabled')).toBeInTheDocument();
+    expect(screen.getByText('Provider.section_available')).toBeInTheDocument();
   });
 
   it('should show loading skeleton when isLoading is true', async () => {
@@ -111,28 +91,12 @@ describe('ProviderGrid', () => {
         isLoading={true}
         onToggle={mockOnToggle}
         onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
       />,
     );
 
-    // Should show skeleton elements
     const skeletons = screen.getAllByTestId('provider-skeleton');
     expect(skeletons.length).toBeGreaterThan(0);
-  });
-
-  it('should show dash in badge when loading', async () => {
-    const { ProviderGrid } = await import('./ProviderGrid');
-    render(
-      <ProviderGrid
-        providers={providers}
-        isLoading={true}
-        onToggle={mockOnToggle}
-        onSelect={mockOnSelect}
-      />,
-    );
-
-    // Should show '-' instead of count when loading
-    const dashes = screen.getAllByText('-');
-    expect(dashes.length).toBe(2); // One for each section
   });
 
   it('should render provider cards when not loading', async () => {
@@ -143,11 +107,47 @@ describe('ProviderGrid', () => {
         isLoading={false}
         onToggle={mockOnToggle}
         onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
       />,
     );
 
     expect(screen.getByText('OpenAI')).toBeInTheDocument();
     expect(screen.getByText('Anthropic')).toBeInTheDocument();
+  });
+
+  it('should render add custom provider card', async () => {
+    const { ProviderGrid } = await import('./ProviderGrid');
+    render(
+      <ProviderGrid
+        providers={providers}
+        isLoading={false}
+        onToggle={mockOnToggle}
+        onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
+      />,
+    );
+
+    expect(screen.getByText('Provider.add_custom_provider')).toBeInTheDocument();
+  });
+
+  it('should call onAddCustom when add custom card is clicked', async () => {
+    const { ProviderGrid } = await import('./ProviderGrid');
+    render(
+      <ProviderGrid
+        providers={providers}
+        isLoading={false}
+        onToggle={mockOnToggle}
+        onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
+      />,
+    );
+
+    const addCard = screen
+      .getByText('Provider.add_custom_provider')
+      .closest('[data-testid="card"]');
+    if (addCard) fireEvent.click(addCard);
+
+    expect(mockOnAddCustom).toHaveBeenCalled();
   });
 
   it('should call onSelect when a provider card is clicked', async () => {
@@ -158,10 +158,10 @@ describe('ProviderGrid', () => {
         isLoading={false}
         onToggle={mockOnToggle}
         onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
       />,
     );
 
-    // Click on the first card
     const cards = screen.getAllByTestId('card');
     if (cards[0]) fireEvent.click(cards[0]);
 
@@ -176,6 +176,7 @@ describe('ProviderGrid', () => {
         isLoading={false}
         onToggle={mockOnToggle}
         onSelect={mockOnSelect}
+        onAddCustom={mockOnAddCustom}
       />,
     );
 
@@ -183,28 +184,5 @@ describe('ProviderGrid', () => {
     if (switches[0]) fireEvent.click(switches[0]);
 
     expect(mockOnToggle).toHaveBeenCalledWith('openai');
-  });
-
-  it('should separate providers by type into correct sections', async () => {
-    const multipleProviders: Provider[] = [
-      { ...enabledProvider, id: 'p1', name: 'Provider1', type: 'enabled' },
-      { ...enabledProvider, id: 'p2', name: 'Provider2', type: 'enabled' },
-      { ...disabledProvider, id: 'p3', name: 'Provider3', type: 'disabled' },
-    ];
-
-    const { ProviderGrid } = await import('./ProviderGrid');
-    render(
-      <ProviderGrid
-        providers={multipleProviders}
-        isLoading={false}
-        onToggle={mockOnToggle}
-        onSelect={mockOnSelect}
-      />,
-    );
-
-    // Enabled count should be 2
-    expect(screen.getByText('2')).toBeInTheDocument();
-    // Disabled count should be 1
-    expect(screen.getByText('1')).toBeInTheDocument();
   });
 });
