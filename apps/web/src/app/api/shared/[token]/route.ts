@@ -1,4 +1,4 @@
-import { asc, db, eq, inArray } from '@lmring/database';
+import { asc, db, desc, eq, inArray } from '@lmring/database';
 import {
   comparisonVoteResults,
   comparisonVotes,
@@ -7,6 +7,9 @@ import {
   modelResponses,
   sharedResults,
   users,
+  webdevIterations,
+  webdevResponses,
+  webdevSessions,
 } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { logError } from '@/libs/error-logging';
@@ -76,6 +79,72 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
       return NextResponse.json({ error: 'Conversation not found' }, { status: 404 });
     }
 
+    const userData = {
+      name: conversationWithUser.userName,
+      avatarUrl: conversationWithUser.userAvatarUrl,
+    };
+
+    const conversationData = {
+      id: conversationWithUser.id,
+      title: conversationWithUser.title,
+      createdAt: conversationWithUser.createdAt,
+    };
+
+    // Check if this conversation has a webdev session
+    const [webdevSession] = await db
+      .select({
+        id: webdevSessions.id,
+        prompt: webdevSessions.prompt,
+        status: webdevSessions.status,
+      })
+      .from(webdevSessions)
+      .where(eq(webdevSessions.conversationId, shared.conversationId))
+      .orderBy(desc(webdevSessions.createdAt))
+      .limit(1);
+
+    if (webdevSession) {
+      // Fetch webdev responses and iterations in parallel
+      const [wdResponses, wdIterations] = await Promise.all([
+        db
+          .select({
+            id: webdevResponses.id,
+            modelId: webdevResponses.modelId,
+            files: webdevResponses.files,
+            status: webdevResponses.status,
+            displayPosition: webdevResponses.displayPosition,
+            snapshotId: webdevResponses.snapshotId,
+            snapshotExpiresAt: webdevResponses.snapshotExpiresAt,
+            content: webdevResponses.content,
+          })
+          .from(webdevResponses)
+          .where(eq(webdevResponses.sessionId, webdevSession.id))
+          .orderBy(asc(webdevResponses.displayPosition)),
+        db
+          .select({
+            id: webdevIterations.id,
+            version: webdevIterations.version,
+            prompt: webdevIterations.prompt,
+            createdAt: webdevIterations.createdAt,
+          })
+          .from(webdevIterations)
+          .where(eq(webdevIterations.sessionId, webdevSession.id))
+          .orderBy(asc(webdevIterations.version)),
+      ]);
+
+      return NextResponse.json(
+        {
+          type: 'webdev' as const,
+          conversation: conversationData,
+          user: userData,
+          session: webdevSession,
+          responses: wdResponses,
+          iterations: wdIterations,
+        },
+        { status: 200 },
+      );
+    }
+
+    // Arena flow: fetch messages, model responses, and votes
     const messageIds = conversationMessages.map((m) => m.id);
 
     const responsesByMessageId: Map<
@@ -189,15 +258,9 @@ export async function GET(_request: Request, { params }: { params: Promise<{ tok
 
     return NextResponse.json(
       {
-        conversation: {
-          id: conversationWithUser.id,
-          title: conversationWithUser.title,
-          createdAt: conversationWithUser.createdAt,
-        },
-        user: {
-          name: conversationWithUser.userName,
-          avatarUrl: conversationWithUser.userAvatarUrl,
-        },
+        type: 'arena' as const,
+        conversation: conversationData,
+        user: userData,
         messages: messagesWithResponses,
       },
       { status: 200 },

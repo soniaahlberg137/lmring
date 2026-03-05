@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import * as React from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import { SharedWebDevView } from '@/components/webdev/shared-webdev-view';
 import type { VoteInfo } from '@/types/vote';
 import { AppConfig } from '@/utils/AppConfig';
 
@@ -47,7 +48,8 @@ interface SharedUser {
   avatarUrl: string | null;
 }
 
-interface SharedConversation {
+interface SharedArenaData {
+  type?: 'arena';
   conversation: {
     id: string;
     title: string;
@@ -56,6 +58,35 @@ interface SharedConversation {
   user: SharedUser;
   messages: Message[];
 }
+
+interface SharedWebDevData {
+  type: 'webdev';
+  conversation: {
+    id: string;
+    title: string;
+    createdAt: string;
+  };
+  user: SharedUser;
+  session: { id: string; prompt: string; status: string };
+  responses: Array<{
+    id: string;
+    modelId: string;
+    files: Record<string, string> | null;
+    status: string;
+    displayPosition: number;
+    snapshotId: string | null;
+    snapshotExpiresAt: string | null;
+    content: string | null;
+  }>;
+  iterations: Array<{
+    id: string;
+    version: number;
+    prompt: string;
+    createdAt: string;
+  }>;
+}
+
+type SharedConversation = SharedArenaData | SharedWebDevData;
 
 type PageStatus = 'loading' | 'success' | 'not_found' | 'expired' | 'error';
 
@@ -236,6 +267,30 @@ export default function SharedConversationPage() {
       </div>
     );
   }
+
+  // Route to WebDev view
+  if (data.type === 'webdev') {
+    return (
+      <div className="h-screen bg-background flex flex-col overflow-hidden">
+        <SharedHeader
+          title={data.conversation.title}
+          createdAt={formatDate(data.conversation.createdAt)}
+        />
+        <main className="flex-1 overflow-hidden">
+          <SharedWebDevView
+            shareToken={token}
+            session={data.session}
+            responses={data.responses}
+            iterations={data.iterations}
+            user={data.user}
+            conversationTitle={data.conversation.title}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  // Arena view (default)
 
   const getUniqueModels = () => {
     const models: Array<{ providerName: string; modelName: string }> = [];
