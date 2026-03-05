@@ -1,10 +1,11 @@
 'use client';
 
 import { ScrollArea, SidebarConversationSkeleton } from '@lmring/ui';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ClockIcon,
+  ListXIcon,
   MenuIcon,
   MessageSquareIcon,
   MessageSquarePlusIcon,
@@ -71,6 +72,13 @@ export function Sidebar({ user }: SidebarProps) {
   const { data: recentConversations = [], isLoading: conversationsLoading } =
     useRecentConversations(10);
   const queryClient = useQueryClient();
+
+  const clearTodayMutation = useMutation({
+    mutationFn: () => fetch('/api/conversations/clear-today', { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: conversationsKeys.recent(10) });
+    },
+  });
 
   // Track actual browser pathname — usePathname() doesn't update on replaceState
   const [browserPath, setBrowserPath] = React.useState('');
@@ -301,8 +309,21 @@ export function Sidebar({ user }: SidebarProps) {
 
         {!collapsed && (
           <div className="mt-4">
-            <div className="px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-              {t('Sidebar.today')}
+            <div className="flex items-center justify-between px-3 py-2">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {t('Sidebar.today')}
+              </span>
+              {recentConversations.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => clearTodayMutation.mutate()}
+                  disabled={clearTodayMutation.isPending}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-0.5 hover:bg-sidebar-accent/50"
+                >
+                  <ListXIcon className="h-3 w-3" />
+                  {t('Sidebar.clear_today')}
+                </button>
+              )}
             </div>
             <ScrollArea className="max-h-[300px]">
               {conversationsLoading || (currentPath.startsWith('/arena') && !mainContentReady) ? (

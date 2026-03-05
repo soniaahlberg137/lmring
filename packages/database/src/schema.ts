@@ -134,6 +134,7 @@ export const userPreferences = pgTable(
     language: text('language').default('en'),
     defaultModels: jsonb('default_models').$type<string[]>(),
     configSource: configSourceEnum('config_source').default('manual'),
+    todayClearedAt: timestamp('today_cleared_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
