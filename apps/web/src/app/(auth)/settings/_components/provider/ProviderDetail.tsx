@@ -960,59 +960,64 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
         <div className="space-y-3">
           <Label>{t('Provider.detail_connectivity_check')}</Label>
-          <div className="flex gap-3 w-full items-start">
-            <Popover open={connectivityCheckOpen} onOpenChange={setConnectivityCheckOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  role="combobox"
-                  aria-expanded={connectivityCheckOpen}
-                  className="flex-1 h-9 justify-between font-normal"
-                >
-                  {selectedModel ? (
-                    <div className="flex items-center gap-2 truncate">
-                      {renderModelListIcon(16)}
-                      <span className="truncate">
-                        {models.find((m) => m.id === selectedModel)?.displayName || selectedModel}
+          <div className="flex gap-6 w-full items-start">
+            <div className="flex-1 min-w-0">
+              <Popover open={connectivityCheckOpen} onOpenChange={setConnectivityCheckOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={connectivityCheckOpen}
+                    className="w-full h-9 justify-between font-normal"
+                  >
+                    {selectedModel ? (
+                      <div className="flex items-center gap-2 truncate">
+                        {renderModelListIcon(16)}
+                        <span className="truncate">
+                          {models.find((m) => m.id === selectedModel)?.displayName || selectedModel}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-muted-foreground">
+                        {t('Provider.detail_select_model_to_check')}
                       </span>
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      {t('Provider.detail_select_model_to_check')}
-                    </span>
-                  )}
-                  <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[400px] p-0" align="start">
-                <Command>
-                  <CommandInput placeholder={t('Provider.detail_search_models')} />
-                  <CommandList className="max-h-[300px]">
-                    <CommandEmpty>No models found.</CommandEmpty>
-                    <CommandGroup>
-                      {models.map((model) => (
-                        <CommandItem
-                          key={model.id}
-                          value={`${model.displayName || model.id} ${model.id}`}
-                          onSelect={() => {
-                            setSelectedModel(model.id);
-                            setConnectivityCheckOpen(false);
-                          }}
-                        >
-                          <div className="flex items-center gap-2 truncate">
-                            {renderModelListIcon(16)}
-                            <span className="truncate">{model.displayName || model.id}</span>
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                    )}
+                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="z-[101] w-[var(--radix-popover-trigger-width)] p-0"
+                  align="start"
+                >
+                  <Command>
+                    <CommandInput placeholder={t('Provider.detail_search_models')} />
+                    <CommandList className="max-h-[300px]">
+                      <CommandEmpty>No models found.</CommandEmpty>
+                      <CommandGroup>
+                        {models.map((model) => (
+                          <CommandItem
+                            key={model.id}
+                            value={`${model.displayName || model.id} ${model.id}`}
+                            onSelect={() => {
+                              setSelectedModel(model.id);
+                              setConnectivityCheckOpen(false);
+                            }}
+                          >
+                            <div className="flex items-center gap-2 truncate">
+                              {renderModelListIcon(16)}
+                              <span className="truncate">{model.displayName || model.id}</span>
+                            </div>
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
             <Button
               variant="outline"
-              className="gap-2 h-9 min-w-[100px] transition-all hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 dark:hover:text-blue-400 dark:hover:border-blue-500"
+              className="ml-auto gap-2 h-9 min-w-[100px] transition-all hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/30 dark:hover:text-blue-400 dark:hover:border-blue-500"
               onClick={handleCheck}
               disabled={checkStatus === 'checking' || isSaving}
             >

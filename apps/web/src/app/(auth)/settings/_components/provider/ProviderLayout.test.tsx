@@ -15,6 +15,7 @@ const { createMockIcon } = vi.hoisted(() => ({
 vi.mock('lucide-react', () => ({
   BoxIcon: createMockIcon('BoxIcon'),
   SearchIcon: createMockIcon('SearchIcon'),
+  PlusIcon: createMockIcon('PlusIcon'),
 }));
 
 vi.mock('@/hooks/use-translations', () => ({
@@ -28,38 +29,52 @@ vi.mock('@lobehub/icons', () => ({
 }));
 
 vi.mock('./AddProviderDialog', () => ({
-  AddProviderDialog: ({ onAdd }: { onAdd: (p: Provider) => void }) => (
+  AddProviderDialog: ({
+    onAdd,
+    open,
+    onOpenChange,
+  }: {
+    onAdd: (p: Provider) => void;
+    open?: boolean;
+    onOpenChange?: (open: boolean) => void;
+  }) => (
     <button type="button" data-testid="add-provider-dialog" onClick={() => onAdd({} as Provider)}>
       Add Provider
     </button>
   ),
 }));
 
-vi.mock('./ProviderDetail', () => ({
-  ProviderDetail: ({
+vi.mock('./ProviderDetailSheet', () => ({
+  ProviderDetailSheet: ({
     provider,
+    open,
     onToggle,
   }: {
-    provider: Provider;
+    provider: Provider | null;
+    open: boolean;
     onToggle: (id: string) => void;
-  }) => (
-    <div data-testid="provider-detail">
-      <span>{provider.name}</span>
-      <button type="button" onClick={() => onToggle(provider.id)}>
-        Toggle
-      </button>
-    </div>
-  ),
+    onOpenChange: (open: boolean) => void;
+  }) =>
+    open && provider ? (
+      <div data-testid="provider-detail-sheet">
+        <span>{provider.name}</span>
+        <button type="button" onClick={() => onToggle(provider.id)}>
+          Toggle
+        </button>
+      </div>
+    ) : null,
 }));
 
 vi.mock('./ProviderGrid', () => ({
   ProviderGrid: ({
     providers,
     onSelect,
+    onAddCustom,
   }: {
     providers: Provider[];
     onToggle: (id: string) => void;
     onSelect: (id: string) => void;
+    onAddCustom: () => void;
   }) => (
     <div data-testid="provider-grid">
       {providers.map((p) => (
@@ -67,6 +82,9 @@ vi.mock('./ProviderGrid', () => ({
           {p.name}
         </button>
       ))}
+      <button type="button" data-testid="add-custom-btn" onClick={onAddCustom}>
+        Add Custom
+      </button>
     </div>
   ),
 }));
@@ -111,7 +129,7 @@ describe('ProviderLayout', () => {
     cleanup();
   });
 
-  it('should render sidebar with provider list', async () => {
+  it('should render header with title', async () => {
     const { ProviderLayout } = await import('./ProviderLayout');
     render(
       <ProviderLayout
@@ -124,8 +142,7 @@ describe('ProviderLayout', () => {
       />,
     );
 
-    // Should show "All Providers" button
-    expect(screen.getByText('Provider.all_providers')).toBeInTheDocument();
+    expect(screen.getByText('Settings.tabs_provider')).toBeInTheDocument();
   });
 
   it('should render search input', async () => {
@@ -161,12 +178,12 @@ describe('ProviderLayout', () => {
     const searchInput = screen.getByPlaceholderText('Provider.search_placeholder');
     fireEvent.change(searchInput, { target: { value: 'OpenAI' } });
 
-    // Grid should only show OpenAI
     const grid = screen.getByTestId('provider-grid');
     expect(grid).toHaveTextContent('OpenAI');
+    expect(grid).not.toHaveTextContent('Anthropic');
   });
 
-  it('should render provider grid when no provider is selected', async () => {
+  it('should render provider grid', async () => {
     const { ProviderLayout } = await import('./ProviderLayout');
     render(
       <ProviderLayout
@@ -180,10 +197,9 @@ describe('ProviderLayout', () => {
     );
 
     expect(screen.getByTestId('provider-grid')).toBeInTheDocument();
-    expect(screen.queryByTestId('provider-detail')).not.toBeInTheDocument();
   });
 
-  it('should render provider detail when a provider is selected from sidebar', async () => {
+  it('should open provider detail dialog when a provider is selected', async () => {
     const { ProviderLayout } = await import('./ProviderLayout');
     render(
       <ProviderLayout
@@ -196,47 +212,12 @@ describe('ProviderLayout', () => {
       />,
     );
 
-    // Click on OpenAI in sidebar
-    const openaiButton = screen.getAllByText('OpenAI')[0];
-    if (openaiButton) fireEvent.click(openaiButton);
+    const openaiButton = screen.getByText('OpenAI');
+    fireEvent.click(openaiButton);
 
-    expect(screen.getByTestId('provider-detail')).toBeInTheDocument();
-    expect(screen.queryByTestId('provider-grid')).not.toBeInTheDocument();
-  });
-
-  it('should show loading skeleton when isLoading is true', async () => {
-    const { ProviderLayout } = await import('./ProviderLayout');
-    render(
-      <ProviderLayout
-        providers={providers}
-        isLoading={true}
-        onToggleProvider={mockOnToggleProvider}
-        onSaveProvider={mockOnSaveProvider}
-        onAddProvider={mockOnAddProvider}
-        onDeleteProvider={mockOnDeleteProvider}
-      />,
-    );
-
-    const skeletons = screen.getAllByTestId('provider-sidebar-skeleton');
-    expect(skeletons.length).toBeGreaterThan(0);
-  });
-
-  it('should show connected indicator for connected providers', async () => {
-    const { ProviderLayout } = await import('./ProviderLayout');
-    const { container } = render(
-      <ProviderLayout
-        providers={providers}
-        isLoading={false}
-        onToggleProvider={mockOnToggleProvider}
-        onSaveProvider={mockOnSaveProvider}
-        onAddProvider={mockOnAddProvider}
-        onDeleteProvider={mockOnDeleteProvider}
-      />,
-    );
-
-    // OpenAI is connected, should have green dot
-    const greenDots = container.querySelectorAll('.bg-green-500');
-    expect(greenDots.length).toBeGreaterThan(0);
+    expect(screen.getByTestId('provider-detail-sheet')).toBeInTheDocument();
+    // Grid should still be visible behind the dialog
+    expect(screen.getByTestId('provider-grid')).toBeInTheDocument();
   });
 
   it('should call onAddProvider when add dialog submits', async () => {
@@ -256,28 +237,5 @@ describe('ProviderLayout', () => {
     fireEvent.click(addButton);
 
     expect(mockOnAddProvider).toHaveBeenCalled();
-  });
-
-  it('should return to grid view when clicking All Providers button', async () => {
-    const { ProviderLayout } = await import('./ProviderLayout');
-    render(
-      <ProviderLayout
-        providers={providers}
-        isLoading={false}
-        onToggleProvider={mockOnToggleProvider}
-        onSaveProvider={mockOnSaveProvider}
-        onAddProvider={mockOnAddProvider}
-        onDeleteProvider={mockOnDeleteProvider}
-      />,
-    );
-
-    // First select a provider
-    const openaiButton = screen.getAllByText('OpenAI')[0];
-    if (openaiButton) fireEvent.click(openaiButton);
-    expect(screen.getByTestId('provider-detail')).toBeInTheDocument();
-
-    // Then click All Providers
-    fireEvent.click(screen.getByText('Provider.all_providers'));
-    expect(screen.getByTestId('provider-grid')).toBeInTheDocument();
   });
 });

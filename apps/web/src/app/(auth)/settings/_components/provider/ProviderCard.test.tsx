@@ -88,14 +88,14 @@ describe('ProviderCard', () => {
     expect(screen.getByText('O')).toBeInTheDocument();
   });
 
-  it('should render tags excluding provider name', async () => {
+  it('should show connected status text for enabled provider', async () => {
+    const connectedProvider = { ...defaultProvider, connected: true, type: 'enabled' as const };
     const { ProviderCard } = await import('./ProviderCard');
     render(
-      <ProviderCard provider={defaultProvider} onToggle={mockOnToggle} onSelect={mockOnSelect} />,
+      <ProviderCard provider={connectedProvider} onToggle={mockOnToggle} onSelect={mockOnSelect} />,
     );
 
-    // 'GPT' tag should be visible, but only one 'OpenAI' (the name, not the tag)
-    expect(screen.getByText('GPT')).toBeInTheDocument();
+    expect(screen.getByText('Connected')).toBeInTheDocument();
   });
 
   it('should call onSelect when card is clicked', async () => {
