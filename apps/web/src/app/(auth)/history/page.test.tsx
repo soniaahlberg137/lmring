@@ -170,7 +170,7 @@ describe('HistoryPage', () => {
     });
   });
 
-  it('hides share button for webdev conversations', async () => {
+  it('renders share button for webdev conversations', async () => {
     mockIsPending.value = false;
     mockHistoryConversations.data = [
       {
@@ -188,8 +188,6 @@ describe('HistoryPage', () => {
     render(<HistoryPage />, { wrapper: createWrapper() });
     expect(await screen.findByText('Build me a landing page')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'History.delete_aria_label' })).toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'History.share_aria_label' }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'History.share_aria_label' })).toBeInTheDocument();
   });
 });

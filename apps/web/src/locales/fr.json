@@ -521,5 +521,13 @@
   "WebDev.iteration_history": "Historique des prompts",
   "WebDev.iteration_switch": "Passer à la v{{version}}",
   "WebDev.follow_up_creating": "Création du suivi...",
-  "WebDev.switch_to_latest": "Passez à la dernière version pour continuer"
+  "WebDev.switch_to_latest": "Passez à la dernière version pour continuer",
+  "SharedWebDev.title": "Aperçu WebDev partagé",
+  "SharedWebDev.read_only_notice": "Ceci est une vue en lecture seule d'une session WebDev partagée depuis",
+  "SharedWebDev.sandbox_loading": "Démarrage du bac à sable de prévisualisation...",
+  "SharedWebDev.sandbox_error": "Échec du démarrage du bac à sable",
+  "SharedWebDev.sandbox_expired": "Bac à sable expiré. Cliquez pour reconstruire.",
+  "SharedWebDev.rebuild_preview": "Reconstruire l'aperçu",
+  "SharedWebDev.iteration_label": "v{{version}}",
+  "SharedWebDev.model_label": "Modèle {{position}}"
 }

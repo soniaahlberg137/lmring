@@ -521,5 +521,13 @@
   "WebDev.iteration_history": "Prompt History",
   "WebDev.iteration_switch": "Switch to v{{version}}",
   "WebDev.follow_up_creating": "Creating follow-up...",
-  "WebDev.switch_to_latest": "Switch to latest version to continue"
+  "WebDev.switch_to_latest": "Switch to latest version to continue",
+  "SharedWebDev.title": "Shared WebDev Preview",
+  "SharedWebDev.read_only_notice": "This is a read-only view of a shared WebDev session from",
+  "SharedWebDev.sandbox_loading": "Starting preview sandbox...",
+  "SharedWebDev.sandbox_error": "Failed to start preview sandbox",
+  "SharedWebDev.sandbox_expired": "Sandbox expired. Click to rebuild.",
+  "SharedWebDev.rebuild_preview": "Rebuild Preview",
+  "SharedWebDev.iteration_label": "v{{version}}",
+  "SharedWebDev.model_label": "Model {{position}}"
 }
