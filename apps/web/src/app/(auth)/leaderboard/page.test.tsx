@@ -49,6 +49,7 @@ vi.mock('@/libs/zeroeval-api', () => ({
     },
   ],
   isNewModel: () => false,
+  sortAndRankModels: <T,>(models: T[]) => [...models],
   sortModels: <T,>(models: T[]) => [...models],
 }));
 
