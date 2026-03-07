@@ -37,9 +37,11 @@ vi.mock('@/libs/zeroeval-api', () => ({
     if (format === 'percentage') return `${(value * 100).toFixed(1)}%`;
     return String(value);
   },
-  getNumericValue: (value: string | number | null) => {
+  getNumericValue: (value: string | number | null | undefined) => {
+    if (value === null || value === undefined || value === '') return -Infinity;
     if (typeof value === 'number') return value;
-    return 0;
+    const numericValue = parseFloat(value);
+    return Number.isNaN(numericValue) ? -Infinity : numericValue;
   },
 }));
 
@@ -382,6 +384,31 @@ describe('ScoreCell', () => {
     }>;
     render(<CellComponent row={{ original: { ...mockModel, gpqa_score: null } }} />);
     expect(screen.getByText('—')).toBeInTheDocument();
+  });
+  it('should push empty string values after numeric values when sorting', async () => {
+    const { createMetricColumns } = await import('./columns');
+    const metrics = [
+      {
+        id: 'input_price',
+        field: 'input_price',
+        label: 'Input $/M',
+        format: 'currency' as const,
+        higherIsBetter: false,
+      },
+    ];
+    const columns = createMetricColumns(metrics, mockT);
+    const metricColumn = columns[0]!;
+    const sortingFn = metricColumn.sortingFn as unknown as (
+      rowA: { original: LeaderboardModel & { input_price: string } },
+      rowB: { original: LeaderboardModel & { input_price: string } },
+    ) => number;
+
+    const comparison = sortingFn(
+      { original: { ...mockModel, input_price: '' } },
+      { original: { ...mockModel, model_id: 'test-model-2', input_price: '1.50' } },
+    );
+
+    expect(comparison).toBeGreaterThan(0);
   });
 });
 

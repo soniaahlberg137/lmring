@@ -5,7 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { CheckIcon, ChevronDown, ChevronUp, LockIcon, UnlockIcon, XIcon } from 'lucide-react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import type { TranslationFunction } from '@/hooks/use-translations';
-import { formatMetricValue, type MetricConfig } from '@/libs/zeroeval-api';
+import { formatMetricValue, getNumericValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel } from './types';
 
 // Rank cell with medal styling
@@ -204,10 +204,15 @@ export function createMetricColumns(
     size: 100,
     minSize: 80,
     sortingFn: (rowA, rowB) => {
-      const a = rowA.original[metric.field as keyof LeaderboardModel] as number | null;
-      const b = rowB.original[metric.field as keyof LeaderboardModel] as number | null;
-      if (a === null || a === undefined) return 1;
-      if (b === null || b === undefined) return -1;
+      const a = getNumericValue(
+        rowA.original[metric.field as keyof LeaderboardModel] as string | number | null,
+      );
+      const b = getNumericValue(
+        rowB.original[metric.field as keyof LeaderboardModel] as string | number | null,
+      );
+      if (a === -Infinity && b === -Infinity) return 0;
+      if (a === -Infinity) return 1;
+      if (b === -Infinity) return -1;
       return a - b;
     },
   }));

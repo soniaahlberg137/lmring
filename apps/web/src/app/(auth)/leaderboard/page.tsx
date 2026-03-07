@@ -1,6 +1,7 @@
 'use client';
 
 import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
+import type { SortingState } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
@@ -25,6 +26,7 @@ import {
   isNewModel,
   type LeaderboardCategory,
   type MetricConfig,
+  sortAndRankModels,
   sortModels,
 } from '@/libs/zeroeval-api';
 import { useArenaStore } from '@/stores';
@@ -42,6 +44,7 @@ export default function LeaderboardPage() {
   const [xAxisMetric, setXAxisMetric] = useState<string>('input_price');
   const [yAxisMetric, setYAxisMetric] = useState<string>('gpqa');
   const [methodologyOpen, setMethodologyOpen] = useState(false);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // Fetch data using TanStack Query
   const { data: rawModels, isPending, error, isInitialLoading } = useLeaderboardData(category);
@@ -68,15 +71,19 @@ export default function LeaderboardPage() {
   // Memoize ranked models with sorting handled by DataTable
   const rankedModels: LeaderboardModel[] = useMemo(() => {
     if (!rawModels) return [];
-    // Sort by first metric field by default (DataTable will handle its own sorting)
     const defaultField = categoryConfig.metrics[0]?.field || 'gpqa_score';
-    const sorted = sortModels(rawModels, defaultField, 'desc');
-    return sorted.map((model, index) => ({
+    const activeSort = sorting[0];
+    const field = activeSort?.id || defaultField;
+    const direction = activeSort?.desc ? 'desc' : 'asc';
+    const sorted = activeSort
+      ? sortAndRankModels(rawModels, field, direction)
+      : sortAndRankModels(rawModels, defaultField, 'desc');
+
+    return sorted.map((model) => ({
       ...model,
-      rank: index + 1,
       isNew: isNewModel(model.release_date, model.announcement_date),
     })) as LeaderboardModel[];
-  }, [rawModels, categoryConfig.metrics]);
+  }, [rawModels, categoryConfig.metrics, sorting]);
 
   const barChartModels = useMemo(() => {
     if (!rawModels) return [];
@@ -117,6 +124,7 @@ export default function LeaderboardPage() {
 
   const handleCategoryChange = useCallback((newCategory: LeaderboardCategory) => {
     setCategory(newCategory);
+    setSorting([]);
     const config = CATEGORY_CONFIGS.find((c) => c.id === newCategory);
     if (config && config.metrics.length > 0) {
       const firstMetric = config.metrics[0];
@@ -228,7 +236,14 @@ export default function LeaderboardPage() {
               ) : (
                 <>
                   {viewMode === 'table' && (
-                    <DataTable columns={columns} data={rankedModels} pageSize={PAGE_SIZE} />
+                    <DataTable
+                      columns={columns}
+                      data={rankedModels}
+                      pageSize={PAGE_SIZE}
+                      sorting={sorting}
+                      onSortingChange={setSorting}
+                      manualSorting
+                    />
                   )}
 
                   {viewMode === 'bar' && (
