@@ -15,6 +15,7 @@ import {
   getOrganizationColor,
   getOrganizationGradient,
   isNewModel,
+  sortAndRankModels,
   sortModels,
 } from './zeroeval-api';
 
@@ -184,6 +185,29 @@ describe('zeroeval-api', () => {
       const original = [...models];
       sortModels(models, 'score');
       expect(models).toEqual(original);
+    });
+  });
+
+  describe('sortAndRankModels', () => {
+    const models = [
+      { id: 'a', score: 50 },
+      { id: 'b', score: 100 },
+      { id: 'c', score: '75' },
+      { id: 'd', score: '' },
+    ];
+
+    it('should sort descending and assign sequential ranks', () => {
+      const ranked = sortAndRankModels(models, 'score', 'desc');
+
+      expect(ranked.map((model) => model.id)).toEqual(['b', 'c', 'a', 'd']);
+      expect(ranked.map((model) => model.rank)).toEqual([1, 2, 3, 4]);
+    });
+
+    it('should sort ascending and reassign ranks for the new order', () => {
+      const ranked = sortAndRankModels(models, 'score', 'asc');
+
+      expect(ranked.map((model) => model.id)).toEqual(['a', 'c', 'b', 'd']);
+      expect(ranked.map((model) => model.rank)).toEqual([1, 2, 3, 4]);
     });
   });
 

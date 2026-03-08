@@ -7,40 +7,58 @@ import {
   getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
+  type OnChangeFn,
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { useEventListener, useMemoizedFn, useRafState, useResetState } from 'ahooks';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
 
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
   pageSize?: number;
+  sorting?: SortingState;
+  onSortingChange?: OnChangeFn<SortingState>;
+  manualSorting?: boolean;
 }
 
-export function DataTable<TData>({ columns, data, pageSize = 20 }: DataTableProps<TData>) {
+export function DataTable<TData>({
+  columns,
+  data,
+  pageSize = 20,
+  sorting: controlledSorting,
+  onSortingChange,
+  manualSorting = false,
+}: DataTableProps<TData>) {
   const t = useTranslations();
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [uncontrolledSorting, setUncontrolledSorting] = useState<SortingState>([]);
   const [resizingColumnId, setResizingColumnId, resetResizingColumnId] = useResetState<
     string | null
   >(null);
   const [guideLinePosition, setGuideLinePosition] = useRafState<number | null>(null);
   const tableContainerRef = useRef<HTMLDivElement>(null);
+  const sorting = controlledSorting ?? uncontrolledSorting;
+  const handleSortingChange = onSortingChange ?? setUncontrolledSorting;
 
   const table = useReactTable({
     data,
     columns,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
+    getSortedRowModel: manualSorting ? undefined : getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    onSortingChange: setSorting,
+    onSortingChange: handleSortingChange,
+    manualSorting,
     state: { sorting },
     initialState: { pagination: { pageSize } },
   });
+
+  useEffect(() => {
+    table.setPageIndex(0);
+  }, [sorting, table]);
 
   // Track resize state (useMemoizedFn: no deps needed, always latest closure)
   const handleResizeStart = useMemoizedFn((headerId: string, handler: (event: unknown) => void) => {

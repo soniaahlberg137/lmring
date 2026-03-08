@@ -721,6 +721,17 @@ export function sortModels<T>(models: T[], field: string, direction: 'asc' | 'de
   });
 }
 
+export function sortAndRankModels<T>(
+  models: T[],
+  field: string,
+  direction: 'asc' | 'desc' = 'desc',
+): Array<T & { rank: number }> {
+  return sortModels(models, field, direction).map((model, index) => ({
+    ...model,
+    rank: index + 1,
+  }));
+}
+
 export function getOrganizationColor(organizationId: string): string {
   const colors: Record<string, string> = {
     openai: '#10B981',

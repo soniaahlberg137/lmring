@@ -139,4 +139,71 @@ describe('DataTable', () => {
     const tableContainer = container.querySelector('.rounded-lg');
     expect(tableContainer).toBeInTheDocument();
   });
+
+  it('should respect controlled sorting state', async () => {
+    const { DataTable } = await import('./DataTable');
+
+    render(
+      <DataTable
+        columns={testColumns}
+        data={testData.slice(0, 3)}
+        sorting={[{ id: 'score', desc: false }]}
+      />,
+    );
+
+    const rows = screen.getAllByRole('row');
+    expect(rows[1]).toHaveTextContent('Model 3');
+    expect(rows[2]).toHaveTextContent('Model 2');
+    expect(rows[3]).toHaveTextContent('Model 1');
+  });
+
+  it('should reset to first page when sorting changes', async () => {
+    const { DataTable } = await import('./DataTable');
+
+    const { rerender } = render(
+      <DataTable
+        columns={testColumns}
+        data={testData}
+        pageSize={10}
+        sorting={[{ id: 'score', desc: false }]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '2' }));
+    expect(screen.getByText('Model 15')).toBeInTheDocument();
+
+    rerender(
+      <DataTable
+        columns={testColumns}
+        data={testData}
+        pageSize={10}
+        sorting={[{ id: 'score', desc: true }]}
+      />,
+    );
+
+    expect(screen.getByText('Model 1')).toBeInTheDocument();
+    expect(screen.queryByText('Model 11')).not.toBeInTheDocument();
+  });
+
+  it('should preserve provided row order in manual sorting mode', async () => {
+    const { DataTable } = await import('./DataTable');
+
+    render(
+      <DataTable
+        columns={testColumns}
+        data={[
+          { id: 72, name: 'Model 72', score: 84 },
+          { id: 1, name: 'Model 1', score: 99 },
+          { id: 2, name: 'Model 2', score: 98 },
+        ]}
+        sorting={[{ id: 'score', desc: true }]}
+        manualSorting
+      />,
+    );
+
+    const rows = screen.getAllByRole('row');
+    expect(rows[1]).toHaveTextContent('Model 72');
+    expect(rows[2]).toHaveTextContent('Model 1');
+    expect(rows[3]).toHaveTextContent('Model 2');
+  });
 });
