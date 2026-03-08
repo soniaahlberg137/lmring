@@ -4,8 +4,13 @@ import { defineConfig, devices } from '@playwright/test';
 // Use process.env.PORT by default and fallback to port 3000
 const PORT = process.env.PORT || 3000;
 
-// Set webServer.url and use.baseURL with the location of the WebServer respecting the correct set port
-const baseURL = `http://localhost:${PORT}`;
+const DEFAULT_REMOTE_BASE_URL = 'https://www.lmring.com';
+
+// Prefer explicit PLAYWRIGHT_BASE_URL, otherwise default to the deployed site.
+// To run against local app, set PLAYWRIGHT_BASE_URL=http://localhost:${PORT}
+const baseURL = process.env.PLAYWRIGHT_BASE_URL || DEFAULT_REMOTE_BASE_URL;
+const localBaseURL = `http://localhost:${PORT}`;
+const shouldStartLocalWebServer = baseURL === localBaseURL;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -28,15 +33,17 @@ export default defineConfig<ChromaticConfig>({
 
   // Run your local dev server before starting the tests:
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
-  webServer: {
-    command: process.env.CI ? 'pnpm run start' : 'pnpm run dev:next',
-    url: baseURL,
-    timeout: 2 * 60 * 1000,
-    reuseExistingServer: !process.env.CI,
-    env: {
-      NEXT_PUBLIC_SENTRY_DISABLED: 'true',
-    },
-  },
+  webServer: shouldStartLocalWebServer
+    ? {
+        command: process.env.CI ? 'pnpm run start' : 'pnpm run dev:next',
+        url: localBaseURL,
+        timeout: 2 * 60 * 1000,
+        reuseExistingServer: !process.env.CI,
+        env: {
+          NEXT_PUBLIC_SENTRY_DISABLED: 'true',
+        },
+      }
+    : undefined,
 
   // Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions.
   use: {
