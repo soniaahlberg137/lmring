@@ -13,8 +13,11 @@ const { createMockIcon } = vi.hoisted(() => ({
 }));
 
 vi.mock('framer-motion', () => ({
+  // biome-ignore lint/suspicious/noExplicitAny: mock props for framer-motion
   motion: { div: ({ children, ...props }: any) => <div {...props}>{children}</div> },
+  // biome-ignore lint/suspicious/noExplicitAny: mock props for framer-motion
   AnimatePresence: ({ children }: any) => <>{children}</>,
+  // biome-ignore lint/suspicious/noExplicitAny: mock props for framer-motion
   LayoutGroup: ({ children }: any) => <>{children}</>,
 }));
 

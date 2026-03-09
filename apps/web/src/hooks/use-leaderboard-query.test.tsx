@@ -36,21 +36,6 @@ const mockModelFull: zeroEvalApi.ZeroEvalModelFull = {
   mmmu_score: 0.7,
 };
 
-const mockModelBasic: zeroEvalApi.ZeroEvalModelBasic = {
-  model_id: 'basic-model',
-  name: 'Basic Model',
-  model_type: 'video',
-  organization: 'Basic Org',
-  organization_id: 'basic-org',
-  announcement_date: '2025-01-01',
-  release_date: '2025-01-01',
-  multimodal: false,
-  license: 'Apache-2.0',
-  is_open: true,
-  input_modalities: ['text'],
-  output_modalities: ['video'],
-};
-
 function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -122,21 +107,42 @@ describe('fetchLeaderboardData', () => {
     expect(result[0]?.multimodal).toBe(true);
   });
 
-  it('fetches other categories using getModelsAll', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsAll').mockResolvedValue([mockModelBasic]);
-    vi.spyOn(zeroEvalApi, 'getArenaScoresForCategory').mockResolvedValue({
-      'basic-model': {
-        'text-to-video': 0.9,
-        'image-to-video': 0.85,
-        'video-editing': 0.8,
-      },
+  it('fetches other categories using getMagiaLeaderboard', async () => {
+    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockResolvedValue({
+      leaderboard: [
+        {
+          variant_id: 'v1',
+          variant_key: 'k1',
+          model_id: 'basic-model',
+          model_name: 'Basic Model',
+          organization: 'Basic Org',
+          mu: 25.0,
+          sigma: 2.0,
+          conservative_rating: 21.0,
+          matches_played: 50,
+          wins: 30,
+          win_rate: 60.0,
+          input_price: null,
+          output_price: null,
+          avg_generation_price: null,
+          announcement_date: '2025-01-01',
+          license: 'Apache-2.0',
+          is_open_source: true,
+        },
+      ],
+      total_count: 1,
+      limit: 200,
+      offset: 0,
     });
 
     const result = await fetchLeaderboardData('video-generation');
 
-    expect(zeroEvalApi.getModelsAll).toHaveBeenCalled();
-    expect(zeroEvalApi.getArenaScoresForCategory).toHaveBeenCalled();
+    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledTimes(3);
+    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('text-to-video');
+    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('image-to-video');
+    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('video-editing');
     expect(result).toHaveLength(1);
+    expect(result[0]?.model_id).toBe('basic-model');
   });
 
   it('handles arena score failure gracefully for "all" category', async () => {
@@ -155,20 +161,10 @@ describe('fetchLeaderboardData', () => {
     warnSpy.mockRestore();
   });
 
-  it('handles arena score failure gracefully for other categories', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsAll').mockResolvedValue([mockModelBasic]);
-    vi.spyOn(zeroEvalApi, 'getArenaScoresForCategory').mockRejectedValue(
-      new Error('Arena API error'),
-    );
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  it('handles magia leaderboard failure gracefully for other categories', async () => {
+    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockRejectedValue(new Error('Magia API error'));
 
-    const result = await fetchLeaderboardData('video-generation');
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.arena_raw_scores).toBeNull();
-    expect(warnSpy).toHaveBeenCalledWith('Failed to fetch arena scores, continuing without them');
-
-    warnSpy.mockRestore();
+    await expect(fetchLeaderboardData('video-generation')).rejects.toThrow();
   });
 
   it('returns empty array when no models', async () => {
@@ -291,9 +287,33 @@ describe('useLeaderboardQuery', () => {
     expect(result.current.error?.message).toBe('API Error');
   });
 
-  it('fetches other categories using getModelsAll', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsAll').mockResolvedValue([mockModelBasic]);
-    vi.spyOn(zeroEvalApi, 'getArenaScoresForCategory').mockResolvedValue({});
+  it('fetches other categories using getMagiaLeaderboard hook', async () => {
+    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockResolvedValue({
+      leaderboard: [
+        {
+          variant_id: 'v1',
+          variant_key: 'k1',
+          model_id: 'basic-model',
+          model_name: 'Basic Model',
+          organization: 'Basic Org',
+          mu: 25.0,
+          sigma: 2.0,
+          conservative_rating: 21.0,
+          matches_played: 50,
+          wins: 30,
+          win_rate: 60.0,
+          input_price: null,
+          output_price: null,
+          avg_generation_price: null,
+          announcement_date: '2025-01-01',
+          license: 'Apache-2.0',
+          is_open_source: true,
+        },
+      ],
+      total_count: 1,
+      limit: 200,
+      offset: 0,
+    });
 
     const { result } = renderHook(() => useLeaderboardQuery('video-generation'), {
       wrapper: createWrapper(),
@@ -304,8 +324,7 @@ describe('useLeaderboardQuery', () => {
     });
 
     expect(result.current.data).toBeDefined();
-    expect(zeroEvalApi.getModelsAll).toHaveBeenCalled();
-    expect(zeroEvalApi.getArenaScoresForCategory).toHaveBeenCalled();
+    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalled();
   });
 });
 

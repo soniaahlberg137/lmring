@@ -141,6 +141,37 @@ export interface ZeroEvalBenchmarkScore {
 }
 
 // ============================================================================
+// Magia Leaderboard Types (from /magia/arenas/{arena}/leaderboard API)
+// ============================================================================
+
+export interface MagiaLeaderboardItem {
+  variant_id: string;
+  variant_key: string;
+  model_id: string;
+  model_name: string;
+  organization: string;
+  mu: number;
+  sigma: number;
+  conservative_rating: number;
+  matches_played: number;
+  wins: number;
+  win_rate: number;
+  input_price: number | null;
+  output_price: number | null;
+  avg_generation_price: number | null;
+  announcement_date: string;
+  license: string;
+  is_open_source: boolean;
+}
+
+export interface MagiaLeaderboardResponse {
+  leaderboard: MagiaLeaderboardItem[];
+  total_count: number;
+  limit: number;
+  offset: number;
+}
+
+// ============================================================================
 // Arena Scores Types (from /magia/models/scores API)
 // ============================================================================
 
@@ -579,6 +610,21 @@ export async function getArenaScoresForCategory(
   params.set('arena_names', arenaNames.join(','));
 
   return fetchWithRetry<ArenaScoresResponse>(`${ZEROEVAL_BASE_URL}/arena-scores?${params}`);
+}
+
+/**
+ * Get magia leaderboard for a specific arena
+ * @param arena - Arena name (e.g., 'text-to-image', 'text-to-video')
+ */
+export async function getMagiaLeaderboard(arena: string): Promise<MagiaLeaderboardResponse> {
+  const params = new URLSearchParams();
+  params.set('arena', arena);
+  params.set('limit', '200');
+  params.set('offset', '0');
+
+  return fetchWithRetry<MagiaLeaderboardResponse>(
+    `${ZEROEVAL_BASE_URL}/magia/leaderboard?${params}`,
+  );
 }
 
 // ============================================================================

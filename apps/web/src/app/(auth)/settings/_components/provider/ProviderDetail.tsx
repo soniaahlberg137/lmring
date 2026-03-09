@@ -91,7 +91,7 @@ const MODEL_TYPE_CONFIG: Record<
 interface ProviderDetailProps {
   provider: Provider;
   onToggle: (id: string, enabled: boolean, apiKeyId?: string) => void;
-  onSave?: (providerId: string, apiKeyId: string) => void;
+  onSave?: (providerId: string, apiKeyId: string, proxyUrl: string, hasApiKey: boolean) => void;
   onDelete?: (providerId: string) => void;
 }
 
@@ -350,7 +350,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
       const result: SaveApiKeyResponse = await response.json();
 
-      onSave?.(provider.id, result.id);
+      onSave?.(provider.id, result.id, result.proxyUrl || '', true);
 
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('arena_models_need_refresh', 'true');
@@ -469,7 +469,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
         const result: SaveApiKeyResponse = await response.json();
         onToggle(provider.id, newEnabled, result.id);
-        onSave?.(provider.id, result.id);
+        onSave?.(provider.id, result.id, result.proxyUrl || '', true);
 
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('arena_models_need_refresh', 'true');

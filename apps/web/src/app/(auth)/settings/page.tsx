@@ -351,22 +351,25 @@ export default function SettingsPage() {
   );
 
   const handleSaveProvider = React.useCallback(
-    (providerId: string, apiKeyId: string) => {
-      setProviders((prev) => prev.map((p) => (p.id === providerId ? { ...p, apiKeyId } : p)));
+    (providerId: string, apiKeyId: string, proxyUrl: string, hasApiKey: boolean) => {
+      setProviders((prev) =>
+        prev.map((p) => (p.id === providerId ? { ...p, apiKeyId, proxyUrl, hasApiKey } : p)),
+      );
 
       // Update or add to store
       const existing = savedApiKeys.find(
         (k) => k.providerName.toLowerCase() === providerId.toLowerCase(),
       );
       if (existing) {
-        updateApiKey(existing.id, { id: apiKeyId });
+        updateApiKey(existing.id, { id: apiKeyId, proxyUrl, hasApiKey });
       } else {
         addApiKey({
           id: apiKeyId,
           providerName: providerId,
-          proxyUrl: '',
+          proxyUrl,
           enabled: false,
           configSource: 'manual',
+          hasApiKey,
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         });
