@@ -96,6 +96,21 @@ export class DashScopeVideoProvider extends BaseVideoProvider {
     qualityTiers: ['standard', 'high'],
   };
 
+  protected get baseURL(): string {
+    const url = this.config.baseURL ?? this.defaultBaseURL;
+    // DashScope chat API uses /compatible-mode/v1, but video API requires /api/v1
+    if (url.includes('aliyuncs.com') && url.includes('/compatible-mode/')) {
+      return url.replace('/compatible-mode/', '/api/');
+    }
+    // For third-party proxies: strip trailing version prefix (e.g., /v1, /v2)
+    // then append DashScope native API path prefix for proper routing.
+    if (!url.includes('aliyuncs.com')) {
+      const stripped = url.replace(/\/v\d+\/?$/, '');
+      return joinUrl(stripped, 'qwen/api/v1');
+    }
+    return url;
+  }
+
   resolveModelId(modelId: string): string {
     return stripProviderPrefix(modelId);
   }
