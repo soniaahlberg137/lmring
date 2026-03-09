@@ -2,6 +2,62 @@ import type { ChatModelCard } from '../types';
 
 const mistralModels: ChatModelCard[] = [
   {
+    id: 'mistral-large-3-latest',
+    displayName: 'Mistral Large 3',
+    description:
+      'Mistral Large 3 is a 41B active / 675B total MoE model with 256K context, excelling at complex reasoning, coding, and multimodal tasks.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 8_192,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 2,
+      output: 6,
+    },
+    releasedAt: '2026-02-26',
+  },
+  {
+    id: 'devstral-2-latest',
+    displayName: 'Devstral 2',
+    description:
+      'Devstral 2 is a 123B coding model achieving 72.2% on SWE-bench, with strong reasoning capabilities for complex software engineering tasks.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 8_192,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+    },
+    pricing: {
+      input: 0.6,
+      output: 1.8,
+    },
+    releasedAt: '2026-02-26',
+  },
+  {
+    id: 'devstral-small-2-latest',
+    displayName: 'Devstral Small 2',
+    description:
+      'Devstral Small 2 is a 24B coding model optimized for efficiency while maintaining strong code generation and understanding capabilities.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 8_192,
+    abilities: {
+      functionCall: true,
+    },
+    pricing: {
+      input: 0.2,
+      output: 0.6,
+    },
+    releasedAt: '2026-02-26',
+  },
+  {
     id: 'mistral-medium-3.1-latest',
     displayName: 'Mistral Medium 3.1',
     description: 'Mistral Medium 3.1 是 Mistral 最新的中型模型，在复杂推理和编码任务上表现出色。',
