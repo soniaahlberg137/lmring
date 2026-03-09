@@ -7,6 +7,32 @@ import { cn } from '../../utils';
 import { Shimmer } from '../shimmer';
 import { StreamingCursor } from '../streaming-cursor';
 
+const BLOCK_ELEMENTS = ['div', 'figure', 'table', 'ul', 'ol', 'blockquote', 'pre', 'hr', 'section', 'article'];
+
+function hasBlockElement(children: React.ReactNode): boolean {
+  return React.Children.toArray(children).some((child) => {
+    if (!React.isValidElement(child)) return false;
+    const type = child.type;
+    if (typeof type === 'string') {
+      return BLOCK_ELEMENTS.includes(type);
+    }
+    // Custom React components (like Streamdown's image renderer) may render
+    // block-level elements. Treat them as block to avoid invalid nesting.
+    return typeof type === 'function' || typeof type === 'object';
+  });
+}
+
+function MarkdownParagraph(props: React.ComponentProps<'p'>) {
+  if (hasBlockElement(props.children)) {
+    return <div className="mb-4 last:mb-0" {...props} />;
+  }
+  return <p {...props} />;
+}
+
+const markdownComponents = {
+  p: MarkdownParagraph,
+};
+
 const permissiveRehypePlugins = [
   defaultRehypePlugins.raw,
   defaultRehypePlugins.katex,
@@ -84,6 +110,7 @@ function ResponseViewer({
               isAnimating={false}
               controls={{ code: true }}
               rehypePlugins={permissiveRehypePlugins}
+              components={markdownComponents}
             >
               {strippedContent}
             </Streamdown>
@@ -137,6 +164,7 @@ function ResponseViewer({
         isAnimating={isStreaming}
         controls={{ code: true }}
         rehypePlugins={permissiveRehypePlugins}
+        components={markdownComponents}
       >
         {strippedContent}
       </Streamdown>

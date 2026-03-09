@@ -112,6 +112,7 @@ const googleChatModels: ChatModelCard[] = [
       cachedInput: 0.2,
     },
     releasedAt: '2025-11-18',
+    legacy: true,
   },
   {
     id: 'gemini-3-pro-image-preview',
@@ -134,6 +135,47 @@ const googleChatModels: ChatModelCard[] = [
     releasedAt: '2025-11-20',
   },
   {
+    id: 'gemini-3.1-flash-preview',
+    displayName: 'Gemini 3.1 Flash Preview',
+    description: 'Gemini 3.1 Flash 是 Google 最新的快速多模态模型，具备全面的推理和工具调用能力。',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      video: true,
+      vision: true,
+    },
+    pricing: {
+      input: 0.3,
+      output: 2.5,
+      cachedInput: 0.075,
+    },
+    releasedAt: '2026-03-04',
+  },
+  {
+    id: 'gemini-3.1-flash-image-preview',
+    displayName: 'Nano Banana Flash',
+    description:
+      'Gemini 3.1 Flash Image（Nano Banana Flash）是 Google 的快速图像生成模型，支持多模态对话。',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    maxOutput: 32_768,
+    enabled: true,
+    abilities: {
+      imageOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 0.3,
+      output: 2.5,
+    },
+    releasedAt: '2026-03-04',
+  },
+  {
     id: 'gemini-3-flash-preview',
     displayName: 'Gemini 3 Flash Preview',
     description: 'Gemini 3 Flash Preview 是 Google 最新的快速多模态模型。',
@@ -154,6 +196,7 @@ const googleChatModels: ChatModelCard[] = [
       cachedInput: 0.075,
     },
     releasedAt: '2025-12-01',
+    legacy: true,
   },
   {
     id: 'gemini-2.5-pro',
