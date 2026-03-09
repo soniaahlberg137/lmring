@@ -84,6 +84,13 @@ export async function POST(request: Request) {
           // Get the runtime provider from model card
           const runtimeProvider = getRuntimeProvider(modelId) as VideoRuntimeProvider | null;
 
+          console.log('[video-stream] Starting generation', {
+            modelId,
+            runtimeProvider,
+            runtimeModelId: getRuntimeModelId(modelId) ?? modelId,
+            hasProxyUrl: !!keyData.proxyUrl,
+          });
+
           const videoGenerator = generateVideo(
             {
               apiKey: keyData.apiKey,
@@ -98,6 +105,7 @@ export async function POST(request: Request) {
           );
 
           for await (const event of videoGenerator) {
+            console.log('[video-stream] SSE event:', event.type);
             if (event.type === 'heartbeat') {
               const heartbeatEvent = JSON.stringify({
                 type: 'heartbeat',
@@ -164,6 +172,7 @@ export async function POST(request: Request) {
           controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         } catch (error) {
+          console.error('[video-stream] Generation error:', error);
           const errorMessage = extractApiErrorMessage(error);
           const errorEvent = JSON.stringify({
             type: 'error',
@@ -171,6 +180,7 @@ export async function POST(request: Request) {
             error: errorMessage,
           });
           controller.enqueue(encoder.encode(`data: ${errorEvent}\n\n`));
+          controller.enqueue(encoder.encode('data: [DONE]\n\n'));
           controller.close();
         }
       },

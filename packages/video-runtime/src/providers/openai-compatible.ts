@@ -166,11 +166,19 @@ export class OpenAICompatibleVideoProvider extends BaseVideoProvider {
   };
 
   private readonly useGenerationsEndpoint: boolean;
+  private readonly baseURLHasEndpoint: boolean;
 
   constructor(config: OpenAICompatibleConfig) {
     super(config);
-    // Default to true for better compatibility with proxy services like bltcy.ai
-    this.useGenerationsEndpoint = config.useGenerationsEndpoint ?? true;
+    // Auto-detect: if baseURL already includes the endpoint path, don't append it again.
+    // This prevents URL duplication like ".../videos/generations/videos/generations"
+    // when users provide a proxy URL that already contains the full path.
+    const baseUrl = config.baseURL ?? '';
+    this.baseURLHasEndpoint =
+      baseUrl.endsWith('/videos/generations') || baseUrl.endsWith('/videos');
+    this.useGenerationsEndpoint = this.baseURLHasEndpoint
+      ? false
+      : (config.useGenerationsEndpoint ?? true);
   }
 
   resolveModelId(modelId: string): string {
@@ -197,16 +205,19 @@ export class OpenAICompatibleVideoProvider extends BaseVideoProvider {
 
   /**
    * Get the endpoint path for video creation.
+   * Returns empty string when baseURL already contains the endpoint path.
    */
   private get createEndpoint(): string {
+    if (this.baseURLHasEndpoint) return '';
     return this.useGenerationsEndpoint ? 'videos/generations' : 'videos';
   }
 
   /**
    * Get the endpoint path for polling status.
+   * Returns empty string when baseURL already contains the endpoint path.
    */
   private get pollEndpoint(): string {
-    // Match the create endpoint pattern for consistency
+    if (this.baseURLHasEndpoint) return '';
     return this.useGenerationsEndpoint ? 'videos/generations' : 'videos';
   }
 

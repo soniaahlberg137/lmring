@@ -375,7 +375,12 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
                 ...workflow,
                 status,
                 error: error ?? (status === 'failed' ? workflow.error : undefined),
-                pendingResponse: status === 'cancelled' ? undefined : workflow.pendingResponse,
+                pendingResponse:
+                  status === 'cancelled'
+                    ? undefined
+                    : status === 'failed' && workflow.pendingResponse
+                      ? { ...workflow.pendingResponse, isVideoGenerating: false }
+                      : workflow.pendingResponse,
                 updatedAt: new Date(),
               });
               return { workflows: newMap };
