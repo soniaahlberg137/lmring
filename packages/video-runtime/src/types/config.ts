@@ -15,6 +15,7 @@ export type VideoRuntimeProvider =
   | 'kling' // Kling AI (Kuaishou)
   | 'seedance' // ByteDance Seedance
   | 'vidu' // Vidu
+  | 'dashscope' // DashScope (Aliyun Bailian)
   | 'openai-compatible'; // Proxy services (LiteLLM, New-API)
 
 /**

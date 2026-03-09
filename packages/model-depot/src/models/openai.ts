@@ -14,6 +14,48 @@ import type {
 
 const openaiChatModels: ChatModelCard[] = [
   {
+    id: 'gpt-5.4',
+    displayName: 'GPT-5.4',
+    description:
+      'GPT-5.4 是专业工作的前沿模型，集成顶级编码、计算机使用、工具搜索与 1M 上下文窗口。',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 2.5,
+      output: 15,
+      cachedInput: 0.25,
+    },
+    releasedAt: '2026-03-05',
+  },
+  {
+    id: 'gpt-5.4-pro',
+    displayName: 'GPT-5.4 pro',
+    description: 'GPT-5.4 pro 使用更多计算来更深入地思考，在复杂任务上提供最高性能。',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      vision: true,
+    },
+    pricing: {
+      input: 30,
+      output: 180,
+    },
+    releasedAt: '2026-03-05',
+  },
+  {
     id: 'gpt-5.3-codex',
     displayName: 'GPT-5.3 Codex',
     description: 'GPT-5.3 Codex 是 OpenAI 最强大的编程代理模型，结合前沿编码性能与通用推理能力。',
@@ -25,6 +67,11 @@ const openaiChatModels: ChatModelCard[] = [
       reasoning: true,
       search: true,
       vision: true,
+    },
+    pricing: {
+      input: 1.75,
+      output: 14,
+      cachedInput: 0.175,
     },
     releasedAt: '2026-02-05',
   },

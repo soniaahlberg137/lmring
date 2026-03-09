@@ -1,4 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 // ============================================================================
 // Chat Models
@@ -60,6 +60,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 20,
       currency: 'CNY',
     },
+    releasedAt: '2025-09-23',
   },
   {
     id: 'qwen3-vl-235b-a22b-instruct',
@@ -77,6 +78,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 8,
       currency: 'CNY',
     },
+    releasedAt: '2025-09-23',
   },
   {
     id: 'qwen3-vl-32b-thinking',
@@ -94,6 +96,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 20,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-21',
   },
   {
     id: 'qwen3-vl-32b-instruct',
@@ -110,6 +113,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 8,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-21',
   },
   {
     id: 'qwen3-vl-30b-a3b-thinking',
@@ -127,6 +131,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 7.5,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-03',
   },
   {
     id: 'qwen3-vl-30b-a3b-instruct',
@@ -143,6 +148,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 3,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-03',
   },
   {
     id: 'qwen3-vl-8b-thinking',
@@ -160,6 +166,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 5,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-14',
   },
   {
     id: 'qwen3-vl-8b-instruct',
@@ -176,6 +183,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 2,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-14',
   },
   {
     id: 'qwen3-max',
@@ -457,6 +465,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.8,
       currency: 'CNY',
     },
+    releasedAt: '2025-07-23',
   },
   {
     id: 'qwen3-coder-flash',
@@ -474,6 +483,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.2,
       currency: 'CNY',
     },
+    releasedAt: '2025-08-05',
   },
   {
     id: 'qwen3-coder-480b-a35b-instruct',
@@ -490,6 +500,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 24,
       currency: 'CNY',
     },
+    releasedAt: '2026-01-12',
   },
   {
     id: 'qwen3-coder-30b-a3b-instruct',
@@ -506,6 +517,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2026-01-12',
   },
   {
     id: 'qwen-flash',
@@ -547,6 +559,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.16,
       currency: 'CNY',
     },
+    releasedAt: '2024-07-05',
   },
   {
     id: 'qwen-turbo',
@@ -586,6 +599,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.48,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-27',
   },
   {
     id: 'qwen-long',
@@ -603,6 +617,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 2,
       currency: 'CNY',
     },
+    releasedAt: '2024-03-28',
   },
   {
     id: 'qwen-vl-plus',
@@ -621,6 +636,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.16,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-13',
   },
   {
     id: 'qwen-vl-max',
@@ -640,6 +656,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       cachedInput: 0.32,
       currency: 'CNY',
     },
+    releasedAt: '2024-08-27',
   },
   {
     id: 'qwen-vl-ocr',
@@ -657,6 +674,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 5,
       currency: 'CNY',
     },
+    releasedAt: '2025-04-30',
   },
   {
     id: 'qwen3-omni-flash',
@@ -693,6 +711,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 4.5,
       currency: 'CNY',
     },
+    releasedAt: '2025-02-14',
   },
   {
     id: 'qwen2.5-omni-7b',
@@ -710,6 +729,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2025-03-26',
   },
   {
     id: 'qwq-plus',
@@ -841,6 +861,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 12,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen2.5-32b-instruct',
@@ -857,6 +878,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen2.5-14b-instruct',
@@ -873,6 +895,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 3,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen2.5-14b-instruct-1m',
@@ -906,6 +929,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 1,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen2.5-vl-72b-instruct',
@@ -972,6 +996,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2024-11-12',
   },
   {
     id: 'qwen2.5-coder-14b-instruct',
@@ -985,6 +1010,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2024-11-12',
   },
   {
     id: 'qwen2.5-coder-7b-instruct',
@@ -998,6 +1024,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 2,
       currency: 'CNY',
     },
+    releasedAt: '2024-11-12',
   },
   {
     id: 'qwen2.5-math-72b-instruct',
@@ -1025,6 +1052,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 2,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen-math-plus',
@@ -1038,6 +1066,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 12,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen-math-turbo',
@@ -1051,6 +1080,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2024-09-19',
   },
   {
     id: 'qwen-coder-plus',
@@ -1064,6 +1094,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 7,
       currency: 'CNY',
     },
+    releasedAt: '2024-11-12',
   },
   {
     id: 'qwen-coder-turbo',
@@ -1077,6 +1108,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2024-11-12',
   },
   {
     id: 'deepseek-v3.2-exp',
@@ -1095,6 +1127,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 3,
       currency: 'CNY',
     },
+    releasedAt: '2025-09-30',
   },
   {
     id: 'deepseek-v3.1',
@@ -1113,6 +1146,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 12,
       currency: 'CNY',
     },
+    releasedAt: '2025-08-22',
   },
   {
     id: 'deepseek-v3',
@@ -1169,6 +1203,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek-r1-distill-qwen-14b',
@@ -1185,6 +1220,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 3,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek-r1-distill-qwen-7b',
@@ -1201,6 +1237,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 1,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek-r1-distill-qwen-1.5b',
@@ -1217,6 +1254,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 0,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek-r1-distill-llama-70b',
@@ -1234,6 +1272,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 0,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek-r1-distill-llama-8b',
@@ -1250,6 +1289,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 0,
       currency: 'CNY',
     },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'kimi-k2-thinking',
@@ -1305,6 +1345,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 14,
       currency: 'CNY',
     },
+    releasedAt: '2025-10-21',
   },
   {
     id: 'glm-4.5',
@@ -1322,6 +1363,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 14,
       currency: 'CNY',
     },
+    releasedAt: '2025-07-28',
   },
   {
     id: 'glm-4.5-air',
@@ -1339,6 +1381,7 @@ const dashscopeChatModels: ChatModelCard[] = [
       output: 6,
       currency: 'CNY',
     },
+    releasedAt: '2025-07-28',
   },
 ];
 
@@ -1476,10 +1519,285 @@ const dashscopeImageModels: ImageModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const dashscopeVideoModels: VideoModelCard[] = [
+  // === wan2.6 ===
+  {
+    id: 'wan2.6-t2v',
+    displayName: 'wan2.6-t2v',
+    description: '万相2.6文生视频模型，支持音频生成、多镜头叙事，最长15秒，1080P高清。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 15,
+    resolutions: [
+      '1280x720',
+      '720x1280',
+      '960x960',
+      '1088x832',
+      '832x1088',
+      '1920x1080',
+      '1080x1920',
+      '1440x1440',
+      '1632x1248',
+      '1248x1632',
+    ],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-25',
+  },
+  {
+    id: 'wan2.6-i2v-flash',
+    displayName: 'wan2.6-i2v-flash',
+    description: '万相2.6图生视频极速版，支持音频生成，快速高效。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 10,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-25',
+  },
+  {
+    id: 'wan2.6-i2v',
+    displayName: 'wan2.6-i2v',
+    description: '万相2.6图生视频模型，支持音频生成、多镜头叙事，最长15秒。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 15,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-25',
+  },
+  {
+    id: 'wan2.6-r2v',
+    displayName: 'wan2.6-r2v',
+    description: '万相2.6参考生视频，支持多模态输入生成角色互动视频，最长15秒。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 15,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-25',
+  },
+  {
+    id: 'wan2.6-r2v-flash',
+    displayName: 'wan2.6-r2v-flash',
+    description: '万相2.6参考生视频极速版，快速高效。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 10,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.3, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-25',
+  },
+  // === wan2.5 ===
+  {
+    id: 'wan2.5-t2v-preview',
+    displayName: 'wan2.5-t2v-preview',
+    description: '万相2.5文生视频预览版，支持音频生成和多镜头叙事。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 10,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-23',
+  },
+  {
+    id: 'wan2.5-i2v-preview',
+    displayName: 'wan2.5-i2v-preview',
+    description: '万相2.5图生视频预览版，支持480P/720P/1080P多分辨率。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 10,
+    resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.3, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-23',
+  },
+  // === wan2.2 ===
+  {
+    id: 'wan2.2-t2v-plus',
+    displayName: 'wan2.2-t2v-plus',
+    description: '万相2.2文生视频专业版，5秒视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-07-28',
+  },
+  {
+    id: 'wan2.2-i2v-flash',
+    displayName: 'wan2.2-i2v-flash',
+    description: '万相2.2图生视频极速版，支持480P/720P/1080P。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.14, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-07-28',
+  },
+  {
+    id: 'wan2.2-i2v-plus',
+    displayName: 'wan2.2-i2v-plus',
+    description: '万相2.2图生视频专业版，高质量1080P视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['854x480', '480x854', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-07-28',
+  },
+  {
+    id: 'wan2.2-kf2v-flash',
+    displayName: 'wan2.2-kf2v-flash',
+    description: '万相2.2首尾帧生视频极速版，基于首尾帧和文本提示生成过渡视频。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.14, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-12',
+  },
+  {
+    id: 'wan2.2-s2v',
+    displayName: 'wan2.2-s2v',
+    description: '万相2.2数字人视频生成，基于图片和音频生成唇形同步的说话视频。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 300,
+    resolutions: ['854x480', '480x854', '1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.9, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-08-26',
+  },
+  {
+    id: 'wan2.2-animate-move',
+    displayName: 'wan2.2-animate-move',
+    description: '万相2.2图生动作，将参考视频的动作迁移到图片角色。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 30,
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.4, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-19',
+  },
+  {
+    id: 'wan2.2-animate-mix',
+    displayName: 'wan2.2-animate-mix',
+    description: '万相2.2角色动画混合，角色替换与动画生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 30,
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-09-19',
+  },
+  // === wan2.1 ===
+  {
+    id: 'wanx2.1-i2v-turbo',
+    displayName: 'wanx2.1-i2v-turbo',
+    description: '万相2.1图生视频极速版，支持480P/720P。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['854x480', '480x854', '1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-01-17',
+  },
+  {
+    id: 'wanx2.1-i2v-plus',
+    displayName: 'wanx2.1-i2v-plus',
+    description: '万相2.1图生视频专业版，720P视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-01-17',
+  },
+  {
+    id: 'wanx2.1-t2v-turbo',
+    displayName: 'wanx2.1-t2v-turbo',
+    description: '万相2.1文生视频极速版，480P/720P视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: [
+      '832x480',
+      '480x832',
+      '624x624',
+      '1280x720',
+      '720x1280',
+      '960x960',
+      '1088x832',
+      '832x1088',
+    ],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-01-08',
+  },
+  {
+    id: 'wanx2.1-t2v-plus',
+    displayName: 'wanx2.1-t2v-plus',
+    description: '万相2.1文生视频专业版，720P视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-01-08',
+  },
+  {
+    id: 'wanx2.1-kf2v-plus',
+    displayName: 'wanx2.1-kf2v-plus',
+    description: '万相2.1首尾帧生视频专业版，720P视频生成。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-04-18',
+  },
+  {
+    id: 'wanx2.1-vace-plus',
+    displayName: 'wanx2.1-vace-plus',
+    description: '万相2.1视频编辑，支持视频创作与编辑。',
+    type: 'video',
+    abilities: { videoOutput: true },
+    maxDurationSeconds: 5,
+    resolutions: ['1280x720', '720x1280'],
+    runtimeProvider: 'dashscope',
+    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    releasedAt: '2025-05-19',
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
 export default {
   chat: dashscopeChatModels,
   image: dashscopeImageModels,
+  video: dashscopeVideoModels,
 };

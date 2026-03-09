@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export type ModelPriceCurrency = 'CNY' | 'USD';
+export type ModelPricingUnit = 'tokens' | 'seconds' | 'requests';
 
 export const AiModelSourceEnum = {
   Builtin: 'builtin',
@@ -51,6 +52,7 @@ export interface ModelPricing {
   input?: number;
   output?: number;
   cachedInput?: number;
+  unit?: ModelPricingUnit;
 }
 
 export interface BaseModelCard {

@@ -4,6 +4,7 @@
  * Creates and caches video provider instances based on configuration.
  */
 
+import { DashScopeVideoProvider } from '../providers/dashscope';
 import { GoogleVideoProvider } from '../providers/google';
 import { KlingVideoProvider } from '../providers/kling';
 import { MiniMaxVideoProvider } from '../providers/minimax';
@@ -73,6 +74,9 @@ export class VideoProviderFactory {
       case 'vidu':
         return new ViduVideoProvider(config);
 
+      case 'dashscope':
+        return new DashScopeVideoProvider(config);
+
       case 'openai-compatible':
         return new OpenAICompatibleVideoProvider(config as OpenAICompatibleConfig);
 
@@ -89,6 +93,7 @@ export class VideoProviderFactory {
       'kling',
       'seedance',
       'vidu',
+      'dashscope',
       'openai-compatible',
     ];
     return supportedProviders.includes(provider);
@@ -99,7 +104,16 @@ export class VideoProviderFactory {
   }
 
   getSupportedProviders(): VideoRuntimeProvider[] {
-    return ['openai', 'minimax', 'google', 'kling', 'seedance', 'vidu', 'openai-compatible'];
+    return [
+      'openai',
+      'minimax',
+      'google',
+      'kling',
+      'seedance',
+      'vidu',
+      'dashscope',
+      'openai-compatible',
+    ];
   }
 }
 
