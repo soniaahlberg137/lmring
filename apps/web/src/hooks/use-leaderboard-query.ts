@@ -1,16 +1,14 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import {
-  CATEGORY_CONFIGS,
-  calculateCategoryArenaScores,
+  CATEGORY_ARENA_NAMES,
   calculateChatArenaScore,
   calculateCodeArenaScore,
   getArenaScores,
-  getArenaScoresForCategory,
-  getModelsAll,
+  getMagiaLeaderboard,
   getModelsFull,
   type LeaderboardCategory,
-  type ModelsAllParams,
+  type MagiaLeaderboardItem,
   type ZeroEvalModelBasic,
   type ZeroEvalModelFull,
 } from '@/libs/zeroeval-api';
@@ -33,8 +31,6 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
 export async function fetchLeaderboardData(
   category: LeaderboardCategory,
 ): Promise<ModelWithArena[]> {
-  const config = CATEGORY_CONFIGS.find((c) => c.id === category);
-
   if (category === 'vision') {
     const models = await getModelsFull(true);
     const modelIds = models.map((m) => m.model_id);
@@ -77,27 +73,59 @@ export async function fetchLeaderboardData(
     });
   }
 
-  // Other categories
-  const apiParams: ModelsAllParams = config?.apiParams || {};
-  const basicModels = await getModelsAll(apiParams);
-  const modelIds = basicModels.map((m) => m.model_id);
+  // Non-LLM categories: use magia leaderboard API
+  const arenaNames = CATEGORY_ARENA_NAMES[category];
+  const leaderboardResults = await Promise.all(
+    arenaNames.map((arena) => getMagiaLeaderboard(arena as string)),
+  );
 
-  let arenaData: Awaited<ReturnType<typeof getArenaScoresForCategory>> = {};
-  try {
-    arenaData = await getArenaScoresForCategory(modelIds, category);
-  } catch {
-    console.warn('Failed to fetch arena scores, continuing without them');
+  // Merge models across arenas, deduplicating by model_id
+  const modelMap = new Map<string, ModelWithArena & { _magiaItem: MagiaLeaderboardItem }>();
+
+  for (let i = 0; i < arenaNames.length; i++) {
+    const arenaName = arenaNames[i] as string;
+    const items = leaderboardResults[i]?.leaderboard ?? [];
+
+    for (const item of items) {
+      const existing = modelMap.get(item.model_id);
+      if (existing) {
+        // Add this arena's score to the existing model
+        (existing as unknown as Record<string, unknown>)[arenaName] =
+          Math.round(item.conservative_rating * 100 * 100) / 100;
+      } else {
+        const model: ModelWithArena & { _magiaItem: MagiaLeaderboardItem } = {
+          model_id: item.model_id,
+          name: item.model_name,
+          organization: item.organization,
+          organization_id: item.organization.toLowerCase().replace(/\s+/g, '-'),
+          announcement_date: item.announcement_date,
+          release_date: null,
+          multimodal: false,
+          license: item.license,
+          is_open: item.is_open_source,
+          model_type:
+            category === 'image-generation'
+              ? 'image'
+              : category === 'video-generation'
+                ? 'video'
+                : category === 'text-to-speech'
+                  ? 'tts'
+                  : 'stt',
+          input_modalities: [],
+          output_modalities: [],
+          input_price: item.input_price != null ? String(item.input_price) : null,
+          output_price: item.output_price != null ? String(item.output_price) : null,
+          arena_raw_scores: null,
+          [arenaName]: Math.round(item.conservative_rating * 100 * 100) / 100,
+          _magiaItem: item,
+        };
+        modelMap.set(item.model_id, model);
+      }
+    }
   }
 
-  return basicModels.map((model) => {
-    const arenaScores = arenaData[model.model_id];
-    const convertedScores = arenaScores ? calculateCategoryArenaScores(arenaScores, category) : {};
-    return {
-      ...model,
-      arena_raw_scores: arenaScores || null,
-      ...convertedScores,
-    };
-  });
+  // Remove internal _magiaItem field before returning
+  return Array.from(modelMap.values()).map(({ _magiaItem, ...model }) => model);
 }
 
 // Query key factory for hierarchical invalidation (Best Practice #2)

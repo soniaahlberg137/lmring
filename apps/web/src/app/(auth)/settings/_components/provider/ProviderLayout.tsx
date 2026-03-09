@@ -11,7 +11,12 @@ interface ProviderLayoutProps {
   providers: Provider[];
   isLoading?: boolean;
   onToggleProvider: (id: string, enabled?: boolean, apiKeyId?: string) => void;
-  onSaveProvider?: (providerId: string, apiKeyId: string) => void;
+  onSaveProvider?: (
+    providerId: string,
+    apiKeyId: string,
+    proxyUrl: string,
+    hasApiKey: boolean,
+  ) => void;
   onAddProvider: (provider: Provider) => void;
   onDeleteProvider?: (providerId: string) => void;
 }

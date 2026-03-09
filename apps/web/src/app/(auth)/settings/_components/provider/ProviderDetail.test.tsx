@@ -649,7 +649,7 @@ describe('ProviderDetail handler functions', () => {
     fireEvent.click(checkButton);
 
     await waitFor(() => {
-      expect(mockOnSave).toHaveBeenCalledWith('openai', 'new-key-id-xyz');
+      expect(mockOnSave).toHaveBeenCalledWith('openai', 'new-key-id-xyz', '', true);
     });
 
     await waitFor(() => {

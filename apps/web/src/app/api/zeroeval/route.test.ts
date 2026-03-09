@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { GET as GET_ARENA } from '@/app/api/zeroeval/arena-scores/route';
 import { GET as GET_BENCHMARKS } from '@/app/api/zeroeval/benchmarks/route';
+import { GET as GET_MAGIA_LEADERBOARD } from '@/app/api/zeroeval/magia/leaderboard/route';
 import { GET as GET_MODEL_DETAIL } from '@/app/api/zeroeval/models/[modelId]/route';
 import { GET as GET_MODELS_ALL } from '@/app/api/zeroeval/models/all/route';
 import { GET as GET_MODELS_FULL } from '@/app/api/zeroeval/models/full/route';
@@ -246,6 +247,100 @@ describe('ZeroEval Proxy API', () => {
 
       expect(response.status).toBe(404);
       expect(data.error).toContain('Upstream error');
+    });
+  });
+
+  describe('GET /api/zeroeval/magia/leaderboard', () => {
+    it('should proxy magia leaderboard successfully', async () => {
+      const mockData = {
+        leaderboard: [{ model_id: 'flux-1', model_name: 'FLUX.1', conservative_rating: 20.65 }],
+        total_count: 1,
+        limit: 200,
+        offset: 0,
+      };
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve(mockData),
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/zeroeval/magia/leaderboard?arena=text-to-image',
+      );
+      const response = await GET_MAGIA_LEADERBOARD(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(200);
+      expect(data).toEqual(mockData);
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('/magia/arenas/text-to-image/leaderboard'),
+        expect.any(Object),
+      );
+    });
+
+    it('should return 400 when arena param is missing', async () => {
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/zeroeval/magia/leaderboard',
+      );
+      const response = await GET_MAGIA_LEADERBOARD(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(400);
+      expect(data.error).toContain('Missing required parameter');
+    });
+
+    it('should forward limit and offset parameters', async () => {
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ leaderboard: [], total_count: 0, limit: 50, offset: 10 }),
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/zeroeval/magia/leaderboard?arena=text-to-video&limit=50&offset=10',
+      );
+      await GET_MAGIA_LEADERBOARD(request);
+
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('limit=50'),
+        expect.any(Object),
+      );
+      expect(mockFetch).toHaveBeenCalledWith(
+        expect.stringContaining('offset=10'),
+        expect.any(Object),
+      );
+    });
+
+    it('should return upstream error status', async () => {
+      mockFetch.mockResolvedValue({
+        ok: false,
+        status: 500,
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/zeroeval/magia/leaderboard?arena=text-to-image',
+      );
+      const response = await GET_MAGIA_LEADERBOARD(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(500);
+      expect(data.error).toContain('Upstream error');
+    });
+
+    it('should handle fetch errors', async () => {
+      mockFetch.mockRejectedValue(new Error('Network error'));
+
+      const request = createMockRequest(
+        'GET',
+        'http://localhost:3000/api/zeroeval/magia/leaderboard?arena=text-to-image',
+      );
+      const response = await GET_MAGIA_LEADERBOARD(request);
+      const data = await parseJsonResponse(response);
+
+      expect(response.status).toBe(500);
+      expect(data.error).toContain('Failed to fetch');
     });
   });
 });

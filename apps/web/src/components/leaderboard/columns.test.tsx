@@ -281,7 +281,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const CellComponent = metricColumn.cell as unknown as React.FC<{
       row: { original: LeaderboardModel & { gpqa_score: number } };
@@ -302,7 +302,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const CellComponent = metricColumn.cell as unknown as React.FC<{
       row: { original: LeaderboardModel & { gpqa_score: number } };
@@ -327,7 +327,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const CellComponent = metricColumn.cell as unknown as React.FC<{
       row: { original: LeaderboardModel & { gpqa_score: number } };
@@ -352,7 +352,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const CellComponent = metricColumn.cell as unknown as React.FC<{
       row: { original: LeaderboardModel & { gpqa_score: number } };
@@ -377,7 +377,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const CellComponent = metricColumn.cell as unknown as React.FC<{
       row: { original: LeaderboardModel & { gpqa_score: null } };
@@ -397,6 +397,7 @@ describe('ScoreCell', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const sortingFn = metricColumn.sortingFn as unknown as (
       rowA: { original: LeaderboardModel & { input_price: string } },
@@ -429,7 +430,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => false as false | 'asc' | 'desc',
@@ -455,7 +456,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => false as false | 'asc' | 'desc',
@@ -482,7 +483,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => 'desc' as false | 'asc' | 'desc',
@@ -508,7 +509,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => 'asc' as false | 'asc' | 'desc',
@@ -535,7 +536,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => false as false | 'asc' | 'desc',
@@ -564,7 +565,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => 'desc' as false | 'asc' | 'desc',
@@ -593,7 +594,7 @@ describe('SortableHeader', () => {
       },
     ];
     const columns = createMetricColumns(metrics, mockT);
-    // biome-ignore lint/style/noNonNullAssertion: Test knows array has elements
+    // biome-ignore lint/style/noNonNullAssertion: test - column existence verified
     const metricColumn = columns[0]!;
     const mockColumn = {
       getIsSorted: () => 'asc' as false | 'asc' | 'desc',

@@ -8,6 +8,7 @@ import {
   getArenaScores,
   getArenaScoresForCategory,
   getBenchmarks,
+  getMagiaLeaderboard,
   getModelDetail,
   getModelsAll,
   getModelsFull,
@@ -610,6 +611,33 @@ describe('zeroeval-api', () => {
 
       const calledUrl = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
       expect(calledUrl).toContain('arena_names=text-to-video%2Cimage-to-video%2Cvideo-editing');
+    });
+  });
+
+  describe('getMagiaLeaderboard', () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it('should fetch magia leaderboard for an arena', async () => {
+      const mockResponse = {
+        leaderboard: [{ model_id: 'flux-1', model_name: 'FLUX.1', conservative_rating: 20.65 }],
+        total_count: 1,
+        limit: 200,
+        offset: 0,
+      };
+
+      vi.spyOn(globalThis, 'fetch').mockResolvedValue(
+        new Response(JSON.stringify(mockResponse), { status: 200 }),
+      );
+
+      const result = await getMagiaLeaderboard('text-to-image');
+
+      expect(result).toEqual(mockResponse);
+      const calledUrl = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]?.[0] as string;
+      expect(calledUrl).toContain('magia/leaderboard');
+      expect(calledUrl).toContain('arena=text-to-image');
+      expect(calledUrl).toContain('limit=200');
     });
   });
 });
