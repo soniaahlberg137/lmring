@@ -43,6 +43,11 @@ const MODEL_PREFIX_MAP: Record<string, VideoRuntimeProvider> = {
 
   // Vidu
   vidu: 'vidu',
+
+  // DashScope Wanxiang
+  'dashscope/': 'dashscope',
+  wan: 'dashscope',
+  wanx: 'dashscope',
 };
 
 /**

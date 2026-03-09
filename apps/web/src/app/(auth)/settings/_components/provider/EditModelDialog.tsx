@@ -43,7 +43,7 @@ interface EditModelDialogProps {
     displayName?: string;
     abilities?: ModelAbilities;
     supportsStreaming?: boolean;
-    pricing?: { currency?: string; input?: number; output?: number };
+    pricing?: { currency?: string; input?: number; output?: number; unit?: string };
   };
   isCustomModel: boolean;
   onSave: (data: {
@@ -325,7 +325,11 @@ export function EditModelDialog({
                       className="w-[180px] h-9 text-right"
                     />
                     <div className="w-[120px] px-3 py-1.5 text-sm text-muted-foreground border rounded-md bg-muted/50 whitespace-nowrap text-center">
-                      {t('Provider.edit_model_dialog_per_million_tokens')}
+                      {model.pricing?.unit === 'seconds'
+                        ? t('Provider.edit_model_dialog_per_second')
+                        : model.pricing?.unit === 'requests'
+                          ? t('Provider.edit_model_dialog_per_request')
+                          : t('Provider.edit_model_dialog_per_million_tokens')}
                     </div>
                   </div>
                 </div>
@@ -347,7 +351,11 @@ export function EditModelDialog({
                       className="w-[180px] h-9 text-right"
                     />
                     <div className="w-[120px] px-3 py-1.5 text-sm text-muted-foreground border rounded-md bg-muted/50 whitespace-nowrap text-center">
-                      {t('Provider.edit_model_dialog_per_million_tokens')}
+                      {model.pricing?.unit === 'seconds'
+                        ? t('Provider.edit_model_dialog_per_second')
+                        : model.pricing?.unit === 'requests'
+                          ? t('Provider.edit_model_dialog_per_request')
+                          : t('Provider.edit_model_dialog_per_million_tokens')}
                     </div>
                   </div>
                 </div>

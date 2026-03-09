@@ -279,6 +279,8 @@
   "Provider.edit_model_dialog_input_price": "Prix d'entrée",
   "Provider.edit_model_dialog_output_price": "Prix de sortie",
   "Provider.edit_model_dialog_per_million_tokens": "$ / M Tokens",
+  "Provider.edit_model_dialog_per_second": "/ sec",
+  "Provider.edit_model_dialog_per_request": "/ req",
   "Provider.edit_model_dialog_cancel": "Annuler",
   "Provider.edit_model_dialog_save": "Enregistrer",
   "Provider.edit_model_dialog_saving": "Enregistrement...",

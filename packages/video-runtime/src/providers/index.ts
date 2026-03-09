@@ -6,6 +6,8 @@
 
 // Base provider
 export { BaseVideoProvider, stripProviderPrefix } from './base';
+// DashScope (Aliyun Bailian)
+export { createDashScopeProvider, DashScopeVideoProvider } from './dashscope';
 // Google Veo
 export { createGoogleProvider, GoogleVideoProvider } from './google';
 // Kling AI

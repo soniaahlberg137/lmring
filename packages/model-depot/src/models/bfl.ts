@@ -8,6 +8,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-pro-1.1',
     pricing: {
       input: 0.04,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -17,6 +18,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-pro-1.1-ultra',
     pricing: {
       input: 0.06,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -27,6 +29,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-dev',
     pricing: {
       input: 0.025,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -36,6 +39,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-schnell',
     pricing: {
       input: 0.003,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -45,6 +49,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-pro-1.0-fill',
     pricing: {
       input: 0.05,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -54,6 +59,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-pro-1.0-canny',
     pricing: {
       input: 0.05,
+      unit: 'requests',
     },
     type: 'image',
   },
@@ -63,6 +69,7 @@ const bflImageModels: ImageModelCard[] = [
     id: 'flux-pro-1.0-depth',
     pricing: {
       input: 0.05,
+      unit: 'requests',
     },
     type: 'image',
   },
