@@ -7,7 +7,7 @@ interface ProviderDetailSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onToggle: (id: string, enabled?: boolean, apiKeyId?: string) => void;
-  onSave?: (providerId: string, apiKeyId: string) => void;
+  onSave?: (providerId: string, apiKeyId: string, proxyUrl: string, hasApiKey: boolean) => void;
   onDelete?: (providerId: string) => void;
 }
 

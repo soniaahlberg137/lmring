@@ -31,8 +31,8 @@ vi.mock('@lobehub/icons', () => ({
 vi.mock('./AddProviderDialog', () => ({
   AddProviderDialog: ({
     onAdd,
-    open,
-    onOpenChange,
+    open: _open,
+    onOpenChange: _onOpenChange,
   }: {
     onAdd: (p: Provider) => void;
     open?: boolean;

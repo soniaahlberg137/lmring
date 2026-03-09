@@ -56,9 +56,10 @@ export function DataTable<TData>({
     initialState: { pagination: { pageSize } },
   });
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: intentionally resets page index when sorting changes
   useEffect(() => {
     table.setPageIndex(0);
-  }, [sorting, table]);
+  }, [sorting]);
 
   // Track resize state (useMemoizedFn: no deps needed, always latest closure)
   const handleResizeStart = useMemoizedFn((headerId: string, handler: (event: unknown) => void) => {

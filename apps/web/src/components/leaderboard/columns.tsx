@@ -56,6 +56,7 @@ function ModelCell({ model, t }: { model: LeaderboardModel; t: TranslationFuncti
 
 // License badge
 function LicenseCell({ license }: { license: string }) {
+  if (!license) return null;
   const isOpen = license !== 'proprietary' && !license.includes('proprietary');
   const displayLicense = license.length > 12 ? `${license.slice(0, 10)}...` : license;
 
