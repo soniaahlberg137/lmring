@@ -11,6 +11,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
     pricing: {
       input: 0.039,
+      unit: 'requests',
     },
     releasedAt: '2025-08-26',
   },
@@ -24,6 +25,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '2048x2048', '4096x4096'],
     pricing: {
       input: 0.03,
+      unit: 'requests',
     },
     releasedAt: '2025-09-09',
   },
@@ -36,6 +38,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
     pricing: {
       input: 0.1,
+      unit: 'requests',
     },
     releasedAt: '2025-09-28',
   },
@@ -48,6 +51,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
     pricing: {
       input: 0.025,
+      unit: 'requests',
     },
     releasedAt: '2025-06-28',
   },
@@ -61,6 +65,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
     pricing: {
       input: 0.04,
+      unit: 'requests',
     },
     releasedAt: '2025-05-01',
   },
@@ -73,6 +78,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['512x512', '1024x1024', '1536x1536'],
     pricing: {
       input: 0.003,
+      unit: 'requests',
     },
     releasedAt: '2024-08-01',
   },
@@ -85,6 +91,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['512x512', '1024x1024', '2048x2048'],
     pricing: {
       input: 0.025,
+      unit: 'requests',
     },
     releasedAt: '2025-07-31',
   },
@@ -98,6 +105,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['1024x1024', '1792x1024', '1024x1792'],
     pricing: {
       input: 0.05,
+      unit: 'requests',
     },
     releasedAt: '2025-05-21',
   },
@@ -111,6 +119,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['512x512', '1024x1024', '1536x1536'],
     pricing: {
       input: 0.03,
+      unit: 'requests',
     },
     releasedAt: '2025-08-19',
   },
@@ -123,6 +132,7 @@ const falImageModels: ImageModelCard[] = [
     resolutions: ['512x512', '1024x1024', '1536x1536'],
     pricing: {
       input: 0.02,
+      unit: 'requests',
     },
     releasedAt: '2025-08-04',
   },

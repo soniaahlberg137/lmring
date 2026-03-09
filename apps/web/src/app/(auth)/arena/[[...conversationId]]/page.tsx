@@ -579,6 +579,16 @@ export default function ArenaPage() {
               ...override?.abilities,
             };
 
+            const pricingUnit = model.pricing?.unit;
+            const unitLabel =
+              pricingUnit === 'seconds'
+                ? '/ sec'
+                : pricingUnit === 'requests'
+                  ? '/ req'
+                  : '/ M tokens';
+            const currencySymbol =
+              (override?.priceCurrency ?? model.pricing?.currency) === 'CNY' ? '¥' : '$';
+
             models.push({
               id: modelId,
               name: displayName,
@@ -588,8 +598,14 @@ export default function ArenaPage() {
               context: model.contextWindowTokens
                 ? `${model.contextWindowTokens.toLocaleString()} tokens`
                 : undefined,
-              inputPricing: inputPrice ? `$${inputPrice} / million tokens` : undefined,
-              outputPricing: outputPrice ? `$${outputPrice} / million tokens` : undefined,
+              inputPricing:
+                inputPrice != null && inputPrice > 0
+                  ? `${currencySymbol}${inputPrice} ${unitLabel}`
+                  : undefined,
+              outputPricing:
+                outputPrice != null && outputPrice > 0
+                  ? `${currencySymbol}${outputPrice} ${unitLabel}`
+                  : undefined,
               type: 'pro',
               isNew: false,
               isCustom: false,

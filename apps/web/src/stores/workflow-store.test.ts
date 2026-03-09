@@ -831,6 +831,24 @@ describe('workflow-store', () => {
       expect(workflow?.pendingResponse).toBeUndefined();
     });
 
+    it('should clear isVideoGenerating in pendingResponse when status is failed', () => {
+      const store = createWorkflowStore();
+      const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');
+      store.getState().setVideoGenerating(id, true);
+
+      // Verify isVideoGenerating is true before failure
+      expect(store.getState().workflows.get(id)?.pendingResponse?.isVideoGenerating).toBe(true);
+
+      store.getState().setWorkflowStatus(id, 'failed', 'Video generation failed');
+
+      const workflow = store.getState().workflows.get(id);
+      expect(workflow?.status).toBe('failed');
+      expect(workflow?.error).toBe('Video generation failed');
+      // pendingResponse should be preserved but isVideoGenerating cleared
+      expect(workflow?.pendingResponse).toBeDefined();
+      expect(workflow?.pendingResponse?.isVideoGenerating).toBe(false);
+    });
+
     it('should preserve pendingResponse when status is running', () => {
       const store = createWorkflowStore();
       const id = store.getState().createWorkflow('openai:gpt-4', 'key-1');

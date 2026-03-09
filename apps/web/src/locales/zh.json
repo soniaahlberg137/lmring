@@ -279,6 +279,8 @@
   "Provider.edit_model_dialog_input_price": "输入价格",
   "Provider.edit_model_dialog_output_price": "输出价格",
   "Provider.edit_model_dialog_per_million_tokens": "$ / 百万 Token",
+  "Provider.edit_model_dialog_per_second": "/ 秒",
+  "Provider.edit_model_dialog_per_request": "/ 次",
   "Provider.edit_model_dialog_cancel": "取消",
   "Provider.edit_model_dialog_save": "保存",
   "Provider.edit_model_dialog_saving": "保存中...",

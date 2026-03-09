@@ -127,7 +127,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
     displayName?: string;
     abilities?: ModelAbilities;
     supportsStreaming?: boolean;
-    pricing?: { currency?: string; input?: number; output?: number };
+    pricing?: { currency?: string; input?: number; output?: number; unit?: string };
     isCustomModel: boolean;
   } | null>(null);
   const [connectivityCheckOpen, setConnectivityCheckOpen] = useState(false);
@@ -582,6 +582,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
           currency: override?.priceCurrency ?? model.pricing?.currency,
           input: override?.inputPrice ?? model.pricing?.input,
           output: override?.outputPrice ?? model.pricing?.output,
+          unit: model.pricing?.unit,
         },
         isCustomModel: isCustom,
       });
@@ -1136,11 +1137,25 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                             </div>
                             <div className="flex flex-wrap gap-x-3 text-xs text-muted-foreground leading-tight">
                               {model.releasedAt && <span>{model.releasedAt}</span>}
-                              {model.pricing?.input && (
-                                <span>Input ${(model.pricing.input || 0).toFixed(2)}/M</span>
+                              {model.pricing?.input != null && model.pricing.input > 0 && (
+                                <span>
+                                  Input ${model.pricing.input.toFixed(2)}
+                                  {model.pricing.unit === 'seconds'
+                                    ? '/sec'
+                                    : model.pricing.unit === 'requests'
+                                      ? '/req'
+                                      : '/M'}
+                                </span>
                               )}
-                              {model.pricing?.output && (
-                                <span>Output ${(model.pricing.output || 0).toFixed(2)}/M</span>
+                              {model.pricing?.output != null && model.pricing.output > 0 && (
+                                <span>
+                                  Output ${model.pricing.output.toFixed(2)}
+                                  {model.pricing.unit === 'seconds'
+                                    ? '/sec'
+                                    : model.pricing.unit === 'requests'
+                                      ? '/req'
+                                      : '/M'}
+                                </span>
                               )}
                               {model.contextWindowTokens && (
                                 <span>{(model.contextWindowTokens / 1000).toFixed(0)}K</span>
