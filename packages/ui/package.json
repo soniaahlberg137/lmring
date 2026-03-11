@@ -121,12 +121,12 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "framer-motion": "^12.34.5",
+    "framer-motion": "^12.35.2",
     "lucide-react": "^0.577.0",
     "radix-ui": "^1.4.3",
-    "react-resizable-panels": "^4.7.1",
+    "react-resizable-panels": "^4.7.2",
     "rehype-harden": "^1.1.8",
-    "streamdown": "^2.3.0",
+    "streamdown": "^2.4.0",
     "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {
@@ -137,11 +137,12 @@
     "@lmring/vitest-config": "workspace:*",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@tsdown/css": "0.21.1",
     "@types/react": "^19.2.14",
     "@vitest/coverage-v8": "^4.0.18",
     "happy-dom": "20.8.3",
     "react": "^19.2.4",
-    "tsdown": "0.20.3",
+    "tsdown": "0.21.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   }

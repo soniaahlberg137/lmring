@@ -22,7 +22,7 @@
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.4.0",
     "@types/pg": "^8.18.0",
     "@vitest/coverage-v8": "^4.0.18",
     "drizzle-kit": "^0.31.9",
