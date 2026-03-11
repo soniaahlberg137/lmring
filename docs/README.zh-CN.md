@@ -11,7 +11,6 @@
   <a href="https://github.com/llm-ring/lmring/stargazers"><img src="https://img.shields.io/github/stars/llm-ring/lmring" alt="GitHub Stars" /></a>
   <a href="https://github.com/llm-ring/lmring/pulls"><img src="https://img.shields.io/badge/PRs-欢迎贡献-brightgreen" alt="PRs Welcome" /></a>
 
-  <img src="assets/homepage.gif" alt="LMRing Demo" width="800" />
 </div>
 
 <p align="center">
@@ -31,6 +30,24 @@
 - **多模态** — 支持文本、图像和视频输入
 - **自托管** — 在自己的基础设施上完全掌控数据
 - **多语言** — 支持英语、法语和中文
+
+## 最新动态
+
+- **视频生成对比** — 多家视频生成服务商的 AI 视频效果并排对比
+- **Web 开发对比** — 对比大语言模型在 Web 开发任务中的编码能力
+- **图片生成对比** — 对比不同模型的 AI 图片生成质量
+
+### 视频生成对比
+
+![视频生成对比](assets/whatsnew/videogen.png)
+
+### Web 开发对比
+
+![Web 开发对比](assets/whatsnew/webdev.png)
+
+### 图片生成对比
+
+![图片生成对比](assets/whatsnew/imagegen.png)
 
 ## 截图
 
