@@ -11,8 +11,6 @@
   <a href="https://github.com/llm-ring/lmring/stargazers"><img src="https://img.shields.io/github/stars/llm-ring/lmring" alt="GitHub Stars" /></a>
   <a href="https://github.com/llm-ring/lmring/pulls"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen" alt="PRs Welcome" /></a>
 
-  <img src="docs/assets/homepage.gif" alt="LMRing Demo" width="800" />
-
 
 </div>
 
@@ -34,6 +32,24 @@
 - **Multimodal** — Text, image, and video inputs for vision-capable models
 - **Self-Hosted** — Full data ownership on your own infrastructure
 - **i18n Ready** — English, French, and Chinese
+
+## What's New
+
+- **Video Generation Comparison** — Side-by-side comparison of AI-generated videos across multiple providers
+- **Web Development Comparison** — Compare LLM coding capabilities for web development tasks
+- **Image Generation Comparison** — Compare AI image generation quality across different models
+
+### Video Generation Comparison
+
+![Video Generation Comparison](docs/assets/whatsnew/videogen.png)
+
+### Web Development Comparison
+
+![Web Development Comparison](docs/assets/whatsnew/webdev.png)
+
+### Image Generation Comparison
+
+![Image Generation Comparison](docs/assets/whatsnew/imagegen.png)
 
 ## Screenshots
 
