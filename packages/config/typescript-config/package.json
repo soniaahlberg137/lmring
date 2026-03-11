@@ -1,6 +1,6 @@
 {
   "name": "@lmring/typescript-config",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "private": true,
   "files": ["base.json", "nextjs.json"]
 }
