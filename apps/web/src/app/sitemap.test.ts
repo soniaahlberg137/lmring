@@ -18,7 +18,7 @@ describe('sitemap.ts', () => {
       env: {},
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
 
     expect(Array.isArray(result)).toBe(true);
@@ -32,7 +32,7 @@ describe('sitemap.ts', () => {
       },
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
 
     const homepage = result.find((entry) => entry.url.endsWith('/'));
@@ -44,7 +44,7 @@ describe('sitemap.ts', () => {
       env: {},
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
     const homepage = result[0];
 
@@ -56,7 +56,7 @@ describe('sitemap.ts', () => {
       env: {},
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
     const homepage = result[0];
 
@@ -68,7 +68,7 @@ describe('sitemap.ts', () => {
       env: {},
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
     const homepage = result[0];
 
@@ -80,7 +80,7 @@ describe('sitemap.ts', () => {
       env: {},
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
     const homepage = result[0];
 
@@ -94,7 +94,7 @@ describe('sitemap.ts', () => {
       },
     }));
 
-    const { default: sitemap } = await import('./sitemap');
+    const { default: sitemap } = await import('./sitemap-data');
     const result = sitemap();
     const homepage = result[0];
 

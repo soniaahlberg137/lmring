@@ -88,18 +88,39 @@ describe('robots.ts', () => {
     const result = robots();
     const rules = result.rules as Array<{
       userAgent: string;
-      allow: string;
+      allow?: string;
+      disallow?: string | string[];
     }>;
 
-    const aiAgents = rules.slice(1).map((r) => r.userAgent);
+    const aiRules = rules.slice(1);
+    const aiAgents = aiRules.map((r) => r.userAgent);
+
+    // Tier 1: Critical for AI Search Visibility
     expect(aiAgents).toContain('GPTBot');
-    expect(aiAgents).toContain('Google-Extended');
+    expect(aiAgents).toContain('OAI-SearchBot');
+    expect(aiAgents).toContain('ChatGPT-User');
     expect(aiAgents).toContain('ClaudeBot');
     expect(aiAgents).toContain('PerplexityBot');
 
-    for (const rule of rules.slice(1)) {
+    // Tier 2: Broader AI Ecosystem
+    expect(aiAgents).toContain('Google-Extended');
+    expect(aiAgents).toContain('GoogleOther');
+    expect(aiAgents).toContain('Applebot-Extended');
+    expect(aiAgents).toContain('Amazonbot');
+    expect(aiAgents).toContain('FacebookBot');
+
+    // Tier 3: Block aggressive/low-value
+    expect(aiAgents).toContain('Bytespider');
+
+    // All allowed bots should have allow: '/'
+    const allowedRules = aiRules.filter((r) => r.userAgent !== 'Bytespider');
+    for (const rule of allowedRules) {
       expect(rule.allow).toBe('/');
     }
+
+    // Bytespider should be blocked
+    const bytespiderRule = aiRules.find((r) => r.userAgent === 'Bytespider');
+    expect(bytespiderRule?.disallow).toBe('/');
   });
 
   it('should use localhost as fallback for sitemap URL', async () => {
