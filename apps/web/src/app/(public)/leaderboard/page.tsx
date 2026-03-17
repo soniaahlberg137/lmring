@@ -3,7 +3,7 @@
 import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
 import type { SortingState } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import {
   CategoryTabs,
   createBaseColumns,
@@ -29,14 +29,11 @@ import {
   sortAndRankModels,
   sortModels,
 } from '@/libs/zeroeval-api';
-import { useArenaStore } from '@/stores';
 
 const PAGE_SIZE = 20;
 
 export default function LeaderboardPage() {
   const t = useTranslations();
-
-  const setMainContentReady = useArenaStore((state) => state.setMainContentReady);
 
   const [category, setCategory] = useState<LeaderboardCategory>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
@@ -108,19 +105,6 @@ export default function LeaderboardPage() {
       isNew: isNewModel(model.release_date, model.announcement_date),
     })) as LeaderboardModel[];
   }, [rawModels, yAxisMetric, categoryConfig.metrics]);
-
-  // Manage mainContentReady state for sidebar
-  useEffect(() => {
-    if (!isPending) {
-      setMainContentReady(true);
-    }
-  }, [isPending, setMainContentReady]);
-
-  useEffect(() => {
-    return () => {
-      setMainContentReady(false);
-    };
-  }, [setMainContentReady]);
 
   const handleCategoryChange = useCallback((newCategory: LeaderboardCategory) => {
     setCategory(newCategory);
@@ -336,7 +320,7 @@ export default function LeaderboardPage() {
                     {t('Leaderboard.methodology_parameters_title')}
                   </h3>
                   <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* μ (mu) */}
+                    {/* mu */}
                     <div className="flex flex-col">
                       <dt className="text-sm font-medium mb-1">
                         {t('Leaderboard.methodology_parameters_mu_label')}
@@ -349,7 +333,7 @@ export default function LeaderboardPage() {
                       </dd>
                     </div>
 
-                    {/* σ (sigma) */}
+                    {/* sigma */}
                     <div className="flex flex-col">
                       <dt className="text-sm font-medium mb-1">
                         {t('Leaderboard.methodology_parameters_sigma_label')}
@@ -362,7 +346,7 @@ export default function LeaderboardPage() {
                       </dd>
                     </div>
 
-                    {/* β (beta) */}
+                    {/* beta */}
                     <div className="flex flex-col">
                       <dt className="text-sm font-medium mb-1">
                         {t('Leaderboard.methodology_parameters_beta_label')}
@@ -375,7 +359,7 @@ export default function LeaderboardPage() {
                       </dd>
                     </div>
 
-                    {/* τ (tau) */}
+                    {/* tau */}
                     <div className="flex flex-col">
                       <dt className="text-sm font-medium mb-1">
                         {t('Leaderboard.methodology_parameters_tau_label')}

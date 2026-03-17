@@ -20,12 +20,16 @@ describe('robots.ts', () => {
 
     const { default: robots } = await import('./robots');
     const result = robots();
-    const rules = result.rules as { userAgent: string; allow: string; disallow: string };
+    const rules = result.rules as Array<{
+      userAgent: string;
+      allow: string;
+      disallow?: string[];
+    }>;
 
-    expect(rules).toEqual({
+    expect(rules[0]).toEqual({
       userAgent: '*',
       allow: '/',
-      disallow: '/arena',
+      disallow: ['/arena/', '/settings/', '/account/', '/api/'],
     });
   });
 
@@ -42,29 +46,60 @@ describe('robots.ts', () => {
     expect(result.sitemap).toContain('sitemap.xml');
   });
 
-  it('should allow all routes by default except /arena', async () => {
+  it('should allow all routes by default except restricted paths', async () => {
     vi.doMock('@lmring/env', () => ({
       env: {},
     }));
 
     const { default: robots } = await import('./robots');
     const result = robots();
-    const rules = result.rules as { userAgent: string; allow: string; disallow: string };
+    const rules = result.rules as Array<{
+      userAgent: string;
+      allow: string;
+      disallow?: string[];
+    }>;
 
-    expect(rules.allow).toBe('/');
-    expect(rules.disallow).toBe('/arena');
+    const firstRule = rules[0];
+    expect(firstRule?.allow).toBe('/');
+    expect(firstRule?.disallow).toEqual(['/arena/', '/settings/', '/account/', '/api/']);
   });
 
-  it('should target all user agents', async () => {
+  it('should target all user agents in the first rule', async () => {
     vi.doMock('@lmring/env', () => ({
       env: {},
     }));
 
     const { default: robots } = await import('./robots');
     const result = robots();
-    const rules = result.rules as { userAgent: string; allow: string; disallow: string };
+    const rules = result.rules as Array<{
+      userAgent: string;
+      allow: string;
+    }>;
 
-    expect(rules.userAgent).toBe('*');
+    expect(rules[0]?.userAgent).toBe('*');
+  });
+
+  it('should include AI bot rules', async () => {
+    vi.doMock('@lmring/env', () => ({
+      env: {},
+    }));
+
+    const { default: robots } = await import('./robots');
+    const result = robots();
+    const rules = result.rules as Array<{
+      userAgent: string;
+      allow: string;
+    }>;
+
+    const aiAgents = rules.slice(1).map((r) => r.userAgent);
+    expect(aiAgents).toContain('GPTBot');
+    expect(aiAgents).toContain('Google-Extended');
+    expect(aiAgents).toContain('ClaudeBot');
+    expect(aiAgents).toContain('PerplexityBot');
+
+    for (const rule of rules.slice(1)) {
+      expect(rule.allow).toBe('/');
+    }
   });
 
   it('should use localhost as fallback for sitemap URL', async () => {

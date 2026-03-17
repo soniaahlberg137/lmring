@@ -13,7 +13,7 @@ import {
   resolveLocale,
 } from '@/libs/locale-utils';
 
-const PROTECTED_PATHS = ['/arena', '/account', '/settings', '/history', '/leaderboard'];
+const PROTECTED_PATHS = ['/arena', '/account', '/settings', '/history'];
 const AUTH_PATHS = ['/sign-in', '/sign-up'];
 const ACCOUNT_DISABLED_PATH = '/account-disabled';
 const COMPLETE_PROFILE_PATH = '/complete-profile';

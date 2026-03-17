@@ -1,32 +1,19 @@
-import { NextResponse } from 'next/server';
+import { getBaseUrl } from '@/utils/BaseUrl';
 
-export async function GET() {
-  const content = generateLlmsTxt();
+export function GET() {
+  const baseUrl = getBaseUrl();
 
-  return new NextResponse(content, {
-    headers: {
-      'Content-Type': 'text/plain; charset=utf-8',
-    },
-  });
-}
+  const content = `# LMRing
 
-function generateLlmsTxt(): string {
-  return `# LMRing
+> LMRing is an open-source AI model comparison platform. Compare large language models side-by-side with real-time benchmarks, community-driven ELO rankings, and comprehensive analysis.
 
-> Open-source LLM comparison arena. Compare multiple AI models side by side, vote on responses, and see the leaderboard.
+## About
 
-LMRing is a web application that allows users to compare 2-5 AI models simultaneously with real-time streaming. It supports 50+ providers including OpenAI, Anthropic, Google, DeepSeek, and more.
-
-Key features:
-- Arena Mode for side-by-side model comparison
-- Video generation comparison (OpenAI Sora, Google Vevo, MiniMax, Kling, Seedance, Vidu, etc.)
-- Authentication via GitHub, Google, and Linux.do OAuth
-- Email OTP verification via Resend
-- Crowdsourced voting system and leaderboard
-- Self-hosted deployment option with full data ownership
-- Internationalization (English, French, Chinese)
-
-Tech stack: Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, DrizzleORM, Better-Auth, Resend, Vercel AI SDK
+LMRing helps developers, researchers, and AI enthusiasts evaluate and compare AI models through:
+- **Side-by-side comparison**: Test multiple AI models with the same prompt and compare outputs in real-time
+- **Benchmark leaderboard**: Rankings based on standardized benchmarks (GPQA, MMLU-Pro, LiveCodeBench, and more)
+- **Community-driven ELO ratings**: TrueSkill-based ranking system powered by real user preferences
+- **Multi-modal support**: Compare LLMs, image generation, video generation, text-to-speech, and more
 
 ## Docs
 
@@ -36,13 +23,23 @@ Tech stack: Next.js 16, React 19, TypeScript, Tailwind CSS 4, PostgreSQL, Drizzl
 
 ## Pages
 
-- [Homepage](https://www.lmring.com/): Landing page with features overview
-- [How It Works](https://www.lmring.com/how-it-works): Step-by-step guide to using LMRing
-- [Leaderboard](https://www.lmring.com/leaderboard): View model rankings
+- [Homepage](${baseUrl}/): Landing page with features overview
+- [Leaderboard](${baseUrl}/leaderboard): AI model benchmark rankings and comparisons
+- [How It Works](${baseUrl}/how-it-works): Step-by-step guide to using LMRing
+- [Arena](${baseUrl}/arena): Side-by-side blind AI model comparison (requires sign-in)
+- [Privacy Policy](${baseUrl}/privacy): How we handle your data
+- [Terms of Service](${baseUrl}/terms): Usage terms and conditions
 
 ## Optional
 
 - [Chinese Documentation](https://github.com/llm-ring/lmring/blob/main/docs/README.zh-CN.md): 中文文档
 - [Code of Conduct](https://github.com/llm-ring/lmring/blob/main/CODE_OF_CONDUCT.md): Community standards
 `;
+
+  return new Response(content, {
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'public, max-age=86400, s-maxage=86400',
+    },
+  });
 }
