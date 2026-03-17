@@ -60,7 +60,7 @@ describe('sitemap.ts', () => {
     const result = sitemap();
     const homepage = result[0];
 
-    expect(homepage?.priority).toBe(0.7);
+    expect(homepage?.priority).toBe(1.0);
   });
 
   it('should have lastModified date', async () => {
