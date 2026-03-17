@@ -1,6 +1,6 @@
 {
   "name": "@lmring/video-runtime",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "description": "Video Runtime - Multi-provider Video Generation API Adapter",
   "main": "./src/index.ts",

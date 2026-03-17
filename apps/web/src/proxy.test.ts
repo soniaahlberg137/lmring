@@ -287,7 +287,7 @@ describe('proxy', () => {
       delete process.env.ARCJET_KEY;
     });
 
-    const protectedPaths = ['/arena', '/account', '/settings', '/history', '/leaderboard'];
+    const protectedPaths = ['/arena', '/account', '/settings', '/history'];
 
     it.each(
       protectedPaths,
@@ -317,6 +317,17 @@ describe('proxy', () => {
       const response = await proxy(request, createMockEvent());
 
       expect(response.status).not.toBe(307);
+    });
+
+    it('should allow unauthenticated user to access /leaderboard (public route)', async () => {
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/leaderboard');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).not.toBe(307);
+      expect(response.status).toBe(200);
     });
 
     it('should redirect to /sign-in with nested protected path', async () => {

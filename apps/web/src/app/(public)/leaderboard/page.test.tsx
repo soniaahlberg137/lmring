@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import LeaderboardPage from './page';
@@ -7,22 +7,12 @@ const { useLeaderboardDataMock } = vi.hoisted(() => ({
   useLeaderboardDataMock: vi.fn(),
 }));
 
-const { setMainContentReadyMock } = vi.hoisted(() => ({
-  setMainContentReadyMock: vi.fn(),
-}));
-
 vi.mock('@/hooks/use-leaderboard-query', () => ({
   useLeaderboardData: (...args: unknown[]) => useLeaderboardDataMock(...args),
 }));
 
 vi.mock('@/hooks/use-translations', () => ({
   useTranslations: () => (key: string) => key,
-}));
-
-vi.mock('@/stores', () => ({
-  useArenaStore: (
-    selector: (state: { setMainContentReady: (ready: boolean) => void }) => unknown,
-  ) => selector({ setMainContentReady: setMainContentReadyMock }),
 }));
 
 vi.mock('@/libs/zeroeval-api', () => ({
@@ -129,7 +119,7 @@ describe('LeaderboardPage', () => {
     expect(screen.getByText('boom')).toBeInTheDocument();
   });
 
-  it('renders table view and updates main content ready', async () => {
+  it('renders table view with data', () => {
     useLeaderboardDataMock.mockReturnValue({
       data: [
         {
@@ -150,17 +140,10 @@ describe('LeaderboardPage', () => {
       isInitialLoading: false,
     });
 
-    const { unmount } = render(<LeaderboardPage />);
+    render(<LeaderboardPage />);
 
     expect(screen.getByText('Leaderboard.page_title')).toBeInTheDocument();
     expect(screen.getByTestId('data-table')).toHaveTextContent('2');
-
-    await waitFor(() => {
-      expect(setMainContentReadyMock).toHaveBeenCalledWith(true);
-    });
-
-    unmount();
-    expect(setMainContentReadyMock).toHaveBeenCalledWith(false);
   });
 
   it('switches view modes', () => {

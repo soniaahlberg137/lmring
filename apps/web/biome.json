@@ -11,5 +11,17 @@
       "!**/playwright-report",
       "!next-env.d.ts"
     ]
-  }
+  },
+  "overrides": [
+    {
+      "includes": ["src/components/seo/**"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
+          }
+        }
+      }
+    }
+  ]
 }
