@@ -437,6 +437,7 @@ export const COMPATIBLE_PROVIDER_METADATA: ProviderMetadata[] = [
     type: 'compatible',
     supportsStreaming: true,
     supportsStructuredOutput: true,
+    supportsVision: true,
     supportsFunctionCalling: true,
   },
 
