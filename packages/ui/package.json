@@ -121,12 +121,12 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "framer-motion": "^12.37.0",
+    "framer-motion": "^12.38.0",
     "lucide-react": "^0.577.0",
     "radix-ui": "^1.4.3",
-    "react-resizable-panels": "^4.7.3",
+    "react-resizable-panels": "^4.7.5",
     "rehype-harden": "^1.1.8",
-    "streamdown": "^2.4.0",
+    "streamdown": "^2.5.0",
     "tailwind-merge": "^3.5.0"
   },
   "peerDependencies": {

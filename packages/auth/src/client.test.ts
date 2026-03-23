@@ -10,8 +10,8 @@ vi.mock('better-auth/react', () => ({
   })),
 }));
 
-import { createClient } from './client';
 import { createAuthClient } from 'better-auth/react';
+import { createClient } from './client';
 
 describe('client', () => {
   describe('createClient', () => {
@@ -21,7 +21,7 @@ describe('client', () => {
       expect(createAuthClient).toHaveBeenCalledWith(
         expect.objectContaining({
           baseURL: 'http://localhost:3000',
-        })
+        }),
       );
       expect(client).toBeDefined();
     });
@@ -32,14 +32,15 @@ describe('client', () => {
       expect(createAuthClient).toHaveBeenCalledWith(
         expect.objectContaining({
           baseURL: 'https://example.com',
-        })
+        }),
       );
     });
 
     it('returns auth client object', () => {
       const client = createClient({ baseURL: 'http://localhost:3000' });
 
-      expect(client.baseURL).toBe('http://localhost:3000');
+      expect(client).toHaveProperty('signIn');
+      expect(client).toHaveProperty('useSession');
     });
   });
 });
