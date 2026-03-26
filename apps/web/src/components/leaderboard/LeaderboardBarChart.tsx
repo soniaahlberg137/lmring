@@ -150,7 +150,7 @@ export function LeaderboardBarChart({ models, metric, maxItems = 15 }: Leaderboa
     active?: boolean;
     payload?: Array<{ payload: ChartDataItem }>;
   }) => {
-    if (!active || !payload || !payload[0]) return null;
+    if (!active || !payload?.[0]) return null;
     const data = payload[0].payload;
     const isArenaMetric =
       metric.field === 'code_arena_score' || metric.field === 'chat_arena_score';
