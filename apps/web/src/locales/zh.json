@@ -258,6 +258,7 @@
   "Provider.delete_provider_dialog_item_model_settings": "所有已启用的模型设置",
   "Provider.delete_provider_dialog_item_custom_models": "所有添加到此服务商的自定义模型",
   "Provider.delete_provider_dialog_cannot_undo": "此操作无法撤销。",
+  "Provider.check_proxy_model_tip": "提示：您的代理服务器可能使用不同的模型 ID。请使用下方的「添加自定义模型」添加与代理兼容的模型 ID。",
   "Provider.delete_provider_dialog_cancel": "取消",
   "Provider.delete_provider_dialog_delete": "删除",
   "Provider.delete_provider_dialog_deleting": "删除中...",
