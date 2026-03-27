@@ -107,6 +107,8 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
   const [checkStatus, setCheckStatus] = useState<CheckStatus>('idle');
   const [checkError, setCheckError] = useState<string>('');
+  const [checkErrorDetails, setCheckErrorDetails] = useState<string>('');
+  const [checkErrorType, setCheckErrorType] = useState<string>('');
   const [responseTime, setResponseTime] = useState<number | null>(null);
 
   const [isSaving, setIsSaving] = useState(false);
@@ -291,6 +293,12 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
     return [...modelsWithOverrides, ...mergedCustomModelsMap.values()] as typeof staticModels;
   }, [provider, modelEnabledStates, customModels, modelOverrides]);
 
+  // Filter out unreleased models for connectivity check
+  const checkableModels = useMemo(() => {
+    const now = new Date();
+    return models.filter((m) => !m.releasedAt || new Date(m.releasedAt) <= now);
+  }, [models]);
+
   const filteredModels = useMemo(() => {
     if (!searchQuery) return models;
     return models.filter(
@@ -385,6 +393,8 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
     setCheckStatus('checking');
     setCheckError('');
+    setCheckErrorDetails('');
+    setCheckErrorType('');
     setResponseTime(null);
 
     try {
@@ -415,6 +425,8 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
       } else {
         setCheckStatus('error');
         setCheckError(result.message || 'Connection failed');
+        setCheckErrorDetails(result.details || '');
+        setCheckErrorType(result.error || '');
         toast.error('Connection Failed', {
           description: result.message || 'Unable to connect to the provider',
         });
@@ -858,9 +870,21 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
     }
     if (checkStatus === 'error') {
       return (
-        <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
-          <AlertCircleIcon className="h-4 w-4" />
-          <span>{checkError || 'Connection failed'}</span>
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-sm text-red-600 dark:text-red-400">
+            <AlertCircleIcon className="h-4 w-4 shrink-0" />
+            <span>{checkError || 'Connection failed'}</span>
+          </div>
+          {checkErrorDetails && checkErrorDetails !== checkError && (
+            <pre className="text-xs text-muted-foreground bg-muted/50 p-2 rounded-md overflow-auto max-h-32 whitespace-pre-wrap break-all">
+              {checkErrorDetails}
+            </pre>
+          )}
+          {checkErrorType === 'MODEL_NOT_FOUND_PROXY' && (
+            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
+              {t('Provider.check_proxy_model_tip')}
+            </p>
+          )}
         </div>
       );
     }
@@ -975,7 +999,8 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                       <div className="flex items-center gap-2 truncate">
                         {renderModelListIcon(16)}
                         <span className="truncate">
-                          {models.find((m) => m.id === selectedModel)?.displayName || selectedModel}
+                          {checkableModels.find((m) => m.id === selectedModel)?.displayName ||
+                            selectedModel}
                         </span>
                       </div>
                     ) : (
@@ -995,7 +1020,7 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
                     <CommandList className="max-h-[300px]">
                       <CommandEmpty>No models found.</CommandEmpty>
                       <CommandGroup>
-                        {models.map((model) => (
+                        {checkableModels.map((model) => (
                           <CommandItem
                             key={model.id}
                             value={`${model.displayName || model.id} ${model.id}`}

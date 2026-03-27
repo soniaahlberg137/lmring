@@ -72,16 +72,19 @@ export async function POST(request: Request) {
         });
         responseText = await streamResult.text;
       } catch (streamError) {
-        // Check if the error indicates streaming is not supported
         const errorMsg = streamError instanceof Error ? streamError.message : '';
+        const errorName = streamError instanceof Error ? streamError.name : '';
         const isStreamNotSupported =
           errorMsg.toLowerCase().includes('stream') &&
           (errorMsg.toLowerCase().includes('not supported') ||
             errorMsg.toLowerCase().includes('disabled') ||
             errorMsg.toLowerCase().includes('false'));
 
-        if (isStreamNotSupported) {
-          // Fallback: use generateText for non-streaming endpoints
+        // AI SDK throws AI_NoOutputGeneratedError without chaining the real cause.
+        // Fall back to generateText which throws AI_APICallError directly.
+        const isNoOutput = errorName === 'AI_NoOutputGeneratedError';
+
+        if (isStreamNotSupported || isNoOutput) {
           const generateResult = await generateText({
             model: provider.languageModel(model),
             messages: [{ role: 'user', content: 'hello' }],
@@ -89,7 +92,6 @@ export async function POST(request: Request) {
           });
           responseText = generateResult.text;
         } else {
-          // Re-throw
           throw streamError;
         }
       }
@@ -107,28 +109,52 @@ export async function POST(request: Request) {
       );
     } catch (error) {
       const responseTimeMs = Date.now() - startTime;
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+      // Unwrap AI SDK error chain: AI_NoOutputGeneratedError → AI_APICallError
+      const rootCause =
+        error instanceof Error && error.cause instanceof Error ? error.cause : error;
+      const errorMessage = rootCause instanceof Error ? rootCause.message : 'Unknown error';
+
+      // Extract structured info from AI_APICallError
+      const apiError = rootCause as Record<string, unknown>;
+      const statusCode = typeof apiError.statusCode === 'number' ? apiError.statusCode : undefined;
+      const responseBody =
+        typeof apiError.responseBody === 'string' ? apiError.responseBody : undefined;
+
+      // Build a combined string for status code + message matching
+      const matchStr = [statusCode?.toString(), errorMessage, responseBody]
+        .filter(Boolean)
+        .join(' ');
 
       // Parse common error types
       let errorType = 'CONNECTION_FAILED';
       let userMessage = errorMessage;
 
-      if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+      if (statusCode === 401 || matchStr.includes('Unauthorized')) {
         errorType = 'INVALID_API_KEY';
         userMessage = 'Invalid API key. Please check your API key and try again.';
-      } else if (errorMessage.includes('403') || errorMessage.includes('Forbidden')) {
+      } else if (statusCode === 403 || matchStr.includes('Forbidden')) {
         errorType = 'ACCESS_DENIED';
         userMessage = 'Access denied. Your API key may not have permission to use this model.';
-      } else if (errorMessage.includes('404') || errorMessage.includes('Not Found')) {
-        errorType = 'MODEL_NOT_FOUND';
-        userMessage = `Model "${model}" not found. Please check the model name.`;
-      } else if (errorMessage.includes('429') || errorMessage.includes('Rate limit')) {
+      } else if (
+        statusCode === 404 ||
+        matchStr.includes('Not Found') ||
+        (matchStr.includes('model') && matchStr.includes('not exist'))
+      ) {
+        if (proxyUrl) {
+          errorType = 'MODEL_NOT_FOUND_PROXY';
+          userMessage = `Model "${model}" not found on the proxy. The proxy may use different model IDs. Try adding a custom model that matches your proxy's naming.`;
+        } else {
+          errorType = 'MODEL_NOT_FOUND';
+          userMessage = `Model "${model}" not found. Please check the model name or select a different model.`;
+        }
+      } else if (statusCode === 429 || matchStr.includes('Rate limit')) {
         errorType = 'RATE_LIMITED';
         userMessage = 'Rate limited. Please wait a moment and try again.';
       } else if (
-        errorMessage.includes('ENOTFOUND') ||
-        errorMessage.includes('ECONNREFUSED') ||
-        errorMessage.includes('timeout')
+        matchStr.includes('ENOTFOUND') ||
+        matchStr.includes('ECONNREFUSED') ||
+        matchStr.includes('timeout')
       ) {
         errorType = 'NETWORK_ERROR';
         userMessage = 'Network error. Please check the proxy URL and your internet connection.';
@@ -136,12 +162,15 @@ export async function POST(request: Request) {
 
       logError('Connection check failed', error);
 
+      // Include response body for frontend to display full error details
+      const details = responseBody || errorMessage;
+
       return NextResponse.json(
         {
           success: false,
           error: errorType,
           message: userMessage,
-          details: errorMessage,
+          details,
           responseTimeMs,
         },
         { status: 200 }, // Return 200 so frontend can handle the error gracefully

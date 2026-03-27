@@ -79,13 +79,12 @@ import {
   BoxIcon,
   DatabaseIcon,
   ExternalLinkIcon,
-  GithubIcon,
   GlobeIcon,
   HelpCircleIcon,
   InfoIcon,
   LifeBuoyIcon,
   Settings2Icon,
-  TwitterIcon,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
 import * as React from 'react';
@@ -701,7 +700,7 @@ export default function SettingsPage() {
                             rel="noopener noreferrer"
                             className="flex items-center gap-2 text-sm hover:underline"
                           >
-                            <GithubIcon className="h-4 w-4" /> {t('Settings.about_contact_us')}{' '}
+                            <Github className="h-4 w-4" /> {t('Settings.about_contact_us')}{' '}
                             <ExternalLinkIcon className="h-3 w-3" />
                           </a>
                         </div>
@@ -719,7 +718,7 @@ export default function SettingsPage() {
                             className="w-full"
                           >
                             <Button variant="secondary" className="w-full justify-start gap-2">
-                              <GithubIcon className="h-4 w-4" /> GitHub
+                              <Github className="h-4 w-4" /> GitHub
                             </Button>
                           </a>
                           <Button
@@ -735,8 +734,7 @@ export default function SettingsPage() {
                             className="w-full justify-start gap-2"
                             disabled
                           >
-                            <TwitterIcon className="h-4 w-4" /> X / Twitter{' '}
-                            {t('Settings.about_coming_soon')}
+                            <X className="h-4 w-4" /> X / Twitter {t('Settings.about_coming_soon')}
                           </Button>
                         </div>
                       </div>

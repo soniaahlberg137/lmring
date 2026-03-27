@@ -258,6 +258,7 @@
   "Provider.delete_provider_dialog_item_model_settings": "All enabled model settings",
   "Provider.delete_provider_dialog_item_custom_models": "All custom models added to this provider",
   "Provider.delete_provider_dialog_cannot_undo": "This action cannot be undone.",
+  "Provider.check_proxy_model_tip": "Tip: Your proxy server may use different model IDs. Use \"Add Custom Model\" below to add a model ID compatible with your proxy.",
   "Provider.delete_provider_dialog_cancel": "Cancel",
   "Provider.delete_provider_dialog_delete": "Delete",
   "Provider.delete_provider_dialog_deleting": "Deleting...",

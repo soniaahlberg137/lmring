@@ -149,7 +149,7 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
     active?: boolean;
     payload?: Array<{ payload: ScatterDataPoint }>;
   }) => {
-    if (!active || !payload || !payload[0]) return null;
+    if (!active || !payload?.[0]) return null;
     const data = payload[0].payload;
     return (
       <div className="bg-popover/95 backdrop-blur-sm border border-border rounded-lg shadow-xl p-3">

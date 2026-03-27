@@ -258,6 +258,7 @@
   "Provider.delete_provider_dialog_item_model_settings": "Tous les paramètres de modèles activés",
   "Provider.delete_provider_dialog_item_custom_models": "Tous les modèles personnalisés ajoutés à ce fournisseur",
   "Provider.delete_provider_dialog_cannot_undo": "Cette action est irréversible.",
+  "Provider.check_proxy_model_tip": "Astuce : Votre serveur proxy peut utiliser des identifiants de modèle différents. Utilisez « Ajouter un modèle personnalisé » ci-dessous pour ajouter un ID compatible avec votre proxy.",
   "Provider.delete_provider_dialog_cancel": "Annuler",
   "Provider.delete_provider_dialog_delete": "Supprimer",
   "Provider.delete_provider_dialog_deleting": "Suppression...",

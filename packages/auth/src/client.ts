@@ -4,23 +4,25 @@
 
 'use client';
 
+import { emailOTPClient, genericOAuthClient } from 'better-auth/client/plugins';
 import { createAuthClient } from 'better-auth/react';
-import { genericOAuthClient, emailOTPClient } from 'better-auth/client/plugins';
 
 interface CreateAuthClientOptions {
   baseURL: string;
 }
 
-export function createClient(options: CreateAuthClientOptions) {
+interface AuthClientOptions {
+  baseURL: string;
+  plugins: [ReturnType<typeof genericOAuthClient>, ReturnType<typeof emailOTPClient>];
+}
+
+export type AuthClient = ReturnType<typeof createAuthClient<AuthClientOptions>>;
+
+export function createClient(options: CreateAuthClientOptions): AuthClient {
   const authClient = createAuthClient({
     baseURL: options.baseURL,
-    plugins: [
-      genericOAuthClient(),
-      emailOTPClient(),
-    ],
+    plugins: [genericOAuthClient(), emailOTPClient()],
   });
 
   return authClient;
 }
-
-export type AuthClient = ReturnType<typeof createClient>;
