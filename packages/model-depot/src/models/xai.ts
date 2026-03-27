@@ -1,11 +1,72 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 // ============================================================================
 // Chat Models
 // ============================================================================
 
 const xaiChatModels: ChatModelCard[] = [
-  // Grok 4.1 Series (Latest)
+  // Grok 4.20 Beta Series (Latest)
+  {
+    id: 'grok-4.20-0309-reasoning',
+    displayName: 'Grok 4.20',
+    description:
+      'xAI 最新旗舰推理模型，支持 200 万上下文窗口，具备视觉理解、函数调用和结构化输出能力。',
+    type: 'chat',
+    contextWindowTokens: 2_000_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 2,
+      output: 6,
+      cachedInput: 2,
+    },
+    releasedAt: '2026-03-09',
+  },
+  {
+    id: 'grok-4.20-0309-non-reasoning',
+    displayName: 'Grok 4.20 (Non-Reasoning)',
+    description:
+      'xAI 最新旗舰非推理模型，支持 200 万上下文窗口，具备视觉理解、函数调用和结构化输出能力。',
+    type: 'chat',
+    contextWindowTokens: 2_000_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: {
+      input: 2,
+      output: 6,
+      cachedInput: 2,
+    },
+    releasedAt: '2026-03-09',
+  },
+  {
+    id: 'grok-4.20-multi-agent-0309',
+    displayName: 'Grok 4.20 Multi-Agent',
+    description: 'xAI 多智能体协作模型，专为多代理工作流优化，支持函数调用和结构化输出。',
+    type: 'chat',
+    contextWindowTokens: 2_000_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      structuredOutput: true,
+    },
+    pricing: {
+      input: 2,
+      output: 6,
+      cachedInput: 2,
+    },
+    releasedAt: '2026-03-09',
+  },
+
+  // Grok 4.1 Series
   {
     id: 'grok-4-1-fast-non-reasoning',
     displayName: 'Grok 4.1 Fast (Non-Reasoning)',
@@ -148,6 +209,23 @@ const xaiChatModels: ChatModelCard[] = [
     releasedAt: '2025-04-03',
   },
   {
+    id: 'grok-3-fast',
+    displayName: 'Grok 3 Fast',
+    description: '旗舰级模型的快速版本，在保持核心能力的同时提供更低延迟和成本。',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: {
+      functionCall: true,
+      search: true,
+    },
+    pricing: {
+      input: 0.6,
+      output: 3,
+      cachedInput: 0.15,
+    },
+    releasedAt: '2025-04-03',
+  },
+  {
     id: 'grok-3-mini',
     displayName: 'Grok 3 Mini',
     description:
@@ -163,6 +241,24 @@ const xaiChatModels: ChatModelCard[] = [
       input: 0.3,
       output: 0.5,
       cachedInput: 0.075,
+    },
+    releasedAt: '2025-04-03',
+  },
+  {
+    id: 'grok-3-mini-fast',
+    displayName: 'Grok 3 Mini Fast',
+    description: '轻量级思考模型的快速版本，适用于高吞吐量场景，兼具速度与推理能力。',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+    },
+    pricing: {
+      input: 0.06,
+      output: 0.1,
+      cachedInput: 0.015,
     },
     releasedAt: '2025-04-03',
   },
@@ -244,6 +340,20 @@ const xaiChatModels: ChatModelCard[] = [
 
 const xaiImageModels: ImageModelCard[] = [
   {
+    id: 'grok-imagine-image-pro',
+    displayName: 'Grok Imagine Image Pro',
+    description: 'xAI 专业图像生成模型，支持高质量、高分辨率的图像生成。',
+    type: 'image',
+    enabled: true,
+  },
+  {
+    id: 'grok-imagine-image',
+    displayName: 'Grok Imagine Image',
+    description: 'xAI 图像生成模型，支持根据文本提示生成高质量图像。',
+    type: 'image',
+    enabled: true,
+  },
+  {
     id: 'grok-2-image-1212',
     displayName: 'Grok 2 Image 1212',
     description:
@@ -255,10 +365,26 @@ const xaiImageModels: ImageModelCard[] = [
 ];
 
 // ============================================================================
+// Video Models
+// ============================================================================
+
+const xaiVideoModels: VideoModelCard[] = [
+  {
+    id: 'grok-imagine-video',
+    displayName: 'Grok Imagine Video',
+    description: 'xAI 视频生成模型，支持根据文本提示生成高质量视频。',
+    type: 'video',
+    enabled: true,
+    abilities: { videoOutput: true },
+  },
+];
+
+// ============================================================================
 // Exports
 // ============================================================================
 
 export default {
   chat: xaiChatModels,
   image: xaiImageModels,
+  video: xaiVideoModels,
 };

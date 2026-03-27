@@ -95,3 +95,4 @@ settings.local.json
 .mcp.json
 *.pen
 CLAUDE.local.md
+node-compile-cache

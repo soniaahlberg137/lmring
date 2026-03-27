@@ -27,9 +27,9 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@better-auth/drizzle-adapter": "^1.5.5",
+    "@better-auth/drizzle-adapter": "^1.5.6",
     "@lmring/database": "workspace:*",
-    "better-auth": "^1.5.5",
+    "better-auth": "^1.5.6",
     "drizzle-orm": "^0.45.1",
     "resend": "^6.9.4"
   },
@@ -40,9 +40,9 @@
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
     "@types/react": "^19.2.14",
-    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/coverage-v8": "^4.1.2",
     "react": "^19.2.4",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
   }
 }

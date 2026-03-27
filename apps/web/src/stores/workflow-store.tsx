@@ -487,7 +487,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           set(
             (state) => {
               const workflow = state.workflows.get(id);
-              if (!workflow || !workflow.pendingResponse) return state;
+              if (!workflow?.pendingResponse) return state;
 
               const newMap = new Map(state.workflows);
               newMap.set(id, {
@@ -509,7 +509,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
           set(
             (state) => {
               const workflow = state.workflows.get(id);
-              if (!workflow || !workflow.pendingResponse) return state;
+              if (!workflow?.pendingResponse) return state;
 
               const newMap = new Map(state.workflows);
               newMap.set(id, {
@@ -530,7 +530,7 @@ export const createWorkflowStore = (initState: Partial<WorkflowState> = {}) => {
         completePendingResponse: (id, metrics) => {
           const state = get();
           const workflow = state.workflows.get(id);
-          if (!workflow || !workflow.pendingResponse) return;
+          if (!workflow?.pendingResponse) return;
 
           get().addAssistantMessage(
             id,

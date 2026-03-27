@@ -1,13 +1,38 @@
 {
   "name": "@lmring/theme",
   "version": "1.0.0",
-  "private": true,
+  "description": "LMRing theme engine, tokens, presets, and CSS variable generation utilities.",
+  "license": "Apache-2.0",
+  "private": false,
   "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./src/index.ts",
-    "./css": "./src/theme.css"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./css": "./src/theme.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "src/theme.css",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true,
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/llm-ring/lmring.git",
+    "directory": "packages/theme"
+  },
+  "homepage": "https://github.com/llm-ring/lmring/tree/main/packages/theme",
+  "bugs": {
+    "url": "https://github.com/llm-ring/lmring/issues"
   },
   "scripts": {
     "build": "tsdown",
@@ -20,10 +45,10 @@
   "devDependencies": {
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
-    "@vitest/coverage-v8": "^4.1.0",
+    "@vitest/coverage-v8": "^4.1.2",
     "fast-check": "^4.6.0",
-    "tsdown": "0.21.4",
-    "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "tsdown": "0.21.6",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.2"
   }
 }

@@ -113,7 +113,6 @@ vi.mock('lucide-react', () => {
     CombineIcon: MockIcon,
     DatabaseIcon: MockIcon,
     ExternalLinkIcon: MockIcon,
-    GithubIcon: MockIcon,
     Globe: MockIcon,
     GlobeIcon: MockIcon,
     HelpCircle: MockIcon,
@@ -129,7 +128,7 @@ vi.mock('lucide-react', () => {
     Sun: MockIcon,
     TextIcon: MockIcon,
     Trash2: MockIcon,
-    TwitterIcon: MockIcon,
+    X: MockIcon,
   };
 });
 
