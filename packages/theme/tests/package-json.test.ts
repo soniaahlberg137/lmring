@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -24,6 +24,7 @@ interface ThemePackageJson {
 }
 
 const packageJsonPath = join(import.meta.dirname, "..", "package.json");
+const changelogPath = join(import.meta.dirname, "..", "CHANGELOG.md");
 const packageJson = JSON.parse(
   readFileSync(packageJsonPath, "utf8"),
 ) as ThemePackageJson;
@@ -53,5 +54,9 @@ describe("@lmring/theme package metadata", () => {
       "./css": "./src/theme.css",
       "./package.json": "./package.json",
     });
+  });
+
+  it("includes a changelog file for changesets release metadata", () => {
+    expect(existsSync(changelogPath)).toBe(true);
   });
 });
