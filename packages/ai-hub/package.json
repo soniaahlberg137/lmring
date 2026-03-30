@@ -33,7 +33,7 @@
     "@lmring/model-depot": "workspace:*",
     "@lmring/video-runtime": "workspace:*",
     "@openrouter/ai-sdk-provider": "^2.3.3",
-    "ai": "^6.0.140",
+    "ai": "^6.0.141",
     "zod": "^4.3.6"
   },
   "devDependencies": {
