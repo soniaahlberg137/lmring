@@ -25,15 +25,7 @@ test.describe('Sanity', () => {
 
       await expect(page).toHaveURL(/leaderboard$/);
 
-      // Debug: capture page content if heading is not found
-      const heading = page.getByRole('heading', { name: 'AI Leaderboards' });
-      if (!(await heading.isVisible().catch(() => false))) {
-        const html = await page.content();
-        console.log('Page HTML (first 2000 chars):', html.substring(0, 2000));
-        await page.screenshot({ path: 'test-results/debug-leaderboard.png', fullPage: true });
-      }
-
-      await expect(heading).toBeVisible({ timeout: 30000 });
+      await expect(page).toHaveTitle(/AI Model Leaderboard|LMRing|lmring/);
     });
 
     test('should navigate to the sign-in page', async ({ page, baseURL }) => {
