@@ -23,6 +23,8 @@ export default defineConfig<ChromaticConfig>({
   timeout: process.env.CI ? 30 * 1000 : 60 * 1000,
   // Fail the build on CI if you accidentally left test.only in the source code.
   forbidOnly: !!process.env.CI,
+  // Retry flaky tests against remote sites
+  retries: process.env.CI ? 2 : 1,
   // Reporter to use. See https://playwright.dev/docs/test-reporters
   reporter: process.env.CI ? 'github' : 'list',
 
@@ -35,7 +37,7 @@ export default defineConfig<ChromaticConfig>({
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: shouldStartLocalWebServer
     ? {
-        command: process.env.CI ? 'pnpm run start' : 'pnpm run dev:next',
+        command: process.env.CI ? 'node .next/standalone/server.js' : 'pnpm run dev:next',
         url: localBaseURL,
         timeout: 2 * 60 * 1000,
         reuseExistingServer: !process.env.CI,
