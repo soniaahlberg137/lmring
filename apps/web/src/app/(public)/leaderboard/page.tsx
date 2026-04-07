@@ -137,14 +137,22 @@ export default function LeaderboardPage() {
   );
 
   if (isInitialLoading) {
-    return <LeaderboardTableSkeleton rows={PAGE_SIZE} metricColumns={7} />;
+    return (
+      <div className="p-6 space-y-6">
+        <div className="mb-6">
+          <h1 className="text-2xl font-medium text-foreground">{t('Leaderboard.page_title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('Leaderboard.page_description')}</p>
+        </div>
+        <LeaderboardTableSkeleton rows={PAGE_SIZE} metricColumns={7} />
+      </div>
+    );
   }
 
   if (error) {
     return (
       <div className="p-6 space-y-6">
         <div className="mb-6">
-          <h1 className="text-2xl font-medium text-foreground">{t('Leaderboard.title')}</h1>
+          <h1 className="text-2xl font-medium text-foreground">{t('Leaderboard.page_title')}</h1>
         </div>
         <Card>
           <CardContent className="flex flex-col items-center justify-center h-[400px] gap-4">
