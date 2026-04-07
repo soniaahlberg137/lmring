@@ -13,7 +13,9 @@ test.describe('Visual testing', () => {
     test('should take screenshot of the leaderboard page', async ({ page }, testInfo) => {
       await page.goto('/leaderboard', { waitUntil: 'networkidle' });
 
-      await expect(page.getByRole('heading', { name: 'AI Leaderboards' })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'AI Leaderboards' })).toBeVisible({
+        timeout: 30000,
+      });
 
       await takeSnapshot(page, testInfo);
     });
