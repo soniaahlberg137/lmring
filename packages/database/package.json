@@ -24,9 +24,9 @@
     "@lmring/vitest-config": "workspace:*",
     "@types/node": "^25.5.2",
     "@types/pg": "^8.20.0",
-    "@vitest/coverage-v8": "^4.1.2",
+    "@vitest/coverage-v8": "^4.1.3",
     "drizzle-kit": "^0.31.10",
     "typescript": "^6.0.2",
-    "vitest": "^4.1.2"
+    "vitest": "^4.1.3"
   }
 }
