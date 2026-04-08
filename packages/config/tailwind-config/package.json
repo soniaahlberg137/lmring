@@ -11,7 +11,7 @@
     "@lmring/theme": "workspace:*"
   },
   "devDependencies": {
-    "postcss": "^8.5.8",
+    "postcss": "^8.5.9",
     "tailwindcss": "^4.2.2"
   }
 }
