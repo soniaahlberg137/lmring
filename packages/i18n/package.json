@@ -28,7 +28,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@vitest/coverage-v8": "^4.1.4",
-    "happy-dom": "20.8.9",
+    "happy-dom": "20.9.0",
     "typescript": "^6.0.2",
     "vitest": "^4.1.4"
   }
