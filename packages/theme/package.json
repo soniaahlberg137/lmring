@@ -46,9 +46,9 @@
     "@lmring/typescript-config": "workspace:*",
     "@lmring/vitest-config": "workspace:*",
     "@vitest/coverage-v8": "^4.1.4",
-    "fast-check": "^4.6.0",
-    "tsdown": "0.21.8",
-    "typescript": "^6.0.2",
+    "fast-check": "^4.7.0",
+    "tsdown": "0.21.9",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.4"
   }
 }
