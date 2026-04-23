@@ -1,3 +1,4 @@
+import '@lmring/env/config';
 import type { ChromaticConfig } from '@chromatic-com/playwright';
 import { defineConfig, devices } from '@playwright/test';
 
