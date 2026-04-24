@@ -122,7 +122,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "framer-motion": "^12.38.0",
-    "lucide-react": "^1.8.0",
+    "lucide-react": "^1.9.0",
     "radix-ui": "^1.4.3",
     "react-resizable-panels": "^4.10.0",
     "rehype-harden": "^1.1.8",
