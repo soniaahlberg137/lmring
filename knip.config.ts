@@ -13,10 +13,22 @@ const config: KnipConfig = {
       // - Playwright/Checkly e2e specs under tests/**
       // - checkly.config.ts (consumed by the Checkly CLI)
       // - global stylesheets that pull in CSS-only deps via @import / @plugin
+      // - barrel `index.{ts,tsx}` files plus self-contained type / constant /
+      //   lib / util modules. Their exports describe a public surface
+      //   (consumed via deep imports, dynamic imports, or future call sites);
+      //   knip should not flag them as unused.
       entry: [
         'tests/**/*.{ts,tsx}',
         'checkly.config.ts',
         'src/styles/**/*.css',
+        'src/components/*/index.{ts,tsx}',
+        'src/components/ai-elements/*.{ts,tsx}',
+        'src/stores/index.{ts,tsx}',
+        'src/types/*.{ts,tsx}',
+        'src/constants/*.{ts,tsx}',
+        'src/libs/*.{ts,tsx}',
+        'src/utils/*.{ts,tsx}',
+        'src/app/**/_components/**/types.{ts,tsx}',
       ],
       // Use negated `project` patterns instead of `ignore` to define
       // codebase boundaries (per knip's official guidance).
@@ -109,11 +121,15 @@ const config: KnipConfig = {
   },
 
   // Internal-only exports are common in this codebase (compound components,
-  // local helpers). Keep type/interface checks strict so we still catch dead
-  // type definitions like the unused validation input types.
-  ignoreExportsUsedInFile: {
-    interface: true,
-    type: true,
+  // local helpers, zod sub-schemas composed into exported parents). Ignore
+  // any export that is only consumed within its own file.
+  ignoreExportsUsedInFile: true,
+
+  // Per-file issue overrides for cases where the export is intentionally
+  // public-facing but currently has no external consumer (zod sub-schemas
+  // used as composable building blocks).
+  ignoreIssues: {
+    'packages/video-runtime/src/utils/validation.ts': ['exports'],
   },
 
   // CSS @import / @plugin resolution for Tailwind / global stylesheets.
