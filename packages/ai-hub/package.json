@@ -19,7 +19,6 @@
     "./models": "./src/providers/models.ts"
   },
   "dependencies": {
-    "@ai-sdk/amazon-bedrock": "^4.0.97",
     "@ai-sdk/anthropic": "^3.0.72",
     "@ai-sdk/azure": "^3.0.55",
     "@ai-sdk/deepseek": "^2.0.30",
@@ -28,7 +27,6 @@
     "@ai-sdk/openai": "^3.0.54",
     "@ai-sdk/openai-compatible": "^2.0.42",
     "@ai-sdk/provider": "^3.0.9",
-    "@ai-sdk/provider-utils": "^4.0.24",
     "@ai-sdk/xai": "^3.0.84",
     "@lmring/model-depot": "workspace:*",
     "@lmring/video-runtime": "workspace:*",

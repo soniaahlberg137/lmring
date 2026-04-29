@@ -13,7 +13,7 @@ const emailChannel = new EmailAlertChannel('email-channel-1', {
   ...sendDefaults,
 });
 
-export const config = defineConfig({
+const config = defineConfig({
   projectName: env.CHECKLY_PROJECT_NAME ?? '',
   logicalId: env.CHECKLY_LOGICAL_ID ?? '',
   repoUrl: 'https://github.com/lmring/lmring',

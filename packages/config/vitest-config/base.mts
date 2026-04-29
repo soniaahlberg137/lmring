@@ -15,5 +15,3 @@ export const baseConfig = defineConfig({
     passWithNoTests: true,
   },
 });
-
-export default baseConfig;

@@ -9,8 +9,15 @@ const config: KnipConfig = {
 
     'apps/web': {
       // Next.js plugin auto-detects proxy.ts, instrumentation*.ts, postcss
-      // config, etc. We only add what the plugin doesn't cover.
-      entry: ['tests/**/*.{ts,tsx}'],
+      // config, etc. We only add what the plugin doesn't cover:
+      // - Playwright/Checkly e2e specs under tests/**
+      // - checkly.config.ts (consumed by the Checkly CLI)
+      // - global stylesheets that pull in CSS-only deps via @import / @plugin
+      entry: [
+        'tests/**/*.{ts,tsx}',
+        'checkly.config.ts',
+        'src/styles/**/*.css',
+      ],
       // Use negated `project` patterns instead of `ignore` to define
       // codebase boundaries (per knip's official guidance).
       project: [
@@ -19,6 +26,10 @@ const config: KnipConfig = {
         '!src/test/**',
         '!src/**/*.test.{ts,tsx}',
       ],
+      // Real consumers exist outside files knip scans:
+      // - @lmring/biome-config: extended from apps/web/biome.json
+      // - vitest-browser-react: loaded by Vitest plugin via vitest config
+      ignoreDependencies: ['@lmring/biome-config', 'vitest-browser-react'],
     },
 
     'packages/ai-hub': {
@@ -88,7 +99,8 @@ const config: KnipConfig = {
     },
 
     'packages/config/tailwind-config': {
-      // PostCSS plugin auto-detects postcss.config.js. No explicit entry needed.
+      // PostCSS plugin auto-detects postcss.config.js, and the CSS plugin
+      // auto-detects shared-styles.css.
     },
 
     'packages/config/vitest-config': {
@@ -104,9 +116,14 @@ const config: KnipConfig = {
     type: true,
   },
 
-  // CSS @import resolution for Tailwind / global stylesheets.
+  // CSS @import / @plugin resolution for Tailwind / global stylesheets.
+  // Both directives reference real packages that knip wouldn't otherwise see.
+  // We rewrite @plugin as @import so knip's resolver picks them up.
   compilers: {
-    css: (text: string) => [...text.matchAll(/(?<=@)import[^;]+/g)].join('\n'),
+    css: (text: string) => {
+      const matches = [...text.matchAll(/@(?:import|plugin)\s+([^;]+);?/g)];
+      return matches.map((m) => `import ${m[1]}`).join('\n');
+    },
   },
 };
 

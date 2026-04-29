@@ -610,6 +610,7 @@ export default function ArenaPage() {
               isNew: false,
               isCustom: false,
               abilities,
+              releasedAt: model.releasedAt,
             });
             addedModelIds.add(modelId);
           }

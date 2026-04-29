@@ -118,6 +118,19 @@ export function ModelSelectorOverlay({
       }
       groups[providerName].push(model);
     });
+    // Sort each provider's models by releasedAt (newest first). Models without
+    // releasedAt fall back to the end so newly-added entries with metadata
+    // surface above legacy ones that haven't been backfilled.
+    for (const providerModels of Object.values(groups)) {
+      providerModels.sort((a, b) => {
+        if (a.releasedAt && b.releasedAt) {
+          return b.releasedAt.localeCompare(a.releasedAt);
+        }
+        if (a.releasedAt) return -1;
+        if (b.releasedAt) return 1;
+        return 0;
+      });
+    }
     return groups;
   }, [models]);
 
