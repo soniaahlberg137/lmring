@@ -1,9 +1,5 @@
 import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const dashscopeChatModels: ChatModelCard[] = [
   {
     id: 'qwen3-vl-plus',
@@ -14,15 +10,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 262_144,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1,
-      output: 10,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 1, output: 10 },
     releasedAt: '2025-09-23',
   },
   {
@@ -32,15 +22,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 1.5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.15, output: 1.5 },
     releasedAt: '2025-10-15',
   },
   {
@@ -51,15 +35,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 20,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
     releasedAt: '2025-09-23',
   },
   {
@@ -70,14 +48,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
     releasedAt: '2025-09-23',
   },
   {
@@ -87,15 +60,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 20,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
     releasedAt: '2025-10-21',
   },
   {
@@ -105,14 +72,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
     releasedAt: '2025-10-21',
   },
   {
@@ -122,15 +84,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.75,
-      output: 7.5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.75, output: 7.5 },
     releasedAt: '2025-10-03',
   },
   {
@@ -140,14 +96,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.75,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 0.75, output: 3 },
     releasedAt: '2025-10-03',
   },
   {
@@ -157,15 +108,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 5 },
     releasedAt: '2025-10-14',
   },
   {
@@ -175,14 +120,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 2 },
     releasedAt: '2025-10-14',
   },
   {
@@ -194,17 +134,10 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 3.2,
-      output: 12.8,
-      cachedInput: 0.64,
-      currency: 'CNY',
-    },
-    releasedAt: '2025-09-23',
+    organization: 'Qwen',
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 2.5, output: 10, cachedInput: 0.5 },
+    releasedAt: '2026-01-23',
   },
   {
     id: 'qwen3-max-preview',
@@ -213,17 +146,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 6,
-      output: 24,
-      cachedInput: 1.2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 6, output: 24, cachedInput: 1.2000000000000002 },
     releasedAt: '2025-10-30',
   },
   {
@@ -235,15 +160,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 20,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
     releasedAt: '2025-07-25',
   },
   {
@@ -255,14 +174,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
     releasedAt: '2025-07-22',
   },
   {
@@ -273,15 +187,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 20,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
     releasedAt: '2025-04-28',
   },
   {
@@ -292,15 +200,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1,
-      output: 10,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1, output: 10 },
     releasedAt: '2025-09-12',
   },
   {
@@ -311,14 +213,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-09-12',
   },
   {
@@ -328,15 +225,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 20,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
     releasedAt: '2025-04-28',
   },
   {
@@ -346,15 +237,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.75,
-      output: 7.5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.75, output: 7.5 },
     releasedAt: '2025-04-28',
   },
   {
@@ -364,15 +249,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1,
-      output: 10,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1, output: 10 },
     releasedAt: '2025-04-28',
   },
   {
@@ -382,15 +261,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 5 },
     releasedAt: '2025-04-28',
   },
   {
@@ -400,15 +273,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 3 },
     releasedAt: '2025-04-28',
   },
   {
@@ -418,15 +285,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 3 },
     releasedAt: '2025-04-28',
   },
   {
@@ -436,15 +297,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 3 },
     releasedAt: '2025-04-28',
   },
   {
@@ -456,15 +311,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      cachedInput: 0.8,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 0.8 },
     releasedAt: '2025-07-23',
   },
   {
@@ -474,15 +323,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_000_000,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      cachedInput: 0.2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1, output: 4, cachedInput: 0.2 },
     releasedAt: '2025-08-05',
   },
   {
@@ -492,14 +335,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 6,
-      output: 24,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 6, output: 24 },
     releasedAt: '2026-01-12',
   },
   {
@@ -509,14 +347,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 6 },
     releasedAt: '2026-01-12',
   },
   {
@@ -527,17 +360,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 1.5,
-      cachedInput: 0.03,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.15, output: 1.5, cachedInput: 0.03 },
     releasedAt: '2025-07-28',
   },
   {
@@ -548,17 +373,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_000_000,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2, cachedInput: 0.16000000000000003 },
     releasedAt: '2024-07-05',
   },
   {
@@ -568,17 +385,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_000_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 3,
-      cachedInput: 0.06,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 3, cachedInput: 0.06 },
     releasedAt: '2025-07-15',
   },
   {
@@ -589,16 +398,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 2.4,
-      output: 9.6,
-      cachedInput: 0.48,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 2.4, output: 9.6, cachedInput: 0.48 },
     releasedAt: '2025-01-27',
   },
   {
@@ -609,14 +411,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 10_000_000,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 2 },
     releasedAt: '2024-03-28',
   },
   {
@@ -627,15 +424,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2, cachedInput: 0.16000000000000003 },
     releasedAt: '2025-01-13',
   },
   {
@@ -647,15 +438,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 1.6,
-      output: 4,
-      cachedInput: 0.32,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 1.6, output: 4, cachedInput: 0.32000000000000006 },
     releasedAt: '2024-08-27',
   },
   {
@@ -666,14 +451,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 34_096,
     maxOutput: 4_096,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 5, output: 5 },
     releasedAt: '2025-04-30',
   },
   {
@@ -684,16 +464,10 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.8,
-      output: 6.9,
-      currency: 'CNY',
-    },
-    releasedAt: '2025-09-15',
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.8, output: 6.9 },
+    releasedAt: '2025-12-04',
   },
   {
     id: 'qwen-omni-turbo',
@@ -703,14 +477,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 2_048,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 4.5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 4.5 },
     releasedAt: '2025-02-14',
   },
   {
@@ -721,14 +490,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 2_048,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2025-03-26',
   },
   {
@@ -740,16 +504,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1.6,
-      output: 4,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1.6, output: 4 },
     releasedAt: '2025-03-05',
   },
   {
@@ -760,15 +517,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2025-03-06',
   },
   {
@@ -778,14 +529,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-11-28',
   },
   {
@@ -797,15 +543,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 8,
-      output: 32,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 8, output: 32 },
     releasedAt: '2025-05-15',
   },
   {
@@ -816,15 +556,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 5 },
     releasedAt: '2025-05-15',
   },
   {
@@ -835,15 +569,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 12,
-      output: 36,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 12, output: 36 },
     releasedAt: '2024-12-25',
   },
   {
@@ -853,14 +581,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 12,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 4, output: 12 },
     releasedAt: '2024-09-19',
   },
   {
@@ -870,14 +593,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-09-19',
   },
   {
@@ -887,14 +605,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1, output: 3 },
     releasedAt: '2024-09-19',
   },
   {
@@ -904,14 +617,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_000_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1, output: 3 },
     releasedAt: '2025-01-27',
   },
   {
@@ -921,14 +629,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 1,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 1 },
     releasedAt: '2024-09-19',
   },
   {
@@ -939,14 +642,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 16,
-      output: 48,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 16, output: 48 },
     releasedAt: '2025-01-27',
   },
   {
@@ -957,14 +655,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 8,
-      output: 24,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 8, output: 24 },
     releasedAt: '2025-03-24',
   },
   {
@@ -974,14 +667,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 5,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 5 },
     releasedAt: '2025-01-27',
   },
   {
@@ -991,11 +679,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-11-12',
   },
   {
@@ -1005,11 +690,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-11-12',
   },
   {
@@ -1019,11 +701,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    pricing: {
-      input: 1,
-      output: 2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 1, output: 2 },
     releasedAt: '2024-11-12',
   },
   {
@@ -1033,11 +712,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 4_096,
     maxOutput: 3_072,
-    pricing: {
-      input: 4,
-      output: 12,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 4, output: 12 },
     releasedAt: '2025-07-23',
   },
   {
@@ -1047,11 +723,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 4_096,
     maxOutput: 3_072,
-    pricing: {
-      input: 1,
-      output: 2,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 1, output: 2 },
     releasedAt: '2024-09-19',
   },
   {
@@ -1061,11 +734,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 4_096,
     maxOutput: 3_072,
-    pricing: {
-      input: 4,
-      output: 12,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 4, output: 12 },
     releasedAt: '2024-09-19',
   },
   {
@@ -1075,11 +745,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 4_096,
     maxOutput: 3_072,
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-09-19',
   },
   {
@@ -1089,11 +756,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    pricing: {
-      input: 3.5,
-      output: 7,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 3.5, output: 7 },
     releasedAt: '2024-11-12',
   },
   {
@@ -1103,11 +767,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2024-11-12',
   },
   {
@@ -1118,15 +779,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 65_536,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 3,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 3 },
     releasedAt: '2025-09-30',
   },
   {
@@ -1137,15 +791,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 4,
-      output: 12,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 12 },
     releasedAt: '2025-08-22',
   },
   {
@@ -1156,15 +803,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
     releasedAt: '2025-01-27',
   },
   {
@@ -1176,16 +817,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
     releasedAt: '2025-05-28',
   },
   {
@@ -1195,14 +829,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 6 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1212,14 +841,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 1,
-      output: 3,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 1, output: 3 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1229,14 +853,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 1,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 1 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1246,14 +865,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1264,14 +878,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1281,14 +890,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    organization: 'DeepSeek',
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
     releasedAt: '2025-01-20',
   },
   {
@@ -1299,15 +903,9 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
     releasedAt: '2025-11-10',
   },
   {
@@ -1318,15 +916,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
     releasedAt: '2025-07-17',
   },
   {
@@ -1336,15 +927,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 202_752,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 14,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 3, output: 14 },
     releasedAt: '2025-10-21',
   },
   {
@@ -1354,15 +938,8 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 14,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 3, output: 14 },
     releasedAt: '2025-07-28',
   },
   {
@@ -1372,22 +949,334 @@ const dashscopeChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 6,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 6 },
     releasedAt: '2025-07-28',
   },
+  {
+    id: 'kimi-k2.6',
+    displayName: 'Kimi K2.6',
+    description:
+      "Kimi K2.6 is Kimi's latest and most capable model, delivering stronger long-horizon coding, instruction following, and self-correction while supporting text, image, and video inputs plus chat and agent tasks.",
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 6.5, output: 27 },
+  },
+  {
+    id: 'kimi-k2.5',
+    displayName: 'Kimi K2.5',
+    description:
+      'Kimi K2.5 is the most capable Kimi model, delivering open-source SOTA in agent tasks, coding, and vision understanding.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 4, output: 21 },
+  },
+  {
+    id: 'MiniMax-M2.5',
+    displayName: 'MiniMax-M2.5',
+    description:
+      'MiniMax-M2.5 is a flagship open-source large model from MiniMax, focusing on solving complex real-world tasks.',
+    type: 'chat',
+    contextWindowTokens: 196_608,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4 },
+  },
+  {
+    id: 'MiniMax-M2.1',
+    displayName: 'MiniMax-M2.1',
+    description:
+      'MiniMax-M2.1 is a flagship open-source large model from MiniMax, focusing on solving complex real-world tasks.',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4 },
+  },
+  {
+    id: 'deepseek-v4-flash',
+    displayName: 'DeepSeek V4 Flash',
+    description:
+      'DeepSeek V4 Flash is the cost-efficient member of the V4 family with a 1M context window and hybrid thinking.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 393_216,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 2 },
+  },
+  {
+    id: 'deepseek-v4-pro',
+    displayName: 'DeepSeek V4 Pro',
+    description:
+      'DeepSeek V4 Pro is the flagship of the V4 family, optimized for high-intensity reasoning, agentic workflows, and long-horizon planning.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 393_216,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 12, output: 24 },
+  },
+  {
+    id: 'deepseek-v3.2',
+    displayName: 'DeepSeek V3.2',
+    description:
+      'deepseek-v3.2 introduces sparse attention mechanism, aiming to improve training and inference efficiency when processing long texts, priced lower than deepseek-v3.1.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 65_536,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 3 },
+  },
+  {
+    id: 'glm-5.1',
+    displayName: 'GLM-5.1',
+    description:
+      'GLM-5.1 is Zhipu’s latest flagship model, aligned with Claude Opus 4.6 on overall and coding capabilities.',
+    type: 'chat',
+    contextWindowTokens: 202_752,
+    maxOutput: 16_384,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 6, output: 24 },
+  },
+  {
+    id: 'glm-5',
+    displayName: 'GLM-5',
+    description:
+      'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
+    type: 'chat',
+    contextWindowTokens: 202_752,
+    maxOutput: 16_384,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 18 },
+  },
+  {
+    id: 'glm-4.7',
+    displayName: 'GLM-4.7',
+    description:
+      'The GLM series is a hybrid reasoning model from Zhipu AI built for agents, with thinking and non-thinking modes.',
+    type: 'chat',
+    contextWindowTokens: 202_752,
+    maxOutput: 16_384,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 3, output: 14 },
+  },
+  {
+    id: 'qwen3-coder-next',
+    displayName: 'Qwen3 Coder Next',
+    description:
+      'Next‑gen Qwen coder optimized for complex multi-file code generation, debugging, and high‑throughput agent workflows.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
+  },
+  {
+    id: 'qwen3.6-35b-a3b',
+    displayName: 'Qwen3.6-35B-A3B',
+    description:
+      'The Qwen3.6 35B-A3B native vision-language model is built on a hybrid architecture that integrates a linear attention mechanism with a sparse Mixture-of-Experts (MoE) design, achieving higher inference efficiency.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.8, output: 10.8 },
+    releasedAt: '2026-04-16',
+  },
+  {
+    id: 'qwen3.6-27b',
+    displayName: 'Qwen3.6-27B',
+    description: 'The Qwen 3.6 series 27B is a native vision-language dense model.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 18 },
+    releasedAt: '2026-04-22',
+  },
+  {
+    id: 'qwen3.5-397b-a17b',
+    displayName: 'Qwen3.5-397B-A17B',
+    description: 'Supports text, image, and video inputs.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 7.2 },
+    releasedAt: '2026-02-16',
+  },
+  {
+    id: 'qwen3.5-122b-a10b',
+    displayName: 'Qwen3.5-122B-A10B',
+    description: 'Supports text, image, and video inputs.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 6.4 },
+    releasedAt: '2026-02-24',
+  },
+  {
+    id: 'qwen3.5-27b',
+    displayName: 'Qwen3.5-27B',
+    description: 'Supports text, image, and video inputs.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.6, output: 4.8 },
+    releasedAt: '2026-02-24',
+  },
+  {
+    id: 'qwen3.5-35b-a3b',
+    displayName: 'Qwen3.5-35B-A3B',
+    description: 'Supports text, image, and video inputs.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.4, output: 3.2 },
+    releasedAt: '2026-02-24',
+  },
+  {
+    id: 'qwen3-30b-a3b-thinking-2507',
+    displayName: 'Qwen3 30B A3B Thinking 2507',
+    description: 'Qwen3 thinking-mode open-source model.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.75, output: 7.5 },
+    releasedAt: '2025-07-30',
+  },
+  {
+    id: 'qwen3-30b-a3b-instruct-2507',
+    displayName: 'Qwen3 30B A3B Instruct 2507',
+    description:
+      'Compared to the previous version (Qwen3-30B-A3B), overall Chinese/English and multilingual general ability is significantly improved.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    organization: 'Qwen',
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 0.75, output: 3 },
+    releasedAt: '2025-07-29',
+  },
+  {
+    id: 'qwen3.6-flash',
+    displayName: 'Qwen3.6 Flash',
+    description:
+      'Qwen3.6 native vision-language Flash model delivers significantly improved performance compared to the 3.5-Flash version.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    enabled: true,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.2, output: 7.2, cachedInput: 0.12 },
+    releasedAt: '2026-04-16',
+  },
+  {
+    id: 'qwen3.5-flash',
+    displayName: 'Qwen3.5 Flash',
+    description:
+      'The Qwen3.5 native vision-language Flash model is built on a hybrid architecture that combines a linear attention mechanism with a sparse Mixture-of-Experts (MoE) design, achieving higher inference efficiency.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.2, output: 2, cachedInput: 0.04000000000000001 },
+    releasedAt: '2026-02-24',
+  },
+  {
+    id: 'qwen3.6-plus',
+    displayName: 'Qwen3.6 Plus',
+    description:
+      'Qwen 3.6-Plus introduces major upgrades in coding capabilities, with a focus on Agentic Coding and front-end development, significantly enhancing the Vibe Coding experience.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    enabled: true,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 12, cachedInput: 0.2 },
+    releasedAt: '2026-04-02',
+  },
+  {
+    id: 'qwen3.5-plus-2026-04-20',
+    displayName: 'Qwen3.5 Plus 2026-04-20',
+    description: 'Qwen 3.5 is a native vision-language Plus model.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 4.8, cachedInput: 0.08000000000000002 },
+    releasedAt: '2026-04-22',
+  },
+  {
+    id: 'qwen3.5-plus',
+    displayName: 'Qwen3.5 Plus',
+    description: 'Qwen3.5 Plus supports text, image, and video input.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 4.8, cachedInput: 0.08000000000000002 },
+    releasedAt: '2026-02-15',
+  },
+  {
+    id: 'qwen3.6-max-preview',
+    displayName: 'Qwen3.6 Max Preview',
+    description: 'The largest closed-source model in the Qwen3.6 series.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    enabled: true,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 9, output: 54, cachedInput: 1.8 },
+    releasedAt: '2026-04-18',
+  },
+  {
+    id: 'qwen3.5-omni-plus',
+    displayName: 'Qwen3.5 Omni Plus',
+    description: 'Qwen3.5 Omni Plus supports text, image, and video input.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 9.6 },
+    releasedAt: '2026-03-30',
+  },
+  {
+    id: 'qwen3.5-omni-flash',
+    displayName: 'Qwen3.5 Omni Flash',
+    description:
+      'Qwen3.5 Omni Flash is a fast, cost-effective full-modal Qwen model that supports text, image, and video input.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    organization: 'Qwen',
+    abilities: { search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.2, output: 4 },
+    releasedAt: '2026-03-30',
+  },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const dashscopeImageModels: ImageModelCard[] = [
   {
@@ -1397,8 +1286,9 @@ const dashscopeImageModels: ImageModelCard[] = [
       'Qwen-Image 是一款通用图像生成模型，支持多种艺术风格，尤其擅长复杂文本渲染，特别是中英文文本渲染。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-08-13',
+    organization: 'Qwen',
     resolutions: ['1664x928', '1472x1140', '1328x1328', '1140x1472', '928x1664'],
+    releasedAt: '2025-08-13',
   },
   {
     id: 'qwen-image-edit',
@@ -1406,6 +1296,7 @@ const dashscopeImageModels: ImageModelCard[] = [
     description: 'Qwen Image Edit 是一款图生图模型，支持基于输入图像和文本提示进行图像编辑和修改。',
     type: 'image',
     enabled: true,
+    organization: 'Qwen',
     releasedAt: '2025-09-18',
   },
   {
@@ -1415,6 +1306,7 @@ const dashscopeImageModels: ImageModelCard[] = [
       '万相2.2极速版，当前最新模型。在创意性、稳定性、写实质感上全面升级，生成速度快，性价比高。',
     type: 'image',
     enabled: true,
+    organization: 'Qwen',
     releasedAt: '2025-07-28',
   },
   {
@@ -1424,6 +1316,7 @@ const dashscopeImageModels: ImageModelCard[] = [
       '万相2.2专业版，当前最新模型。在创意性、稳定性、写实质感上全面升级，生成细节丰富。',
     type: 'image',
     enabled: true,
+    organization: 'Qwen',
     releasedAt: '2025-07-28',
   },
   {
@@ -1431,6 +1324,7 @@ const dashscopeImageModels: ImageModelCard[] = [
     displayName: 'Wanxiang 2.1 T2I Turbo',
     description: '全面升级版本。生成速度快、效果全面、综合性价比高。对应通义万相官网2.1极速模型。',
     type: 'image',
+    organization: 'Qwen',
     releasedAt: '2025-01-08',
   },
   {
@@ -1438,6 +1332,7 @@ const dashscopeImageModels: ImageModelCard[] = [
     displayName: 'Wanxiang 2.1 T2I Plus',
     description: '全面升级版本。生成图像细节更丰富，速度稍慢。对应通义万相官网2.1专业模型。',
     type: 'image',
+    organization: 'Qwen',
     releasedAt: '2025-01-08',
   },
   {
@@ -1445,6 +1340,7 @@ const dashscopeImageModels: ImageModelCard[] = [
     displayName: 'Wanxiang 2.0 T2I Turbo',
     description: '擅长质感人像，速度中等、成本较低。对应通义万相官网2.0极速模型。',
     type: 'image',
+    organization: 'Qwen',
     releasedAt: '2025-01-17',
   },
   {
@@ -1452,6 +1348,7 @@ const dashscopeImageModels: ImageModelCard[] = [
     displayName: 'Wanxiang v1',
     description: '基础文生图模型。对应通义万相官网1.0通用模型。',
     type: 'image',
+    organization: 'Qwen',
     releasedAt: '2024-05-22',
   },
   {
@@ -1461,8 +1358,8 @@ const dashscopeImageModels: ImageModelCard[] = [
       'FLUX.1 [schnell] 作为目前开源最先进的少步模型，不仅超越了同类竞争者，甚至还优于诸如 Midjourney v6.0 和 DALL·E 3 (HD) 等强大的非精馏模型。',
     type: 'image',
     enabled: true,
-    releasedAt: '2024-08-07',
     resolutions: ['512x1024', '768x512', '768x1024', '1024x576', '576x1024', '1024x1024'],
+    releasedAt: '2024-08-07',
   },
   {
     id: 'flux-dev',
@@ -1471,8 +1368,8 @@ const dashscopeImageModels: ImageModelCard[] = [
       'FLUX.1 [dev] 是一款面向非商业应用的开源权重、精炼模型。在保持了与FLUX专业版相近的图像质量和指令遵循能力的同时，具备更高的运行效率。',
     type: 'image',
     enabled: true,
-    releasedAt: '2024-08-07',
     resolutions: ['512x1024', '768x512', '768x1024', '1024x576', '576x1024', '1024x1024'],
+    releasedAt: '2024-08-07',
   },
   {
     id: 'flux-merged',
@@ -1481,8 +1378,8 @@ const dashscopeImageModels: ImageModelCard[] = [
       'FLUX.1-merged 模型结合了 "DEV" 在开发阶段探索的深度特性和 "Schnell" 所代表的高速执行优势。',
     type: 'image',
     enabled: true,
-    releasedAt: '2024-08-22',
     resolutions: ['512x1024', '768x512', '768x1024', '1024x576', '576x1024', '1024x1024'],
+    releasedAt: '2024-08-22',
   },
   {
     id: 'stable-diffusion-3.5-large',
@@ -1516,14 +1413,158 @@ const dashscopeImageModels: ImageModelCard[] = [
     type: 'image',
     releasedAt: '2024-04-09',
   },
+  {
+    id: 'z-image-turbo',
+    displayName: 'Z-Image Turbo',
+    description:
+      'Z-Image is a lightweight text-to-image generation model that can rapidly produce images, supports both Chinese and English text rendering, and flexibly adapts to multiple resolutions and aspect ratios.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2025-12-19',
+  },
+  {
+    id: 'qwen-image-2.0-pro-2026-04-22',
+    displayName: 'Qwen Image 2.0 Pro 2026-04-22',
+    description:
+      'The Qwen-Image-2.0 series full-version model integrates image generation and image editing into a unified capability.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-04-22',
+  },
+  {
+    id: 'qwen-image-2.0-pro',
+    displayName: 'Qwen Image 2.0 Pro',
+    description:
+      'The Qwen-Image-2.0 series full-version model integrates image generation and image editing into a unified capability.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2026-03-03',
+  },
+  {
+    id: 'qwen-image-2.0',
+    displayName: 'Qwen Image 2.0',
+    description:
+      'The Qwen-Image-2.0 series accelerated version model integrates image generation and image editing into a unified capability.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-03-03',
+  },
+  {
+    id: 'qwen-image-edit-max',
+    displayName: 'Qwen Image Edit Max',
+    description:
+      'Qwen Image Editing Model supports multi-image input and multi-image output, enabling precise in-image text editing, object addition, removal, or relocation, subject action modification, image style transfer, and enhanced visual detail.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2026-01-17',
+  },
+  {
+    id: 'qwen-image-edit-plus',
+    displayName: 'Qwen Image Edit Plus',
+    description:
+      'Qwen Image Editing Model supports multi-image input and multi-image output, enabling precise in-image text editing, object addition, removal, or relocation, subject action modification, image style transfer, and enhanced visual detail.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2025-12-23',
+  },
+  {
+    id: 'qwen-image-max',
+    displayName: 'Qwen Image Max',
+    description:
+      'Qwen Image Generation Model (Max series) delivers enhanced realism and visual naturalness compared with the Plus series, effectively reducing AI-generated artifacts, and demonstrating outstanding performance in human appearance, texture det...',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2025-12-31',
+  },
+  {
+    id: 'qwen-image-plus',
+    displayName: 'Qwen Image Plus',
+    description:
+      'It supports a wide range of artistic styles and is particularly proficient at rendering complex text within images, enabling integrated image–text layout design.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2026-01-12',
+  },
+  {
+    id: 'wan2.7-image-pro',
+    displayName: 'Wanxiang2.7 Image Pro',
+    description: 'Wanxiang 2.7 Image Professional Edition, supports 4K high-definition output.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-04-01',
+  },
+  {
+    id: 'wan2.7-image',
+    displayName: 'Wanxiang2.7 Image',
+    description: 'Wanxiang 2.7 Image, faster image generation speed.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-04-01',
+  },
+  {
+    id: 'wan2.6-image',
+    displayName: 'Wanxiang2.6 Image',
+    description: 'Wanxiang 2.6 Image supports image editing and mixed image–text layout output.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2025-07-28',
+  },
+  {
+    id: 'wan2.6-t2i',
+    displayName: 'Wanxiang2.6 T2I',
+    description:
+      'Wanxiang 2.6 T2I supports flexible selection of image dimensions within total pixel area and aspect ratio constraints (same as Wanxiang 2.5).',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2025-12-16',
+  },
+  {
+    id: 'wan2.5-i2i-preview',
+    displayName: 'Wanxiang2.5 I2I Preview',
+    description: 'Wanxiang 2.5 I2I Preview supports single-image editing and multi-image fusion.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2025-09-23',
+  },
+  {
+    id: 'wan2.5-t2i-preview',
+    displayName: 'Wanxiang2.5 T2I Preview',
+    description:
+      'Wanxiang 2.5 T2I supports flexible selection of image dimensions within total pixel area and aspect ratio constraints.',
+    type: 'image',
+    organization: 'Qwen',
+    releasedAt: '2025-09-23',
+  },
+  {
+    id: 'kling/kling-v3-image-generation',
+    displayName: 'Kling V3 Image Generation',
+    description:
+      'Supports up to 10 reference images, allowing you to lock subjects, elements, and color tones to ensure consistent style.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-03-26',
+  },
+  {
+    id: 'kling/kling-v3-omni-image-generation',
+    displayName: 'Kling V3 Omni Image Generation',
+    description:
+      'Unlock cinematic storytelling visuals with new series image generation and direct 2K/4K output.',
+    type: 'image',
+    enabled: true,
+    organization: 'Qwen',
+    releasedAt: '2026-03-26',
+  },
 ];
 
-// ============================================================================
-// Video Models
-// ============================================================================
-
 const dashscopeVideoModels: VideoModelCard[] = [
-  // === wan2.6 ===
   {
     id: 'wan2.6-t2v',
     displayName: 'wan2.6-t2v',
@@ -1531,7 +1572,7 @@ const dashscopeVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
-    maxDurationSeconds: 15,
+    pricing: { currency: 'CNY', output: 0.6 },
     resolutions: [
       '1280x720',
       '720x1280',
@@ -1544,9 +1585,8 @@ const dashscopeVideoModels: VideoModelCard[] = [
       '1632x1248',
       '1248x1632',
     ],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-09-25',
+    maxDurationSeconds: 15,
+    releasedAt: '2025-12-16',
   },
   {
     id: 'wan2.6-i2v-flash',
@@ -1555,11 +1595,10 @@ const dashscopeVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
+    pricing: { currency: 'CNY', output: 0.6 },
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-09-25',
+    maxDurationSeconds: 10,
+    releasedAt: '2026-01-17',
   },
   {
     id: 'wan2.6-i2v',
@@ -1568,11 +1607,10 @@ const dashscopeVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
-    maxDurationSeconds: 15,
+    pricing: { currency: 'CNY', output: 0.6 },
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-09-25',
+    maxDurationSeconds: 15,
+    releasedAt: '2025-12-16',
   },
   {
     id: 'wan2.6-r2v',
@@ -1581,11 +1619,10 @@ const dashscopeVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
-    maxDurationSeconds: 15,
+    pricing: { currency: 'CNY', output: 0.6 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-09-25',
+    maxDurationSeconds: 15,
+    releasedAt: '2025-12-16',
   },
   {
     id: 'wan2.6-r2v-flash',
@@ -1594,23 +1631,20 @@ const dashscopeVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
+    pricing: { currency: 'CNY', output: 0.3 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.3, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-09-25',
+    maxDurationSeconds: 10,
+    releasedAt: '2025-12-16',
   },
-  // === wan2.5 ===
   {
     id: 'wan2.5-t2v-preview',
     displayName: 'wan2.5-t2v-preview',
     description: '万相2.5文生视频预览版，支持音频生成和多镜头叙事。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
+    pricing: { currency: 'CNY', output: 0.6 },
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 10,
     releasedAt: '2025-09-23',
   },
   {
@@ -1619,23 +1653,20 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.5图生视频预览版，支持480P/720P/1080P多分辨率。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
+    pricing: { currency: 'CNY', output: 0.3 },
     resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.3, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 10,
     releasedAt: '2025-09-23',
   },
-  // === wan2.2 ===
   {
     id: 'wan2.2-t2v-plus',
     displayName: 'wan2.2-t2v-plus',
     description: '万相2.2文生视频专业版，5秒视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.7 },
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-07-28',
   },
   {
@@ -1644,11 +1675,10 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2图生视频极速版，支持480P/720P/1080P。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.14 },
     resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.14, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-07-28',
+    maxDurationSeconds: 5,
+    releasedAt: '2025-08-11',
   },
   {
     id: 'wan2.2-i2v-plus',
@@ -1656,10 +1686,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2图生视频专业版，高质量1080P视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.7 },
     resolutions: ['854x480', '480x854', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-07-28',
   },
   {
@@ -1668,10 +1697,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2首尾帧生视频极速版，基于首尾帧和文本提示生成过渡视频。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.14 },
     resolutions: ['854x480', '480x854', '1280x720', '720x1280', '1920x1080', '1080x1920'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.14, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-09-12',
   },
   {
@@ -1680,10 +1708,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2数字人视频生成，基于图片和音频生成唇形同步的说话视频。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 300,
+    pricing: { currency: 'CNY', output: 0.9 },
     resolutions: ['854x480', '480x854', '1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.9, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 300,
     releasedAt: '2025-08-26',
   },
   {
@@ -1692,9 +1719,8 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2图生动作，将参考视频的动作迁移到图片角色。',
     type: 'video',
     abilities: { videoOutput: true },
+    pricing: { currency: 'CNY', output: 0.4 },
     maxDurationSeconds: 30,
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.4, currency: 'CNY', unit: 'seconds' },
     releasedAt: '2025-09-19',
   },
   {
@@ -1703,23 +1729,20 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.2角色动画混合，角色替换与动画生成。',
     type: 'video',
     abilities: { videoOutput: true },
+    pricing: { currency: 'CNY', output: 0.6 },
     maxDurationSeconds: 30,
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.6, currency: 'CNY', unit: 'seconds' },
     releasedAt: '2025-09-19',
   },
-  // === wan2.1 ===
   {
     id: 'wanx2.1-i2v-turbo',
     displayName: 'wanx2.1-i2v-turbo',
     description: '万相2.1图生视频极速版，支持480P/720P。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.24 },
     resolutions: ['854x480', '480x854', '1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
-    releasedAt: '2025-01-17',
+    maxDurationSeconds: 5,
+    releasedAt: '2025-02-25',
   },
   {
     id: 'wanx2.1-i2v-plus',
@@ -1727,10 +1750,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.1图生视频专业版，720P视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.24 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-01-17',
   },
   {
@@ -1739,7 +1761,7 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.1文生视频极速版，480P/720P视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.24 },
     resolutions: [
       '832x480',
       '480x832',
@@ -1750,8 +1772,7 @@ const dashscopeVideoModels: VideoModelCard[] = [
       '1088x832',
       '832x1088',
     ],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.24, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-01-08',
   },
   {
@@ -1760,10 +1781,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.1文生视频专业版，720P视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.7 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-01-08',
   },
   {
@@ -1772,10 +1792,9 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.1首尾帧生视频专业版，720P视频生成。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.7 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-04-18',
   },
   {
@@ -1784,17 +1803,277 @@ const dashscopeVideoModels: VideoModelCard[] = [
     description: '万相2.1视频编辑，支持视频创作与编辑。',
     type: 'video',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
+    pricing: { currency: 'CNY', output: 0.7 },
     resolutions: ['1280x720', '720x1280'],
-    runtimeProvider: 'dashscope',
-    pricing: { output: 0.7, currency: 'CNY', unit: 'seconds' },
+    maxDurationSeconds: 5,
     releasedAt: '2025-05-19',
   },
+  {
+    id: 'happyhorse-1.0-i2v',
+    displayName: 'HappyHorse-1.0-I2V',
+    description:
+      'HappyHorse-1.0-I2V supports text-to-video generation, delivering highly faithful dynamic visuals.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-22',
+  },
+  {
+    id: 'happyhorse-1.0-r2v',
+    displayName: 'HappyHorse-1.0-R2V',
+    description:
+      'HappyHorse-1.0-R2V supports reference-based video generation, offering more stable subject and scene consistency.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-26',
+  },
+  {
+    id: 'happyhorse-1.0-t2v',
+    displayName: 'HappyHorse-1.0-T2V',
+    description:
+      'HappyHorse-1.0-T2V supports text-to-video generation, delivering highly faithful dynamic visuals.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-21',
+  },
+  {
+    id: 'wan2.7-i2v-2026-04-25',
+    displayName: 'Wan2.7 I2V 2026-04-25',
+    description:
+      'Wanxiang 2.7 Image-to-Video delivers a comprehensive upgrade in performance capabilities.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-26',
+  },
+  {
+    id: 'wan2.7-i2v',
+    displayName: 'Wan2.7 I2V',
+    description:
+      'Wanxiang 2.7 Image-to-Video delivers a comprehensive upgrade in performance capabilities.',
+    type: 'video',
+    releasedAt: '2026-04-03',
+  },
+  {
+    id: 'wan2.7-r2v',
+    displayName: 'Wan2.7 R2V',
+    description:
+      'Wanxiang 2.7 Reference-to-Video offers more stable references for characters, props, and scenes.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-03',
+  },
+  {
+    id: 'wan2.7-t2v-2026-04-25',
+    displayName: 'Wan2.7 T2V 2026-04-25',
+    description:
+      'Wanxiang 2.7 Text-to-Video delivers a comprehensive upgrade in performance capabilities.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-26',
+  },
+  {
+    id: 'wan2.7-t2v',
+    displayName: 'Wan2.7 T2V',
+    description:
+      'Wanxiang 2.7 Text-to-Video delivers a comprehensive upgrade in performance capabilities.',
+    type: 'video',
+    releasedAt: '2026-04-03',
+  },
+  {
+    id: 'wan2.2-kf2v-plus',
+    displayName: 'Wan2.2 KF2V Plus',
+    description: 'Wanxiang 2.2 Plus Edition',
+    type: 'video',
+    releasedAt: '2025-09-12',
+  },
+  {
+    id: 'kling/kling-v3-video-generation',
+    displayName: 'Kling V3 Video Generation',
+    description:
+      'Intelligent storyboarding understands scene transitions within scripts, automatically arranging camera positions and shot types.',
+    type: 'video',
+    enabled: true,
+  },
+  {
+    id: 'kling/kling-v3-omni-video-generation',
+    displayName: 'Kling V3 Omni Video Generation',
+    description:
+      'New “All-in-One Reference” feature supports 3–8 second videos or multiple images to anchor character elements.',
+    type: 'video',
+    enabled: true,
+  },
+  {
+    id: 'vidu/viduq3-pro_text2video',
+    displayName: 'Vidu Q3 Pro Text-to-Video',
+    description: 'Enter a text prompt to generate video.',
+    type: 'video',
+    enabled: true,
+  },
+  {
+    id: 'vidu/viduq3-turbo_text2video',
+    displayName: 'Vidu Q3 Turbo Text-to-Video',
+    description: 'Enter a text prompt to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2_text2video',
+    displayName: 'Vidu Q2 Turbo Text-to-Video',
+    description: 'Enter a text prompt to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq3-pro_img2video',
+    displayName: 'Vidu Q3 Pro Image-to-Video',
+    description: 'Input an image and a text description to generate video.',
+    type: 'video',
+    enabled: true,
+  },
+  {
+    id: 'vidu/viduq3-turbo_img2video',
+    displayName: 'Vidu Q3 Turbo Image-to-Video',
+    description: 'Input an image and a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2-pro_img2video',
+    displayName: 'Vidu Q2 Pro Image-to-Video',
+    description: 'Input an image and a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2-turbo_img2video',
+    displayName: 'Vidu Q2 Turbo Image-to-Video',
+    description: 'Input an image and a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq3-pro_start-end2video',
+    displayName: 'Vidu Q3 Pro Start-to-End Video',
+    description:
+      'Input the first and last frame images along with a text description to generate video.',
+    type: 'video',
+    enabled: true,
+  },
+  {
+    id: 'vidu/viduq3-turbo_start-end2video',
+    displayName: 'Vidu Q3 Turbo Start-to-End Video',
+    description:
+      'Input the first and last frame images along with a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2-pro_start-end2video',
+    displayName: 'Vidu Q2 Pro Start-to-End Video',
+    description:
+      'Input the first and last frame images along with a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2-turbo_start-end2video',
+    displayName: 'Vidu Q2 Turbo Start-to-End Video',
+    description:
+      'Input the first and last frame images along with a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2-pro_reference2video',
+    displayName: 'Vidu Q2 Pro Reference-to-Video',
+    description: 'Input reference videos, images, and a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'vidu/viduq2_reference2video',
+    displayName: 'Vidu Q2 Reference-to-Video',
+    description: 'Input reference images along with a text description to generate video.',
+    type: 'video',
+  },
+  {
+    id: 'pixverse/pixverse-c1-t2v',
+    displayName: 'PixVerse C1 T2V',
+    description:
+      'C1 is a large-scale model for the film and television industry launched by PixVerse in late March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-07',
+  },
+  {
+    id: 'pixverse/pixverse-v6-t2v',
+    displayName: 'PixVerse V6 T2V',
+    description: 'V6 is PixVerse’s new model launched at the end of March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-03-30',
+  },
+  {
+    id: 'pixverse/pixverse-v5.6-t2v',
+    displayName: 'PixVerse V5.6 T2V',
+    description:
+      'Input a text description to generate high-quality videos with second-level speed and precise semantic alignment, supporting multiple styles.',
+    type: 'video',
+  },
+  {
+    id: 'pixverse/pixverse-c1-it2v',
+    displayName: 'PixVerse C1 IT2V',
+    description:
+      'C1 is a large-scale model for the film and television industry launched by PixVerse in late March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-07',
+  },
+  {
+    id: 'pixverse/pixverse-v6-it2v',
+    displayName: 'PixVerse V6 IT2V',
+    description: 'V6 is PixVerse’s new model launched at the end of March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-03-30',
+  },
+  {
+    id: 'pixverse/pixverse-v5.6-it2v',
+    displayName: 'PixVerse V5.6 IT2V',
+    description:
+      'Upload any image to freely customize the story, pacing, and style, generating vivid and coherent videos.',
+    type: 'video',
+  },
+  {
+    id: 'pixverse/pixverse-c1-kf2v',
+    displayName: 'PixVerse C1 KF2V',
+    description:
+      'C1 is a large-scale model for the film and television industry launched by PixVerse in late March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-04-07',
+  },
+  {
+    id: 'pixverse/pixverse-v6-kf2v',
+    displayName: 'PixVerse V6 KF2V',
+    description: 'V6 is PixVerse’s new model launched at the end of March 2026.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-03-30',
+  },
+  {
+    id: 'pixverse/pixverse-v5.6-kf2v',
+    displayName: 'PixVerse V5.6 KF2V',
+    description:
+      'Achieve seamless transitions between any two images, creating smoother and more natural scene changes with visually striking effects.',
+    type: 'video',
+  },
+  {
+    id: 'pixverse/pixverse-c1-r2v',
+    displayName: 'PixVerse C1 R2V',
+    description:
+      'C1 is a large-scale model for the film and television industry launched by PixVerse in late March 2026.',
+    type: 'video',
+    releasedAt: '2026-04-07',
+  },
+  {
+    id: 'pixverse/pixverse-v5.6-r2v',
+    displayName: 'PixVerse V5.6 R2V',
+    description:
+      'Input 2–7 images to intelligently merge different subjects while maintaining unified style and coordinated motion, easily building rich narrative scenes and enhancing content controllability and creative freedom.',
+    type: 'video',
+  },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: dashscopeChatModels,

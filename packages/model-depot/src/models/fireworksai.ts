@@ -8,10 +8,7 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/llama-v3p2-3b-instruct',
@@ -20,10 +17,7 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-    },
+    pricing: { input: 0.1, output: 0.1 },
   },
   {
     id: 'accounts/fireworks/models/llama-v3p2-11b-vision-instruct',
@@ -32,13 +26,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.2,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.2, output: 0.2 },
   },
   {
     id: 'accounts/fireworks/models/llama-v3p2-90b-vision-instruct',
@@ -47,13 +36,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/llama-v3p1-70b-instruct',
@@ -61,13 +45,8 @@ const fireworksaiModels: ChatModelCard[] = [
     description: 'Meta Llama 3.1 70B多语言对话模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/llama-v3p1-405b-instruct',
@@ -75,13 +54,8 @@ const fireworksaiModels: ChatModelCard[] = [
     description: 'Llama 3.1家族最强模型，FP8推理高度匹配。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 3,
-      output: 3,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 3, output: 3 },
   },
   {
     id: 'accounts/fireworks/models/mistral-small-24b-instruct-2501',
@@ -90,10 +64,7 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/mixtral-8x22b-instruct',
@@ -101,13 +72,8 @@ const fireworksaiModels: ChatModelCard[] = [
     description: 'Mixtral 8x22B指令微调版，支持函数调用。',
     type: 'chat',
     contextWindowTokens: 65_536,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1.2,
-      output: 1.2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 1.2, output: 1.2 },
   },
   {
     id: 'accounts/fireworks/models/phi-3-vision-128k-instruct',
@@ -116,13 +82,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_064,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.2,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.2, output: 0.2 },
   },
   {
     id: 'accounts/fireworks/models/deepseek-v3',
@@ -131,10 +92,7 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/deepseek-r1',
@@ -143,13 +101,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 163_840,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 8,
-      output: 8,
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 8, output: 8 },
   },
   {
     id: 'accounts/fireworks/models/qwen-qwq-32b-preview',
@@ -158,13 +111,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/qwen2p5-72b-instruct',
@@ -173,10 +121,7 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/fireworks/models/qwen2-vl-72b-instruct',
@@ -185,13 +130,8 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.9, output: 0.9 },
   },
   {
     id: 'accounts/yi-01-ai/models/yi-large',
@@ -200,10 +140,70 @@ const fireworksaiModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    pricing: {
-      input: 3,
-      output: 3,
-    },
+    pricing: { input: 3, output: 3 },
+  },
+  {
+    id: 'accounts/fireworks/models/llama-v3p1-8b-instruct',
+    displayName: 'Llama 3.1 8B Instruct',
+    description:
+      'Meta Llama 3.1 is a multilingual LLM family with pre-trained and instruction-tuned generation models at 8B, 70B, and 405B sizes.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    pricing: { input: 0.2, output: 0.2 },
+  },
+  {
+    id: 'accounts/fireworks/models/llama-v3-8b-instruct',
+    displayName: 'Llama 3 8B Instruct',
+    description:
+      'Meta developed and released the Meta Llama 3 LLM series, a collection of pre-trained and instruction-tuned text generation models at 8B and 70B.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+    pricing: { input: 0.2, output: 0.2 },
+  },
+  {
+    id: 'accounts/fireworks/models/llama-v3-70b-instruct',
+    displayName: 'Llama 3 70B Instruct',
+    description:
+      'Meta developed and released the Meta Llama 3 LLM series, which includes pre-trained and instruction-tuned text generation models at 8B and 70B.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+    pricing: { input: 0.9, output: 0.9 },
+  },
+  {
+    id: 'accounts/fireworks/models/llama-v3-8b-instruct-hf',
+    displayName: 'Llama 3 8B Instruct (HF version)',
+    description:
+      'The Meta Llama 3 instruction-tuned models are optimized for conversational use and outperform many existing open chat models on common industry benchmarks.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+    pricing: { input: 0.2, output: 0.2 },
+  },
+  {
+    id: 'accounts/fireworks/models/mixtral-8x7b-instruct',
+    displayName: 'Mixtral MoE 8x7B Instruct',
+    description:
+      'Mixtral MoE 8x7B Instruct is the instruction-tuned version of Mixtral MoE 8x7B, with the chat completion API enabled.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    pricing: { input: 0.5, output: 0.5 },
+  },
+  {
+    id: 'accounts/fireworks/models/mythomax-l2-13b',
+    displayName: 'MythoMax L2 13b',
+    description:
+      'An improved variant of MythoMix, possibly its more refined form, merging MythoLogic-L2 and Huginn with a highly experimental tensor-type merge technique.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    pricing: { input: 0.2, output: 0.2 },
+  },
+  {
+    id: 'accounts/fireworks/models/qwen2p5-coder-32b-instruct',
+    displayName: 'Qwen2.5-Coder-32B-Instruct',
+    description: 'Qwen2.5-Coder is the latest Qwen LLM designed for code (formerly CodeQwen).',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    enabled: true,
+    pricing: { input: 0.9, output: 0.9 },
   },
 ];
 

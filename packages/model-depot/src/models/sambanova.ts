@@ -8,54 +8,36 @@ const sambanovaModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.6,
-      output: 1.2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.6, output: 1.2 },
   },
   {
     id: 'Meta-Llama-3.2-3B-Instruct',
     displayName: 'Meta Llama 3.2 3B Instruct',
     description: '先进小型语言模型，具备卓越推理和文本生成。',
     type: 'chat',
-    contextWindowTokens: 8000,
-    pricing: {
-      input: 0.08,
-      output: 0.16,
-    },
+    contextWindowTokens: 8_000,
+    pricing: { input: 0.08, output: 0.16 },
   },
   {
     id: 'Llama-3.2-11B-Vision-Instruct',
     displayName: 'Meta Llama 3.2 11B Vision Instruct',
     description: 'Llama视觉模型，高分辨率图像推理能力出色。',
     type: 'chat',
-    contextWindowTokens: 4000,
+    contextWindowTokens: 4_000,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.3,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.15, output: 0.3 },
   },
   {
     id: 'Llama-3.2-90B-Vision-Instruct',
     displayName: 'Meta Llama 3.2 90B Vision Instruct',
     description: 'Llama大规模视觉模型，适用于视觉理解代理应用。',
     type: 'chat',
-    contextWindowTokens: 4000,
+    contextWindowTokens: 4_000,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 1.6,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.8, output: 1.6 },
   },
   {
     id: 'Meta-Llama-3.1-8B-Instruct',
@@ -63,13 +45,8 @@ const sambanovaModels: ChatModelCard[] = [
     description: 'Llama 3.1指令调优模型，多语言对话场景优化。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.1, output: 0.2 },
   },
   {
     id: 'Meta-Llama-3.1-70B-Instruct',
@@ -77,13 +54,8 @@ const sambanovaModels: ChatModelCard[] = [
     description: 'Llama 3.1 70B指令模型，128K上下文支持。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.6,
-      output: 1.2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.6, output: 1.2 },
   },
   {
     id: 'Meta-Llama-3.1-405B-Instruct',
@@ -91,27 +63,17 @@ const sambanovaModels: ChatModelCard[] = [
     description: 'Llama 3.1 405B最强指令模型。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 5,
-      output: 10,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 5, output: 10 },
   },
   {
     id: 'DeepSeek-R1',
     displayName: 'DeepSeek R1',
     description: '最先进高效LLM，擅长推理、数学和编程。',
     type: 'chat',
-    contextWindowTokens: 4000,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 5,
-      output: 7,
-    },
+    contextWindowTokens: 4_000,
+    abilities: { reasoning: true },
+    pricing: { input: 5, output: 7 },
   },
   {
     id: 'DeepSeek-R1-Distill-Llama-70B',
@@ -120,13 +82,8 @@ const sambanovaModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.7,
-      output: 1.4,
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 0.7, output: 1.4 },
   },
   {
     id: 'QwQ-32B-Preview',
@@ -135,13 +92,8 @@ const sambanovaModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 3,
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 1.5, output: 3 },
   },
   {
     id: 'Qwen2.5-72B-Instruct',
@@ -150,10 +102,7 @@ const sambanovaModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_000,
     enabled: true,
-    pricing: {
-      input: 2,
-      output: 4,
-    },
+    pricing: { input: 2, output: 4 },
   },
   {
     id: 'Qwen2.5-Coder-32B-Instruct',
@@ -162,10 +111,33 @@ const sambanovaModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_000,
     enabled: true,
-    pricing: {
-      input: 1.5,
-      output: 3,
-    },
+    pricing: { input: 1.5, output: 3 },
+  },
+  {
+    id: 'Meta-Llama-3.2-1B-Instruct',
+    displayName: 'Meta Llama 3.2 1B Instruct',
+    description:
+      'Cutting-edge small language model with strong language understanding, excellent reasoning, and text generation.',
+    type: 'chat',
+    contextWindowTokens: 16_000,
+    pricing: { input: 0.04, output: 0.08 },
+  },
+  {
+    id: 'Llama-3.2-90B-Vision-Instruct	',
+    displayName: 'Meta Llama 3.2 90B Vision Instruct',
+    description: 'Advanced image reasoning for visual-understanding agent applications.',
+    type: 'chat',
+    contextWindowTokens: 4_000,
+    enabled: true,
+    abilities: { vision: true },
+    pricing: { input: 0.8, output: 1.6 },
+  },
+  {
+    id: 'Llama-3.1-Tulu-3-405B',
+    displayName: 'Llama 3.1 Tulu 3 405B',
+    type: 'chat',
+    contextWindowTokens: 16_000,
+    pricing: { input: 0.7, output: 1.4 },
   },
 ];
 

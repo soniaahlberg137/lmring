@@ -1,8 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
-
-// ============================================================================
-// Chat Models
-// ============================================================================
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const zhipuChatModels: ChatModelCard[] = [
   {
@@ -14,17 +10,9 @@ const zhipuChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      cachedInput: 0.4,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 8, cachedInput: 0.4 },
+    releasedAt: '2025-09-08',
   },
   {
     id: 'glm-4.5v',
@@ -35,18 +23,8 @@ const zhipuChatModels: ChatModelCard[] = [
     contextWindowTokens: 65_536,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      cachedInput: 0.4,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 6, cachedInput: 0.4 },
   },
   {
     id: 'glm-4.5',
@@ -56,17 +34,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 98_304,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      cachedInput: 0.4,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 8, cachedInput: 0.4 },
   },
   {
     id: 'glm-4.5-x',
@@ -75,17 +44,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 98_304,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 8,
-      output: 16,
-      cachedInput: 1.6,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 8, output: 16, cachedInput: 1.6 },
   },
   {
     id: 'glm-4.5-air',
@@ -94,17 +54,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 98_304,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2, cachedInput: 0.16 },
   },
   {
     id: 'glm-4.5-airx',
@@ -113,17 +64,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 98_304,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 4,
-      output: 12,
-      cachedInput: 0.8,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 12, cachedInput: 0.8 },
   },
   {
     id: 'glm-4.5-flash',
@@ -133,16 +75,8 @@ const zhipuChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 98_304,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
   },
   {
     id: 'glm-4.1v-thinking-flashx',
@@ -152,15 +86,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 2 },
   },
   {
     id: 'glm-4.1v-thinking-flash',
@@ -170,15 +97,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
   },
   {
     id: 'glm-zero-preview',
@@ -186,14 +106,8 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-Zero-Preview具备强大的复杂推理能力，在逻辑推理、数学、编程等领域表现优异。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 10,
-      output: 10,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 10, output: 10 },
   },
   {
     id: 'glm-z1-air',
@@ -202,15 +116,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 0.5,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 0.5 },
   },
   {
     id: 'glm-z1-airx',
@@ -219,15 +126,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 5,
-      output: 5,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 5, output: 5 },
   },
   {
     id: 'glm-z1-flashx',
@@ -236,15 +136,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.1, output: 0.1 },
   },
   {
     id: 'glm-z1-flash',
@@ -253,15 +146,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
   },
   {
     id: 'glm-4-plus',
@@ -269,17 +155,10 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-4-Plus 作为高智能旗舰，具备强大的处理长文本和复杂任务的能力，性能全面提升。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    maxOutput: 4095,
+    maxOutput: 4_095,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 5,
-      output: 5,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 5, output: 5 },
   },
   {
     id: 'glm-4-0520',
@@ -287,15 +166,8 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-4-0520 是最新模型版本，专为高度复杂和多样化任务设计，表现卓越。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 100,
-      output: 100,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 100, output: 100 },
   },
   {
     id: 'glm-4-flash-250414',
@@ -304,15 +176,8 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
   },
   {
     id: 'glm-4-flashx',
@@ -320,16 +185,9 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-4-FlashX 是Flash的增强版本，超快推理速度。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    maxOutput: 4095,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-      currency: 'CNY',
-    },
+    maxOutput: 4_095,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.1, output: 0.1 },
   },
   {
     id: 'glm-4-long',
@@ -337,16 +195,9 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-4-Long 支持超长文本输入，适合记忆型任务与大规模文档处理。',
     type: 'chat',
     contextWindowTokens: 1_024_000,
-    maxOutput: 4095,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 1,
-      currency: 'CNY',
-    },
+    maxOutput: 4_095,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 1 },
   },
   {
     id: 'glm-4-air-250414',
@@ -355,32 +206,18 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 0.5,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 0.5 },
   },
   {
     id: 'glm-4-airx',
     displayName: 'GLM-4-AirX',
     description: 'GLM-4-AirX 提供 GLM-4-Air 的高效版本，推理速度可达其2.6倍。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    maxOutput: 4095,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 10,
-      output: 10,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 8_192,
+    maxOutput: 4_095,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 10, output: 10 },
   },
   {
     id: 'glm-4v-flash',
@@ -388,16 +225,10 @@ const zhipuChatModels: ChatModelCard[] = [
     description:
       'GLM-4V-Flash 专注于高效的单一图像理解，适用于快速图像解析的场景，例如实时图像分析或批量图像处理。',
     type: 'chat',
-    contextWindowTokens: 4096,
-    maxOutput: 8192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 4_096,
+    maxOutput: 8_192,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
     releasedAt: '2024-12-09',
   },
   {
@@ -406,30 +237,19 @@ const zhipuChatModels: ChatModelCard[] = [
     description: 'GLM-4V-Plus 具备对视频内容及多图片的理解能力，适合多模态任务。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 4,
-      output: 4,
-      currency: 'CNY',
-    },
+    maxOutput: 8_192,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 4, output: 4 },
   },
   {
     id: 'glm-4v',
     displayName: 'GLM-4V',
     description: 'GLM-4V 提供强大的图像理解与推理能力，支持多种视觉任务。',
     type: 'chat',
-    contextWindowTokens: 4096,
-    maxOutput: 1024,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 50,
-      output: 50,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 4_096,
+    maxOutput: 1_024,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 50, output: 50 },
   },
   {
     id: 'codegeex-4',
@@ -439,43 +259,150 @@ const zhipuChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-      currency: 'CNY',
-    },
+    pricing: { currency: 'CNY', input: 0.1, output: 0.1 },
   },
   {
     id: 'charglm-4',
     displayName: 'CharGLM-4',
     description: 'CharGLM-4 专为角色扮演与情感陪伴设计，支持超长多轮记忆与个性化对话，应用广泛。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    maxOutput: 4000,
-    pricing: {
-      input: 1,
-      output: 1,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 8_192,
+    maxOutput: 4_000,
+    pricing: { currency: 'CNY', input: 1, output: 1 },
   },
   {
     id: 'emohaa',
     displayName: 'Emohaa',
     description: 'Emohaa 是心理模型，具备专业咨询能力，帮助用户理解情感问题。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    maxOutput: 4000,
-    pricing: {
-      input: 15,
-      output: 15,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 8_192,
+    maxOutput: 4_000,
+    pricing: { currency: 'CNY', input: 15, output: 15 },
+  },
+  {
+    id: 'glm-5.1',
+    displayName: 'GLM-5.1',
+    description:
+      'GLM-5.1 is Zhipu’s latest flagship model, aligned with Claude Opus 4.6 on overall and coding capabilities.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 6, output: 24, cachedInput: 1.3 },
+    releasedAt: '2026-03-27',
+  },
+  {
+    id: 'glm-5-turbo',
+    displayName: 'GLM-5-Turbo',
+    description: 'GLM-5-Turbo is a foundation model deeply optimized for agentic scenarios.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 5, output: 22, cachedInput: 1.2 },
+    releasedAt: '2026-03-15',
+  },
+  {
+    id: 'glm-5',
+    displayName: 'GLM-5',
+    description:
+      'GLM-5 is Zhipu’s next-generation flagship foundation model, purpose-built for Agentic Engineering.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 18, cachedInput: 1 },
+    releasedAt: '2026-02-12',
+  },
+  {
+    id: 'glm-4.7',
+    displayName: 'GLM-4.7',
+    description:
+      "GLM-4.7 is Zhipu's latest flagship model, enhanced for Agentic Coding scenarios with improved coding capabilities, long-term task planning, and tool collaboration.",
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 2, output: 8, cachedInput: 0.4 },
+    releasedAt: '2025-12-22',
+  },
+  {
+    id: 'glm-4.7-flash',
+    displayName: 'GLM-4.7-Flash',
+    description:
+      'GLM-4.7-Flash, as a 30B-level SOTA model, offers a new choice that balances performance and efficiency.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0, output: 0, cachedInput: 0 },
+    releasedAt: '2026-01-19',
+  },
+  {
+    id: 'glm-4.7-flashx',
+    displayName: 'GLM-4.7-FlashX',
+    description:
+      'GLM-4.7-Flash, as a 30B-level SOTA model, offers a new choice that balances performance and efficiency.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 3, cachedInput: 0.1 },
+    releasedAt: '2026-01-19',
+  },
+  {
+    id: 'glm-5v-turbo',
+    displayName: 'GLM-5V-Turbo',
+    description:
+      'GLM-5V-Turbo is Zhipu’s first multimodal coding foundation model, designed for visual programming tasks.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 5, output: 22, cachedInput: 1.2 },
+    releasedAt: '2026-04-02',
+  },
+  {
+    id: 'glm-4.6v',
+    displayName: 'GLM-4.6V',
+    description:
+      'The GLM-4.6V series represents a major iteration of the GLM family in the multimodal direction, comprising GLM-4.6V (flagship), GLM-4.6V-FlashX (lightweight and high-speed), and GLM-4.6V-Flash (fully free).',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 1, output: 3, cachedInput: 0.2 },
+    releasedAt: '2025-12-08',
+  },
+  {
+    id: 'glm-4.6v-flashx',
+    displayName: 'GLM-4.6V-FlashX',
+    description:
+      'The GLM-4.6V series represents a major iteration of the GLM family in the multimodal direction, comprising GLM-4.6V (flagship), GLM-4.6V-FlashX (lightweight and high-speed), and GLM-4.6V-Flash (fully free).',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.15, output: 1.5, cachedInput: 0.03 },
+    releasedAt: '2025-12-08',
+  },
+  {
+    id: 'glm-4.6v-flash',
+    displayName: 'GLM-4.6V-Flash',
+    description:
+      'The GLM-4.6V series represents a major iteration of the GLM family in the multimodal direction, comprising GLM-4.6V (flagship), GLM-4.6V-FlashX (lightweight and high-speed), and GLM-4.6V-Flash (fully free).',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0, output: 0, cachedInput: 0 },
+    releasedAt: '2025-12-08',
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const zhipuImageModels: ImageModelCard[] = [
   {
@@ -485,7 +412,6 @@ const zhipuImageModels: ImageModelCard[] = [
       'CogView-4 是智谱首个支持生成汉字的开源文生图模型，在语义理解、图像生成质量、中英文字生成能力等方面全面提升。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-03-04',
     resolutions: [
       '1024x1024',
       '768x1344',
@@ -495,14 +421,106 @@ const zhipuImageModels: ImageModelCard[] = [
       '1440x720',
       '720x1440',
     ],
+    releasedAt: '2025-03-04',
+  },
+  {
+    id: 'glm-image',
+    displayName: 'GLM-Image',
+    description: 'GLM-Image is Zhipu’s new flagship image generation model.',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2026-01-14',
+  },
+  {
+    id: 'cogview-3-flash',
+    displayName: 'CogView-3-Flash',
+    description: 'CogView-3-Flash is a free image generation model launched by Zhipu.',
+    type: 'image',
+    enabled: true,
   },
 ];
 
-// ============================================================================
-// Exports
-// ============================================================================
+const zhipuVideoModels: VideoModelCard[] = [
+  {
+    id: 'vidu2-reference',
+    displayName: 'Vidu 2 Reference',
+    description:
+      'Vidu 2 is a video generation foundation model designed to balance speed and quality.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'vidu2-start-end',
+    displayName: 'Vidu 2 Start End',
+    description:
+      'Vidu 2 is a video generation foundation model designed to balance speed and quality.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'viduq1-start-end',
+    displayName: 'Vidu Q1 Start End',
+    description:
+      'Vidu Q1 is Vidu’s next-generation video generation foundation model, focused on high-quality video creation.',
+    type: 'video',
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'vidu2-image',
+    displayName: 'Vidu 2 Image',
+    description:
+      'Vidu 2 is a video generation foundation model designed to balance speed and quality.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'viduq1-image',
+    displayName: 'Vidu Q1 Image',
+    description:
+      'Vidu Q1 is Vidu’s next-generation video generation foundation model, focused on high-quality video creation.',
+    type: 'video',
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'viduq1-text',
+    displayName: 'Vidu Q1 Text',
+    description:
+      'Vidu Q1 is Vidu’s next-generation video generation foundation model, focused on high-quality video creation.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'cogvideox-3',
+    displayName: 'CogVideoX-3',
+    description:
+      'CogVideoX-3 adds a start-and-end frame generation feature, significantly improving visual stability and clarity.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-07-15',
+  },
+  {
+    id: 'cogvideox-2',
+    displayName: 'CogVideoX-2',
+    description:
+      'CogVideoX-2 is Zhipu’s new-generation video generation foundation model, with image-to-video capabilities improved by 38%.',
+    type: 'video',
+  },
+  {
+    id: 'cogvideox-flash',
+    displayName: 'CogVideoX-Flash',
+    description:
+      'CogVideoX-Flash is a free video generation model released by Zhipu, capable of generating videos that follow user instructions while achieving higher aesthetic quality scores.',
+    type: 'video',
+    enabled: true,
+  },
+];
 
 export default {
   chat: zhipuChatModels,
   image: zhipuImageModels,
+  video: zhipuVideoModels,
 };

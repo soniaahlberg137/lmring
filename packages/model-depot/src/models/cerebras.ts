@@ -9,15 +9,8 @@ const cerebrasModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 40_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2.25,
-      output: 2.75,
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { input: 2.25, output: 2.75 },
   },
   {
     id: 'gpt-oss-120b',
@@ -26,14 +19,8 @@ const cerebrasModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.35,
-      output: 0.75,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.35, output: 0.75 },
   },
   {
     id: 'qwen-3-32b',
@@ -41,14 +28,8 @@ const cerebrasModels: ChatModelCard[] = [
     description: 'Qwen系列多语言编码任务表现优良。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 0.8,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.4, output: 0.8 },
   },
   {
     id: 'llama-3.3-70b',
@@ -56,13 +37,8 @@ const cerebrasModels: ChatModelCard[] = [
     description: 'Llama中大型模型，兼顾推理能力与吞吐。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.85,
-      output: 1.2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.85, output: 1.2 },
   },
   {
     id: 'llama3.1-8b',
@@ -70,13 +46,16 @@ const cerebrasModels: ChatModelCard[] = [
     description: 'Llama小体量低延迟变体，适合轻量在线推理。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.1, output: 0.1 },
+  },
+  {
+    id: 'qwen-3-235b-a22b-instruct-2507',
+    displayName: 'Qwen 3 235B Instruct',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { functionCall: true },
+    pricing: { input: 0.6, output: 1.2 },
   },
 ];
 

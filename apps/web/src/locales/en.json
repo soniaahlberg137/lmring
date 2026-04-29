@@ -76,6 +76,7 @@
   "Providers.ppio_description": "PPIO provides distributed AI inference services.",
   "Providers.taichu_description": "Taichu provides multimodal AI models from CASIA.",
   "Providers.tencentcloud_description": "Tencent Cloud provides enterprise AI services and model APIs.",
+  "Providers.xiaomimimo_description": "Xiaomi MiMo is Xiaomi's flagship AI model series, featuring hybrid attention architecture with 1M context window for agentic and multimodal tasks.",
   "Providers.lmstudio_description": "LM Studio allows you to run LLMs locally with a user-friendly interface.",
   "Providers.vllm_description": "vLLM is a high-throughput inference engine for LLMs.",
   "Providers.xinference_description": "Xinference is a distributed inference framework for various AI models.",

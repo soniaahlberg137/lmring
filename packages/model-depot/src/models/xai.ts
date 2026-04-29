@@ -1,11 +1,6 @@
 import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const xaiChatModels: ChatModelCard[] = [
-  // Grok 4.20 Beta Series (Latest)
   {
     id: 'grok-4.20-0309-reasoning',
     displayName: 'Grok 4.20',
@@ -14,17 +9,8 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_000_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      cachedInput: 2,
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6, cachedInput: 0.2 },
     releasedAt: '2026-03-09',
   },
   {
@@ -35,16 +21,8 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_000_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      cachedInput: 2,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6, cachedInput: 0.2 },
     releasedAt: '2026-03-09',
   },
   {
@@ -54,19 +32,10 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_000_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      cachedInput: 2,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 2, output: 6, cachedInput: 0.2 },
     releasedAt: '2026-03-09',
   },
-
-  // Grok 4.1 Series
   {
     id: 'grok-4-1-fast-non-reasoning',
     displayName: 'Grok 4.1 Fast (Non-Reasoning)',
@@ -74,17 +43,8 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_000_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1,
-      cachedInput: 0.05,
-    },
+    abilities: { functionCall: true, search: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.2, output: 0.5, cachedInput: 0.05 },
     releasedAt: '2025-11-20',
   },
   {
@@ -101,15 +61,9 @@ const xaiChatModels: ChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 0.4,
-      output: 1,
-      cachedInput: 0.05,
-    },
+    pricing: { input: 0.2, output: 0.5, cachedInput: 0.05 },
     releasedAt: '2025-11-20',
   },
-
-  // Grok 4 Series
   {
     id: 'grok-4',
     displayName: 'Grok 4 0709',
@@ -118,17 +72,8 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.75,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.75 },
     releasedAt: '2025-07-09',
   },
   {
@@ -137,16 +82,8 @@ const xaiChatModels: ChatModelCard[] = [
     description: '我们很高兴发布 Grok 4 Fast，这是我们在成本效益推理模型方面的最新进展。',
     type: 'chat',
     contextWindowTokens: 2_000_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1,
-      cachedInput: 0.05,
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 0.4, output: 1, cachedInput: 0.05 },
     releasedAt: '2025-09-09',
   },
   {
@@ -155,21 +92,10 @@ const xaiChatModels: ChatModelCard[] = [
     description: '我们很高兴发布 Grok 4 Fast，这是我们在成本效益推理模型方面的最新进展。',
     type: 'chat',
     contextWindowTokens: 2_000_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1,
-      cachedInput: 0.05,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 0.4, output: 1, cachedInput: 0.05 },
     releasedAt: '2025-09-09',
   },
-
-  // Grok Code Series
   {
     id: 'grok-code-fast-1',
     displayName: 'Grok Code Fast 1',
@@ -177,19 +103,10 @@ const xaiChatModels: ChatModelCard[] = [
       '我们很高兴推出 grok-code-fast-1，这是一款快速且经济高效的推理模型，在代理编码方面表现出色。',
     type: 'chat',
     contextWindowTokens: 256_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 1.5,
-      cachedInput: 0.02,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.2, output: 1.5, cachedInput: 0.02 },
     releasedAt: '2025-08-27',
   },
-
-  // Grok 3 Series
   {
     id: 'grok-3',
     displayName: 'Grok 3',
@@ -197,15 +114,8 @@ const xaiChatModels: ChatModelCard[] = [
       '旗舰级模型，擅长数据提取、编程和文本摘要等企业级应用，拥有金融、医疗、法律和科学等领域的深厚知识。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.75,
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.75 },
     releasedAt: '2025-04-03',
   },
   {
@@ -214,15 +124,8 @@ const xaiChatModels: ChatModelCard[] = [
     description: '旗舰级模型的快速版本，在保持核心能力的同时提供更低延迟和成本。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.6,
-      output: 3,
-      cachedInput: 0.15,
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { input: 0.6, output: 3, cachedInput: 0.15 },
     releasedAt: '2025-04-03',
   },
   {
@@ -232,16 +135,8 @@ const xaiChatModels: ChatModelCard[] = [
       '轻量级模型，回话前会先思考。运行快速、智能，适用于不需要深层领域知识的逻辑任务，并能获取原始的思维轨迹。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 0.5,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { input: 0.3, output: 0.5, cachedInput: 0.075 },
     releasedAt: '2025-04-03',
   },
   {
@@ -250,35 +145,18 @@ const xaiChatModels: ChatModelCard[] = [
     description: '轻量级思考模型的快速版本，适用于高吞吐量场景，兼具速度与推理能力。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.06,
-      output: 0.1,
-      cachedInput: 0.015,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { input: 0.06, output: 0.1, cachedInput: 0.015 },
     releasedAt: '2025-04-03',
   },
-
-  // Grok 2 Series (Legacy)
   {
     id: 'grok-2-vision-1212',
     displayName: 'Grok 2 Vision 1212',
     description: '该模型在准确性、指令遵循和多语言能力方面有所改进。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 2, output: 10 },
     releasedAt: '2024-12-12',
   },
   {
@@ -288,15 +166,8 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-    },
+    abilities: { functionCall: true, vision: true, structuredOutput: true },
+    pricing: { input: 2, output: 10 },
   },
   {
     id: 'grok-beta',
@@ -305,15 +176,9 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 5,
-      output: 15,
-    },
     legacy: true,
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 5, output: 15 },
   },
   {
     id: 'grok-vision-beta',
@@ -322,21 +187,11 @@ const xaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 8_192,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 15,
-    },
     legacy: true,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 5, output: 15 },
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const xaiImageModels: ImageModelCard[] = [
   {
@@ -345,6 +200,7 @@ const xaiImageModels: ImageModelCard[] = [
     description: 'xAI 专业图像生成模型，支持高质量、高分辨率的图像生成。',
     type: 'image',
     enabled: true,
+    releasedAt: '2026-01-28',
   },
   {
     id: 'grok-imagine-image',
@@ -352,6 +208,7 @@ const xaiImageModels: ImageModelCard[] = [
     description: 'xAI 图像生成模型，支持根据文本提示生成高质量图像。',
     type: 'image',
     enabled: true,
+    releasedAt: '2026-01-28',
   },
   {
     id: 'grok-2-image-1212',
@@ -364,10 +221,6 @@ const xaiImageModels: ImageModelCard[] = [
   },
 ];
 
-// ============================================================================
-// Video Models
-// ============================================================================
-
 const xaiVideoModels: VideoModelCard[] = [
   {
     id: 'grok-imagine-video',
@@ -376,12 +229,9 @@ const xaiVideoModels: VideoModelCard[] = [
     type: 'video',
     enabled: true,
     abilities: { videoOutput: true },
+    releasedAt: '2026-01-28',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: xaiChatModels,

@@ -1,13 +1,6 @@
 import type { ChatModelCard, ImageModelCard } from '../types';
 
-// ============================================================================
-// Chat Models - Google Vertex AI
-// ============================================================================
-
 const vertexaiChatModels: ChatModelCard[] = [
-  // =========================================================================
-  // Gemini 3 Series
-  // =========================================================================
   {
     id: 'gemini-3-pro-image-preview',
     displayName: 'Nano Banana Pro',
@@ -17,17 +10,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 163_840,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      imageOutput: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 12,
-      currency: 'USD',
-    },
+    abilities: { imageOutput: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 2, output: 12 },
     releasedAt: '2025-11-20',
   },
   {
@@ -39,24 +23,10 @@ const vertexaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 12,
-      cachedInput: 0.2,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 2, output: 12, cachedInput: 0.2 },
     releasedAt: '2025-11-18',
   },
-
-  // =========================================================================
-  // Gemini 2.5 Series
-  // =========================================================================
   {
     id: 'gemini-2.5-pro',
     displayName: 'Gemini 2.5 Pro',
@@ -66,18 +36,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.31,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.31 },
     releasedAt: '2025-06-17',
   },
   {
@@ -88,16 +48,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.25, output: 10 },
     releasedAt: '2025-05-06',
   },
   {
@@ -108,16 +60,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.25, output: 10 },
     releasedAt: '2025-04-09',
   },
   {
@@ -128,18 +72,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 0.3, output: 2.5, cachedInput: 0.075 },
     releasedAt: '2025-06-17',
   },
   {
@@ -149,16 +83,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 3.5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.15, output: 3.5 },
     releasedAt: '2025-04-17',
   },
   {
@@ -170,14 +96,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 40_960,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { input: 0.3, output: 2.5 },
     releasedAt: '2025-08-26',
   },
   {
@@ -187,18 +107,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_064_000,
     maxOutput: 64_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-07-22',
   },
   {
@@ -209,22 +119,10 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_064_000,
     maxOutput: 64_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.1, output: 0.4 },
     releasedAt: '2025-06-17',
   },
-
-  // =========================================================================
-  // Gemini 2.0 Series
-  // =========================================================================
   {
     id: 'gemini-2.0-flash',
     displayName: 'Gemini 2.0 Flash',
@@ -233,16 +131,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_056_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      cachedInput: 0.0375,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.15, output: 0.6, cachedInput: 0.0375 },
     releasedAt: '2025-02-05',
   },
   {
@@ -252,22 +142,10 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_056_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-      cachedInput: 0.018,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.075, output: 0.3, cachedInput: 0.018 },
     releasedAt: '2025-02-05',
   },
-
-  // =========================================================================
-  // Gemini 1.5 Series
-  // =========================================================================
   {
     id: 'gemini-1.5-flash-002',
     displayName: 'Gemini 1.5 Flash 002',
@@ -275,15 +153,8 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_008_192,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.075, output: 0.3 },
     releasedAt: '2024-09-25',
   },
   {
@@ -294,22 +165,77 @@ const vertexaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_008_192,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 2.5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 1.25, output: 2.5 },
     releasedAt: '2024-09-24',
   },
+  {
+    id: 'gemini-3.1-flash-image-preview',
+    displayName: 'Nano Banana 2',
+    description:
+      "Gemini 3.1 Flash Image (Nano Banana 2) is Google's fastest native image generation model with thinking support, conversational image generation and editing.",
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    maxOutput: 32_768,
+    enabled: true,
+    abilities: { imageOutput: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 0.25, output: 1.5 },
+    releasedAt: '2026-02-26',
+  },
+  {
+    id: 'gemini-3.1-pro-preview',
+    displayName: 'Gemini 3.1 Pro Preview',
+    description:
+      'Gemini 3.1 Pro Preview improves on Gemini 3 Pro with enhanced reasoning capabilities and adds medium thinking level support.',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { input: 2, output: 12, cachedInput: 0.2 },
+    releasedAt: '2026-02-19',
+  },
+  {
+    id: 'gemini-3.1-flash-lite-preview',
+    displayName: 'Gemini 3.1 Flash-Lite Preview',
+    description:
+      "Gemini 3.1 Flash-Lite Preview is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { input: 0.25, output: 1.5, cachedInput: 0.025 },
+    releasedAt: '2026-03-04',
+  },
+  {
+    id: 'gemini-3-flash-preview',
+    displayName: 'Gemini 3 Flash Preview',
+    description:
+      'Gemini 3 Flash is the smartest model built for speed, combining cutting-edge intelligence with excellent search grounding.',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.5, output: 3, cachedInput: 0.05 },
+    releasedAt: '2025-12-17',
+  },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const vertexaiImageModels: ImageModelCard[] = [
   {
@@ -319,6 +245,7 @@ const vertexaiImageModels: ImageModelCard[] = [
       'Nano Banana 是 Google 最新、最快、最高效的原生多模态模型，它允许您通过对话生成和编辑图像。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.3, output: 2.5 },
     releasedAt: '2025-08-26',
   },
   {
@@ -327,6 +254,7 @@ const vertexaiImageModels: ImageModelCard[] = [
     description: 'Imagen 4 是 Google DeepMind 的第四代文本到图像生成模型。',
     type: 'image',
     enabled: true,
+    organization: 'Deepmind',
     releasedAt: '2025-08-15',
   },
   {
@@ -335,6 +263,7 @@ const vertexaiImageModels: ImageModelCard[] = [
     description: 'Imagen 4 Ultra 是 Imagen 4 的高质量版本。',
     type: 'image',
     enabled: true,
+    organization: 'Deepmind',
     releasedAt: '2025-08-15',
   },
   {
@@ -343,13 +272,10 @@ const vertexaiImageModels: ImageModelCard[] = [
     description: 'Imagen 4 Fast 是 Imagen 4 的快速版本。',
     type: 'image',
     enabled: true,
+    organization: 'Deepmind',
     releasedAt: '2025-08-15',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: vertexaiChatModels,

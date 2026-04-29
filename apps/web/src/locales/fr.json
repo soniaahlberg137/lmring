@@ -76,6 +76,7 @@
   "Providers.ppio_description": "PPIO fournit des services d'inférence IA distribués.",
   "Providers.taichu_description": "Taichu fournit des modèles d'IA multimodaux du CASIA.",
   "Providers.tencentcloud_description": "Tencent Cloud fournit des services d'IA entreprise et des APIs de modèles.",
+  "Providers.xiaomimimo_description": "Xiaomi MiMo est la série phare de modèles IA de Xiaomi, avec une architecture d'attention hybride et une fenêtre de contexte de 1M tokens pour les tâches agentiques et multimodales.",
   "Providers.lmstudio_description": "LM Studio vous permet d'exécuter des LLMs localement avec une interface conviviale.",
   "Providers.vllm_description": "vLLM est un moteur d'inférence à haut débit pour les LLMs.",
   "Providers.xinference_description": "Xinference est un framework d'inférence distribué pour divers modèles d'IA.",

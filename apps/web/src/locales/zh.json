@@ -76,6 +76,7 @@
   "Providers.ppio_description": "PPIO 提供分布式 AI 推理服务。",
   "Providers.taichu_description": "紫东太初提供中科院自动化所的多模态 AI 模型。",
   "Providers.tencentcloud_description": "腾讯云提供企业级 AI 服务和模型 API。",
+  "Providers.xiaomimimo_description": "小米 MiMo 是小米旗舰级 AI 模型系列，采用混合注意力架构和百万级上下文窗口，适用于 Agent 和多模态任务。",
   "Providers.lmstudio_description": "LM Studio 提供友好的界面让您在本地运行大语言模型。",
   "Providers.vllm_description": "vLLM 是高吞吐量的大语言模型推理引擎。",
   "Providers.xinference_description": "Xinference 是支持多种 AI 模型的分布式推理框架。",

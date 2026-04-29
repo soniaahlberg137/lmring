@@ -1,9 +1,5 @@
 import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const googleChatModels: ChatModelCard[] = [
   {
     id: 'gemini-3.1-pro-preview',
@@ -22,11 +18,7 @@ const googleChatModels: ChatModelCard[] = [
       video: true,
       vision: true,
     },
-    pricing: {
-      input: 2,
-      output: 12,
-      cachedInput: 0.5,
-    },
+    pricing: { input: 2, output: 12, cachedInput: 0.2 },
     releasedAt: '2026-02-19',
   },
   {
@@ -44,11 +36,7 @@ const googleChatModels: ChatModelCard[] = [
       video: true,
       vision: true,
     },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.31,
-    },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.31 },
   },
   {
     id: 'gemini-flash-latest',
@@ -57,18 +45,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.3, output: 2.5, cachedInput: 0.075 },
   },
   {
     id: 'gemini-flash-lite-latest',
@@ -77,18 +55,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
   },
   {
     id: 'gemini-3-pro-preview',
@@ -99,20 +67,10 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 12,
-      cachedInput: 0.2,
-    },
-    releasedAt: '2025-11-18',
     legacy: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 2, output: 12, cachedInput: 0.2 },
+    releasedAt: '2025-11-18',
   },
   {
     id: 'gemini-3-pro-image-preview',
@@ -122,16 +80,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 163_840,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      imageOutput: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 12,
-    },
+    abilities: { imageOutput: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 2, output: 12 },
     releasedAt: '2025-11-20',
   },
   {
@@ -142,18 +92,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.3, output: 2.5, cachedInput: 0.075 },
     releasedAt: '2026-03-04',
   },
   {
@@ -165,15 +105,9 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 163_840,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      imageOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-    },
-    releasedAt: '2026-03-04',
+    abilities: { imageOutput: true, vision: true },
+    pricing: { input: 0.25, output: 1.5 },
+    releasedAt: '2026-02-26',
   },
   {
     id: 'gemini-3-flash-preview',
@@ -183,20 +117,10 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-    },
-    releasedAt: '2025-12-01',
     legacy: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.5, output: 3, cachedInput: 0.05 },
+    releasedAt: '2025-12-17',
   },
   {
     id: 'gemini-2.5-pro',
@@ -207,18 +131,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.31,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.31 },
     releasedAt: '2025-06-17',
   },
   {
@@ -228,18 +142,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.31,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.31 },
     releasedAt: '2025-06-05',
   },
   {
@@ -249,18 +153,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.31,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.31 },
     releasedAt: '2025-05-06',
   },
   {
@@ -271,18 +165,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.3, output: 2.5, cachedInput: 0.075 },
     releasedAt: '2025-06-17',
   },
   {
@@ -292,18 +176,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.3, output: 2.5, cachedInput: 0.075 },
     releasedAt: '2025-09-25',
   },
   {
@@ -312,17 +186,11 @@ const googleChatModels: ChatModelCard[] = [
     description:
       'Nano Banana 是 Google 最新、最快、最高效的原生多模态模型，允许通过对话生成和编辑图像。',
     type: 'chat',
-    contextWindowTokens: 40_960,
-    maxOutput: 8192,
+    contextWindowTokens: 98_304,
+    maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      imageOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-    },
+    abilities: { imageOutput: true, vision: true },
+    pricing: { input: 0.3, output: 2.5 },
     releasedAt: '2025-08-26',
   },
   {
@@ -331,15 +199,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Nano Banana Preview 版本。',
     type: 'chat',
     contextWindowTokens: 40_960,
-    maxOutput: 8192,
-    abilities: {
-      imageOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.5,
-    },
+    maxOutput: 8_192,
+    abilities: { imageOutput: true, vision: true },
+    pricing: { input: 0.3, output: 2.5 },
     releasedAt: '2025-08-26',
   },
   {
@@ -349,18 +211,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-07-22',
   },
   {
@@ -370,18 +222,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_114_112,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      video: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-09-25',
   },
   {
@@ -391,17 +233,9 @@ const googleChatModels: ChatModelCard[] = [
       'Gemini 2.0 Flash 提供下一代功能，包括卓越的速度、原生工具使用和 1M 令牌上下文窗口。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-02-05',
   },
   {
@@ -410,17 +244,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 2.0 Flash 001 版本。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-02-05',
   },
   {
@@ -429,18 +255,10 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 2.0 Flash 实验版本。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
+    maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      imageOutput: true,
-      functionCall: true,
-      vision: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { imageOutput: true, functionCall: true, vision: true, structuredOutput: true },
+    pricing: { input: 0, output: 0 },
     releasedAt: '2025-02-05',
   },
   {
@@ -449,15 +267,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 2.0 Flash 实验模型，支持图像生成。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
-    abilities: {
-      imageOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    abilities: { imageOutput: true, vision: true },
+    pricing: { input: 0, output: 0 },
     releasedAt: '2025-03-14',
   },
   {
@@ -466,14 +278,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 2.0 Flash 模型变体，针对成本效益和低延迟优化。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-    },
+    maxOutput: 8_192,
+    abilities: { vision: true },
+    pricing: { input: 0.075, output: 0.3 },
     releasedAt: '2025-02-05',
   },
   {
@@ -482,14 +289,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 2.0 Flash-Lite 001 版本。',
     type: 'chat',
     contextWindowTokens: 1_056_768,
-    maxOutput: 8192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-    },
+    maxOutput: 8_192,
+    abilities: { vision: true },
+    pricing: { input: 0.075, output: 0.3 },
     releasedAt: '2025-02-05',
   },
   {
@@ -499,13 +301,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_081_344,
     maxOutput: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
   },
   {
     id: 'learnlm-1.5-pro-experimental',
@@ -513,14 +310,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'LearnLM 1.5 Pro 实验版本。',
     type: 'chat',
     contextWindowTokens: 40_959,
-    maxOutput: 8192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
     releasedAt: '2024-11-19',
   },
   {
@@ -531,16 +323,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 2_097_152,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      video: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 5,
-    },
+    abilities: { functionCall: true, vision: true, video: true, structuredOutput: true },
+    pricing: { input: 1.25, output: 5 },
   },
   {
     id: 'gemini-1.5-pro-002',
@@ -549,18 +333,11 @@ const googleChatModels: ChatModelCard[] = [
       'Gemini 1.5 Pro 002 是最新的生产就绪模型，在数学、长上下文和视觉任务方面有显著提升。',
     type: 'chat',
     contextWindowTokens: 2_008_192,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 5,
-      cachedInput: 0.3125,
-    },
-    releasedAt: '2024-09-24',
+    maxOutput: 8_192,
     legacy: true,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 1.25, output: 5, cachedInput: 0.3125 },
+    releasedAt: '2024-09-24',
   },
   {
     id: 'gemini-1.5-flash',
@@ -570,16 +347,8 @@ const googleChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_048_576,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      video: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-    },
+    abilities: { functionCall: true, vision: true, video: true, structuredOutput: true },
+    pricing: { input: 0.075, output: 0.3 },
   },
   {
     id: 'gemini-1.5-flash-002',
@@ -587,18 +356,11 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 1.5 Flash 002 是高效的多模态模型。',
     type: 'chat',
     contextWindowTokens: 1_008_192,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-      cachedInput: 0.018,
-    },
-    releasedAt: '2024-09-25',
+    maxOutput: 8_192,
     legacy: true,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.075, output: 0.3, cachedInput: 0.018 },
+    releasedAt: '2024-09-25',
   },
   {
     id: 'gemini-1.5-flash-8b',
@@ -607,15 +369,8 @@ const googleChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_048_576,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.0375,
-      output: 0.15,
-    },
+    abilities: { functionCall: true, vision: true, structuredOutput: true },
+    pricing: { input: 0.0375, output: 0.15 },
   },
   {
     id: 'gemini-1.5-flash-8b-latest',
@@ -623,16 +378,9 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemini 1.5 Flash 8B 最新版本。',
     type: 'chat',
     contextWindowTokens: 1_008_192,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.0375,
-      output: 0.15,
-      cachedInput: 0.01,
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.0375, output: 0.15, cachedInput: 0.01 },
     releasedAt: '2024-10-03',
   },
   {
@@ -641,11 +389,8 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3 1B 是 Google 开源的小型语言模型。',
     type: 'chat',
     contextWindowTokens: 40_960,
-    maxOutput: 8192,
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
   },
   {
     id: 'gemma-3-4b-it',
@@ -653,11 +398,8 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3 4B 是 Google 开源的小型语言模型。',
     type: 'chat',
     contextWindowTokens: 40_960,
-    maxOutput: 8192,
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
   },
   {
     id: 'gemma-3-12b-it',
@@ -665,11 +407,8 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3 12B 是 Google 开源的中型语言模型。',
     type: 'chat',
     contextWindowTokens: 40_960,
-    maxOutput: 8192,
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
   },
   {
     id: 'gemma-3-27b-it',
@@ -677,11 +416,8 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3 27B 是 Google 开源的大型语言模型。',
     type: 'chat',
     contextWindowTokens: 139_264,
-    maxOutput: 8192,
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 8_192,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
   },
   {
     id: 'gemma-3n-e2b-it',
@@ -689,11 +425,8 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3n E2B 是高效的小型模型。',
     type: 'chat',
     contextWindowTokens: 10_240,
-    maxOutput: 2048,
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    maxOutput: 2_048,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
   },
   {
     id: 'gemma-3n-e4b-it',
@@ -701,17 +434,30 @@ const googleChatModels: ChatModelCard[] = [
     description: 'Gemma 3n E4B 是高效的小型模型。',
     type: 'chat',
     contextWindowTokens: 10_240,
-    maxOutput: 2048,
-    pricing: {
-      input: 0,
-      output: 0,
+    maxOutput: 2_048,
+    pricing: { input: 0, output: 0, cachedInput: 0 },
+  },
+  {
+    id: 'gemini-3.1-flash-lite-preview',
+    displayName: 'Gemini 3.1 Flash-Lite Preview',
+    description:
+      "Gemini 3.1 Flash-Lite Preview is Google's most cost-efficient multimodal model, optimized for high-volume agentic tasks, translation, and data processing.",
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
     },
+    pricing: { input: 0.25, output: 1.5, cachedInput: 0.025 },
+    releasedAt: '2026-03-04',
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const googleImageModels: ImageModelCard[] = [
   {
@@ -721,8 +467,8 @@ const googleImageModels: ImageModelCard[] = [
     type: 'image',
     enabled: true,
     organization: 'Deepmind',
-    releasedAt: '2025-08-15',
     resolutions: ['1024x1024'],
+    releasedAt: '2025-08-15',
   },
   {
     id: 'imagen-4.0-ultra-generate-001',
@@ -731,8 +477,8 @@ const googleImageModels: ImageModelCard[] = [
     type: 'image',
     enabled: true,
     organization: 'Deepmind',
-    releasedAt: '2025-08-15',
     resolutions: ['1024x1024'],
+    releasedAt: '2025-08-15',
   },
   {
     id: 'imagen-4.0-fast-generate-001',
@@ -741,17 +487,41 @@ const googleImageModels: ImageModelCard[] = [
     type: 'image',
     enabled: true,
     organization: 'Deepmind',
-    releasedAt: '2025-08-15',
     resolutions: ['1024x1024'],
+    releasedAt: '2025-08-15',
+  },
+  {
+    id: 'gemini-3.1-flash-image-preview:image',
+    displayName: 'Nano Banana 2',
+    description:
+      "Gemini 3.1 Flash Image (Nano Banana 2) is Google's fastest native image generation model with thinking support, conversational image generation and editing.",
+    type: 'image',
+    enabled: true,
+    pricing: { input: 0.25, output: 1.5 },
+    releasedAt: '2026-02-26',
+  },
+  {
+    id: 'gemini-3-pro-image-preview:image',
+    displayName: 'Nano Banana Pro',
+    description:
+      'Gemini 3 Pro Image (Nano Banana Pro) is Google’s image generation model and also supports multimodal chat.',
+    type: 'image',
+    enabled: true,
+    pricing: { input: 2, output: 12 },
+    releasedAt: '2025-11-18',
+  },
+  {
+    id: 'gemini-2.5-flash-image:image',
+    displayName: 'Nano Banana',
+    description:
+      'Nano Banana is Google’s newest, fastest, and most efficient native multimodal model, enabling conversational image generation and editing.',
+    type: 'image',
+    pricing: { input: 0.3, output: 2.5 },
+    releasedAt: '2025-08-26',
   },
 ];
 
-// ============================================================================
-// Video Models
-// ============================================================================
-
 const googleVideoModels: VideoModelCard[] = [
-  // Veo 3.1 Models (Latest - January 2026)
   {
     id: 'google/veo-3.1',
     displayName: 'Google Veo 3.1',
@@ -759,13 +529,11 @@ const googleVideoModels: VideoModelCard[] = [
       'Google 最新的视频生成模型，支持 720p、1080p、4K 分辨率，8 秒时长，原生音频生成，竖屏视频支持',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.1-generate-001',
+    maxDurationSeconds: 8,
     releasedAt: '2026-01-13',
   },
   {
@@ -774,13 +542,11 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.1 带原生音频生成，支持自然对话和同步音效',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.1-generate-001',
+    maxDurationSeconds: 8,
     releasedAt: '2026-01-13',
   },
   {
@@ -789,13 +555,11 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.1 快速版本，优化生成速度同时保持高质量',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.1-fast-generate-001',
+    maxDurationSeconds: 8,
     releasedAt: '2026-01-13',
   },
   {
@@ -804,29 +568,24 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.1 Fast 带音频生成支持',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920', '3840x2160', '2160x3840'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.1-fast-generate-001',
+    maxDurationSeconds: 8,
     releasedAt: '2026-01-13',
   },
-  // Veo 3.0 Models
   {
     id: 'google/veo-3.0',
     displayName: 'Google Veo 3.0',
     description: 'Google latest video generation model with 8s duration',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.0-generate-001',
+    maxDurationSeconds: 8,
   },
   {
     id: 'google/veo-3.0-audio',
@@ -834,13 +593,11 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.0 with audio generation support',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.0-generate-001',
+    maxDurationSeconds: 8,
   },
   {
     id: 'google/veo-3.0-fast',
@@ -848,13 +605,11 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.0 optimized for faster generation',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.0-fast-generate-001',
+    maxDurationSeconds: 8,
   },
   {
     id: 'google/veo-3.0-fast-audio',
@@ -862,34 +617,69 @@ const googleVideoModels: VideoModelCard[] = [
     description: 'Google Veo 3.0 Fast with audio generation support',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1280x720', '720x1280', '1920x1080', '1080x1920'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-3.0-fast-generate-001',
+    maxDurationSeconds: 8,
   },
-  // Veo 2.0 Model
   {
     id: 'google/veo-2.0',
     displayName: 'Google Veo 2.0',
     description: 'Google Veo 2.0 video generation model',
     type: 'video',
     enabled: true,
+    organization: 'Google',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1280x720', '720x1280'],
     fps: 24,
-    organization: 'Google',
-    runtimeProvider: 'google',
-    runtimeModelId: 'veo-2.0-generate-001',
+    maxDurationSeconds: 5,
+  },
+  {
+    id: 'veo-3.1-generate-preview',
+    displayName: 'Veo 3.1 Generate Preview',
+    description:
+      'Our latest video generation model, available to developers on the paid tier of the Gemini API.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-01-13',
+  },
+  {
+    id: 'veo-3.1-fast-generate-preview',
+    displayName: 'Veo 3.1 Fast Generate Preview',
+    description:
+      'Our latest video generation model, available to developers on the paid tier of the Gemini API.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-01-13',
+  },
+  {
+    id: 'veo-3.0-generate-001',
+    displayName: 'Veo 3.0 Generate 001',
+    description:
+      'Our stable video generation model, available to developers on the paid tier of the Gemini API.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-11-11',
+  },
+  {
+    id: 'veo-3.0-fast-generate-001',
+    displayName: 'Veo 3.0 Fast Generate 001',
+    description:
+      'Our stable video generation model, available to developers on the paid tier of the Gemini API.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-11-11',
+  },
+  {
+    id: 'veo-2.0-generate-001',
+    displayName: 'Veo 2.0 Generate 001',
+    description:
+      'Our state-of-the-art video generation model, available to developers on the paid tier of the Gemini API.',
+    type: 'video',
+    releasedAt: '2025-04-09',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: googleChatModels,
