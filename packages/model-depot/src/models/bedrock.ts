@@ -1,13 +1,6 @@
 import type { ChatModelCard } from '../types';
 
-// ============================================================================
-// Chat Models - AWS Bedrock
-// ============================================================================
-
-const bedrockChatModels: ChatModelCard[] = [
-  // =========================================================================
-  // Claude Series (Anthropic on Bedrock)
-  // =========================================================================
+const bedrockModels: ChatModelCard[] = [
   {
     id: 'global.anthropic.claude-opus-4-5-20251101-v1:0',
     displayName: 'Claude Opus 4.5',
@@ -17,18 +10,8 @@ const bedrockChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 25,
-      cachedInput: 0.5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
     releasedAt: '2025-11-24',
   },
   {
@@ -39,17 +22,8 @@ const bedrockChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { currency: 'USD', input: 3, output: 15 },
     releasedAt: '2025-09-29',
   },
   {
@@ -61,17 +35,8 @@ const bedrockChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1,
-      output: 5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { currency: 'USD', input: 1, output: 5 },
     releasedAt: '2025-10-15',
   },
   {
@@ -82,17 +47,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 3, output: 15 },
     releasedAt: '2025-02-24',
   },
   {
@@ -103,15 +59,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
     releasedAt: '2024-10-22',
   },
   {
@@ -122,15 +71,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
     releasedAt: '2024-10-22',
   },
   {
@@ -141,15 +83,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
     releasedAt: '2024-06-20',
   },
   {
@@ -160,15 +95,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.25,
-      output: 1.25,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.25, output: 1.25 },
     releasedAt: '2024-03-07',
   },
   {
@@ -178,15 +106,8 @@ const bedrockChatModels: ChatModelCard[] = [
       'Anthropic 的 Claude 3 Sonnet 在智能和速度之间达到了理想的平衡——特别适合企业工作负载。',
     type: 'chat',
     contextWindowTokens: 200_000,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
   },
   {
     id: 'anthropic.claude-3-opus-20240229-v1:0',
@@ -195,14 +116,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 15, output: 75 },
     releasedAt: '2024-02-29',
   },
   {
@@ -212,11 +127,7 @@ const bedrockChatModels: ChatModelCard[] = [
       'Claude 2 的更新版，具有双倍的上下文窗口，以及在长文档和 RAG 上下文中的可靠性、幻觉率和基于证据的准确性的改进。',
     type: 'chat',
     contextWindowTokens: 200_000,
-    pricing: {
-      input: 8,
-      output: 24,
-      currency: 'USD',
-    },
+    pricing: { input: 8, output: 24 },
   },
   {
     id: 'anthropic.claude-v2',
@@ -225,11 +136,7 @@ const bedrockChatModels: ChatModelCard[] = [
       'Anthropic 在从复杂对话和创意内容生成到详细指令跟随的广泛任务中都表现出高度能力的模型。',
     type: 'chat',
     contextWindowTokens: 100_000,
-    pricing: {
-      input: 8,
-      output: 24,
-      currency: 'USD',
-    },
+    pricing: { input: 8, output: 24 },
   },
   {
     id: 'anthropic.claude-instant-v1',
@@ -239,16 +146,8 @@ const bedrockChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 100_000,
     maxOutput: 4_096,
-    pricing: {
-      input: 0.8,
-      output: 2.4,
-      currency: 'USD',
-    },
+    pricing: { input: 0.8, output: 2.4 },
   },
-
-  // =========================================================================
-  // Meta Llama Series
-  // =========================================================================
   {
     id: 'meta.llama3-1-8b-instruct-v1:0',
     displayName: 'Llama 3.1 8B Instruct',
@@ -256,14 +155,8 @@ const bedrockChatModels: ChatModelCard[] = [
       'Meta Llama 3.1 8B Instruct 的更新版，包括扩展的 128K 上下文长度、多语言性和改进的推理能力。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.22,
-      output: 0.22,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.22, output: 0.22 },
   },
   {
     id: 'meta.llama3-1-70b-instruct-v1:0',
@@ -272,14 +165,8 @@ const bedrockChatModels: ChatModelCard[] = [
       'Meta Llama 3.1 70B Instruct 的更新版，包括扩展的 128K 上下文长度、多语言性和改进的推理能力。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.99,
-      output: 0.99,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.99, output: 0.99 },
   },
   {
     id: 'meta.llama3-1-405b-instruct-v1:0',
@@ -288,14 +175,8 @@ const bedrockChatModels: ChatModelCard[] = [
       'Meta Llama 3.1 405B Instruct 是 Llama 3.1 Instruct 模型中最大、最强大的模型，是一款高度先进的对话推理和合成数据生成模型。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 5.32,
-      output: 16,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 5.32, output: 16 },
   },
   {
     id: 'meta.llama3-8b-instruct-v1:0',
@@ -304,11 +185,7 @@ const bedrockChatModels: ChatModelCard[] = [
       'Meta Llama 3 是一款面向开发者、研究人员和企业的开放大型语言模型，非常适合计算能力和资源有限、边缘设备和更快的训练时间。',
     type: 'chat',
     contextWindowTokens: 8_000,
-    pricing: {
-      input: 0.3,
-      output: 0.6,
-      currency: 'USD',
-    },
+    pricing: { input: 0.3, output: 0.6 },
   },
   {
     id: 'meta.llama3-70b-instruct-v1:0',
@@ -317,16 +194,69 @@ const bedrockChatModels: ChatModelCard[] = [
       'Meta Llama 3 是一款面向开发者、研究人员和企业的开放大型语言模型，非常适合内容创建、对话 AI、语言理解、研发和企业应用。',
     type: 'chat',
     contextWindowTokens: 8_000,
-    pricing: {
-      input: 2.65,
-      output: 3.5,
-      currency: 'USD',
-    },
+    pricing: { input: 2.65, output: 3.5 },
+  },
+  {
+    id: 'global.anthropic.claude-opus-4-7',
+    displayName: 'Claude Opus 4.7',
+    description:
+      "Claude Opus 4.7 is Anthropic's most capable generally available model for complex reasoning and agentic coding.",
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
+    releasedAt: '2026-04-16',
+  },
+  {
+    id: 'global.anthropic.claude-opus-4-6-v1',
+    displayName: 'Claude Opus 4.6',
+    description:
+      "Claude Opus 4.6 is Anthropic's most intelligent model for building agents and coding.",
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
+    releasedAt: '2026-02-05',
+  },
+  {
+    id: 'global.anthropic.claude-sonnet-4-6',
+    displayName: 'Claude Sonnet 4.6',
+    description: 'Claude Sonnet 4.6 is Anthropic’s best combination of speed and intelligence.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 64_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
+    releasedAt: '2026-02-17',
+  },
+  {
+    id: 'global.anthropic.claude-sonnet-4-5-20250929-v1:0',
+    displayName: 'Claude Sonnet 4.5',
+    description: "Claude Sonnet 4.5 is Anthropic's most intelligent model to date.",
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 64_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 3, output: 15 },
+    releasedAt: '2025-09-29',
+  },
+  {
+    id: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
+    displayName: 'Claude Haiku 4.5',
+    description:
+      "Claude Haiku 4.5 is Anthropic's fastest and most intelligent Haiku model, with lightning speed and extended thinking.",
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 64_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 1, output: 5 },
+    releasedAt: '2025-10-15',
   },
 ];
 
-// ============================================================================
-// Exports
-// ============================================================================
-
-export default bedrockChatModels;
+export default bedrockModels;

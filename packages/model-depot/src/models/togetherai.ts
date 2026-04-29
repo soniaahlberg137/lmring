@@ -1,9 +1,5 @@
 import type { ChatModelCard, VideoModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const togetheraiChatModels: ChatModelCard[] = [
   {
     id: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
@@ -12,9 +8,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
@@ -31,9 +25,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'meta-llama/Llama-3.2-90B-Vision-Instruct-Turbo',
@@ -42,9 +34,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo',
@@ -53,9 +43,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo',
@@ -64,9 +52,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'meta-llama/Meta-Llama-3.1-405B-Instruct-Turbo',
@@ -75,9 +61,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 130_815,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'nvidia/Llama-3.1-Nemotron-70B-Instruct-HF',
@@ -94,9 +78,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-ai/DeepSeek-V3',
@@ -113,9 +95,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'Qwen/Qwen2.5-7B-Instruct-Turbo',
@@ -138,7 +118,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     displayName: 'Gemma 2 9B',
     description: 'Google Gemma 2 9B模型，高效指令响应。',
     type: 'chat',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
     enabled: true,
   },
   {
@@ -146,7 +126,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     displayName: 'Gemma 2 27B',
     description: 'Google Gemma 2 27B通用模型，应用场景广泛。',
     type: 'chat',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
     enabled: true,
   },
   {
@@ -156,9 +136,7 @@ const togetheraiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'mistralai/Mixtral-8x22B-Instruct-v0.1',
@@ -168,48 +146,253 @@ const togetheraiChatModels: ChatModelCard[] = [
     contextWindowTokens: 65_536,
     enabled: true,
   },
+  {
+    id: 'meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo',
+    displayName: 'Llama 3.2 11B Vision Instruct Turbo',
+    description: 'LLaMA 3.2 is designed for tasks combining vision and text.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { vision: true },
+  },
+  {
+    id: 'meta-llama/Meta-Llama-3-8B-Instruct-Turbo',
+    displayName: 'Llama 3 8B Instruct Turbo',
+    description:
+      'Llama 3 8B Instruct Turbo is a high-performance LLM for a wide range of use cases.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Meta-Llama-3-70B-Instruct-Turbo',
+    displayName: 'Llama 3 70B Instruct Turbo',
+    description:
+      'Llama 3 70B Instruct Turbo delivers strong understanding and generation for the most demanding workloads.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Meta-Llama-3-8B-Instruct-Lite',
+    displayName: 'Llama 3 8B Instruct Lite',
+    description:
+      'Llama 3 8B Instruct Lite balances performance for resource-constrained environments.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Meta-Llama-3-70B-Instruct-Lite',
+    displayName: 'Llama 3 70B Instruct Lite',
+    description: 'Llama 3 70B Instruct Lite is built for high performance with lower latency.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Llama-3-8b-chat-hf',
+    displayName: 'Llama 3 8B Instruct Reference',
+    description:
+      'Llama 3 8B Instruct Reference offers multilingual support and broad domain knowledge.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Llama-3-70b-chat-hf',
+    displayName: 'Llama 3 70B Instruct Reference',
+    description: 'Llama 3 70B Instruct Reference is a powerful chat model for complex dialogues.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'meta-llama/Llama-2-13b-chat-hf',
+    displayName: 'LLaMA-2 Chat (13B)',
+    description:
+      'LLaMA-2 Chat (13B) provides strong language handling and a solid chat experience.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+  },
+  {
+    id: 'meta-llama/Llama-2-70b-hf',
+    displayName: 'LLaMA-2 (70B)',
+    description: 'LLaMA-2 provides strong language handling and a solid interaction experience.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+  },
+  {
+    id: 'codellama/CodeLlama-34b-Instruct-hf',
+    displayName: 'CodeLlama 34B Instruct',
+    description:
+      'Code Llama is an LLM focused on code generation and discussion, with broad language support for developer workflows.',
+    type: 'chat',
+    contextWindowTokens: 16_384,
+  },
+  {
+    id: 'google/gemma-2b-it',
+    displayName: 'Gemma Instruct (2B)',
+    description:
+      'Gemma Instruct (2B) provides basic instruction handling for lightweight applications.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'mistralai/Mistral-7B-Instruct-v0.3',
+    displayName: 'Mistral (7B) Instruct v0.3',
+    description:
+      'Mistral (7B) Instruct v0.3 offers efficient compute and strong language understanding for many use cases.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    enabled: true,
+  },
+  {
+    id: 'mistralai/Mistral-7B-Instruct-v0.2',
+    displayName: 'Mistral (7B) Instruct v0.2',
+    description: 'Mistral (7B) Instruct v0.2 improves instruction handling and result accuracy.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'mistralai/Mistral-7B-Instruct-v0.1',
+    displayName: 'Mistral (7B) Instruct',
+    description: 'Mistral (7B) Instruct is known for strong performance across language tasks.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'mistralai/Mistral-7B-v0.1',
+    displayName: 'Mistral (7B)',
+    description:
+      'Mistral 7B is compact but high-performing, strong for batch processing and simple tasks like classification and text generation, with solid reasoning.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'mistralai/Mixtral-8x7B-v0.1',
+    displayName: 'Mixtral-8x7B (46.7B)',
+    description:
+      'Mixtral 8x7B is a sparse MoE model that boosts inference speed, suitable for multilingual and code generation tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'microsoft/WizardLM-2-8x22B',
+    displayName: 'WizardLM-2 8x22B',
+    description:
+      'WizardLM 2 is a language model from Microsoft AI that excels at complex dialogue, multilingual tasks, reasoning, and assistants.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+  },
+  {
+    id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B',
+    displayName: 'DeepSeek R1 Distill Qwen 1.5B',
+    description:
+      'DeepSeek-R1 distilled models use RL and cold-start data to improve reasoning and set new open-model multi-task benchmarks.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-14B',
+    displayName: 'DeepSeek R1 Distill Qwen 14B',
+    description:
+      'DeepSeek-R1 distilled models use RL and cold-start data to improve reasoning and set new open-model multi-task benchmarks.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'deepseek-ai/DeepSeek-R1-Distill-Llama-70B',
+    displayName: 'DeepSeek R1 Distill Llama 70B',
+    description:
+      'DeepSeek-R1 distilled models use RL and cold-start data to improve reasoning and set new open-model multi-task benchmarks.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'deepseek-ai/deepseek-llm-67b-chat',
+    displayName: 'DeepSeek LLM Chat (67B)',
+    description:
+      'DeepSeek LLM Chat (67B) is an innovative model offering deep language understanding and interaction.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+  },
+  {
+    id: 'Qwen/Qwen2.5-Coder-32B-Instruct',
+    displayName: 'Qwen 2.5 Coder 32B Instruct',
+    description: 'Qwen2.5 Coder 32B Instruct is the latest Alibaba Cloud code-focused LLM.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'Qwen/Qwen2-72B-Instruct',
+    displayName: 'Qwen 2 Instruct (72B)',
+    description:
+      'Qwen 2 Instruct (72B) delivers precise instruction following for enterprise workloads.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'databricks/dbrx-instruct',
+    displayName: 'DBRX Instruct',
+    description: 'DBRX Instruct offers highly reliable instruction handling across industries.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'upstage/SOLAR-10.7B-Instruct-v1.0',
+    displayName: 'Upstage SOLAR Instruct v1 (11B)',
+    description:
+      'Upstage SOLAR Instruct v1 (11B) is tuned for precise instruction tasks with strong language performance.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+  },
+  {
+    id: 'NousResearch/Nous-Hermes-2-Mixtral-8x7B-DPO',
+    displayName: 'Nous Hermes 2 - Mixtral 8x7B-DPO (46.7B)',
+    description:
+      'Nous Hermes 2 - Mixtral 8x7B-DPO (46.7B) is a high-precision instruction model for complex computation.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'Gryphe/MythoMax-L2-13b',
+    displayName: 'MythoMax-L2 (13B)',
+    description: 'MythoMax-L2 (13B) is an innovative model for diverse domains and complex tasks.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+  },
+  {
+    id: 'togethercomputer/StripedHyena-Nous-7B',
+    displayName: 'StripedHyena Nous (7B)',
+    description:
+      'StripedHyena Nous (7B) delivers enhanced compute efficiency through its architecture and strategy.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
 ];
 
-// ============================================================================
-// Video Models
-// ============================================================================
-
 const togetheraiVideoModels: VideoModelCard[] = [
-  // -------------------------------------------------------------------------
-  // Tier 1 - Flagship Models (enabled: true)
-  // -------------------------------------------------------------------------
-
-  // Kuaishou Kling Models
   {
     id: 'kwaivgI/kling-2.1-master',
     displayName: 'Kling 2.1 Master',
     description: 'Kuaishou Kling 2.1 Master with highest quality output',
     type: 'video',
     enabled: true,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
-
-  // -------------------------------------------------------------------------
-  // Tier 2 - Production Models (enabled: true)
-  // -------------------------------------------------------------------------
-
   {
     id: 'ByteDance/Seedance-1.0-pro',
     displayName: 'ByteDance Seedance 1.0 Pro',
     description: 'ByteDance professional video generation model',
     type: 'video',
     enabled: true,
+    organization: 'ByteDance',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1280x720', '720x1280', '1024x1024'],
     fps: 24,
-    organization: 'ByteDance',
-    runtimeProvider: 'seedance',
+    maxDurationSeconds: 5,
   },
   {
     id: 'kwaivgI/kling-2.1-pro',
@@ -217,12 +400,11 @@ const togetheraiVideoModels: VideoModelCard[] = [
     description: 'Kuaishou Kling 2.1 Pro with enhanced quality',
     type: 'video',
     enabled: true,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
   {
     id: 'vidu/vidu-2.0',
@@ -230,134 +412,106 @@ const togetheraiVideoModels: VideoModelCard[] = [
     description: 'Vidu latest video generation model with 8s duration',
     type: 'video',
     enabled: true,
+    organization: 'Vidu',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
     resolutions: ['1920x1080', '1080x1080', '1080x1920', '1280x720', '720x1280'],
     fps: 24,
-    organization: 'Vidu',
-    runtimeProvider: 'vidu',
+    maxDurationSeconds: 8,
   },
-
-  // -------------------------------------------------------------------------
-  // Tier 3 - Standard Models (enabled: false)
-  // -------------------------------------------------------------------------
-
   {
     id: 'ByteDance/Seedance-1.0-lite',
     displayName: 'ByteDance Seedance 1.0 Lite',
     description: 'ByteDance lightweight video generation model',
     type: 'video',
-    enabled: false,
+    organization: 'ByteDance',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1280x720', '720x1280', '1024x1024'],
     fps: 24,
-    organization: 'ByteDance',
-    runtimeProvider: 'seedance',
+    maxDurationSeconds: 5,
   },
   {
     id: 'pixverse/pixverse-v5',
     displayName: 'PixVerse v5',
     description: 'PixVerse video generation model with stylized output',
     type: 'video',
-    enabled: false,
+    organization: 'PixVerse',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1280x720', '720x1280', '1024x1024'],
     fps: 24,
-    organization: 'PixVerse',
-    runtimeProvider: 'openai-compatible',
+    maxDurationSeconds: 5,
   },
   {
     id: 'kwaivgI/kling-2.1-standard',
     displayName: 'Kling 2.1 Standard',
     description: 'Kuaishou Kling 2.1 Standard quality tier',
     type: 'video',
-    enabled: false,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
   {
     id: 'kwaivgI/kling-2.0-master',
     displayName: 'Kling 2.0 Master',
     description: 'Kuaishou Kling 2.0 Master previous generation',
     type: 'video',
-    enabled: false,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1280x720', '720x720', '720x1280'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
   {
     id: 'kwaivgI/kling-1.6-standard',
     displayName: 'Kling 1.6 Standard',
     description: 'Kuaishou Kling 1.6 Standard legacy model',
     type: 'video',
-    enabled: false,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
   {
     id: 'kwaivgI/kling-1.6-pro',
     displayName: 'Kling 1.6 Pro',
     description: 'Kuaishou Kling 1.6 Pro legacy model',
     type: 'video',
-    enabled: false,
+    organization: 'Kuaishou',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Kuaishou',
-    runtimeProvider: 'kling',
+    maxDurationSeconds: 5,
   },
   {
     id: 'Wan-AI/Wan2.2-I2V-A14B',
     displayName: 'Wan 2.2 Image-to-Video',
     description: 'Wan-AI image-to-video generation model',
     type: 'video',
-    enabled: false,
-    abilities: { videoOutput: true },
     organization: 'Wan-AI',
-    runtimeProvider: 'openai-compatible',
+    abilities: { videoOutput: true },
   },
   {
     id: 'Wan-AI/Wan2.2-T2V-A14B',
     displayName: 'Wan 2.2 Text-to-Video',
     description: 'Wan-AI text-to-video generation model',
     type: 'video',
-    enabled: false,
-    abilities: { videoOutput: true },
     organization: 'Wan-AI',
-    runtimeProvider: 'openai-compatible',
+    abilities: { videoOutput: true },
   },
   {
     id: 'vidu/vidu-q1',
     displayName: 'Vidu Q1',
     description: 'Vidu Q1 quality-focused video generation',
     type: 'video',
-    enabled: false,
+    organization: 'Vidu',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1920x1080', '1080x1080', '1080x1920'],
     fps: 24,
-    organization: 'Vidu',
-    runtimeProvider: 'vidu',
+    maxDurationSeconds: 5,
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: togetheraiChatModels,

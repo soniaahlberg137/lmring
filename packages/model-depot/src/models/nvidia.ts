@@ -9,10 +9,7 @@ const nvidiaModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'deepseek-ai/deepseek-v3.1-terminus',
@@ -22,10 +19,7 @@ const nvidiaModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'meta/llama-3.3-70b-instruct',
@@ -33,9 +27,7 @@ const nvidiaModels: ChatModelCard[] = [
     description: '先进LLM，擅长推理、数学、常识和函数调用。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'meta/llama-3.2-11b-vision-instruct',
@@ -43,9 +35,7 @@ const nvidiaModels: ChatModelCard[] = [
     description: '尖端视觉语言模型，擅长图像高质量推理。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'meta/llama-3.2-90b-vision-instruct',
@@ -53,9 +43,7 @@ const nvidiaModels: ChatModelCard[] = [
     description: '大规模视觉语言模型，图像推理能力强。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'meta/llama-3.1-70b-instruct',
@@ -63,9 +51,7 @@ const nvidiaModels: ChatModelCard[] = [
     description: '赋能复杂对话，上下文理解推理能力卓越。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'meta/llama-3.1-405b-instruct',
@@ -73,9 +59,7 @@ const nvidiaModels: ChatModelCard[] = [
     description: '高级LLM，支持合成数据生成和知识蒸馏。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'nvidia/llama-3.1-nemotron-70b-instruct',
@@ -90,16 +74,14 @@ const nvidiaModels: ChatModelCard[] = [
     description: '最先进高效LLM，擅长推理数学编程。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'google/gemma-2-27b-it',
     displayName: 'Gemma 2 27B Instruct',
     description: '尖端文本生成模型，文本理解代码生成出色。',
     type: 'chat',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
   },
   {
     id: 'qwen/qwen2.5-72b-instruct',
@@ -107,14 +89,150 @@ const nvidiaModels: ChatModelCard[] = [
     description: 'NVIDIA托管的Qwen2.5 72B模型。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'qwen/qwen2.5-coder-32b-instruct',
     displayName: 'Qwen2.5 Coder 32B Instruct',
     description: '高级LLM，代码生成推理修复能力强。',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'minimaxai/minimax-m2.5',
+    displayName: 'MiniMax-M2.5',
+    description:
+      'MiniMax-M2.5 is the latest large language model from MiniMax, featuring a Mixture-of-Experts (MoE) architecture with 229 billion total parameters.',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'qwen/qwen3.5-397b-a17b',
+    displayName: 'Qwen3.5-397B-A17B',
+    description: 'Supports text, image, and video inputs.',
+    type: 'chat',
+    contextWindowTokens: 1_010_000,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+  },
+  {
+    id: 'deepseek-ai/deepseek-v3.2',
+    displayName: 'DeepSeek V3.2',
+    description:
+      'DeepSeek V3.2 is a next-gen reasoning model with stronger complex reasoning and chain-of-thought capabilities.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'z-ai/glm4.7',
+    displayName: 'GLM-4.7',
+    description:
+      'GLM-4.7 is Zhipu latest flagship model, enhanced for Agentic Coding scenarios with improved coding capabilities.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'z-ai/glm5',
+    displayName: 'GLM-5',
+    description:
+      "GLM-5 is Zhipu AI's new flagship foundation model for agent engineering, achieving open-source SOTA performance in coding and agent capabilities.",
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'moonshotai/kimi-k2.5',
+    displayName: 'Kimi K2.5',
+    description:
+      'Kimi K2.5 is the most intelligent Kimi model to date, featuring native multimodal architecture.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'deepseek-ai/deepseek-v3.1',
+    displayName: 'DeepSeek V3.1',
+    description:
+      'DeepSeek V3.1 is a next-gen reasoning model with stronger complex reasoning and chain-of-thought for deep analysis tasks.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 16_384,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'meta/llama-3.2-1b-instruct',
+    displayName: 'Llama 3.2 1B Instruct',
+    description:
+      'A cutting-edge small language model with strong understanding, reasoning, and text generation.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'meta/llama-3.2-3b-instruct',
+    displayName: 'Llama 3.2 3B Instruct',
+    description:
+      'A cutting-edge small language model with strong understanding, reasoning, and text generation.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'meta/llama-3.1-8b-instruct',
+    displayName: 'Llama 3.1 8B Instruct',
+    description:
+      'A cutting-edge model with strong language understanding, reasoning, and text generation.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'nvidia/llama-3.1-nemotron-51b-instruct',
+    displayName: 'Llama 3.1 Nemotron 51B Instruct',
+    description: 'A distinctive language model delivering exceptional accuracy and efficiency.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'google/gemma-2-2b-it',
+    displayName: 'Gemma 2 2B Instruct',
+    description: 'An advanced small language model designed for edge applications.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'google/gemma-2-9b-it',
+    displayName: 'Gemma 2 9B Instruct',
+    description:
+      'A frontier text generation model strong in understanding, transformation, and code generation.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'qwen/qwen2.5-7b-instruct',
+    displayName: 'Qwen2.5 7B Instruct',
+    description:
+      'A bilingual LLM for Chinese and English across language, coding, math, and reasoning.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen/qwen2.5-coder-7b-instruct',
+    displayName: 'Qwen2.5 Coder 7B Instruct',
+    description:
+      'A strong mid-sized code model with 32K context, excelling at multilingual programming.',
     type: 'chat',
     contextWindowTokens: 32_768,
   },

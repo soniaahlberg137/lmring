@@ -7,7 +7,7 @@ const anthropicModels: ChatModelCard[] = [
     description:
       'Claude Opus 4.6 是 Anthropic 最新旗舰模型，具备自适应思考、百万级上下文窗口和增强的编程代理能力。',
     type: 'chat',
-    contextWindowTokens: 200_000,
+    contextWindowTokens: 1_000_000,
     maxOutput: 128_000,
     enabled: true,
     abilities: {
@@ -17,11 +17,7 @@ const anthropicModels: ChatModelCard[] = [
       search: true,
       structuredOutput: true,
     },
-    pricing: {
-      input: 5,
-      output: 25,
-      cachedInput: 0.5,
-    },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
     releasedAt: '2026-02-05',
   },
   {
@@ -30,7 +26,7 @@ const anthropicModels: ChatModelCard[] = [
     description:
       'Claude Sonnet 4.6 是最新的 Sonnet 系列模型，在智能和速度之间取得最佳平衡，支持自适应思考和推理。',
     type: 'chat',
-    contextWindowTokens: 200_000,
+    contextWindowTokens: 1_000_000,
     maxOutput: 64_000,
     enabled: true,
     abilities: {
@@ -40,11 +36,7 @@ const anthropicModels: ChatModelCard[] = [
       search: true,
       structuredOutput: true,
     },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
     releasedAt: '2026-02-17',
   },
   {
@@ -61,11 +53,7 @@ const anthropicModels: ChatModelCard[] = [
       search: true,
       structuredOutput: true,
     },
-    pricing: {
-      input: 5,
-      output: 25,
-      cachedInput: 1.5,
-    },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
     releasedAt: '2025-11-24',
   },
   {
@@ -83,11 +71,7 @@ const anthropicModels: ChatModelCard[] = [
       search: true,
       structuredOutput: true,
     },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
     releasedAt: '2025-09-29',
   },
   {
@@ -105,12 +89,8 @@ const anthropicModels: ChatModelCard[] = [
       search: true,
       structuredOutput: true,
     },
-    pricing: {
-      input: 0.8,
-      output: 4,
-      cachedInput: 0.08,
-    },
-    releasedAt: '2025-10-01',
+    pricing: { input: 1, output: 5, cachedInput: 0.1 },
+    releasedAt: '2025-10-16',
   },
   {
     id: 'claude-opus-4-1-20250805',
@@ -119,17 +99,8 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      cachedInput: 1.5,
-    },
+    abilities: { functionCall: true, vision: true, reasoning: true, search: true },
+    pricing: { input: 15, output: 75, cachedInput: 1.5 },
     releasedAt: '2025-08-05',
   },
   {
@@ -139,18 +110,9 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      cachedInput: 1.5,
-    },
-    releasedAt: '2025-05-14',
+    abilities: { functionCall: true, vision: true, reasoning: true, search: true },
+    pricing: { input: 15, output: 75, cachedInput: 1.5 },
+    releasedAt: '2025-05-23',
   },
   {
     id: 'claude-sonnet-4-20250514',
@@ -159,18 +121,9 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
-    releasedAt: '2025-05-14',
+    abilities: { functionCall: true, vision: true, reasoning: true, search: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
+    releasedAt: '2025-05-23',
   },
   {
     id: 'claude-3-7-sonnet-20250219',
@@ -179,17 +132,8 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
     releasedAt: '2025-02-19',
   },
   {
@@ -200,15 +144,8 @@ const anthropicModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
     releasedAt: '2024-10-22',
   },
   {
@@ -218,17 +155,10 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      cachedInput: 0.3,
-    },
-    releasedAt: '2024-06-20',
     legacy: true,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
+    releasedAt: '2024-06-20',
   },
   {
     id: 'claude-3-5-haiku-20241022',
@@ -238,15 +168,8 @@ const anthropicModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 4,
-      cachedInput: 0.08,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.8, output: 4, cachedInput: 0.08 },
     releasedAt: '2024-10-22',
   },
   {
@@ -256,15 +179,8 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      cachedInput: 1.5,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 15, output: 75, cachedInput: 1.5 },
     releasedAt: '2024-02-29',
   },
   {
@@ -274,14 +190,8 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
     releasedAt: '2024-02-29',
   },
   {
@@ -291,15 +201,28 @@ const anthropicModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.25, output: 1.25 },
+    releasedAt: '2024-03-07',
+  },
+  {
+    id: 'claude-opus-4-7',
+    displayName: 'Claude Opus 4.7',
+    description:
+      "Claude Opus 4.7 is Anthropic's most capable generally available model for complex reasoning and agentic coding.",
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 128_000,
+    enabled: true,
     abilities: {
       functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 0.25,
-      output: 1.25,
-    },
-    releasedAt: '2024-03-07',
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
+    releasedAt: '2026-04-16',
   },
 ];
 

@@ -28,14 +28,8 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.15, output: 0.6 },
     releasedAt: '2025-08-06',
   },
   {
@@ -46,14 +40,8 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.075, output: 0.3 },
     releasedAt: '2025-08-06',
   },
   {
@@ -65,13 +53,8 @@ const groqModels: ChatModelCard[] = [
     contextWindowTokens: 262_144,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 3,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 1, output: 3 },
     releasedAt: '2025-09-05',
   },
   {
@@ -82,10 +65,7 @@ const groqModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    pricing: {
-      input: 0.11,
-      output: 0.34,
-    },
+    pricing: { input: 0.11, output: 0.34 },
   },
   {
     id: 'meta-llama/llama-4-maverick-17b-128e-instruct',
@@ -95,13 +75,8 @@ const groqModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.2, output: 0.6 },
   },
   {
     id: 'qwen/qwen3-32b',
@@ -110,13 +85,8 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 40_960,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.29,
-      output: 0.59,
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 0.29, output: 0.59 },
   },
   {
     id: 'llama-3.1-8b-instant',
@@ -126,13 +96,8 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.05,
-      output: 0.08,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.05, output: 0.08 },
   },
   {
     id: 'llama-3.3-70b-versatile',
@@ -142,13 +107,8 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.59,
-      output: 0.79,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.59, output: 0.79 },
   },
   {
     id: 'mistral-saba-24b',
@@ -157,10 +117,7 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 32_768,
-    pricing: {
-      input: 0.79,
-      output: 0.79,
-    },
+    pricing: { input: 0.79, output: 0.79 },
   },
   {
     id: 'meta-llama/llama-guard-4-12b',
@@ -169,10 +126,7 @@ const groqModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 1_024,
-    pricing: {
-      input: 0.2,
-      output: 0.2,
-    },
+    pricing: { input: 0.2, output: 0.2 },
   },
   {
     id: 'meta-llama/llama-prompt-guard-2-22m',

@@ -1,7 +1,6 @@
-import type { ChatModelCard } from '../types';
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
-const hunyuanModels: ChatModelCard[] = [
-  // Hunyuan A13B (Hybrid Reasoning)
+const hunyuanChatModels: ChatModelCard[] = [
   {
     id: 'hunyuan-a13b',
     displayName: 'Hunyuan A13B',
@@ -11,14 +10,9 @@ const hunyuanModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
+    abilities: { reasoning: true, search: true },
     releasedAt: '2025-06-25',
   },
-
-  // Hunyuan T1 Series (Deep Thinking)
   {
     id: 'hunyuan-t1-latest',
     displayName: 'Hunyuan T1',
@@ -27,15 +21,8 @@ const hunyuanModels: ChatModelCard[] = [
     contextWindowTokens: 96_000,
     maxOutput: 64_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-08-22',
   },
   {
@@ -45,15 +32,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 92_000,
     maxOutput: 64_000,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-07-11',
   },
   {
@@ -63,15 +43,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 92_000,
     maxOutput: 64_000,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-05-29',
   },
   {
@@ -81,15 +54,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 92_000,
     maxOutput: 64_000,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-04-03',
   },
   {
@@ -99,19 +65,10 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 92_000,
     maxOutput: 64_000,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 4,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 4 },
     releasedAt: '2025-03-21',
   },
-
-  // Hunyuan T1 Vision Series
   {
     id: 'hunyuan-t1-vision-20250916',
     displayName: 'Hunyuan T1 Vision 20250916',
@@ -120,15 +77,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 40_000,
     maxOutput: 16_000,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2025-09-16',
   },
   {
@@ -138,32 +88,19 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 40_000,
     maxOutput: 16_000,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2025-06-19',
   },
-
-  // Hunyuan Standard Series
   {
     id: 'hunyuan-lite',
     displayName: 'Hunyuan Lite',
     description: '混元轻量模型，MOE 结构，256k 上下文，免费使用。',
     type: 'chat',
     contextWindowTokens: 256_000,
-    maxOutput: 6000,
+    maxOutput: 6_000,
     enabled: true,
-    pricing: {
-      input: 0,
-      output: 0,
-      currency: 'CNY',
-    },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
     releasedAt: '2024-10-30',
   },
   {
@@ -172,15 +109,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '混元标准模型，采用优化路由策略，长文方面大海捞针指标达到 99.9%。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 2000,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    maxOutput: 2_000,
+    abilities: { search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-02-10',
   },
   {
@@ -189,35 +120,21 @@ const hunyuanModels: ChatModelCard[] = [
     description: '混元标准模型，支持 256k 长文本处理。',
     type: 'chat',
     contextWindowTokens: 256_000,
-    maxOutput: 6000,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 2,
-      currency: 'CNY',
-    },
+    maxOutput: 6_000,
+    abilities: { search: true },
+    pricing: { currency: 'CNY', input: 0.5, output: 2 },
     releasedAt: '2025-02-10',
   },
-
-  // Hunyuan Large Series
   {
     id: 'hunyuan-large',
     displayName: 'Hunyuan Large',
     description: '混元大规模模型，总参数 389B，激活 52B，开源 MoE 模型中规模最大。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
+    maxOutput: 4_000,
     enabled: true,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 4,
-      output: 12,
-      currency: 'CNY',
-    },
+    abilities: { search: true },
+    pricing: { currency: 'CNY', input: 4, output: 12 },
     releasedAt: '2025-02-10',
   },
   {
@@ -226,15 +143,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '擅长处理长文任务如文档摘要和文档问答等。',
     type: 'chat',
     contextWindowTokens: 134_000,
-    maxOutput: 6000,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 6,
-      output: 18,
-      currency: 'CNY',
-    },
+    maxOutput: 6_000,
+    abilities: { search: true },
+    pricing: { currency: 'CNY', input: 6, output: 18 },
     releasedAt: '2024-12-18',
   },
   {
@@ -243,14 +154,10 @@ const hunyuanModels: ChatModelCard[] = [
     description: '基于混元 Large 训练的视觉语言大模型，支持任意分辨率多张图片+文本输入。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    maxOutput: 8000,
-    abilities: {
-      vision: true,
-    },
+    maxOutput: 8_000,
+    abilities: { vision: true },
     releasedAt: '2025-05-26',
   },
-
-  // Hunyuan TurboS Series
   {
     id: 'hunyuan-turbos-latest',
     displayName: 'Hunyuan TurboS',
@@ -259,15 +166,8 @@ const hunyuanModels: ChatModelCard[] = [
     contextWindowTokens: 44_000,
     maxOutput: 16_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-07-16',
   },
   {
@@ -277,15 +177,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 44_000,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-09-26',
   },
   {
@@ -295,15 +188,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 44_000,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-06-04',
   },
   {
@@ -312,16 +198,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '增强底座的指令理解及遵循能力；增强数学、代码、逻辑、科学等理科能力。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 8000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    maxOutput: 8_000,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-04-16',
   },
   {
@@ -330,16 +209,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '统一数学解题步骤的风格，文本创作优化回答风格。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 8000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    maxOutput: 8_000,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
     releasedAt: '2025-03-13',
   },
   {
@@ -348,20 +220,11 @@ const hunyuanModels: ChatModelCard[] = [
     description: '擅长处理长文任务如文档摘要和文档问答等。',
     type: 'chat',
     contextWindowTokens: 134_000,
-    maxOutput: 6000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 6,
-      currency: 'CNY',
-    },
+    maxOutput: 6_000,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 6 },
     releasedAt: '2025-03-25',
   },
-
-  // Hunyuan TurboS Vision Series
   {
     id: 'hunyuan-turbos-vision',
     displayName: 'Hunyuan TurboS Vision',
@@ -369,14 +232,8 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     maxOutput: 24_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2025-05-23',
   },
   {
@@ -387,34 +244,19 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     maxOutput: 16_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2025-06-19',
   },
-
-  // Hunyuan Turbo Series
   {
     id: 'hunyuan-turbo-latest',
     displayName: 'Hunyuan Turbo',
     description: '混元通用优化模型，在 NLP 理解、创作、问答等方面表现优异。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 2.4,
-      output: 9.6,
-      currency: 'CNY',
-    },
+    maxOutput: 4_000,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 2.4, output: 9.6 },
     releasedAt: '2025-01-10',
   },
   {
@@ -423,16 +265,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '数据指令 scaling，大幅提升模型通用泛化能力。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 2.4,
-      output: 9.6,
-      currency: 'CNY',
-    },
+    maxOutput: 4_000,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 2.4, output: 9.6 },
     releasedAt: '2025-01-10',
   },
   {
@@ -441,20 +276,12 @@ const hunyuanModels: ChatModelCard[] = [
     description:
       '混元 MoE 结构视觉语言旗舰大模型，在图文理解相关的基础识别、内容创作等能力上全面提升。',
     type: 'chat',
-    contextWindowTokens: 8000,
-    maxOutput: 2000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 80,
-      output: 80,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 8_000,
+    maxOutput: 2_000,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 80, output: 80 },
     releasedAt: '2024-11-26',
   },
-
-  // Hunyuan Vision Series
   {
     id: 'hunyuan-lite-vision',
     displayName: 'Hunyuan Lite Vision',
@@ -462,10 +289,8 @@ const hunyuanModels: ChatModelCard[] = [
       '混元最新 7B 多模态模型，上下文窗口 32K，支持中英文场景的多模态对话、图像物体识别、文档表格理解。',
     type: 'chat',
     contextWindowTokens: 36_000,
-    maxOutput: 4000,
-    abilities: {
-      vision: true,
-    },
+    maxOutput: 4_000,
+    abilities: { vision: true },
     releasedAt: '2024-12-12',
   },
   {
@@ -473,11 +298,9 @@ const hunyuanModels: ChatModelCard[] = [
     displayName: 'Hunyuan Standard Vision',
     description: '混元最新多模态模型，支持多语种作答，中英文能力均衡。',
     type: 'chat',
-    contextWindowTokens: 8000,
-    maxOutput: 2000,
-    abilities: {
-      vision: true,
-    },
+    contextWindowTokens: 8_000,
+    maxOutput: 2_000,
+    abilities: { vision: true },
     releasedAt: '2024-12-31',
   },
   {
@@ -487,30 +310,18 @@ const hunyuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     maxOutput: 16_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 18,
-      output: 18,
-      currency: 'CNY',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 18, output: 18 },
     releasedAt: '2025-01-03',
   },
-
-  // Specialized Models
   {
     id: 'hunyuan-code',
     displayName: 'Hunyuan Code',
     description: '混元代码生成模型，经过 200B 高质量代码数据增训。',
     type: 'chat',
-    contextWindowTokens: 8000,
-    maxOutput: 4000,
-    pricing: {
-      input: 3.5,
-      output: 7,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 8_000,
+    maxOutput: 4_000,
+    pricing: { currency: 'CNY', input: 3.5, output: 7 },
     releasedAt: '2024-11-12',
   },
   {
@@ -519,15 +330,9 @@ const hunyuanModels: ChatModelCard[] = [
     description: '混元 MOE 架构 FunctionCall 模型，专为工具调用优化。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 8,
-      currency: 'CNY',
-    },
+    maxOutput: 4_000,
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 4, output: 8 },
     releasedAt: '2025-04-22',
   },
   {
@@ -536,12 +341,8 @@ const hunyuanModels: ChatModelCard[] = [
     description: '混元角色扮演模型，基于混元模型结合角色扮演场景数据集进行增训。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
-    pricing: {
-      input: 4,
-      output: 8,
-      currency: 'CNY',
-    },
+    maxOutput: 4_000,
+    pricing: { currency: 'CNY', input: 4, output: 8 },
     releasedAt: '2024-07-04',
   },
   {
@@ -550,8 +351,298 @@ const hunyuanModels: ChatModelCard[] = [
     description: '混元最新版角色扮演模型，在角色扮演场景具有更好的基础效果。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    maxOutput: 4000,
+    maxOutput: 4_000,
+  },
+  {
+    id: 'hy3-preview',
+    displayName: 'Hy3 preview',
+    description:
+      'Hunyuan Hy3 Preview is designed for agent workloads, adopting a Mixture-of-Experts (MoE) architecture with 295B total parameters and 21B activated parameters.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 1.2, output: 4, cachedInput: 0.4 },
+    releasedAt: '2026-04-23',
+  },
+  {
+    id: 'hunyuan-2.0-thinking-20251109',
+    displayName: 'HY 2.0 Think',
+    description:
+      'Specialized in creative content, multi-turn interactions, and practical instruction-following scenarios.',
+    type: 'chat',
+    contextWindowTokens: 192_000,
+    maxOutput: 64_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 3.975, output: 15.9 },
+    releasedAt: '2025-11-09',
+  },
+  {
+    id: 'hunyuan-2.0-instruct-20251111',
+    displayName: 'HY 2.0 Instruct',
+    description:
+      'The model foundation has been comprehensively upgraded, with more robust core capabilities.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_000,
+    enabled: true,
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 3.18, output: 7.95 },
+    releasedAt: '2025-11-11',
+  },
+  {
+    id: 'hunyuan-role-latest',
+    displayName: 'Hunyuan-role',
+    description:
+      'For role-playing scenarios, it delivers highly consistent character alignment and exceptionally natural, human-like conversational style.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_000,
+    pricing: { currency: 'CNY', input: 2.4, output: 9.6 },
+    releasedAt: '2026-03-04',
+  },
+  {
+    id: 'glm-5.1',
+    displayName: 'GLM-5.1',
+    description:
+      'GLM-5.1 is Zhipu’s latest flagship model, with significantly enhanced coding capabilities and substantial improvements in long-horizon tasks.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 6, output: 24, cachedInput: 1.3 },
+    releasedAt: '2026-04-08',
+  },
+  {
+    id: 'glm-5-turbo',
+    displayName: 'GLM-5-Turbo',
+    description:
+      'A model deeply optimized for real-world, long-chain agent tasks, with a focus on improving complex instruction decomposition, tool usage, scheduled continuous execution, and long-task stability.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 5, output: 22, cachedInput: 1.2 },
+    releasedAt: '2026-03-16',
+  },
+  {
+    id: 'glm-5',
+    displayName: 'GLM-5',
+    description:
+      'GLM-5 is Zhipu’s new-generation flagship foundation model, designed for agentic engineering.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 18, cachedInput: 1 },
+    releasedAt: '2026-02-11',
+  },
+  {
+    id: 'glm-5v-turbo',
+    displayName: 'GLM-5V-Turbo',
+    description:
+      'GLM-5V-Turbo is Zhipu’s first multimodal coding foundation model, designed for vision-based programming tasks.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { currency: 'CNY', input: 5, output: 22, cachedInput: 1.2 },
+    releasedAt: '2026-04-02',
+  },
+  {
+    id: 'kimi-k2.6',
+    displayName: 'Kimi K2.6',
+    description:
+      'Kimi K2.6, as Kimi’s latest open-source model, delivers industry-leading (state-of-the-art) capabilities in coding, long-horizon task execution, and agent orchestration.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 256_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { currency: 'CNY', input: 6.5, output: 27, cachedInput: 1.1 },
+    releasedAt: '2026-04-20',
+  },
+  {
+    id: 'kimi-k2.5',
+    displayName: 'Kimi K2.5',
+    description:
+      'Kimi K2.5 is Kimi’s most versatile model to date, featuring a natively multimodal architecture.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 256_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { currency: 'CNY', input: 4, output: 21, cachedInput: 0.7 },
+    releasedAt: '2026-01-27',
+  },
+  {
+    id: 'minimax-m2.7',
+    displayName: 'MiniMax-M2.7',
+    description:
+      'A self-evolving large language model developed by MiniMax, featuring strong software engineering capabilities and professional office productivity skills.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.42 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'minimax-m2.5',
+    displayName: 'MiniMax-M2.5',
+    description:
+      'MiniMax-M2.5 achieves or sets new state-of-the-art performance across productivity scenarios such as programming, tool use and search, and office-related tasks.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
+    releasedAt: '2026-02-12',
+  },
+  {
+    id: 'deepseek-v4-flash',
+    displayName: 'DeepSeek-V4-Flash',
+    description:
+      'DeepSeek-V4-Flash is a production-grade model purpose-built for high concurrency and low latency.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 384_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 1, output: 2, cachedInput: 0.2 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'deepseek-v4-pro',
+    displayName: 'DeepSeek-V4-Pro',
+    description:
+      'DeepSeek-V4-Pro is a native multimodal flagship model with 1.6 trillion parameters.',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 384_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 12, output: 24, cachedInput: 1 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'deepseek-v3.2',
+    displayName: 'Deepseek-v3.2',
+    description: 'DeepSeek-V3.2 is a 685B-parameter MoE (Mixture-of-Experts) model.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 2, output: 3 },
+    releasedAt: '2025-12-02',
+  },
+  {
+    id: 'deepseek-v3.1',
+    displayName: 'Deepseek-v3.1',
+    description: 'DeepSeek-V3.1-Terminus is a 685B-parameter MoE (Mixture-of-Experts) model.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 4, output: 12 },
+    releasedAt: '2025-09-23',
+  },
+  {
+    id: 'deepseek-r1-0528',
+    displayName: 'Deepseek-r1-0528',
+    description: 'DeepSeek-R1-0528 is a 671B-parameter model.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 16_000,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
+    releasedAt: '2025-05-28',
+  },
+  {
+    id: 'deepseek-v3-0324',
+    displayName: 'Deepseek-v3-0324',
+    description: 'DeepSeek-V3-0324 is a 671B-parameter MoE (Mixture-of-Experts) model.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 16_000,
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
+    releasedAt: '2025-03-25',
+  },
+  {
+    id: 'youtu-vita',
+    displayName: 'YT-VITA',
+    description:
+      'VITA is a multimodal understanding model that supports analysis of video and image content.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 256_000,
+    abilities: { video: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.2, output: 3.5 },
+    releasedAt: '2026-01-10',
   },
 ];
 
-export default hunyuanModels;
+const hunyuanImageModels: ImageModelCard[] = [
+  {
+    id: 'hy-image-v3.0',
+    displayName: 'HY-Image-V3.0',
+    description:
+      'Based on the Hunyuan large model, it is capable of reasoning about image layout, composition, and brushwork, using world knowledge to infer commonsense visual scenes.',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2026-03-10',
+  },
+  {
+    id: 'hy-image-lite',
+    displayName: 'HY-Image-Lite',
+    description:
+      'It adopts an ultra-high compression codec to enable fast image generation while maintaining high-quality output.',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2025-09-12',
+  },
+];
+
+const hunyuanVideoModels: VideoModelCard[] = [
+  {
+    id: 'hy-video-1.5',
+    displayName: 'HY-Video-1.5',
+    description:
+      'It supports multimodal inputs including text and images to generate high-quality videos, enabling scene transitions and multi-character interactions.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2026-01-06',
+  },
+  {
+    id: 'yt-video-2.0',
+    displayName: 'YT-Video-2.0',
+    description:
+      'It generates highly temporally consistent videos from images, suitable for demanding applications such as advertising, film clips, and product showcase videos.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-11-27',
+  },
+];
+
+export default {
+  chat: hunyuanChatModels,
+  image: hunyuanImageModels,
+  video: hunyuanVideoModels,
+};

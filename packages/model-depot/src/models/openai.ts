@@ -8,10 +8,6 @@ import type {
   VideoModelCard,
 } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const openaiChatModels: ChatModelCard[] = [
   {
     id: 'gpt-5.4',
@@ -29,11 +25,7 @@ const openaiChatModels: ChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 2.5,
-      output: 15,
-      cachedInput: 0.25,
-    },
+    pricing: { input: 2.5, output: 15, cachedInput: 0.25 },
     releasedAt: '2026-03-05',
   },
   {
@@ -43,16 +35,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_050_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 30,
-      output: 180,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 30, output: 180 },
     releasedAt: '2026-03-05',
   },
   {
@@ -62,17 +46,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.75,
-      output: 14,
-      cachedInput: 0.175,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
     releasedAt: '2026-02-05',
   },
   {
@@ -90,11 +65,7 @@ const openaiChatModels: ChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 1.75,
-      output: 14,
-      cachedInput: 0.175,
-    },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
     releasedAt: '2025-12-11',
   },
   {
@@ -104,16 +75,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 21,
-      output: 168,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 21, output: 168 },
     releasedAt: '2025-12-11',
   },
   {
@@ -124,15 +87,8 @@ const openaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.75,
-      output: 14,
-      cachedInput: 0.175,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
     releasedAt: '2025-12-11',
   },
   {
@@ -143,17 +99,8 @@ const openaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2025-11-13',
   },
   {
@@ -164,15 +111,8 @@ const openaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2025-11-13',
   },
   {
@@ -182,17 +122,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2025-11-13',
   },
   {
@@ -202,17 +133,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.25,
-      output: 2,
-      cachedInput: 0.025,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 0.25, output: 2, cachedInput: 0.025 },
     releasedAt: '2025-11-13',
   },
   {
@@ -229,11 +151,7 @@ const openaiChatModels: ChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2025-08-07',
   },
   {
@@ -243,16 +161,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 272_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 120,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 15, output: 120 },
     releasedAt: '2025-10-06',
   },
   {
@@ -262,17 +172,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2024-09-15',
   },
   {
@@ -290,11 +191,7 @@ const openaiChatModels: ChatModelCard[] = [
       structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 0.25,
-      output: 2,
-      cachedInput: 0.025,
-    },
+    pricing: { input: 0.25, output: 2, cachedInput: 0.025 },
     releasedAt: '2025-08-07',
   },
   {
@@ -304,16 +201,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.05,
-      output: 0.4,
-      cachedInput: 0.005,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.05, output: 0.4, cachedInput: 0.005 },
     releasedAt: '2025-08-07',
   },
   {
@@ -323,14 +212,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 400_000,
     maxOutput: 128_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 10,
-      cachedInput: 0.125,
-    },
+    abilities: { vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
     releasedAt: '2025-08-07',
   },
   {
@@ -340,17 +223,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-      search: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      cachedInput: 0.275,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true, search: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.275 },
     releasedAt: '2025-04-17',
   },
   {
@@ -360,17 +234,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      cachedInput: 0.5,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-06-26',
   },
   {
@@ -380,16 +245,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 20,
-      output: 80,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 20, output: 80 },
     releasedAt: '2025-06-10',
   },
   {
@@ -399,17 +256,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      cachedInput: 0.5,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true, search: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-04-16',
   },
   {
@@ -419,17 +267,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 40,
-      cachedInput: 2.5,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 10, output: 40, cachedInput: 2.5 },
     releasedAt: '2025-06-26',
   },
   {
@@ -439,15 +278,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      cachedInput: 0.55,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.55 },
     releasedAt: '2025-01-31',
   },
   {
@@ -457,15 +289,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 150,
-      output: 600,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 150, output: 600 },
     releasedAt: '2025-03-19',
   },
   {
@@ -475,16 +300,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 60,
-      cachedInput: 7.5,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 15, output: 60, cachedInput: 7.5 },
     releasedAt: '2024-12-17',
   },
   {
@@ -494,16 +311,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      cachedInput: 0.5,
-    },
+    abilities: { functionCall: true, vision: true, search: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-04-14',
   },
   {
@@ -513,16 +322,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1.6,
-      cachedInput: 0.1,
-    },
+    abilities: { functionCall: true, vision: true, search: true },
+    pricing: { input: 0.4, output: 1.6, cachedInput: 0.1 },
     releasedAt: '2025-04-14',
   },
   {
@@ -532,15 +333,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      cachedInput: 0.025,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-04-14',
   },
   {
@@ -551,17 +345,8 @@ const openaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      structuredOutput: true,
-      search: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      cachedInput: 1.25,
-    },
+    abilities: { functionCall: true, vision: true, structuredOutput: true, search: true },
+    pricing: { input: 2.5, output: 10, cachedInput: 1.25 },
     releasedAt: '2024-05-13',
   },
   {
@@ -571,16 +356,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      cachedInput: 1.25,
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 2.5, output: 10, cachedInput: 1.25 },
     releasedAt: '2024-11-20',
   },
   {
@@ -590,15 +367,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 15,
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { input: 5, output: 15 },
     releasedAt: '2024-05-13',
   },
   {
@@ -608,17 +378,10 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      search: true,
-    },
-    settings: {
-      searchImpl: 'internal',
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-    },
+    abilities: { search: true },
+    pricing: { input: 2.5, output: 10 },
     releasedAt: '2025-03-11',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'gpt-4o-mini',
@@ -628,17 +391,8 @@ const openaiChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-      structuredOutput: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      cachedInput: 0.075,
-    },
+    abilities: { functionCall: true, vision: true, structuredOutput: true, search: true },
+    pricing: { input: 0.15, output: 0.6, cachedInput: 0.075 },
     releasedAt: '2024-07-18',
   },
   {
@@ -648,17 +402,10 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      search: true,
-    },
-    settings: {
-      searchImpl: 'internal',
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-    },
+    abilities: { search: true },
+    pricing: { input: 0.15, output: 0.6 },
     releasedAt: '2025-03-11',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'chatgpt-4o-latest',
@@ -666,13 +413,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'ChatGPT-4o 是动态模型，实时更新以保持当前最新版本。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 15,
-    },
+    abilities: { vision: true },
+    pricing: { input: 5, output: 15 },
     releasedAt: '2024-08-14',
   },
   {
@@ -682,13 +424,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 2.5, output: 10 },
     releasedAt: '2025-08-28',
   },
   {
@@ -698,13 +435,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 2.5, output: 10 },
     releasedAt: '2024-12-17',
   },
   {
@@ -714,13 +446,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.15, output: 0.6 },
     releasedAt: '2024-12-17',
   },
   {
@@ -730,14 +457,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 10, output: 30 },
     releasedAt: '2024-04-09',
   },
   {
@@ -747,14 +468,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 10, output: 30 },
     releasedAt: '2024-04-09',
   },
   {
@@ -763,13 +478,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'GPT-4 Turbo Preview 版本。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 10, output: 30 },
   },
   {
     id: 'gpt-4-0125-preview',
@@ -777,13 +487,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'GPT-4 Turbo Preview 0125 版本。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 10, output: 30 },
     releasedAt: '2024-01-25',
   },
   {
@@ -792,13 +497,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'GPT-4 Turbo Preview 1106 版本。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 10, output: 30 },
     releasedAt: '2023-11-06',
   },
   {
@@ -806,28 +506,18 @@ const openaiChatModels: ChatModelCard[] = [
     displayName: 'GPT-4',
     description: 'GPT-4 提供了更大的上下文窗口，适用于需要广泛信息整合的场景。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 30,
-      output: 60,
-    },
+    contextWindowTokens: 8_192,
+    abilities: { functionCall: true },
+    pricing: { input: 30, output: 60 },
   },
   {
     id: 'gpt-4-0613',
     displayName: 'GPT-4 0613',
     description: 'GPT-4 0613 版本。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 30,
-      output: 60,
-    },
+    contextWindowTokens: 8_192,
+    abilities: { functionCall: true },
+    pricing: { input: 30, output: 60 },
     releasedAt: '2023-06-13',
   },
   {
@@ -837,13 +527,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_385,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 1.5,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.5, output: 1.5 },
   },
   {
     id: 'gpt-3.5-turbo-0125',
@@ -851,13 +536,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'GPT-3.5 Turbo 0125 版本。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 1.5,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.5, output: 1.5 },
     releasedAt: '2024-01-25',
   },
   {
@@ -866,13 +546,8 @@ const openaiChatModels: ChatModelCard[] = [
     description: 'GPT-3.5 Turbo 1106 版本。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1,
-      output: 2,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 1, output: 2 },
     releasedAt: '2023-11-06',
   },
   {
@@ -880,11 +555,8 @@ const openaiChatModels: ChatModelCard[] = [
     displayName: 'GPT-3.5 Turbo Instruct',
     description: 'GPT-3.5 Turbo 对指令遵循的优化版本。',
     type: 'chat',
-    contextWindowTokens: 4096,
-    pricing: {
-      input: 1.5,
-      output: 2,
-    },
+    contextWindowTokens: 4_096,
+    pricing: { input: 1.5, output: 2 },
   },
   {
     id: 'codex-mini-latest',
@@ -893,16 +565,8 @@ const openaiChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 6,
-      cachedInput: 0.375,
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.5, output: 6, cachedInput: 0.375 },
     releasedAt: '2025-06-01',
   },
   {
@@ -910,24 +574,128 @@ const openaiChatModels: ChatModelCard[] = [
     displayName: 'Computer Use Preview',
     description: 'computer-use-preview 是专为计算机使用工具设计的专用模型。',
     type: 'chat',
-    contextWindowTokens: 8192,
-    maxOutput: 1024,
+    contextWindowTokens: 8_192,
+    maxOutput: 1_024,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 3, output: 12 },
+    releasedAt: '2025-03-11',
+  },
+  {
+    id: 'gpt-5.5',
+    displayName: 'GPT-5.5',
+    description: 'GPT-5.5 is our newest frontier model for the most complex professional work.',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    enabled: true,
     abilities: {
       functionCall: true,
       reasoning: true,
+      search: true,
+      structuredOutput: true,
       vision: true,
     },
-    pricing: {
-      input: 3,
-      output: 12,
+    pricing: { input: 5, output: 30, cachedInput: 0.5 },
+    releasedAt: '2026-04-23',
+  },
+  {
+    id: 'gpt-5.5-pro',
+    displayName: 'GPT-5.5 Pro',
+    description:
+      'GPT-5.5 pro uses more compute to think harder and provide consistently better answers.',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
     },
-    releasedAt: '2025-03-11',
+    pricing: { input: 30, output: 180 },
+    releasedAt: '2026-04-23',
+  },
+  {
+    id: 'gpt-5.4-mini',
+    displayName: 'GPT-5.4 mini',
+    description:
+      "GPT-5.4 mini is OpenAI's strongest mini model for coding, computer use, and subagents.",
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 0.75, output: 4.5, cachedInput: 0.075 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'gpt-5.4-nano',
+    displayName: 'GPT-5.4 nano',
+    description:
+      "GPT-5.4 nano is OpenAI's cheapest GPT-5.4-class model for simple high-volume tasks.",
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 0.2, output: 1.25, cachedInput: 0.02 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'gpt-5.3-chat-latest',
+    displayName: 'GPT-5.3 Chat',
+    description:
+      'GPT-5.3 Chat is the latest ChatGPT model used in ChatGPT with improved conversation experiences.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 16_384,
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
+    releasedAt: '2026-03-04',
+  },
+  {
+    id: 'gpt-5.2-codex',
+    displayName: 'GPT-5.2 Codex',
+    description:
+      'GPT-5.2-Codex is an upgraded GPT-5.2 variant optimized for long-horizon, agentic coding tasks.',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
+    releasedAt: '2025-12-18',
+  },
+  {
+    id: 'gpt-5.1-codex-max',
+    displayName: 'GPT-5.1 Codex Max',
+    description:
+      "GPT-5.1 Codex Max: OpenAI's most intelligent coding model, optimized for long-horizon agentic coding tasks, supports reasoning tokens.",
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
+    releasedAt: '2025-12-04',
   },
 ];
-
-// ============================================================================
-// Embedding Models
-// ============================================================================
 
 const openaiEmbeddingModels: EmbeddingModelCard[] = [
   {
@@ -935,11 +703,9 @@ const openaiEmbeddingModels: EmbeddingModelCard[] = [
     displayName: 'Text Embedding 3 Large',
     description: '最强大的向量化模型，适用于英文和非英文任务。',
     type: 'embedding',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
+    pricing: { currency: 'USD', input: 0.13 },
     maxDimension: 3072,
-    pricing: {
-      input: 0.13,
-    },
     releasedAt: '2024-01-25',
   },
   {
@@ -947,80 +713,12 @@ const openaiEmbeddingModels: EmbeddingModelCard[] = [
     displayName: 'Text Embedding 3 Small',
     description: '高效且经济的新一代 Embedding 模型，适用于知识检索、RAG 应用等场景。',
     type: 'embedding',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
+    pricing: { currency: 'USD', input: 0.02 },
     maxDimension: 1536,
-    pricing: {
-      input: 0.02,
-    },
     releasedAt: '2024-01-25',
   },
 ];
-
-// ============================================================================
-// TTS Models
-// ============================================================================
-
-const openaiTTSModels: TTSModelCard[] = [
-  {
-    id: 'tts-1',
-    displayName: 'TTS-1',
-    description: '最新的文本转语音模型，针对实时场景优化速度。',
-    type: 'tts',
-  },
-  {
-    id: 'tts-1-hd',
-    displayName: 'TTS-1 HD',
-    description: '最新的文本转语音模型，针对质量进行优化。',
-    type: 'tts',
-  },
-  {
-    id: 'gpt-4o-mini-tts',
-    displayName: 'GPT-4o Mini TTS',
-    description: 'GPT-4o mini TTS 是基于 GPT-4o mini 构建的文本转语音模型。',
-    type: 'tts',
-  },
-];
-
-// ============================================================================
-// STT Models
-// ============================================================================
-
-const openaiSTTModels: STTModelCard[] = [
-  {
-    id: 'whisper-1',
-    displayName: 'Whisper',
-    description: '通用语音识别模型，支持多语言语音识别、语音翻译和语言识别。',
-    type: 'stt',
-  },
-  {
-    id: 'gpt-4o-transcribe',
-    displayName: 'GPT-4o Transcribe',
-    description: 'GPT-4o Transcribe 是使用 GPT-4o 转录音频的语音转文本模型。',
-    type: 'stt',
-    contextWindowTokens: 16_000,
-    maxOutput: 2000,
-    pricing: {
-      input: 2.5,
-      output: 10,
-    },
-  },
-  {
-    id: 'gpt-4o-mini-transcribe',
-    displayName: 'GPT-4o Mini Transcribe',
-    description: 'GPT-4o Mini Transcribe 是更快速的语音转文本模型。',
-    type: 'stt',
-    contextWindowTokens: 16_000,
-    maxOutput: 2000,
-    pricing: {
-      input: 1.25,
-      output: 5,
-    },
-  },
-];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const openaiImageModels: ImageModelCard[] = [
   {
@@ -1029,6 +727,7 @@ const openaiImageModels: ImageModelCard[] = [
     description: 'ChatGPT 原生多模态图片生成模型。',
     type: 'image',
     enabled: true,
+    pricing: { input: 5, cachedInput: 1.25 },
     resolutions: ['1024x1024', '1024x1536', '1536x1024'],
   },
   {
@@ -1037,6 +736,7 @@ const openaiImageModels: ImageModelCard[] = [
     description: '成本更低的 GPT Image 1 版本，原生支持文本与图像输入。',
     type: 'image',
     enabled: true,
+    pricing: { input: 2, cachedInput: 0.2 },
     resolutions: ['1024x1024', '1024x1536', '1536x1024'],
     releasedAt: '2025-10-06',
   },
@@ -1054,11 +754,26 @@ const openaiImageModels: ImageModelCard[] = [
     type: 'image',
     resolutions: ['256x256', '512x512', '1024x1024'],
   },
+  {
+    id: 'gpt-image-2',
+    displayName: 'GPT Image 2',
+    description:
+      "OpenAI's next-generation multimodal image model with native reasoning, up to 4K resolution, near-perfect text rendering, and high-fidelity multilingual support.",
+    type: 'image',
+    enabled: true,
+    pricing: { input: 5, cachedInput: 1.25 },
+    releasedAt: '2026-04-21',
+  },
+  {
+    id: 'gpt-image-1.5',
+    displayName: 'GPT Image 1.5',
+    description:
+      'An enhanced GPT Image 1 model with 4× faster generation, more precise editing, and improved text rendering.',
+    type: 'image',
+    pricing: { input: 5, cachedInput: 1.25 },
+    releasedAt: '2025-12-16',
+  },
 ];
-
-// ============================================================================
-// Realtime Models
-// ============================================================================
 
 const openaiRealtimeModels: RealtimeModelCard[] = [
   {
@@ -1067,11 +782,9 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
     description: '通用实时模型，支持文本与音频的实时输入输出，并支持图像输入。',
     type: 'realtime',
     contextWindowTokens: 32_000,
-    maxOutput: 4096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
+    maxOutput: 4_096,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 4, output: 16, cachedInput: 0.4 },
     releasedAt: '2025-08-28',
   },
   {
@@ -1080,7 +793,8 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
     description: 'GPT-4o 实时版本，支持音频和文本实时输入输出。',
     type: 'realtime',
     contextWindowTokens: 16_000,
-    maxOutput: 4096,
+    maxOutput: 4_096,
+    pricing: { input: 5, output: 20, cachedInput: 2.5 },
     releasedAt: '2024-12-17',
   },
   {
@@ -1089,7 +803,8 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
     description: 'GPT-4o 实时版本 2025-06-03。',
     type: 'realtime',
     contextWindowTokens: 32_000,
-    maxOutput: 4096,
+    maxOutput: 4_096,
+    pricing: { input: 5, output: 20, cachedInput: 2.5 },
     releasedAt: '2025-06-03',
   },
   {
@@ -1098,9 +813,10 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
     description: 'GPT-4o 实时版本 2024-10-01。',
     type: 'realtime',
     contextWindowTokens: 16_000,
-    maxOutput: 4096,
-    releasedAt: '2024-10-01',
+    maxOutput: 4_096,
     legacy: true,
+    pricing: { input: 5, output: 20, cachedInput: 2.5 },
+    releasedAt: '2024-10-01',
   },
   {
     id: 'gpt-4o-mini-realtime-preview',
@@ -1108,14 +824,62 @@ const openaiRealtimeModels: RealtimeModelCard[] = [
     description: 'GPT-4o-mini 实时版本，支持音频和文本实时输入输出。',
     type: 'realtime',
     contextWindowTokens: 128_000,
-    maxOutput: 4096,
+    maxOutput: 4_096,
+    pricing: { input: 0.6, output: 2.4, cachedInput: 0.3 },
     releasedAt: '2024-12-17',
   },
 ];
 
-// ============================================================================
-// Video Models
-// ============================================================================
+const openaiSttModels: STTModelCard[] = [
+  {
+    id: 'whisper-1',
+    displayName: 'Whisper',
+    description: '通用语音识别模型，支持多语言语音识别、语音翻译和语言识别。',
+    type: 'stt',
+  },
+  {
+    id: 'gpt-4o-transcribe',
+    displayName: 'GPT-4o Transcribe',
+    description: 'GPT-4o Transcribe 是使用 GPT-4o 转录音频的语音转文本模型。',
+    type: 'stt',
+    contextWindowTokens: 16_000,
+    maxOutput: 2_000,
+    pricing: { input: 2.5, output: 10 },
+  },
+  {
+    id: 'gpt-4o-mini-transcribe',
+    displayName: 'GPT-4o Mini Transcribe',
+    description: 'GPT-4o Mini Transcribe 是更快速的语音转文本模型。',
+    type: 'stt',
+    contextWindowTokens: 16_000,
+    maxOutput: 2_000,
+    pricing: { input: 1.25, output: 5 },
+  },
+];
+
+const openaiTtsModels: TTSModelCard[] = [
+  {
+    id: 'tts-1',
+    displayName: 'TTS-1',
+    description: '最新的文本转语音模型，针对实时场景优化速度。',
+    type: 'tts',
+    pricing: { input: 15 },
+  },
+  {
+    id: 'tts-1-hd',
+    displayName: 'TTS-1 HD',
+    description: '最新的文本转语音模型，针对质量进行优化。',
+    type: 'tts',
+    pricing: { input: 30 },
+  },
+  {
+    id: 'gpt-4o-mini-tts',
+    displayName: 'GPT-4o Mini TTS',
+    description: 'GPT-4o mini TTS 是基于 GPT-4o mini 构建的文本转语音模型。',
+    type: 'tts',
+    pricing: { input: 0.6 },
+  },
+];
 
 const openaiVideoModels: VideoModelCard[] = [
   {
@@ -1124,11 +888,10 @@ const openaiVideoModels: VideoModelCard[] = [
     description: 'OpenAI flagship video generation model with 8s duration',
     type: 'video',
     enabled: true,
-    abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
-    resolutions: ['1280x720', '720x1280'],
     organization: 'OpenAI',
-    runtimeProvider: 'openai',
+    abilities: { videoOutput: true },
+    resolutions: ['1280x720', '720x1280'],
+    maxDurationSeconds: 8,
   },
   {
     id: 'openai/sora-2-pro',
@@ -1136,24 +899,37 @@ const openaiVideoModels: VideoModelCard[] = [
     description: 'OpenAI Sora 2 Pro with enhanced quality',
     type: 'video',
     enabled: true,
-    abilities: { videoOutput: true },
-    maxDurationSeconds: 8,
-    resolutions: ['1280x720', '720x1280'],
     organization: 'OpenAI',
-    runtimeProvider: 'openai',
+    abilities: { videoOutput: true },
+    resolutions: ['1280x720', '720x1280'],
+    maxDurationSeconds: 8,
+  },
+  {
+    id: 'sora-2',
+    displayName: 'Sora 2',
+    description:
+      'Sora 2 is our new powerful media generation model, generating videos with synced audio.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-12-08',
+  },
+  {
+    id: 'sora-2-pro',
+    displayName: 'Sora 2 Pro',
+    description:
+      'Sora 2 Pro is our state-of-the-art, most advanced media generation model, generating videos with synced audio.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-10-06',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: openaiChatModels,
   embedding: openaiEmbeddingModels,
-  tts: openaiTTSModels,
-  stt: openaiSTTModels,
   image: openaiImageModels,
   realtime: openaiRealtimeModels,
+  stt: openaiSttModels,
+  tts: openaiTtsModels,
   video: openaiVideoModels,
 };

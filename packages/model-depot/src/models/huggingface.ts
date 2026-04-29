@@ -13,7 +13,7 @@ const huggingfaceModels: ChatModelCard[] = [
     displayName: 'Gemma 2 2B Instruct',
     description: 'Google轻量级指令调优模型。',
     type: 'chat',
-    contextWindowTokens: 8192,
+    contextWindowTokens: 8_192,
   },
   {
     id: 'Qwen/Qwen2.5-72B-Instruct',
@@ -35,9 +35,7 @@ const huggingfaceModels: ChatModelCard[] = [
     description: 'Qwen实验研究模型，专注AI推理能力。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'microsoft/Phi-3.5-mini-instruct',
@@ -59,9 +57,7 @@ const huggingfaceModels: ChatModelCard[] = [
     description: 'DeepSeek推理模型，HuggingFace托管。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-ai/DeepSeek-R1-Distill-Qwen-32B',
@@ -69,9 +65,7 @@ const huggingfaceModels: ChatModelCard[] = [
     description: 'DeepSeek R1蒸馏版Qwen 32B。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
 ];
 

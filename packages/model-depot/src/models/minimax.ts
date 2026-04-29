@@ -1,9 +1,5 @@
 import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const minimaxChatModels: ChatModelCard[] = [
   {
     id: 'MiniMax-M2.5',
@@ -13,16 +9,8 @@ const minimaxChatModels: ChatModelCard[] = [
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 8.4,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
     releasedAt: '2026-02-12',
   },
   {
@@ -32,16 +20,8 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 16.8,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 16.8, cachedInput: 0.21 },
     releasedAt: '2026-02-12',
   },
   {
@@ -51,16 +31,8 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 8.4,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
     releasedAt: '2025-12-23',
   },
   {
@@ -70,16 +42,8 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 16.8,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 16.8, cachedInput: 0.21 },
     releasedAt: '2025-12-23',
   },
   {
@@ -89,15 +53,8 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 8.4,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
     releasedAt: '2026-01-15',
   },
   {
@@ -108,16 +65,8 @@ const minimaxChatModels: ChatModelCard[] = [
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 8.4,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
     releasedAt: '2025-10-27',
   },
   {
@@ -127,16 +76,8 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 204_800,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 2.1,
-      output: 8.4,
-      cachedInput: 0.21,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
     releasedAt: '2025-10-27',
   },
   {
@@ -147,15 +88,8 @@ const minimaxChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_000_192,
     maxOutput: 40_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.2,
-      output: 16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1.2, output: 16 },
     releasedAt: '2025-06-16',
   },
   {
@@ -166,22 +100,69 @@ const minimaxChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_000_192,
     maxOutput: 40_000,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1,
-      output: 8,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 1, output: 8 },
     releasedAt: '2025-01-15',
   },
+  {
+    id: 'MiniMax-M2.7',
+    displayName: 'MiniMax M2.7',
+    description:
+      'First self-evolving model with top-tier coding and agentic performance (~60 tps).',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.42 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'MiniMax-M2.7-highspeed',
+    displayName: 'MiniMax M2.7 Highspeed',
+    description: 'Same performance as M2.7 with significantly faster inference (~100 tps).',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4.2, output: 16.8, cachedInput: 0.42 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'MiniMax-M2.5-highspeed',
+    displayName: 'MiniMax M2.5 highspeed',
+    description: 'M2.5 highspeed: Same performance, faster and more agile (approx.',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4.2, output: 16.8, cachedInput: 0.21 },
+    releasedAt: '2026-02-12',
+  },
+  {
+    id: 'M2-her',
+    displayName: 'MiniMax M2-her',
+    description:
+      'A text dialogue model designed for role-playing and multi-turn conversations, with character customization and emotional expression.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+    maxOutput: 2_048,
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4 },
+    releasedAt: '2026-01-23',
+  },
+  {
+    id: 'MiniMax-M2.1-highspeed',
+    displayName: 'MiniMax M2.1 highspeed',
+    description:
+      'Powerful multilingual programming capabilities, comprehensively upgraded programming experience.',
+    type: 'chat',
+    contextWindowTokens: 204_800,
+    maxOutput: 131_072,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4.2, output: 16.8, cachedInput: 0.21 },
+    releasedAt: '2025-12-23',
+  },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const minimaxImageModels: ImageModelCard[] = [
   {
@@ -190,8 +171,8 @@ const minimaxImageModels: ImageModelCard[] = [
     description: '全新图像生成模型，画面表现细腻，支持文生图、图生图',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-02-28',
     resolutions: ['1:1', '16:9', '4:3', '3:2', '2:3', '3:4', '9:16', '21:9'],
+    releasedAt: '2025-02-28',
   },
   {
     id: 'image-01-live',
@@ -199,14 +180,10 @@ const minimaxImageModels: ImageModelCard[] = [
     description: '图像生成模型，画面表现细腻，支持文生图并进行画风设置',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-02-28',
     resolutions: ['1:1', '16:9', '4:3', '3:2', '2:3', '3:4', '9:16', '21:9'],
+    releasedAt: '2025-02-28',
   },
 ];
-
-// ============================================================================
-// Video Models
-// ============================================================================
 
 const minimaxVideoModels: VideoModelCard[] = [
   {
@@ -215,12 +192,11 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax 最新视频生成模型，支持 768p/1080p 分辨率，6s/10s 时长，动漫/插画风格',
     type: 'video',
     enabled: true,
+    organization: 'MiniMax',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
     resolutions: ['1366x768', '1920x1080'],
     fps: 25,
-    organization: 'MiniMax',
-    runtimeProvider: 'minimax',
+    maxDurationSeconds: 10,
   },
   {
     id: 'minimax/hailuo-2.3-fast',
@@ -228,12 +204,11 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax Hailuo 2.3 快速版本，优化生成效率',
     type: 'video',
     enabled: true,
+    organization: 'MiniMax',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
     resolutions: ['1366x768', '1920x1080'],
     fps: 25,
-    organization: 'MiniMax',
-    runtimeProvider: 'minimax',
+    maxDurationSeconds: 10,
   },
   {
     id: 'minimax/hailuo-02',
@@ -241,12 +216,11 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax Hailuo 2.0 视频生成模型，支持 10 秒时长和高清分辨率',
     type: 'video',
     enabled: true,
+    organization: 'MiniMax',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 10,
     resolutions: ['1366x768', '1920x1080'],
     fps: 25,
-    organization: 'MiniMax',
-    runtimeProvider: 'minimax',
+    maxDurationSeconds: 10,
   },
   {
     id: 'minimax/video-01-director',
@@ -254,18 +228,84 @@ const minimaxVideoModels: VideoModelCard[] = [
     description: 'MiniMax video model with camera movement control',
     type: 'video',
     enabled: true,
+    organization: 'MiniMax',
     abilities: { videoOutput: true },
-    maxDurationSeconds: 5,
     resolutions: ['1366x768'],
     fps: 25,
-    organization: 'MiniMax',
-    runtimeProvider: 'minimax',
+    maxDurationSeconds: 5,
+  },
+  {
+    id: 'MiniMax-Hailuo-2.3-Fast',
+    displayName: 'MiniMax Hailuo 2.3 Fast',
+    description:
+      'Brand-new video generation model with comprehensive upgrades in body motion, physical realism, and instruction following.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-10-28',
+  },
+  {
+    id: 'MiniMax-Hailuo-2.3',
+    displayName: 'MiniMax Hailuo 2.3',
+    description:
+      'Brand-new video generation model with comprehensive upgrades in body motion, physical realism, and instruction following.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-10-28',
+  },
+  {
+    id: 'MiniMax-Hailuo-02',
+    displayName: 'MiniMax Hailuo 02',
+    description:
+      'The next-generation video generation model, MiniMax Hailuo 02, has been officially released, supporting 1080P resolution and 10-second video generation.',
+    type: 'video',
+    enabled: true,
+    releasedAt: '2025-06-18',
+  },
+  {
+    id: 'I2V-01-Director',
+    displayName: 'I2V 01 Director',
+    description:
+      'A director-level video generation model has been officially released, offering improved adherence to camera movement instructions and cinematic shot storytelling language.',
+    type: 'video',
+    releasedAt: '2025-02-11',
+  },
+  {
+    id: 'T2V-01-Director',
+    displayName: 'T2V 01 Director',
+    description:
+      'A director-level video generation model has been officially released, offering improved adherence to camera movement instructions and cinematic shot storytelling language.',
+    type: 'video',
+    releasedAt: '2025-02-11',
+  },
+  {
+    id: 'I2V-01-live',
+    displayName: 'I2V 01 Live',
+    description: 'Enhanced character performance: more stable, smoother, and more vivid.',
+    type: 'video',
+    releasedAt: '2025-03-03',
+  },
+  {
+    id: 'I2V-01',
+    displayName: 'I2V 01',
+    description: 'The foundational image-to-video model of the 01 series.',
+    type: 'video',
+    releasedAt: '2025-03-03',
+  },
+  {
+    id: 'S2V-01',
+    displayName: 'S2V 01',
+    description: 'The foundational reference-to-video model of the 01 series.',
+    type: 'video',
+    releasedAt: '2025-01-10',
+  },
+  {
+    id: 'T2V-01',
+    displayName: 'T2V 01',
+    description: 'The foundational text-to-video model of the 01 series.',
+    type: 'video',
+    releasedAt: '2025-03-03',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: minimaxChatModels,

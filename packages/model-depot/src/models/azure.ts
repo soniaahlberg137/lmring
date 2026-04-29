@@ -1,67 +1,41 @@
 import type { ChatModelCard, ImageModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const azureChatModels: ChatModelCard[] = [
   {
     id: 'gpt-5',
     displayName: 'GPT-5',
     description: 'Azure OpenAI GPT-5 最新旗舰模型，具有卓越的推理和生成能力。',
     type: 'chat',
-    contextWindowTokens: 256_000,
-    maxOutput: 32_768,
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 20,
-      currency: 'USD',
-    },
-    releasedAt: '2025-05-14',
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
+    releasedAt: '2025-08-07',
   },
   {
     id: 'gpt-5-mini',
     displayName: 'GPT-5 Mini',
     description: 'Azure OpenAI GPT-5 Mini 轻量版，平衡性能与成本。',
     type: 'chat',
-    contextWindowTokens: 256_000,
-    maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.25,
-      output: 5,
-      currency: 'USD',
-    },
-    releasedAt: '2025-05-14',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.25, output: 2, cachedInput: 0.025 },
+    releasedAt: '2025-08-07',
   },
   {
     id: 'gpt-5-nano',
     displayName: 'GPT-5 Nano',
     description: 'Azure OpenAI GPT-5 Nano 超轻量版，适合高吞吐场景。',
     type: 'chat',
-    contextWindowTokens: 256_000,
-    maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.25,
-      output: 1,
-      currency: 'USD',
-    },
-    releasedAt: '2025-05-14',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.05, output: 0.4, cachedInput: 0.005 },
+    releasedAt: '2025-08-07',
   },
   {
     id: 'o3',
@@ -71,17 +45,9 @@ const azureChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 40,
-      currency: 'USD',
-    },
-    releasedAt: '2025-04-16',
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 10, output: 40, cachedInput: 2.5 },
+    releasedAt: '2025-04-17',
   },
   {
     id: 'o3-mini',
@@ -90,16 +56,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.55 },
     releasedAt: '2025-01-31',
   },
   {
@@ -110,17 +68,9 @@ const azureChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
-    releasedAt: '2025-04-16',
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.275 },
+    releasedAt: '2025-04-17',
   },
   {
     id: 'o1',
@@ -129,16 +79,9 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 60,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 15, output: 60, cachedInput: 7.5 },
+    releasedAt: '2024-12-17',
   },
   {
     id: 'o1-mini',
@@ -147,14 +90,9 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 65_536,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.55 },
+    releasedAt: '2024-09-12',
   },
   {
     id: 'gpt-4.1',
@@ -164,16 +102,8 @@ const azureChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-04-14',
   },
   {
@@ -183,16 +113,9 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1.6,
-      currency: 'USD',
-    },
+    enabled: true,
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.4, output: 1.6, cachedInput: 0.1 },
     releasedAt: '2025-04-14',
   },
   {
@@ -202,16 +125,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-04-14',
   },
   {
@@ -222,16 +137,9 @@ const azureChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2.5, output: 10, cachedInput: 1.25 },
+    releasedAt: '2024-05-13',
   },
   {
     id: 'gpt-4o-mini',
@@ -241,16 +149,8 @@ const azureChatModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.15, output: 0.6, cachedInput: 0.075 },
   },
   {
     id: 'gpt-4o-2024-11-20',
@@ -259,16 +159,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { currency: 'USD', input: 2.5, output: 10 },
     releasedAt: '2024-11-20',
   },
   {
@@ -278,16 +170,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { currency: 'USD', input: 2.5, output: 10 },
     releasedAt: '2024-08-06',
   },
   {
@@ -297,15 +181,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 5, output: 15 },
     releasedAt: '2024-05-13',
   },
   {
@@ -315,16 +192,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { currency: 'USD', input: 0.15, output: 0.6 },
     releasedAt: '2024-07-18',
   },
   {
@@ -334,15 +203,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 10, output: 30 },
   },
   {
     id: 'gpt-4-turbo-2024-04-09',
@@ -351,15 +213,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 10, output: 30 },
     releasedAt: '2024-04-09',
   },
   {
@@ -367,16 +222,10 @@ const azureChatModels: ChatModelCard[] = [
     displayName: 'GPT-4',
     description: 'Azure OpenAI GPT-4 基础模型。',
     type: 'chat',
-    contextWindowTokens: 8_192,
+    contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 30,
-      output: 60,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 30, output: 60 },
   },
   {
     id: 'gpt-4-32k',
@@ -385,14 +234,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 60,
-      output: 120,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 60, output: 120 },
   },
   {
     id: 'gpt-35-turbo',
@@ -401,14 +244,8 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_385,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.5,
-      output: 1.5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 0.5, output: 1.5 },
   },
   {
     id: 'gpt-35-turbo-16k',
@@ -417,20 +254,157 @@ const azureChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_385,
     maxOutput: 4_096,
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 3, output: 4 },
+  },
+  {
+    id: 'gpt-5.4',
+    displayName: 'GPT-5.4',
+    description:
+      'GPT-5.4 is the frontier model for complex professional work with highest reasoning capability.',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    enabled: true,
     abilities: {
       functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
     },
-    pricing: {
-      input: 3,
-      output: 4,
-      currency: 'USD',
+    pricing: { input: 2.5, output: 15, cachedInput: 0.25 },
+    releasedAt: '2026-03-05',
+  },
+  {
+    id: 'gpt-5.4-pro',
+    displayName: 'GPT-5.4 Pro',
+    description:
+      'GPT-5.4 Pro uses more compute to think harder and provide consistently better answers, available in the Responses API only.',
+    type: 'chat',
+    contextWindowTokens: 1_050_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 30, output: 180 },
+    releasedAt: '2026-03-05',
+  },
+  {
+    id: 'gpt-5.4-mini',
+    displayName: 'GPT-5.4 mini',
+    description:
+      "GPT-5.4 mini is OpenAI's strongest mini model for coding, computer use, and subagents.",
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
     },
+    pricing: { input: 0.75, output: 4.5, cachedInput: 0.075 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'gpt-5.4-nano',
+    displayName: 'GPT-5.4 nano',
+    description:
+      "GPT-5.4 nano is OpenAI's cheapest GPT-5.4-class model for simple high-volume tasks.",
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 0.2, output: 1.25, cachedInput: 0.02 },
+    releasedAt: '2026-03-18',
+  },
+  {
+    id: 'gpt-5.2',
+    displayName: 'GPT-5.2',
+    description:
+      'GPT-5.2 is a flagship model for coding and agentic workflows with stronger reasoning and long-context performance.',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 1.75, output: 14, cachedInput: 0.175 },
+    releasedAt: '2025-12-11',
+  },
+  {
+    id: 'gpt-5.1',
+    displayName: 'GPT-5.1',
+    description:
+      'GPT-5.1 is a flagship model optimized for coding and agent tasks with configurable reasoning effort and longer context.',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
+    releasedAt: '2025-11-13',
+  },
+  {
+    id: 'gpt-5-pro',
+    displayName: 'GPT-5 Pro',
+    description: 'GPT-5 Pro is the advanced version in the GPT-5 series with enhanced reasoning.',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 15, output: 120 },
+    releasedAt: '2025-10-06',
+  },
+  {
+    id: 'gpt-5-codex',
+    displayName: 'GPT-5 Codex',
+    description:
+      'GPT-5 Codex is optimized for programming tasks, including Codex CLI and the VS Code extension.',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
+    releasedAt: '2025-09-11',
+  },
+  {
+    id: 'gpt-5-chat',
+    displayName: 'GPT-5 Chat',
+    description: 'GPT-5 Chat is a preview model optimized for conversational scenarios.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 16_384,
+    abilities: { vision: true },
+    pricing: { input: 1.25, output: 10, cachedInput: 0.125 },
+    releasedAt: '2025-08-07',
+  },
+  {
+    id: 'o1-preview',
+    displayName: 'o1-preview',
+    description:
+      'o1 is OpenAI’s new reasoning model for complex tasks requiring broad general knowledge.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_768,
+    abilities: { reasoning: true },
+    pricing: { input: 15, output: 60 },
+    releasedAt: '2024-09-12',
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const azureImageModels: ImageModelCard[] = [
   {
@@ -439,8 +413,8 @@ const azureImageModels: ImageModelCard[] = [
     description: 'Azure OpenAI GPT Image 1 最新图像生成模型，支持多种风格。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-04-23',
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
+    releasedAt: '2025-04-23',
   },
   {
     id: 'dall-e-3',
@@ -448,22 +422,34 @@ const azureImageModels: ImageModelCard[] = [
     description: 'Azure OpenAI DALL-E 3 图像生成模型。',
     type: 'image',
     enabled: true,
-    releasedAt: '2023-10-19',
     resolutions: ['1024x1024', '1792x1024', '1024x1792'],
+    releasedAt: '2023-10-19',
   },
   {
     id: 'dall-e-2',
     displayName: 'DALL-E 2',
     description: 'Azure OpenAI DALL-E 2 图像生成模型。',
     type: 'image',
-    releasedAt: '2022-04-06',
     resolutions: ['256x256', '512x512', '1024x1024'],
+    releasedAt: '2022-04-06',
+  },
+  {
+    id: 'FLUX.1-Kontext-pro',
+    displayName: 'FLUX.1 Kontext [pro]',
+    description: 'FLUX.1 Kontext [pro]',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2025-06-23',
+  },
+  {
+    id: 'FLUX-1.1-pro',
+    displayName: 'FLUX.1.1 Pro',
+    description: 'FLUX.1.1 Pro',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2025-06-23',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: azureChatModels,

@@ -6,14 +6,10 @@ const sparkModels: ChatModelCard[] = [
     displayName: 'Spark X1.5',
     description: '星火深度推理模型，支持动态思考模式，64K上下文。',
     type: 'chat',
-    contextWindowTokens: 65_535,
-    maxOutput: 65_535,
+    contextWindowTokens: 131_072,
+    maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
   },
   {
     id: 'lite',
@@ -21,7 +17,7 @@ const sparkModels: ChatModelCard[] = [
     description: '星火轻量模型，完全免费，快速响应，支持实时搜索。',
     type: 'chat',
     contextWindowTokens: 12_288,
-    maxOutput: 4096,
+    maxOutput: 4_096,
     enabled: true,
   },
   {
@@ -30,10 +26,8 @@ const sparkModels: ChatModelCard[] = [
     description: '星火专业版，针对数学、编程、医疗等领域优化。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    maxOutput: 8192,
-    abilities: {
-      search: true,
-    },
+    maxOutput: 8_192,
+    abilities: { search: true },
   },
   {
     id: 'pro-128k',
@@ -49,11 +43,8 @@ const sparkModels: ChatModelCard[] = [
     description: '星火功能最全版本，支持联网搜索和函数调用。',
     type: 'chat',
     contextWindowTokens: 16_384,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, search: true },
   },
   {
     id: 'max-32k',
@@ -62,10 +53,8 @@ const sparkModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
+    abilities: { functionCall: true, search: true },
+    settings: { searchImpl: 'internal' },
   },
   {
     id: '4.0Ultra',
@@ -74,11 +63,17 @@ const sparkModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      search: true,
-    },
+    abilities: { functionCall: true, reasoning: true, search: true },
+  },
+  {
+    id: 'x1',
+    displayName: 'Spark X1.5',
+    description:
+      'X1.5 updates: (1) adds dynamic thinking mode controlled by the `thinking` field; (2) larger context length with 64K input and 64K output; (3) supports FunctionCall.',
+    type: 'chat',
+    contextWindowTokens: 65_535,
+    maxOutput: 65_535,
+    abilities: { functionCall: true, reasoning: true, search: true },
   },
 ];
 
