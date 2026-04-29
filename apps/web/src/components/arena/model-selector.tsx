@@ -121,8 +121,8 @@ export function ModelSelectorOverlay({
     // Sort each provider's models by releasedAt (newest first). Models without
     // releasedAt fall back to the end so newly-added entries with metadata
     // surface above legacy ones that haven't been backfilled.
-    for (const providerModels of Object.values(groups)) {
-      providerModels.sort((a, b) => {
+    for (const [providerName, providerModels] of Object.entries(groups)) {
+      groups[providerName] = providerModels.toSorted((a, b) => {
         if (a.releasedAt && b.releasedAt) {
           return b.releasedAt.localeCompare(a.releasedAt);
         }
