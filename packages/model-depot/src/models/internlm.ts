@@ -8,13 +8,8 @@ const internlmModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0, output: 0 },
   },
   {
     id: 'internlm2.5-latest',
@@ -22,13 +17,8 @@ const internlmModels: ChatModelCard[] = [
     description: '书生浦语稳定版，支持1M上下文和强大的工具调用能力。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0, output: 0 },
   },
   {
     id: 'internvl3-latest',
@@ -37,13 +27,8 @@ const internlmModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
   },
   {
     id: 'internvl2.5-latest',
@@ -51,13 +36,78 @@ const internlmModels: ChatModelCard[] = [
     description: '书生浦语多模态稳定版，具备优异且稳定的性能。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0,
-      output: 0,
-    },
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
+  },
+  {
+    id: 'intern-latest',
+    displayName: 'Intern',
+    description:
+      'By default, it points to our latest released Intern series model, currently set to intern-s1-pro.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2026-02-04',
+  },
+  {
+    id: 'intern-s1-pro',
+    displayName: 'Intern-S1-Pro',
+    description:
+      'We have launched our most advanced open-source multimodal reasoning model, currently the top-performing open-source multimodal large language model in terms of overall performance.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2026-02-04',
+  },
+  {
+    id: 'intern-s1',
+    displayName: 'Intern-S1',
+    description:
+      'The open-source multimodal reasoning model not only demonstrates strong general-purpose capabilities but also achieves state-of-the-art performance across a wide range of scientific tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2025-07-26',
+  },
+  {
+    id: 'intern-s1-mini',
+    displayName: 'Intern-S1-Mini',
+    description:
+      'A lightweight multimodal large model with strong scientific reasoning capabilities.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2025-08-20',
+  },
+  {
+    id: 'internvl3.5-latest',
+    displayName: 'InternVL3.5',
+    description:
+      'By default, it points to the latest model in the InternVL3.5 series, currently set to internvl3.5-241b-a28b.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2025-08-28',
+  },
+  {
+    id: 'internvl3.5-241b-a28b',
+    displayName: 'InternVL3.5-241B-A28B',
+    description:
+      'Our newly released multimodal large model features enhanced image-and-text understanding and long-sequence image comprehension capabilities, achieving performance comparable to leading closed-source models.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    enabled: true,
+    abilities: { vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2025-08-28',
   },
 ];
 

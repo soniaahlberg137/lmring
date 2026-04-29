@@ -1124,8 +1124,16 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
               const typeModels = [...(modelsByType[type] || [])].sort((a, b) => {
                 const aEnabled = modelEnabledStates[a.id] ?? false;
                 const bEnabled = modelEnabledStates[b.id] ?? false;
-                if (aEnabled === bEnabled) return 0;
-                return aEnabled ? -1 : 1;
+                if (aEnabled !== bEnabled) return aEnabled ? -1 : 1;
+                // Same enabled state: sort by releasedAt desc (newest first), undated to bottom
+                const aTime = a.releasedAt ? Date.parse(a.releasedAt) : Number.NaN;
+                const bTime = b.releasedAt ? Date.parse(b.releasedAt) : Number.NaN;
+                const aValid = !Number.isNaN(aTime);
+                const bValid = !Number.isNaN(bTime);
+                if (aValid && bValid) return bTime - aTime;
+                if (aValid) return -1;
+                if (bValid) return 1;
+                return 0;
               });
               return (
                 <TabsContent key={type} value={type} className="space-y-2 mt-4">

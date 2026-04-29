@@ -16,6 +16,7 @@ export interface ModelOption {
   isCustom?: boolean;
   default?: boolean;
   abilities?: ModelAbilities;
+  releasedAt?: string;
 }
 
 export interface ModelConfig {

@@ -1,10 +1,8 @@
 import { cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-vi.mock('@/components/analytics/PostHogProvider', () => ({
-  PostHogProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="posthog-provider">{children}</div>
-  ),
+vi.mock('@/components/seo/JsonLd', () => ({
+  JsonLd: () => <div data-testid="json-ld" />,
 }));
 
 vi.mock('@/components/theme-provider', () => ({
@@ -19,12 +17,6 @@ vi.mock('@/libs/load-locale-messages', () => ({
 
 vi.mock('@/libs/request-locale', () => ({
   getRequestLocale: vi.fn().mockResolvedValue('en'),
-}));
-
-vi.mock('@/providers', () => ({
-  QueryProvider: ({ children }: { children: React.ReactNode }) => (
-    <div data-testid="query-provider">{children}</div>
-  ),
 }));
 
 vi.mock('@/providers/language-provider', () => ({
@@ -58,25 +50,11 @@ describe('RootLayout', () => {
     expect(container.querySelector('[data-testid="theme-provider"]')).toBeInTheDocument();
   });
 
-  it('should render QueryProvider', async () => {
-    const { default: RootLayout } = await import('./layout');
-    const { container } = render(await RootLayout({ children: <div>Content</div> }));
-
-    expect(container.querySelector('[data-testid="query-provider"]')).toBeInTheDocument();
-  });
-
   it('should render LanguageProvider', async () => {
     const { default: RootLayout } = await import('./layout');
     const { container } = render(await RootLayout({ children: <div>Content</div> }));
 
     expect(container.querySelector('[data-testid="language-provider"]')).toBeInTheDocument();
-  });
-
-  it('should render PostHogProvider', async () => {
-    const { default: RootLayout } = await import('./layout');
-    const { container } = render(await RootLayout({ children: <div>Content</div> }));
-
-    expect(container.querySelector('[data-testid="posthog-provider"]')).toBeInTheDocument();
   });
 
   it('should render Toaster', async () => {

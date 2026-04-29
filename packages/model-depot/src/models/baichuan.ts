@@ -1,7 +1,6 @@
 import type { ChatModelCard } from '../types';
 
 const baichuanModels: ChatModelCard[] = [
-  // Baichuan 4 Series
   {
     id: 'Baichuan4',
     displayName: 'Baichuan 4',
@@ -11,15 +10,8 @@ const baichuanModels: ChatModelCard[] = [
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 100,
-      output: 100,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 100, output: 100 },
   },
   {
     id: 'Baichuan4-Turbo',
@@ -30,15 +22,8 @@ const baichuanModels: ChatModelCard[] = [
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 15,
-      output: 15,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 15, output: 15 },
   },
   {
     id: 'Baichuan4-Air',
@@ -49,18 +34,9 @@ const baichuanModels: ChatModelCard[] = [
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 0.98,
-      output: 0.98,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 0.98, output: 0.98 },
   },
-
-  // Baichuan 3 Series
   {
     id: 'Baichuan3-Turbo',
     displayName: 'Baichuan 3 Turbo',
@@ -69,15 +45,8 @@ const baichuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 12,
-      output: 12,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 12, output: 12 },
   },
   {
     id: 'Baichuan3-Turbo-128k',
@@ -87,14 +56,8 @@ const baichuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 4_096,
-    pricing: {
-      input: 24,
-      output: 24,
-      currency: 'CNY',
-    },
+    pricing: { currency: 'CNY', input: 24, output: 24 },
   },
-
-  // Baichuan 2 Series
   {
     id: 'Baichuan2-Turbo',
     displayName: 'Baichuan 2 Turbo',
@@ -103,11 +66,54 @@ const baichuanModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 8_192,
-    pricing: {
-      input: 8,
-      output: 8,
-      currency: 'CNY',
-    },
+    pricing: { currency: 'CNY', input: 8, output: 8 },
+  },
+  {
+    id: 'Baichuan-M3-Plus',
+    displayName: 'Baichuan M3 Plus',
+    description:
+      'We introduce Baichuan-M3, a new-generation medical-enhanced large language model designed to support clinical-grade medical assistance.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    maxOutput: 32_768,
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 5, output: 9 },
+    settings: { searchImpl: 'internal' },
+  },
+  {
+    id: 'Baichuan-M3',
+    displayName: 'Baichuan M3',
+    description:
+      'We introduce Baichuan-M3, a new-generation medical-enhanced large language model designed to support clinical-grade medical assistance.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    maxOutput: 32_768,
+    enabled: true,
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 10, output: 30 },
+  },
+  {
+    id: 'Baichuan-M2-Plus',
+    displayName: 'Baichuan M2 Plus',
+    description:
+      'We introduce Baichuan-M2, a medically-enhanced reasoning model, designed for real-world medical reasoning tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    maxOutput: 32_768,
+    abilities: { reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 10, output: 30 },
+    settings: { searchImpl: 'internal' },
+  },
+  {
+    id: 'Baichuan-M2',
+    displayName: 'Baichuan M2',
+    description:
+      'We introduce Baichuan-M2, a medically-enhanced reasoning model, designed for real-world medical reasoning tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    maxOutput: 32_768,
+    abilities: { reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 20 },
   },
 ];
 

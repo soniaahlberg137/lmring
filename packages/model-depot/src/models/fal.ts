@@ -1,6 +1,6 @@
 import type { ImageModelCard } from '../types';
 
-const falImageModels: ImageModelCard[] = [
+const falModels: ImageModelCard[] = [
   {
     id: 'fal-ai/nano-banana',
     displayName: 'Nano Banana',
@@ -8,11 +8,8 @@ const falImageModels: ImageModelCard[] = [
       'Nano Banana 是 Google 最新、最快、最高效的原生多模态模型，支持通过对话生成和编辑图像。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.039 },
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
-    pricing: {
-      input: 0.039,
-      unit: 'requests',
-    },
     releasedAt: '2025-08-26',
   },
   {
@@ -22,11 +19,8 @@ const falImageModels: ImageModelCard[] = [
       'Seedream 4.0 是字节跳动 Seed 的图像生成模型，支持文本和图像输入，具备高可控性和高质量图像生成能力。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.03 },
     resolutions: ['1024x1024', '2048x2048', '4096x4096'],
-    pricing: {
-      input: 0.03,
-      unit: 'requests',
-    },
     releasedAt: '2025-09-09',
   },
   {
@@ -35,11 +29,8 @@ const falImageModels: ImageModelCard[] = [
     description: '腾讯混元图像生成模型 3.0，是强大的原生多模态图像生成模型。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.1 },
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
-    pricing: {
-      input: 0.1,
-      unit: 'requests',
-    },
     releasedAt: '2025-09-28',
   },
   {
@@ -48,11 +39,8 @@ const falImageModels: ImageModelCard[] = [
     description: 'FLUX.1 图像编辑模型，支持文本和图像输入。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.025 },
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
-    pricing: {
-      input: 0.025,
-      unit: 'requests',
-    },
     releasedAt: '2025-06-28',
   },
   {
@@ -62,11 +50,8 @@ const falImageModels: ImageModelCard[] = [
       'FLUX.1 Kontext [pro] 接受文本和参考图像作为输入，支持针对性的局部编辑和复杂的全局场景变换。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.04 },
     resolutions: ['1024x1024', '1536x1024', '1024x1536'],
-    pricing: {
-      input: 0.04,
-      unit: 'requests',
-    },
     releasedAt: '2025-05-01',
   },
   {
@@ -75,11 +60,8 @@ const falImageModels: ImageModelCard[] = [
     description: 'FLUX.1 [schnell] 是 120 亿参数的图像生成模型，专为快速高质量输出而构建。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.003 },
     resolutions: ['512x512', '1024x1024', '1536x1536'],
-    pricing: {
-      input: 0.003,
-      unit: 'requests',
-    },
     releasedAt: '2024-08-01',
   },
   {
@@ -88,11 +70,8 @@ const falImageModels: ImageModelCard[] = [
     description: 'Flux Krea [dev] 是具有审美偏好的图像生成模型，倾向于更真实、自然的图像。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.025 },
     resolutions: ['512x512', '1024x1024', '2048x2048'],
-    pricing: {
-      input: 0.025,
-      unit: 'requests',
-    },
     releasedAt: '2025-07-31',
   },
   {
@@ -102,11 +81,8 @@ const falImageModels: ImageModelCard[] = [
     type: 'image',
     enabled: true,
     organization: 'Deepmind',
+    pricing: { input: 0.05 },
     resolutions: ['1024x1024', '1792x1024', '1024x1792'],
-    pricing: {
-      input: 0.05,
-      unit: 'requests',
-    },
     releasedAt: '2025-05-21',
   },
   {
@@ -116,11 +92,8 @@ const falImageModels: ImageModelCard[] = [
       'Qwen 团队的专业图像编辑模型，支持语义和外观编辑、精确编辑中英文文本，以及风格迁移和物体旋转等高质量编辑。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.03 },
     resolutions: ['512x512', '1024x1024', '1536x1536'],
-    pricing: {
-      input: 0.03,
-      unit: 'requests',
-    },
     releasedAt: '2025-08-19',
   },
   {
@@ -129,15 +102,10 @@ const falImageModels: ImageModelCard[] = [
     description: 'Qwen 团队的强大图像生成模型，具有出色的中文文本渲染和多样化的视觉风格。',
     type: 'image',
     enabled: true,
+    pricing: { input: 0.02 },
     resolutions: ['512x512', '1024x1024', '1536x1536'],
-    pricing: {
-      input: 0.02,
-      unit: 'requests',
-    },
     releasedAt: '2025-08-04',
   },
 ];
 
-export default {
-  image: falImageModels,
-};
+export default falModels;

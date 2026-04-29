@@ -8,9 +8,7 @@ const cloudflareModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 80_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: '@cf/qwen/qwq-32b',
@@ -19,9 +17,7 @@ const cloudflareModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 24_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: '@cf/qwen/qwen2.5-coder-32b-instruct',
@@ -43,9 +39,7 @@ const cloudflareModels: ChatModelCard[] = [
     description: 'Cloudflare托管Llama 3.3高速版。',
     type: 'chat',
     contextWindowTokens: 24_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: '@cf/meta/llama-4-scout-17b-16e-instruct',
@@ -53,9 +47,7 @@ const cloudflareModels: ChatModelCard[] = [
     description: 'Cloudflare托管Meta Llama 4 Scout。',
     type: 'chat',
     contextWindowTokens: 131_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: '@cf/mistralai/mistral-small-3.1-24b-instruct',
@@ -63,9 +55,7 @@ const cloudflareModels: ChatModelCard[] = [
     description: 'Cloudflare托管Mistral Small模型。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: '@cf/meta/llama-3.1-8b-instruct-fast',
@@ -73,6 +63,19 @@ const cloudflareModels: ChatModelCard[] = [
     description: 'Cloudflare托管Llama 3.1快速版。',
     type: 'chat',
     contextWindowTokens: 128_000,
+  },
+  {
+    id: '@cf/openchat/openchat-3.5-0106',
+    displayName: 'openchat-3.5-0106',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: '@cf/qwen/qwen1.5-14b-chat-awq',
+    displayName: 'qwen1.5-14b-chat-awq',
+    type: 'chat',
+    contextWindowTokens: 7_500,
+    enabled: true,
   },
 ];
 

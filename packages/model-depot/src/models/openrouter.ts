@@ -1,13 +1,6 @@
 import type { ChatModelCard, ImageModelCard } from '../types';
 
-// ============================================================================
-// Chat Models - via OpenRouter API Gateway
-// ============================================================================
-
 const openrouterChatModels: ChatModelCard[] = [
-  // =========================================================================
-  // DeepSeek Series
-  // =========================================================================
   {
     id: 'deepseek/deepseek-chat-v3-1',
     displayName: 'DeepSeek V3.1',
@@ -17,15 +10,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 163_840,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 2.2,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'USD', input: 1.1, output: 2.2 },
     releasedAt: '2025-05-20',
   },
   {
@@ -36,14 +22,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 163_840,
     maxOutput: 163_840,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 8,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 0.5, output: 2.18 },
     releasedAt: '2025-05-28',
   },
   {
@@ -53,14 +33,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 163_840,
     maxOutput: 163_840,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 8,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 3, output: 8 },
+    releasedAt: '2025-01-20',
   },
   {
     id: 'deepseek/deepseek-chat',
@@ -69,14 +44,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 65_536,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 0.9, output: 0.9 },
   },
   {
     id: 'deepseek/deepseek-prover-v2',
@@ -85,19 +54,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 163_840,
     maxOutput: 163_840,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 8,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { currency: 'USD', input: 3, output: 8 },
   },
-
-  // =========================================================================
-  // Qwen Series
-  // =========================================================================
   {
     id: 'qwen/qwen3-coder-480b-a35b-instruct',
     displayName: 'Qwen3 Coder 480B A35B',
@@ -106,14 +65,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 1.8,
-      output: 7.2,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 1.8, output: 7.2 },
   },
   {
     id: 'qwen/qwen3-235b-a22b',
@@ -121,16 +74,9 @@ const openrouterChatModels: ChatModelCard[] = [
     description: 'Qwen3 最大规模的 MoE 模型，支持思考模式切换。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.16,
-      output: 0.58,
-      currency: 'USD',
-    },
+    maxOutput: 40_960,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.2, output: 0.6 },
   },
   {
     id: 'qwen/qwen3-32b',
@@ -139,15 +85,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.07,
-      output: 0.13,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.1, output: 0.3 },
   },
   {
     id: 'qwen/qwq-32b',
@@ -156,14 +95,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.12,
-      output: 0.18,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { currency: 'USD', input: 0.12, output: 0.18 },
   },
   {
     id: 'qwen/qvq-72b-preview',
@@ -172,20 +105,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.33,
-      output: 1.33,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'USD', input: 0.33, output: 1.33 },
   },
-
-  // =========================================================================
-  // Google Gemini Series
-  // =========================================================================
   {
     id: 'google/gemini-2.5-pro-preview',
     displayName: 'Gemini 2.5 Pro Preview',
@@ -194,16 +116,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_048_576,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.25, output: 10 },
     releasedAt: '2025-03-26',
   },
   {
@@ -213,16 +127,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_048_576,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.15, output: 0.6 },
     releasedAt: '2025-04-17',
   },
   {
@@ -230,17 +136,11 @@ const openrouterChatModels: ChatModelCard[] = [
     displayName: 'Gemini 2.0 Flash',
     description: 'Google Gemini 2.0 Flash 稳定版。',
     type: 'chat',
-    contextWindowTokens: 1_048_576,
+    contextWindowTokens: 1_056_768,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
+    releasedAt: '2025-02-05',
   },
   {
     id: 'google/gemini-flash-1.5',
@@ -249,15 +149,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_048_576,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.075,
-      output: 0.3,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.075, output: 0.3 },
   },
   {
     id: 'google/gemini-pro-1.5',
@@ -266,20 +159,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 2_097_152,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3.5, output: 10.5 },
   },
-
-  // =========================================================================
-  // OpenAI Series
-  // =========================================================================
   {
     id: 'openai/o3',
     displayName: 'OpenAI o3',
@@ -288,17 +170,9 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 40,
-      currency: 'USD',
-    },
-    releasedAt: '2025-04-16',
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
+    releasedAt: '2025-04-17',
   },
   {
     id: 'openai/o3-mini',
@@ -307,16 +181,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.55 },
     releasedAt: '2025-01-31',
   },
   {
@@ -326,17 +192,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
-    releasedAt: '2025-04-16',
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.275 },
+    releasedAt: '2025-04-17',
   },
   {
     id: 'openai/gpt-4.1',
@@ -346,15 +204,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 2, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-04-14',
   },
   {
@@ -364,15 +215,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 1.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.4, output: 1.6, cachedInput: 0.1 },
     releasedAt: '2025-04-14',
   },
   {
@@ -382,15 +226,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 1_047_576,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.1, output: 0.4, cachedInput: 0.025 },
     releasedAt: '2025-04-14',
   },
   {
@@ -400,15 +237,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 2.5, output: 10 },
   },
   {
     id: 'openai/gpt-4o-mini',
@@ -416,16 +246,9 @@ const openrouterChatModels: ChatModelCard[] = [
     description: 'OpenAI GPT-4o Mini 轻量版。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    maxOutput: 16_385,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.15, output: 0.6 },
   },
   {
     id: 'openai/o1',
@@ -434,16 +257,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 100_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 60,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'USD', input: 15, output: 60 },
   },
   {
     id: 'openai/o1-mini',
@@ -452,19 +267,10 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 65_536,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.1,
-      output: 4.4,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { input: 3, output: 12 },
+    releasedAt: '2024-09-12',
   },
-
-  // =========================================================================
-  // Anthropic Claude Series
-  // =========================================================================
   {
     id: 'anthropic/claude-sonnet-4',
     displayName: 'Claude Sonnet 4',
@@ -473,16 +279,9 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 64_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
-    releasedAt: '2025-05-22',
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15 },
+    releasedAt: '2025-05-23',
   },
   {
     id: 'anthropic/claude-opus-4',
@@ -492,16 +291,9 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 200_000,
     maxOutput: 32_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      currency: 'USD',
-    },
-    releasedAt: '2025-05-22',
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 15, output: 75 },
+    releasedAt: '2025-05-23',
   },
   {
     id: 'anthropic/claude-3.7-sonnet',
@@ -510,16 +302,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 128_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
     releasedAt: '2025-02-24',
   },
   {
@@ -529,15 +313,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
+    releasedAt: '2024-06-20',
   },
   {
     id: 'anthropic/claude-3.5-haiku',
@@ -546,15 +324,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 1, output: 5, cachedInput: 0.1 },
+    releasedAt: '2024-11-05',
   },
   {
     id: 'anthropic/claude-3-opus',
@@ -563,20 +335,10 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 75,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 15, output: 75, cachedInput: 1.5 },
+    releasedAt: '2024-02-29',
   },
-
-  // =========================================================================
-  // Meta Llama Series
-  // =========================================================================
   {
     id: 'meta-llama/llama-4-maverick',
     displayName: 'Llama 4 Maverick',
@@ -585,15 +347,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.22,
-      output: 0.88,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 0.22, output: 0.88 },
     releasedAt: '2025-04-05',
   },
   {
@@ -603,15 +358,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 10_485_760,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 0.15, output: 0.6 },
     releasedAt: '2025-04-05',
   },
   {
@@ -621,14 +369,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.12,
-      output: 0.3,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.12, output: 0.3 },
   },
   {
     id: 'meta-llama/llama-3.2-90b-vision-instruct',
@@ -637,14 +379,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.9,
-      output: 0.9,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'USD', input: 0.9, output: 0.9 },
   },
   {
     id: 'meta-llama/llama-3.1-405b-instruct',
@@ -653,16 +389,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    pricing: {
-      input: 3,
-      output: 3,
-      currency: 'USD',
-    },
+    pricing: { currency: 'USD', input: 3, output: 3 },
   },
-
-  // =========================================================================
-  // Mistral Series
-  // =========================================================================
   {
     id: 'mistralai/mistral-large-2411',
     displayName: 'Mistral Large 2411',
@@ -671,15 +399,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 2, output: 6 },
   },
   {
     id: 'mistralai/mistral-medium-3',
@@ -688,14 +409,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 2,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 0.4, output: 2 },
   },
   {
     id: 'mistralai/mistral-small-3.1-24b-instruct',
@@ -704,15 +419,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.3,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 0.1, output: 0.3 },
   },
   {
     id: 'mistralai/codestral-2501',
@@ -721,11 +429,7 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 262_144,
-    pricing: {
-      input: 0.3,
-      output: 0.9,
-      currency: 'USD',
-    },
+    pricing: { currency: 'USD', input: 0.3, output: 0.9 },
   },
   {
     id: 'mistralai/magistral-medium-2506',
@@ -734,19 +438,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 40_000,
     maxOutput: 40_000,
-    abilities: {
-      reasoning: true,
-    },
-    pricing: {
-      input: 2,
-      output: 5,
-      currency: 'USD',
-    },
+    abilities: { reasoning: true },
+    pricing: { currency: 'USD', input: 2, output: 5 },
   },
-
-  // =========================================================================
-  // Cohere Series
-  // =========================================================================
   {
     id: 'cohere/command-r-plus-08-2024',
     displayName: 'Command R+ 08-2024',
@@ -754,14 +448,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 2.5, output: 10 },
   },
   {
     id: 'cohere/command-r-08-2024',
@@ -770,19 +458,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.6,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 0.15, output: 0.6 },
   },
-
-  // =========================================================================
-  // xAI Grok Series
-  // =========================================================================
   {
     id: 'x-ai/grok-3-mini-beta',
     displayName: 'Grok 3 Mini Beta',
@@ -791,15 +469,8 @@ const openrouterChatModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 0.5,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'USD', input: 0.3, output: 0.5 },
     releasedAt: '2025-04-09',
   },
   {
@@ -809,15 +480,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'USD', input: 3, output: 15 },
     releasedAt: '2025-02-18',
   },
   {
@@ -827,15 +491,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'USD', input: 2, output: 10 },
   },
   {
     id: 'x-ai/grok-2-1212',
@@ -844,19 +501,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 2, output: 10 },
   },
-
-  // =========================================================================
-  // Google Gemma Series
-  // =========================================================================
   {
     id: 'google/gemma-3-27b-it',
     displayName: 'Gemma 3 27B',
@@ -864,14 +511,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.2,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'USD', input: 0.1, output: 0.2 },
   },
   {
     id: 'google/gemma-3-12b-it',
@@ -880,14 +521,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.06,
-      output: 0.15,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'USD', input: 0.06, output: 0.15 },
   },
   {
     id: 'google/gemma-3-4b-it',
@@ -896,19 +531,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.04,
-      output: 0.06,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'USD', input: 0.04, output: 0.06 },
   },
-
-  // =========================================================================
-  // Microsoft Phi Series
-  // =========================================================================
   {
     id: 'microsoft/phi-4',
     displayName: 'Phi 4',
@@ -916,11 +541,7 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 16_384,
     maxOutput: 16_384,
-    pricing: {
-      input: 0.07,
-      output: 0.14,
-      currency: 'USD',
-    },
+    pricing: { currency: 'USD', input: 0.07, output: 0.14 },
   },
   {
     id: 'microsoft/phi-4-multimodal-instruct',
@@ -929,19 +550,9 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 0.04,
-      output: 0.1,
-      currency: 'USD',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'USD', input: 0.04, output: 0.1 },
   },
-
-  // =========================================================================
-  // Other Models
-  // =========================================================================
   {
     id: 'nvidia/llama-3.1-nemotron-70b-instruct',
     displayName: 'Llama 3.1 Nemotron 70B',
@@ -949,11 +560,7 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    pricing: {
-      input: 0.12,
-      output: 0.3,
-      currency: 'USD',
-    },
+    pricing: { currency: 'USD', input: 0.12, output: 0.3 },
   },
   {
     id: 'perplexity/sonar-pro',
@@ -962,14 +569,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     maxOutput: 8_000,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-      currency: 'USD',
-    },
+    abilities: { search: true },
+    pricing: { currency: 'USD', input: 3, output: 15 },
   },
   {
     id: 'perplexity/sonar',
@@ -978,14 +579,8 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 8_000,
-    abilities: {
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 1,
-      currency: 'USD',
-    },
+    abilities: { search: true },
+    pricing: { currency: 'USD', input: 1, output: 1 },
   },
   {
     id: 'nousresearch/hermes-3-llama-3.1-405b',
@@ -994,20 +589,361 @@ const openrouterChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 4,
-      currency: 'USD',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'USD', input: 4, output: 4 },
+  },
+  {
+    id: 'openrouter/auto',
+    displayName: 'Auto (best for prompt)',
+    description:
+      'Based on context length, topic, and complexity, your request is routed to Llama 3 70B Instruct, Claude 3.5 Sonnet (self-moderated), or GPT-4o.',
+    type: 'chat',
+    contextWindowTokens: 2_000_000,
+    enabled: true,
+  },
+  {
+    id: 'deepseek/deepseek-chat-v3.1',
+    displayName: 'DeepSeek V3.1',
+    description:
+      'DeepSeek-V3.1 is a large hybrid reasoning model with 128K context and efficient mode switching, delivering excellent performance and speed for tool use, code generation, and complex reasoning.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.2, output: 0.8 },
+    releasedAt: '2025-08-21',
+  },
+  {
+    id: 'google/gemini-3.1-flash-image-preview',
+    displayName: 'Nano Banana 2',
+    description: 'Gemini 3.1 Flash Image Preview, a.k.a.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 65_536,
+    abilities: { imageOutput: true, reasoning: true, vision: true },
+    pricing: { input: 0.25, output: 1.5 },
+    releasedAt: '2026-02-26',
+  },
+  {
+    id: 'google/gemini-3-pro-image-preview',
+    displayName: 'Nano Banana Pro',
+    description:
+      'Nano Banana Pro is Google’s most advanced image-generation and editing model, built on Gemini 3 Pro.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    maxOutput: 32_768,
+    abilities: { imageOutput: true, reasoning: true, vision: true },
+    pricing: { input: 2, output: 12 },
+    releasedAt: '2025-11-20',
+  },
+  {
+    id: 'google/gemini-2.5-flash-image',
+    displayName: 'Nano Banana',
+    description: 'Gemini 2.5 Flash Image, a.k.a.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    maxOutput: 8_192,
+    abilities: { imageOutput: true, vision: true },
+    pricing: { input: 0.3, output: 2.5 },
+    releasedAt: '2025-10-07',
+  },
+  {
+    id: 'qwen/qwen3-30b-a3b:free',
+    displayName: 'Qwen3 30B A3B (Free)',
+    description:
+      'Qwen3 is the latest Qwen LLM generation with dense and MoE architectures, excelling at reasoning, multilingual support, and advanced agent tasks.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'qwen/qwen3-30b-a3b',
+    displayName: 'Qwen3 30B A3B',
+    description:
+      'Qwen3 is the latest Qwen LLM generation with dense and MoE architectures, excelling at reasoning, multilingual support, and advanced agent tasks.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    maxOutput: 40_960,
+    abilities: { reasoning: true },
+    pricing: { input: 0.1, output: 0.3 },
+  },
+  {
+    id: 'qwen/qwen3-8b:free',
+    displayName: 'Qwen3 8B (Free)',
+    description:
+      'Qwen3-8B is a dense 8.2B-parameter causal LLM built for reasoning-heavy tasks and efficient chat.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    maxOutput: 40_960,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'qwen/qwen3-14b:free',
+    displayName: 'Qwen3 14B (Free)',
+    description:
+      'Qwen3-14B is a dense 14.8B-parameter causal LLM built for complex reasoning and efficient chat.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'qwen/qwen3-14b',
+    displayName: 'Qwen3 14B',
+    description:
+      'Qwen3-14B is a dense 14.8B-parameter causal LLM built for complex reasoning and efficient chat.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    maxOutput: 40_960,
+    abilities: { reasoning: true },
+    pricing: { input: 0.08, output: 0.24 },
+  },
+  {
+    id: 'qwen/qwen3-32b:free',
+    displayName: 'Qwen3 32B (Free)',
+    description:
+      'Qwen3-32B is a dense 32.8B-parameter causal LLM optimized for complex reasoning and efficient chat.',
+    type: 'chat',
+    contextWindowTokens: 40_960,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'qwen/qwen3-235b-a22b:free',
+    displayName: 'Qwen3 235B A22B (Free)',
+    description:
+      'Qwen3-235B-A22B is a 235B-parameter MoE model from Qwen with 22B active per forward pass.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'tngtech/deepseek-r1t-chimera:free',
+    displayName: 'DeepSeek R1T Chimera (Free)',
+    description:
+      'DeepSeek-R1T-Chimera is created by merging DeepSeek-R1 and DeepSeek-V3 (0324), combining R1 reasoning with V3 token efficiency.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'thudm/glm-z1-rumination-32b',
+    displayName: 'GLM Z1 Rumination 32B',
+    description:
+      'GLM Z1 Rumination 32B is a 32B deep reasoning model in the GLM-4-Z1 series, optimized for complex open-ended tasks that require long thinking.',
+    type: 'chat',
+    contextWindowTokens: 32_000,
+    abilities: { reasoning: true },
+    pricing: { input: 0.24, output: 0.24 },
+  },
+  {
+    id: 'thudm/glm-z1-32b',
+    displayName: 'GLM Z1 32B',
+    description:
+      'GLM-Z1-32B-0414 is an enhanced reasoning variant of GLM-4-32B, built for deep math, logic, and code-focused problem solving.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    abilities: { reasoning: true },
+    pricing: { input: 0.24, output: 0.24 },
+  },
+  {
+    id: 'thudm/glm-4-32b:free',
+    displayName: 'GLM 4 32B (Free)',
+    description:
+      'GLM-4-32B-0414 is a 32B bilingual (Chinese/English) open-weights model optimized for code generation, function calling, and agent tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_000,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'thudm/glm-4-32b',
+    displayName: 'GLM 4 32B',
+    description:
+      'GLM-4-32B-0414 is a 32B bilingual (Chinese/English) open-weights model optimized for code generation, function calling, and agent tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_000,
+    abilities: { reasoning: true },
+    pricing: { input: 0.24, output: 0.24 },
+  },
+  {
+    id: 'google/gemini-2.5-pro',
+    displayName: 'Gemini 2.5 Pro',
+    description:
+      'Gemini 2.5 Pro is Google’s most advanced thinking model for reasoning over complex problems in code, math, and STEM, and for analyzing large datasets, codebases, and documents with long context.',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 65_536,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.25, output: 10 },
+  },
+  {
+    id: 'google/gemini-2.5-flash',
+    displayName: 'Gemini 2.5 Flash',
+    description:
+      'Gemini 2.5 Flash is Google’s most advanced flagship model, built for advanced reasoning, coding, math, and science tasks.',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 65_535,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.15, output: 0.6 },
+  },
+  {
+    id: 'google/gemini-2.5-flash-preview:thinking',
+    displayName: 'Gemini 2.5 Flash Preview (thinking)',
+    description:
+      'Gemini 2.5 Flash is Google’s most advanced flagship model, built for advanced reasoning, coding, math, and science tasks.',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 65_535,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.15, output: 3.5 },
+  },
+  {
+    id: 'openai/o4-mini-high',
+    displayName: 'o4-mini (high)',
+    description:
+      'o4-mini high reasoning tier, optimized for fast, efficient reasoning with strong coding and vision performance.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 100_000,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.275 },
+    releasedAt: '2025-04-17',
+  },
+  {
+    id: 'openai/o3-mini-high',
+    displayName: 'o3-mini (high)',
+    description:
+      'o3-mini (high reasoning) delivers higher intelligence at the same cost and latency targets as o1-mini.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 100_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 1.1, output: 4.4, cachedInput: 0.55 },
+    releasedAt: '2025-01-31',
+  },
+  {
+    id: 'openai/o1-preview',
+    displayName: 'o1-preview',
+    description: 'o1 is OpenAI’s new reasoning model for complex tasks requiring broad knowledge.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    maxOutput: 32_768,
+    abilities: { reasoning: true },
+    pricing: { input: 15, output: 60 },
+    releasedAt: '2024-09-12',
+  },
+  {
+    id: 'deepseek/deepseek-r1-0528:free',
+    displayName: 'DeepSeek R1 0528 (Free)',
+    description:
+      'DeepSeek-R1 greatly improves reasoning with minimal labeled data and outputs a chain-of-thought before the final answer to improve accuracy.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    abilities: { reasoning: true },
+    releasedAt: '2025-05-28',
+  },
+  {
+    id: 'deepseek/deepseek-r1:free',
+    displayName: 'DeepSeek R1 (Free)',
+    description:
+      'DeepSeek-R1 greatly improves reasoning with minimal labeled data and outputs a chain-of-thought before the final answer to improve accuracy.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    abilities: { reasoning: true },
+    releasedAt: '2025-01-20',
+  },
+  {
+    id: 'deepseek/deepseek-chat-v3-0324',
+    displayName: 'DeepSeek V3 0324',
+    description:
+      'DeepSeek V3 is a 685B-parameter MoE model and the latest iteration of DeepSeek’s flagship chat series.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    pricing: { input: 0.27, output: 1.1, cachedInput: 0.07 },
+  },
+  {
+    id: 'deepseek/deepseek-chat-v3-0324:free',
+    displayName: 'DeepSeek V3 0324 (Free)',
+    description:
+      'DeepSeek V3 is a 685B-parameter MoE model and the latest iteration of DeepSeek’s flagship chat series.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+  },
+  {
+    id: 'anthropic/claude-opus-4.5',
+    displayName: 'Claude Opus 4.5',
+    description:
+      'Claude Opus 4.5 is Anthropic’s flagship model, combining top-tier intelligence with scalable performance for complex, high-quality reasoning tasks.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 64_000,
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
+    releasedAt: '2025-11-24',
+  },
+  {
+    id: 'anthropic/claude-sonnet-4.5',
+    displayName: 'Claude Sonnet 4.5',
+    description: 'Claude Sonnet 4.5 is Anthropic’s most intelligent model to date.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 64_000,
+    abilities: { functionCall: true, reasoning: true, search: true, vision: true },
+    pricing: { input: 3, output: 15, cachedInput: 0.3 },
+    releasedAt: '2025-09-30',
+  },
+  {
+    id: 'anthropic/claude-3-haiku',
+    displayName: 'Claude 3 Haiku',
+    description:
+      'Claude 3 Haiku is Anthropic’s fastest and most compact model, designed for near-instant responses with fast, accurate performance.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 4_096,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.25, output: 1.25, cachedInput: 0.025 },
+    releasedAt: '2024-03-07',
+  },
+  {
+    id: 'meta-llama/llama-3.2-11b-vision-instruct',
+    displayName: 'Llama 3.2 11B Vision',
+    description: 'LLaMA 3.2 is designed for tasks combining vision and text.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { vision: true },
+    pricing: { input: 0.162, output: 0.162 },
+  },
+  {
+    id: 'meta-llama/llama-3.3-70b-instruct:free',
+    displayName: 'Llama 3.3 70B Instruct (Free)',
+    description:
+      'Llama 3.3 is the most advanced multilingual open-source Llama model, delivering near-405B performance at very low cost.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen/qwen-2-7b-instruct:free',
+    displayName: 'Qwen2 7B (Free)',
+    description:
+      'Qwen2 is a new large language model family with stronger understanding and generation.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'meta-llama/llama-3.1-8b-instruct:free',
+    displayName: 'Llama 3.1 8B (Free)',
+    description:
+      'LLaMA 3.1 offers multilingual support and is one of the leading generative models.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+  },
+  {
+    id: 'google/gemma-2-9b-it:free',
+    displayName: 'Gemma 2 9B (Free)',
+    description: 'Gemma 2 is Google’s lightweight open-source text model family.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const openrouterImageModels: ImageModelCard[] = [
   {
@@ -1050,10 +986,6 @@ const openrouterImageModels: ImageModelCard[] = [
     type: 'image',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: openrouterChatModels,

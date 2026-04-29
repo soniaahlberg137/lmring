@@ -1,11 +1,9 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
-import { PostHogProvider } from '@/components/analytics/PostHogProvider';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { ThemeProvider } from '@/components/theme-provider';
 import { loadLocaleMessages } from '@/libs/load-locale-messages';
 import { getRequestLocale } from '@/libs/request-locale';
-import { QueryProvider } from '@/providers';
 import { LanguageProvider } from '@/providers/language-provider';
 import '@/styles/global.css';
 import '@/styles/arena.css';
@@ -76,10 +74,8 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body suppressHydrationWarning className={`min-h-screen`}>
         <LanguageProvider initialLanguage={locale} initialMessages={messages}>
           <ThemeProvider>
-            <QueryProvider>
-              <PostHogProvider>{props.children}</PostHogProvider>
-              <Toaster />
-            </QueryProvider>
+            {props.children}
+            <Toaster />
           </ThemeProvider>
         </LanguageProvider>
       </body>

@@ -10,15 +10,8 @@ const mistralModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6 },
     releasedAt: '2026-02-26',
   },
   {
@@ -30,14 +23,8 @@ const mistralModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.6,
-      output: 1.8,
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { input: 0.6, output: 1.8 },
     releasedAt: '2026-02-26',
   },
   {
@@ -48,13 +35,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.2, output: 0.6 },
     releasedAt: '2026-02-26',
   },
   {
@@ -64,15 +46,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.4,
-      output: 2,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.4, output: 2 },
     releasedAt: '2025-05-14',
   },
   {
@@ -82,16 +57,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 5,
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 5 },
     releasedAt: '2025-05-14',
   },
   {
@@ -99,18 +66,10 @@ const mistralModels: ChatModelCard[] = [
     displayName: 'Magistral Small 2509',
     description: 'Magistral Small 是轻量级推理模型，在速度和推理能力之间取得平衡。',
     type: 'chat',
-    contextWindowTokens: 32_000,
+    contextWindowTokens: 131_072,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.5, output: 1.5 },
     releasedAt: '2025-09-25',
   },
   {
@@ -121,32 +80,18 @@ const mistralModels: ChatModelCard[] = [
     contextWindowTokens: 128_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6 },
   },
   {
     id: 'mistral-large-2411',
     displayName: 'Mistral Large 2411',
     description: 'Mistral Large 2411 版本。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6 },
     releasedAt: '2024-11-01',
   },
   {
@@ -156,14 +101,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 2, output: 6 },
     releasedAt: '2024-07-01',
   },
   {
@@ -174,15 +113,8 @@ const mistralModels: ChatModelCard[] = [
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.2, output: 0.6 },
   },
   {
     id: 'mistral-small-2503',
@@ -191,15 +123,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.2, output: 0.6 },
     releasedAt: '2025-03-01',
   },
   {
@@ -209,14 +134,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 0.2, output: 0.6 },
     releasedAt: '2024-09-01',
   },
   {
@@ -224,16 +143,10 @@ const mistralModels: ChatModelCard[] = [
     displayName: 'Mistral Nemo',
     description: 'Mistral Nemo 是开源的高性能模型，支持函数调用和结构化输出。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.15,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 0.15, output: 0.15 },
     releasedAt: '2024-07-18',
   },
   {
@@ -244,13 +157,8 @@ const mistralModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.2,
-      output: 0.6,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.3, output: 0.9 },
     releasedAt: '2025-07-30',
   },
   {
@@ -260,13 +168,8 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 0.9,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0.3, output: 0.9 },
     releasedAt: '2025-01-01',
   },
   {
@@ -276,47 +179,28 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.25,
-      output: 0.25,
-    },
+    abilities: { functionCall: true },
+    pricing: { input: 0, output: 0 },
   },
   {
     id: 'pixtral-large-latest',
     displayName: 'Pixtral Large',
     description: 'Pixtral Large 是 Mistral 的大型多模态视觉模型。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 8_192,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 6,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 2, output: 6 },
   },
   {
     id: 'pixtral-12b-2409',
     displayName: 'Pixtral 12B',
     description: 'Pixtral 12B 是 Mistral 的中型多模态视觉模型。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 0.15,
-    },
+    abilities: { functionCall: true, structuredOutput: true, vision: true },
+    pricing: { input: 0.15, output: 0.15 },
     releasedAt: '2024-09-01',
   },
   {
@@ -324,16 +208,10 @@ const mistralModels: ChatModelCard[] = [
     displayName: 'Ministral 3B',
     description: 'Ministral 3B 是 Mistral 最轻量的模型，适合边缘部署和低延迟场景。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.04,
-      output: 0.04,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 0.04, output: 0.04 },
     releasedAt: '2024-10-01',
   },
   {
@@ -341,16 +219,10 @@ const mistralModels: ChatModelCard[] = [
     displayName: 'Ministral 8B',
     description: 'Ministral 8B 是轻量级模型，在效率和性能之间取得良好平衡。',
     type: 'chat',
-    contextWindowTokens: 128_000,
+    contextWindowTokens: 131_072,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 0.1,
-      output: 0.1,
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 0.1, output: 0.1 },
     releasedAt: '2024-10-01',
   },
   {
@@ -360,15 +232,96 @@ const mistralModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2.7,
-      output: 8.1,
-    },
     legacy: true,
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { input: 2.7, output: 8.1 },
+  },
+  {
+    id: 'devstral-2512',
+    displayName: 'Devstral 2',
+    description:
+      'Devstral 2 is an enterprise-level text model that excels at using tools to explore codebases, edit multiple files, and power software engineering agents.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true },
+    pricing: { input: 0.4, output: 2 },
+    releasedAt: '2025-12-09',
+  },
+  {
+    id: 'labs-devstral-small-2512',
+    displayName: 'Devstral Small 2',
+    description:
+      'Devstral Small 2 excels at using tools to explore code bases, edit multiple files, and power software engineering agents.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true },
+    pricing: { input: 0.1, output: 0.3 },
+    releasedAt: '2025-12-09',
+  },
+  {
+    id: 'mistral-medium-2508',
+    displayName: 'Mistral Medium 3.1',
+    description:
+      'Mistral Medium 3.1 delivers state-of-the-art performance at 8× lower cost and simplifies enterprise deployment.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    enabled: true,
+    abilities: { functionCall: true },
+    pricing: { input: 0.4, output: 2 },
+  },
+  {
+    id: 'magistral-medium-2509',
+    displayName: 'Magistral Medium 1.2',
+    description:
+      'Magistral Medium 1.2 is a frontier reasoning model from Mistral AI (Sep 2025) with vision support.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { reasoning: true, vision: true },
+    pricing: { input: 2, output: 5 },
+  },
+  {
+    id: 'mistral-small-2603',
+    displayName: 'Mistral Small 4',
+    description:
+      "Mistral's powerful hybrid model unifying instruct, reasoning, and coding capabilities in a single model.",
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0.15, output: 0.6 },
+    releasedAt: '2026-03-16',
+  },
+  {
+    id: 'mistral-small-2506',
+    displayName: 'Mistral Small 3.2',
+    description:
+      'Mistral Small is a cost-effective, fast, and reliable option for translation, summarization, and sentiment analysis.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { functionCall: true },
+    pricing: { input: 0.1, output: 0.3 },
+  },
+  {
+    id: 'mistral-large-2512',
+    displayName: 'Mistral Large 3',
+    description:
+      'Mistral Large 3, is a state-of-the-art, open-weight, general-purpose multimodal model with a granular Mixture-of-Experts architecture.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    enabled: true,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0.5, output: 1.5 },
+    releasedAt: '2025-12-02',
+  },
+  {
+    id: 'labs-leanstral-2603',
+    displayName: 'Leanstral',
+    description:
+      "Mistral's first open-source code agent designed for Lean 4, built for formal proof engineering in realistic repositories.",
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    abilities: { functionCall: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2026-03-16',
   },
 ];
 

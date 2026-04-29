@@ -1,13 +1,6 @@
 import type { ChatModelCard, EmbeddingModelCard } from '../types';
 
-// ============================================================================
-// Chat Models - Local Inference
-// ============================================================================
-
 const ollamaChatModels: ChatModelCard[] = [
-  // =========================================================================
-  // DeepSeek Series
-  // =========================================================================
   {
     id: 'deepseek-v3.1:latest',
     displayName: 'DeepSeek V3.1',
@@ -16,9 +9,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 163_840,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:671b',
@@ -28,9 +19,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:70b',
@@ -38,9 +27,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 70B 模型，适合在本地运行的中大型推理模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:32b',
@@ -48,9 +35,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 32B 模型，平衡性能和资源消耗的推理模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:14b',
@@ -58,9 +43,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 14B 模型，适合在消费级硬件上运行。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:8b',
@@ -68,9 +51,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 8B 轻量级模型，适合资源受限环境。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:7b',
@@ -78,9 +59,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 7B 轻量级模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-r1:1.5b',
@@ -88,9 +67,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1 1.5B 超轻量级模型，可在低配设备上运行。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
   },
   {
     id: 'deepseek-v3:latest',
@@ -114,19 +91,14 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
   },
-
-  // =========================================================================
-  // GPT-OSS Series
-  // =========================================================================
   {
     id: 'gpt-oss:120b',
     displayName: 'GPT OSS 120B',
     description: 'GPT OSS 120B 开源模型，具有强大的通用能力。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
+    releasedAt: '2025-08-05',
   },
   {
     id: 'gpt-oss:20b',
@@ -134,14 +106,9 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'GPT OSS 20B 开源模型，平衡性能和效率。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      reasoning: true,
-    },
+    abilities: { reasoning: true },
+    releasedAt: '2025-08-05',
   },
-
-  // =========================================================================
-  // Qwen Series
-  // =========================================================================
   {
     id: 'qwen3:235b-a22b',
     displayName: 'Qwen3 235B A22B',
@@ -149,10 +116,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:72b',
@@ -160,10 +124,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 72B 大规模模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:32b',
@@ -171,10 +132,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 32B 模型，性能与资源消耗的良好平衡。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:14b',
@@ -182,10 +140,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 14B 中型模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:8b',
@@ -193,10 +148,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 8B 轻量级模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:4b',
@@ -204,10 +156,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 4B 超轻量级模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen3:1.7b',
@@ -215,10 +164,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen3 1.7B 最小模型，适合嵌入式设备。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
+    abilities: { functionCall: true, reasoning: true },
   },
   {
     id: 'qwen2.5:72b',
@@ -226,9 +172,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen2.5 72B 大规模模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'qwen2.5:32b',
@@ -236,9 +180,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen2.5 32B 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'qwen2.5:14b',
@@ -246,9 +188,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen2.5 14B 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'qwen2.5:7b',
@@ -256,9 +196,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Qwen2.5 7B 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'qwen2.5-coder:32b',
@@ -281,10 +219,6 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
   },
-
-  // =========================================================================
-  // Llama Series
-  // =========================================================================
   {
     id: 'llama4:maverick',
     displayName: 'Llama 4 Maverick',
@@ -292,10 +226,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
+    abilities: { functionCall: true, vision: true },
   },
   {
     id: 'llama4:scout',
@@ -303,10 +234,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Meta Llama 4 Scout 模型，支持超长上下文。',
     type: 'chat',
     contextWindowTokens: 10_485_760,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
+    abilities: { functionCall: true, vision: true },
   },
   {
     id: 'llama3.3:70b',
@@ -314,9 +242,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Meta Llama 3.3 70B 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'llama3.2:90b',
@@ -324,9 +250,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Meta Llama 3.2 90B 视觉模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'llama3.2:11b',
@@ -334,9 +258,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Meta Llama 3.2 11B 视觉模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'llama3.2:3b',
@@ -373,10 +295,6 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
   },
-
-  // =========================================================================
-  // Gemma Series
-  // =========================================================================
   {
     id: 'gemma3:27b',
     displayName: 'Gemma 3 27B',
@@ -384,9 +302,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'gemma3:12b',
@@ -394,9 +310,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Google Gemma 3 12B 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'gemma3:4b',
@@ -404,9 +318,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Google Gemma 3 4B 轻量级模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'gemma3:1b',
@@ -436,10 +348,6 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 8_192,
   },
-
-  // =========================================================================
-  // Mistral Series
-  // =========================================================================
   {
     id: 'mistral-large:latest',
     displayName: 'Mistral Large',
@@ -447,9 +355,7 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'mistral-nemo:latest',
@@ -457,9 +363,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Mistral Nemo 模型，12B 参数。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'mistral:latest',
@@ -481,6 +385,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Mixtral 8x22B 大规模 MoE 模型。',
     type: 'chat',
     contextWindowTokens: 65_536,
+    abilities: { functionCall: true },
   },
   {
     id: 'codestral:latest',
@@ -489,10 +394,6 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
   },
-
-  // =========================================================================
-  // Phi Series (Microsoft)
-  // =========================================================================
   {
     id: 'phi4:latest',
     displayName: 'Phi 4',
@@ -515,19 +416,13 @@ const ollamaChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
   },
-
-  // =========================================================================
-  // Other Models
-  // =========================================================================
   {
     id: 'command-r-plus:latest',
     displayName: 'Command R+',
     description: 'Cohere Command R+ 模型，专为 RAG 优化。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'command-r:latest',
@@ -535,9 +430,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Cohere Command R 模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
+    abilities: { functionCall: true },
   },
   {
     id: 'yi:34b',
@@ -601,9 +494,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'LLaVA 视觉语言模型。',
     type: 'chat',
     contextWindowTokens: 4_096,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'llava-llama3:latest',
@@ -611,9 +502,7 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'LLaVA 基于 Llama 3 的视觉语言模型。',
     type: 'chat',
     contextWindowTokens: 8_192,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
   },
   {
     id: 'moondream:latest',
@@ -621,15 +510,369 @@ const ollamaChatModels: ChatModelCard[] = [
     description: 'Moondream 轻量级视觉语言模型。',
     type: 'chat',
     contextWindowTokens: 2_048,
-    abilities: {
-      vision: true,
-    },
+    abilities: { vision: true },
+  },
+  {
+    id: 'deepseek-v3.1:671b',
+    displayName: 'DeepSeek V3.1',
+    description:
+      'DeepSeek V3.1: a next-generation reasoning model with stronger complex reasoning and chain-of-thought, suited for deep analysis tasks.',
+    type: 'chat',
+    contextWindowTokens: 163_840,
+    abilities: { functionCall: true, reasoning: true },
+  },
+  {
+    id: 'qwen3-coder:480b',
+    displayName: 'Qwen3 Coder 480B',
+    description: 'A high-performance long-context model from Alibaba for agents and coding tasks.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'deepseek-r1',
+    displayName: 'DeepSeek R1',
+    description:
+      'DeepSeek-R1 is a reinforcement-learning-driven reasoning model that addresses repetition and readability issues.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+    abilities: { reasoning: true },
+  },
+  {
+    id: 'deepseek-v3',
+    displayName: 'DeepSeek V3 671B',
+    description:
+      'DeepSeek-V3 is a powerful MoE model with 671B total parameters and 37B active per token.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+  },
+  {
+    id: 'llama3.1',
+    displayName: 'Llama 3.1 8B',
+    description:
+      'Llama 3.1 is Meta’s leading model, scaling up to 405B parameters for complex dialogue, multilingual translation, and data analysis.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'codellama',
+    displayName: 'Code Llama 7B',
+    description:
+      'Code Llama is an LLM focused on code generation and discussion, with broad language support for developer workflows.',
+    type: 'chat',
+    contextWindowTokens: 16_384,
+  },
+  {
+    id: 'codellama:13b',
+    displayName: 'Code Llama 13B',
+    description:
+      'Code Llama is an LLM focused on code generation and discussion, with broad language support for developer workflows.',
+    type: 'chat',
+    contextWindowTokens: 16_384,
+  },
+  {
+    id: 'codellama:34b',
+    displayName: 'Code Llama 34B',
+    description:
+      'Code Llama is an LLM focused on code generation and discussion, with broad language support for developer workflows.',
+    type: 'chat',
+    contextWindowTokens: 16_384,
+  },
+  {
+    id: 'codellama:70b',
+    displayName: 'Code Llama 70B',
+    description:
+      'Code Llama is an LLM focused on code generation and discussion, with broad language support for developer workflows.',
+    type: 'chat',
+    contextWindowTokens: 16_384,
+  },
+  {
+    id: 'qwq',
+    displayName: 'QwQ 32B',
+    description: 'QwQ is a reasoning model in the Qwen family.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true, reasoning: true },
+    releasedAt: '2024-11-28',
+  },
+  {
+    id: 'qwen3',
+    displayName: 'Qwen3 7B',
+    description:
+      'Qwen3 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen2.5:0.5b',
+    displayName: 'Qwen2.5 0.5B',
+    description:
+      'Qwen2.5 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'qwen2.5:1.5b',
+    displayName: 'Qwen2.5 1.5B',
+    description:
+      'Qwen2.5 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'qwen2.5',
+    displayName: 'Qwen2.5 7B',
+    description:
+      'Qwen2.5 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'codeqwen',
+    displayName: 'CodeQwen1.5 7B',
+    description:
+      'CodeQwen1.5 is a large language model trained on extensive code data, built for complex programming tasks.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen2:0.5b',
+    displayName: 'Qwen2 0.5B',
+    description:
+      'Qwen2 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen2:1.5b',
+    displayName: 'Qwen2 1.5B',
+    description:
+      'Qwen2 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen2',
+    displayName: 'Qwen2 7B',
+    description:
+      'Qwen2 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'qwen2:72b',
+    displayName: 'Qwen2 72B',
+    description:
+      'Qwen2 is Alibaba’s next-generation large language model with strong performance across diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'gemma2',
+    displayName: 'Gemma 2 9B',
+    description:
+      'Gemma 2 is Google’s efficient model, covering use cases from small apps to complex data processing.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'codegemma',
+    displayName: 'CodeGemma 7B',
+    description:
+      'CodeGemma is a lightweight model for varied programming tasks, enabling fast iteration and integration.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'phi3',
+    displayName: 'Phi-3 3.8B',
+    description:
+      'Phi-3 is Microsoft’s lightweight open model for efficient integration and large-scale reasoning.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'phi3:14b',
+    displayName: 'Phi-3 14B',
+    description:
+      'Phi-3 is Microsoft’s lightweight open model for efficient integration and large-scale reasoning.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'wizardlm2',
+    displayName: 'WizardLM 2 7B',
+    description:
+      'WizardLM 2 is a language model from Microsoft AI that excels at complex dialogue, multilingual tasks, reasoning, and assistants.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'wizardlm2:8x22b',
+    displayName: 'WizardLM 2 8x22B',
+    description:
+      'WizardLM 2 is a language model from Microsoft AI that excels at complex dialogue, multilingual tasks, reasoning, and assistants.',
+    type: 'chat',
+    contextWindowTokens: 65_536,
+  },
+  {
+    id: 'mathstral',
+    displayName: 'MathΣtral 7B',
+    description:
+      'MathΣtral is built for scientific research and mathematical reasoning, with strong computation and explanation.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'mistral',
+    displayName: 'Mistral 7B',
+    description: 'Mistral is Mistral AI’s 7B model, suitable for varied language tasks.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'mixtral',
+    displayName: 'Mixtral 8x7B',
+    description:
+      'Mixtral is Mistral AI’s MoE model with open weights, supporting code generation and language understanding.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'mistral-large',
+    displayName: 'Mixtral Large 123B',
+    description:
+      'Mixtral Large is Mistral’s flagship model, combining code generation, math, and reasoning with a 128K context window.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'mistral-nemo',
+    displayName: 'Mixtral Nemo 12B',
+    description: 'Mistral Nemo is a high-efficiency 12B model from Mistral AI and NVIDIA.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'codestral',
+    displayName: 'Codestral 22B',
+    description:
+      'Codestral is Mistral AI’s first code model, delivering strong code generation support.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'aya',
+    displayName: 'Aya 23 8B',
+    description:
+      'Aya 23 is Cohere’s multilingual model supporting 23 languages for diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'aya:35b',
+    displayName: 'Aya 23 35B',
+    description:
+      'Aya 23 is Cohere’s multilingual model supporting 23 languages for diverse use cases.',
+    type: 'chat',
+    contextWindowTokens: 8_192,
+  },
+  {
+    id: 'command-r',
+    displayName: 'Command R 35B',
+    description:
+      'Command R is an LLM optimized for chat and long-context tasks, ideal for dynamic interaction and knowledge management.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'command-r-plus',
+    displayName: 'Command R+ 104B',
+    description:
+      'Command R+ is a high-performance LLM designed for real enterprise scenarios and complex apps.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    abilities: { functionCall: true },
+  },
+  {
+    id: 'deepseek-v2',
+    displayName: 'DeepSeek V2 16B',
+    description: 'DeepSeek V2 is an efficient MoE model for cost-effective processing.',
+    type: 'chat',
+    contextWindowTokens: 32_768,
+  },
+  {
+    id: 'deepseek-v2:236b',
+    displayName: 'DeepSeek V2 236B',
+    description: 'DeepSeek V2 236B is DeepSeek’s code-focused model with strong code generation.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'deepseek-coder-v2',
+    displayName: 'DeepSeek Coder V2 16B',
+    description:
+      'DeepSeek Coder V2 is an open-source MoE code model that performs strongly on coding tasks, comparable to GPT-4 Turbo.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'deepseek-coder-v2:236b',
+    displayName: 'DeepSeek Coder V2 236B',
+    description:
+      'DeepSeek Coder V2 is an open-source MoE code model that performs strongly on coding tasks, comparable to GPT-4 Turbo.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+  },
+  {
+    id: 'llava',
+    displayName: 'LLaVA 7B',
+    description:
+      'LLaVA is a multimodal model combining a vision encoder and Vicuna for strong vision-language understanding.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+    abilities: { vision: true },
+  },
+  {
+    id: 'llava:13b',
+    displayName: 'LLaVA 13B',
+    description:
+      'LLaVA is a multimodal model combining a vision encoder and Vicuna for strong vision-language understanding.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+    abilities: { vision: true },
+  },
+  {
+    id: 'llava:34b',
+    displayName: 'LLaVA 34B',
+    description:
+      'LLaVA is a multimodal model combining a vision encoder and Vicuna for strong vision-language understanding.',
+    type: 'chat',
+    contextWindowTokens: 4_096,
+    abilities: { vision: true },
+  },
+  {
+    id: 'minicpm-v',
+    displayName: 'MiniCPM-V 8B',
+    description:
+      'MiniCPM-V is OpenBMB’s next-generation multimodal model with excellent OCR and multimodal understanding for wide-ranging use cases.',
+    type: 'chat',
+    contextWindowTokens: 128_000,
+    abilities: { vision: true },
   },
 ];
-
-// ============================================================================
-// Embedding Models
-// ============================================================================
 
 const ollamaEmbeddingModels: EmbeddingModelCard[] = [
   {
@@ -637,16 +880,16 @@ const ollamaEmbeddingModels: EmbeddingModelCard[] = [
     displayName: 'Nomic Embed Text',
     description: 'Nomic Embed Text 文本嵌入模型。',
     type: 'embedding',
-    maxDimension: 768,
     enabled: true,
+    maxDimension: 768,
   },
   {
     id: 'mxbai-embed-large:latest',
     displayName: 'MxBai Embed Large',
     description: 'MxBai Embed Large 高维度嵌入模型。',
     type: 'embedding',
-    maxDimension: 1024,
     enabled: true,
+    maxDimension: 1024,
   },
   {
     id: 'all-minilm:latest',
@@ -663,10 +906,6 @@ const ollamaEmbeddingModels: EmbeddingModelCard[] = [
     maxDimension: 1024,
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: ollamaChatModels,

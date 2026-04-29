@@ -1,8 +1,4 @@
-import type { ChatModelCard, ImageModelCard } from '../types';
-
-// ============================================================================
-// Chat Models
-// ============================================================================
+import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const volcengineChatModels: ChatModelCard[] = [
   {
@@ -13,17 +9,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.2,
-      output: 8,
-      cachedInput: 0.24,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.2, output: 8, cachedInput: 0.24 },
   },
   {
     id: 'deepseek-v3.1',
@@ -33,16 +20,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 4,
-      output: 12,
-      cachedInput: 0.8,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 12, cachedInput: 0.8 },
   },
   {
     id: 'kimi-k2',
@@ -52,15 +31,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 32_768,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      cachedInput: 0.8,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 0.8 },
   },
   {
     id: 'deepseek-r1',
@@ -70,15 +42,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
   },
   {
     id: 'deepseek-r1-distill-qwen-32b',
@@ -86,16 +51,9 @@ const volcengineChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1-Distill 模型是通过微调训练得到的，使用 DeepSeek-R1 生成的样本数据。',
     type: 'chat',
     contextWindowTokens: 65_536,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 6,
-      currency: 'CNY',
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 6 },
   },
   {
     id: 'deepseek-r1-distill-qwen-7b',
@@ -103,16 +61,9 @@ const volcengineChatModels: ChatModelCard[] = [
     description: 'DeepSeek-R1-Distill 7B 版本。',
     type: 'chat',
     contextWindowTokens: 65_536,
-    maxOutput: 8192,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 0.6,
-      output: 2.4,
-      currency: 'CNY',
-    },
+    maxOutput: 8_192,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0.6, output: 2.4 },
   },
   {
     id: 'deepseek-v3',
@@ -122,14 +73,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 2, output: 8 },
   },
   {
     id: 'doubao-seed-1.6-vision',
@@ -139,17 +84,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 8,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 8, cachedInput: 0.16 },
   },
   {
     id: 'doubao-seed-1.6',
@@ -159,17 +95,8 @@ const volcengineChatModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 8,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2, cachedInput: 0.16 },
   },
   {
     id: 'doubao-seed-1.6-thinking',
@@ -179,17 +106,8 @@ const volcengineChatModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 8,
-      cachedInput: 0.16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 8, cachedInput: 0.16 },
   },
   {
     id: 'doubao-seed-1.6-lite',
@@ -198,17 +116,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 2.4,
-      cachedInput: 0.06,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 0.6, cachedInput: 0.06 },
   },
   {
     id: 'doubao-seed-1.6-flash',
@@ -218,17 +127,8 @@ const volcengineChatModels: ChatModelCard[] = [
     contextWindowTokens: 256_000,
     maxOutput: 32_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 0.15,
-      output: 1.5,
-      cachedInput: 0.03,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.15, output: 1.5, cachedInput: 0.03 },
   },
   {
     id: 'doubao-1.5-ui-tars',
@@ -238,16 +138,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3.5,
-      output: 12,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 3.5, output: 12 },
   },
   {
     id: 'doubao-1.5-thinking-vision-pro',
@@ -257,16 +149,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
   },
   {
     id: 'doubao-1.5-thinking-pro',
@@ -275,15 +159,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
   },
   {
     id: 'doubao-1.5-thinking-pro-m',
@@ -292,16 +169,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     maxOutput: 16_000,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 4, output: 16 },
   },
   {
     id: 'doubao-1.5-pro-32k',
@@ -310,14 +179,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
   },
   {
     id: 'doubao-1.5-pro-256k',
@@ -326,11 +189,7 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 256_000,
     maxOutput: 12_288,
-    pricing: {
-      input: 5,
-      output: 9,
-      currency: 'CNY',
-    },
+    pricing: { currency: 'CNY', input: 5, output: 9 },
   },
   {
     id: 'doubao-1.5-lite-32k',
@@ -339,14 +198,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 12_288,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 0.3,
-      output: 0.6,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 0.3, output: 0.6 },
   },
   {
     id: 'doubao-1.5-vision-pro-32k',
@@ -355,15 +208,9 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_768,
     maxOutput: 12_288,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
+    releasedAt: '2025-01-15',
   },
   {
     id: 'doubao-1.5-vision-pro',
@@ -372,15 +219,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2025-03-28',
   },
   {
@@ -390,15 +230,8 @@ const volcengineChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 128_000,
     maxOutput: 16_384,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 4.5,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 4.5 },
     releasedAt: '2025-03-15',
   },
   {
@@ -407,15 +240,9 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包多模态大模型，具备强大的图片理解与推理能力。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    maxOutput: 4096,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 9,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 3, output: 9 },
     releasedAt: '2024-10-28',
   },
   {
@@ -424,15 +251,9 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包轻量版多模态大模型。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    maxOutput: 4096,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 1.5,
-      output: 4.5,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 4.5 },
     releasedAt: '2024-10-15',
   },
   {
@@ -441,12 +262,8 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包效果最好的主力模型，适合处理复杂任务。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    maxOutput: 4096,
-    pricing: {
-      input: 0.8,
-      output: 2,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    pricing: { currency: 'CNY', input: 0.8, output: 2 },
   },
   {
     id: 'doubao-pro-256k',
@@ -454,25 +271,17 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包主力模型 256k 上下文版本。',
     type: 'chat',
     contextWindowTokens: 256_000,
-    maxOutput: 4096,
-    pricing: {
-      input: 5,
-      output: 9,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    pricing: { currency: 'CNY', input: 5, output: 9 },
   },
   {
     id: 'doubao-lite-4k',
     displayName: 'Doubao Lite 4k',
     description: '豆包轻量模型 4k 版本，极致响应速度。',
     type: 'chat',
-    contextWindowTokens: 4096,
-    maxOutput: 4096,
-    pricing: {
-      input: 0.3,
-      output: 0.6,
-      currency: 'CNY',
-    },
+    contextWindowTokens: 4_096,
+    maxOutput: 4_096,
+    pricing: { currency: 'CNY', input: 0.3, output: 0.6 },
   },
   {
     id: 'doubao-lite-32k',
@@ -480,12 +289,8 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包轻量模型，极致响应速度，高性价比。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    maxOutput: 4096,
-    pricing: {
-      input: 0.3,
-      output: 0.6,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    pricing: { currency: 'CNY', input: 0.3, output: 0.6 },
   },
   {
     id: 'doubao-lite-128k',
@@ -493,18 +298,104 @@ const volcengineChatModels: ChatModelCard[] = [
     description: '豆包轻量模型 128k 上下文版本。',
     type: 'chat',
     contextWindowTokens: 128_000,
-    maxOutput: 4096,
-    pricing: {
-      input: 0.8,
-      output: 1,
-      currency: 'CNY',
-    },
+    maxOutput: 4_096,
+    pricing: { currency: 'CNY', input: 0.8, output: 1 },
+  },
+  {
+    id: 'doubao-seed-2.0-pro',
+    displayName: 'Doubao Seed 2.0 Pro',
+    description:
+      "Doubao-Seed-2.0-pro is ByteDance's flagship Agent general model, with all-around leaps in complex task planning and execution capabilities.",
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 3.2, output: 16, cachedInput: 0.64 },
+    releasedAt: '2026-02-15',
+  },
+  {
+    id: 'doubao-seed-2.0-lite',
+    displayName: 'Doubao Seed 2.0 Lite',
+    description:
+      'Doubao-Seed-2.0-lite is a new multimodal deep-reasoning model that delivers better value and a strong choice for common tasks, with a context window up to 256k.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.6, output: 3.6, cachedInput: 0.12 },
+    releasedAt: '2026-02-15',
+  },
+  {
+    id: 'doubao-seed-2.0-mini',
+    displayName: 'Doubao Seed 2.0 Mini',
+    description:
+      'Doubao-Seed-2.0-mini is a lightweight model with fast response and high performance, suitable for small tasks and high-concurrency scenarios.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.2, output: 2, cachedInput: 0.04 },
+    releasedAt: '2026-02-15',
+  },
+  {
+    id: 'doubao-seed-2.0-code',
+    displayName: 'Doubao Seed 2.0 Code',
+    description:
+      'Doubao-Seed-2.0-code is deeply optimized for agentic coding, supports multimodal inputs and a 256k context window, fitting coding, vision understanding, and agent workflows.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 3.2, output: 16, cachedInput: 0.64 },
+    releasedAt: '2026-02-15',
+  },
+  {
+    id: 'doubao-seed-1.8',
+    displayName: 'Doubao Seed 1.8',
+    description:
+      'Doubao-Seed-1.8 has stronger multimodal understanding and Agent capabilities, supports text/image/video input and context caching, and can deliver excellent performance in complex tasks.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    maxOutput: 64_000,
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.8, output: 2, cachedInput: 0.16 },
+    releasedAt: '2025-12-18',
+  },
+  {
+    id: 'glm-4-7',
+    displayName: 'GLM-4.7',
+    description: 'GLM-4.7 is the latest flagship model from Zhipu AI.',
+    type: 'chat',
+    contextWindowTokens: 200_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 8, cachedInput: 0.4 },
+  },
+  {
+    id: 'deepseek-v3.2',
+    displayName: 'DeepSeek V3.2',
+    description:
+      'DeepSeek-V3.2 is the first hybrid reasoning model from DeepSeek that integrates thinking into tool usage.',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2, output: 3, cachedInput: 0.4 },
+  },
+  {
+    id: 'kimi-k2-thinking',
+    displayName: 'Kimi K2 Thinking',
+    description:
+      'Kimi-K2 is a MoE architecture basic model launched by Moonshot AI with super strong code and agent capabilities.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 32_768,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 0.8 },
   },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const volcengineImageModels: ImageModelCard[] = [
   {
@@ -514,7 +405,6 @@ const volcengineImageModels: ImageModelCard[] = [
       'Seedream 4.0 图片生成模型由字节跳动 Seed 团队研发，支持文字与图片输入，提供高可控、高质量的图片生成体验。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-09-09',
     resolutions: [
       '2048x2048',
       '2304x1728',
@@ -525,6 +415,7 @@ const volcengineImageModels: ImageModelCard[] = [
       '1664x2496',
       '3024x1296',
     ],
+    releasedAt: '2025-09-09',
   },
   {
     id: 'doubao-seedream-3-0-t2i-250415',
@@ -533,7 +424,6 @@ const volcengineImageModels: ImageModelCard[] = [
       'Seedream 3.0 图片生成模型由字节跳动 Seed 团队研发，支持文字与图片输入，提供高可控、高质量的图片生成体验。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-04-15',
     resolutions: [
       '1024x1024',
       '864x1152',
@@ -544,6 +434,7 @@ const volcengineImageModels: ImageModelCard[] = [
       '1248x832',
       '1512x648',
     ],
+    releasedAt: '2025-04-15',
   },
   {
     id: 'doubao-seededit-3-0-i2i-250628',
@@ -553,13 +444,96 @@ const volcengineImageModels: ImageModelCard[] = [
     enabled: true,
     releasedAt: '2025-06-28',
   },
+  {
+    id: 'doubao-seedream-5-0-260128',
+    displayName: 'Seedream 5.0 Lite',
+    description: 'Doubao-Seedream-5.0-lite is ByteDance’s latest image-generation model.',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2026-01-28',
+  },
+  {
+    id: 'doubao-seedream-4-5-251128',
+    displayName: 'Seedream 4.5',
+    description:
+      'Seedream 4.5 is ByteDance’s latest multimodal image model, integrating text-to-image, image-to-image, and batch image generation capabilities, while incorporating commonsense and reasoning abilities.',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2025-11-28',
+  },
 ];
 
-// ============================================================================
-// Exports
-// ============================================================================
+const volcengineVideoModels: VideoModelCard[] = [
+  {
+    id: 'doubao-seedance-2-0-260128',
+    displayName: 'Seedance 2.0',
+    description:
+      'Seedance 2.0 by ByteDance is the most powerful video generation model, supporting multimodal reference video generation, video editing, video extension, text-to-video, and image-to-video with synchronized audio.',
+    type: 'video',
+    enabled: true,
+    organization: 'ByteDance',
+    releasedAt: '2026-01-28',
+  },
+  {
+    id: 'doubao-seedance-2-0-fast-260128',
+    displayName: 'Seedance 2.0 Fast',
+    description:
+      'Seedance 2.0 Fast by ByteDance offers the same capabilities as Seedance 2.0 with faster generation speeds at a more competitive price.',
+    type: 'video',
+    enabled: true,
+    organization: 'ByteDance',
+    releasedAt: '2026-01-28',
+  },
+  {
+    id: 'doubao-seedance-1-5-pro-251215',
+    displayName: 'Seedance 1.5 Pro',
+    description:
+      'Seedance 1.5 Pro by ByteDance supports text-to-video, image-to-video (first frame, first+last frame), and audio generation synchronized with visuals.',
+    type: 'video',
+    enabled: true,
+    organization: 'ByteDance',
+    releasedAt: '2025-12-15',
+  },
+  {
+    id: 'doubao-seedance-1-0-pro-fast-251015',
+    displayName: 'Seedance 1.0 Pro Fast',
+    description:
+      'Seedance 1.0 Pro Fast is a comprehensive model designed to minimize cost while maximizing performance, achieving an excellent balance between video generation quality, speed, and price.',
+    type: 'video',
+    organization: 'ByteDance',
+    releasedAt: '2025-10-15',
+  },
+  {
+    id: 'doubao-seedance-1-0-pro-250528',
+    displayName: 'Seedance 1.0 Pro',
+    description:
+      'Seedance 1.0 Pro is a video generation foundation model that supports multi-shot storytelling.',
+    type: 'video',
+    organization: 'ByteDance',
+    releasedAt: '2025-05-28',
+  },
+  {
+    id: 'doubao-seedance-1-0-lite-i2v-250428',
+    displayName: 'Seedance 1.0 Lite I2V',
+    description:
+      'Stable generation quality with high cost-effectiveness, capable of generating videos from a first frame, first-and-last frames, or reference images.',
+    type: 'video',
+    organization: 'ByteDance',
+    releasedAt: '2025-04-28',
+  },
+  {
+    id: 'doubao-seedance-1-0-lite-t2v-250428',
+    displayName: 'Seedance 1.0 Lite T2V',
+    description:
+      'Stable generation quality with high cost-effectiveness, capable of generating videos based on text instructions.',
+    type: 'video',
+    organization: 'ByteDance',
+    releasedAt: '2025-04-28',
+  },
+];
 
 export default {
   chat: volcengineChatModels,
   image: volcengineImageModels,
+  video: volcengineVideoModels,
 };

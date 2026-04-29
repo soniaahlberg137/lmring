@@ -1,11 +1,6 @@
 import type { ChatModelCard, ImageModelCard } from '../types';
 
-// ============================================================================
-// Chat Models
-// ============================================================================
-
 const stepfunChatModels: ChatModelCard[] = [
-  // Step 3 (Latest)
   {
     id: 'step-3',
     displayName: 'Step 3',
@@ -14,18 +9,9 @@ const stepfunChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 64_000,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 4,
-      output: 8,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 1.5, output: 4, cachedInput: 0.3 },
   },
-
-  // Step R1 Series (Reasoning)
   {
     id: 'step-r1-v-mini',
     displayName: 'Step R1 V Mini',
@@ -33,18 +19,9 @@ const stepfunChatModels: ChatModelCard[] = [
       '该模型是拥有强大的图像理解能力的推理大模型，能够处理图像和文字信息，经过深度思考后输出文本生成文本内容。该模型在视觉推理领域表现突出，同时拥有第一梯队的数学、代码、文本推理能力。上下文长度为100k。',
     type: 'chat',
     contextWindowTokens: 100_000,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 8,
-      currency: 'CNY',
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 2.5, output: 8, cachedInput: 0.5 },
   },
-
-  // Step 2 Series
   {
     id: 'step-2-mini',
     displayName: 'Step 2 Mini',
@@ -53,15 +30,8 @@ const stepfunChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 8_000,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 1,
-      output: 2,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 2, cachedInput: 0.2 },
     releasedAt: '2025-01-14',
   },
   {
@@ -70,15 +40,8 @@ const stepfunChatModels: ChatModelCard[] = [
     description: '支持大规模上下文交互，适合复杂对话场景。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 38,
-      output: 120,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 38, output: 120, cachedInput: 7.6 },
   },
   {
     id: 'step-2-16k-exp',
@@ -86,34 +49,18 @@ const stepfunChatModels: ChatModelCard[] = [
     description: 'step-2模型的实验版本，包含最新的特性，滚动更新中。不推荐在正式生产环境使用。',
     type: 'chat',
     contextWindowTokens: 16_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 38,
-      output: 120,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 38, output: 120, cachedInput: 7.6 },
     releasedAt: '2025-01-15',
   },
-
-  // Step 1 Series
   {
     id: 'step-1-8k',
     displayName: 'Step 1 8K',
     description: '小型模型，适合轻量级任务。',
     type: 'chat',
     contextWindowTokens: 8_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 5,
-      output: 20,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 5, output: 20, cachedInput: 1 },
   },
   {
     id: 'step-1-32k',
@@ -121,15 +68,8 @@ const stepfunChatModels: ChatModelCard[] = [
     description: '支持中等长度的对话，适用于多种应用场景。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 15,
-      output: 70,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 15, output: 70, cachedInput: 3 },
   },
   {
     id: 'step-1-256k',
@@ -137,34 +77,17 @@ const stepfunChatModels: ChatModelCard[] = [
     description: '具备超长上下文处理能力，尤其适合长文档分析。',
     type: 'chat',
     contextWindowTokens: 256_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-    },
-    pricing: {
-      input: 95,
-      output: 300,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true },
+    pricing: { currency: 'CNY', input: 95, output: 300, cachedInput: 19 },
   },
-
-  // Step 1V Series (Vision)
   {
     id: 'step-1v-8k',
     displayName: 'Step 1V 8K',
     description: '小型视觉模型，适合基本的图文任务。',
     type: 'chat',
     contextWindowTokens: 8_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 20,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { currency: 'CNY', input: 5, output: 0.2, cachedInput: 1 },
   },
   {
     id: 'step-1v-32k',
@@ -172,19 +95,9 @@ const stepfunChatModels: ChatModelCard[] = [
     description: '支持视觉输入，增强多模态交互体验。',
     type: 'chat',
     contextWindowTokens: 32_000,
-    abilities: {
-      functionCall: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 70,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, search: true, vision: true },
+    pricing: { currency: 'CNY', input: 15, output: 0.6, cachedInput: 3 },
   },
-
-  // Step 1o Series (Vision Enhanced)
   {
     id: 'step-1o-vision-32k',
     displayName: 'Step 1o Vision 32K',
@@ -192,14 +105,8 @@ const stepfunChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 15,
-      output: 70,
-      currency: 'CNY',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 15, output: 0.6, cachedInput: 3 },
     releasedAt: '2025-01-22',
   },
   {
@@ -210,21 +117,32 @@ const stepfunChatModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 32_000,
     enabled: true,
-    abilities: {
-      vision: true,
-    },
-    pricing: {
-      input: 2.5,
-      output: 8,
-      currency: 'CNY',
-    },
+    abilities: { vision: true },
+    pricing: { currency: 'CNY', input: 2.5, output: 8, cachedInput: 0.5 },
     releasedAt: '2025-02-14',
   },
+  {
+    id: 'step-3.5-flash-2603',
+    displayName: 'Step 3.5 Flash 2603',
+    description:
+      'Built on Step 3.5 Flash and optimized for high-frequency agent scenarios, it further improves token efficiency and inference speed while retaining flagship-level reasoning and tool-calling capabilities.',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.7, output: 2.1, cachedInput: 0.14 },
+  },
+  {
+    id: 'step-3.5-flash',
+    displayName: 'Step 3.5 Flash',
+    description:
+      'Stepfun’s flagship language reasoning model.This model has top-notch reasoning capabilities and fast and reliable execution capabilities.Able to decompose and plan complex tasks, call tools quickly and reliably to perform tasks, and be comp...',
+    type: 'chat',
+    contextWindowTokens: 256_000,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 0.7, output: 2.1, cachedInput: 0.14 },
+  },
 ];
-
-// ============================================================================
-// Image Models
-// ============================================================================
 
 const stepfunImageModels: ImageModelCard[] = [
   {
@@ -234,8 +152,8 @@ const stepfunImageModels: ImageModelCard[] = [
       '阶跃星辰新一代生图模型,该模型专注于图像生成任务,能够根据用户提供的文本描述,生成高质量的图像。新模型生成图片质感更真实，中英文文字生成能力更强。',
     type: 'image',
     enabled: true,
-    releasedAt: '2024-08-07',
     resolutions: ['256x256', '512x512', '768x768', '1024x1024', '1280x800', '800x1280'],
+    releasedAt: '2024-08-07',
   },
   {
     id: 'step-1x-medium',
@@ -244,8 +162,8 @@ const stepfunImageModels: ImageModelCard[] = [
       '该模型拥有强大的图像生成能力，支持文本描述作为输入方式。具备原生的中文支持，能够更好的理解和处理中文文本描述，并且能够更准确地捕捉文本描述中的语义信息，并将其转化为图像特征，从而实现更精准的图像生成。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-07-15',
     resolutions: ['256x256', '512x512', '768x768', '1024x1024', '1280x800', '800x1280'],
+    releasedAt: '2025-07-15',
   },
   {
     id: 'step-1x-edit',
@@ -254,14 +172,10 @@ const stepfunImageModels: ImageModelCard[] = [
       '该模型专注于图像编辑任务，能够根据用户提供的图片和文本描述，对图片进行修改和增强。支持多种输入格式，包括文本描述和示例图像。',
     type: 'image',
     enabled: true,
-    releasedAt: '2025-03-04',
     resolutions: ['512x512', '768x768', '1024x1024'],
+    releasedAt: '2025-03-04',
   },
 ];
-
-// ============================================================================
-// Exports
-// ============================================================================
 
 export default {
   chat: stepfunChatModels,

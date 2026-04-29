@@ -7,16 +7,12 @@ const perplexityModels: ChatModelCard[] = [
     description: 'Perplexity深度研究模型，生成专家级研究报告。',
     type: 'chat',
     contextWindowTokens: 127_072,
-    maxOutput: 8192,
+    maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-    },
+    abilities: { reasoning: true, search: true },
+    pricing: { input: 2, output: 8 },
+    releasedAt: '2025-02-14',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'sonar-reasoning-pro',
@@ -24,17 +20,12 @@ const perplexityModels: ChatModelCard[] = [
     description: 'Perplexity高级推理搜索模型，支持复杂查询。',
     type: 'chat',
     contextWindowTokens: 127_072,
-    maxOutput: 8192,
+    maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-    },
+    abilities: { reasoning: true, search: true, vision: true },
+    pricing: { input: 2, output: 8 },
+    releasedAt: '2025-01-21',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'sonar-reasoning',
@@ -42,17 +33,12 @@ const perplexityModels: ChatModelCard[] = [
     description: 'Perplexity推理搜索模型，支持高级查询和跟进。',
     type: 'chat',
     contextWindowTokens: 127_072,
-    maxOutput: 8192,
+    maxOutput: 8_192,
     enabled: true,
-    abilities: {
-      reasoning: true,
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1,
-      output: 5,
-    },
+    abilities: { reasoning: true, search: true, vision: true },
+    pricing: { input: 1, output: 5 },
+    releasedAt: '2025-01-21',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'sonar-pro',
@@ -61,14 +47,10 @@ const perplexityModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 200_000,
     enabled: true,
-    abilities: {
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 3,
-      output: 15,
-    },
+    abilities: { search: true, vision: true },
+    pricing: { input: 3, output: 15 },
+    releasedAt: '2025-01-21',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'sonar',
@@ -77,14 +59,10 @@ const perplexityModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 127_072,
     enabled: true,
-    abilities: {
-      search: true,
-      vision: true,
-    },
-    pricing: {
-      input: 1,
-      output: 1,
-    },
+    abilities: { search: true, vision: true },
+    pricing: { input: 1, output: 1 },
+    releasedAt: '2025-01-21',
+    settings: { searchImpl: 'internal' },
   },
   {
     id: 'r1-1776',
@@ -92,14 +70,9 @@ const perplexityModels: ChatModelCard[] = [
     description: 'DeepSeek R1变体，经过后训练，提供未经审查的事实信息。',
     type: 'chat',
     contextWindowTokens: 127_072,
-    abilities: {
-      reasoning: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 8,
-    },
+    abilities: { reasoning: true, vision: true },
+    pricing: { input: 2, output: 8 },
+    releasedAt: '2025-02-18',
   },
 ];
 

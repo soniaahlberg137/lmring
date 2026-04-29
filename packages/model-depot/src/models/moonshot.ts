@@ -1,7 +1,6 @@
 import type { ChatModelCard } from '../types';
 
 const moonshotModels: ChatModelCard[] = [
-  // Kimi K2 Series (Thinking)
   {
     id: 'kimi-k2-thinking',
     displayName: 'Kimi K2 Thinking',
@@ -10,17 +9,8 @@ const moonshotModels: ChatModelCard[] = [
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 1 },
     releasedAt: '2025-11-06',
   },
   {
@@ -31,21 +21,10 @@ const moonshotModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 262_144,
     maxOutput: 65_536,
-    abilities: {
-      functionCall: true,
-      reasoning: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 8,
-      output: 58,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, reasoning: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 8, output: 58, cachedInput: 1 },
     releasedAt: '2025-11-06',
   },
-
-  // Kimi K2 Series (Standard)
   {
     id: 'kimi-k2-0905-preview',
     displayName: 'Kimi K2 0905',
@@ -53,17 +32,10 @@ const moonshotModels: ChatModelCard[] = [
       'kimi-k2-0905-preview 模型上下文长度为 256k，具备更强的 Agentic Coding 能力、更突出的前端代码的美观度和实用性、以及更好的上下文理解能力。',
     type: 'chat',
     contextWindowTokens: 262_144,
+    maxOutput: 65_536,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 1 },
     releasedAt: '2025-09-05',
   },
   {
@@ -73,15 +45,8 @@ const moonshotModels: ChatModelCard[] = [
       'kimi-k2 是一款具备超强代码和 Agent 能力的 MoE 架构基础模型，总参数 1T，激活参数 32B。在通用知识推理、编程、数学、Agent 等主要类别的基准性能测试中，K2 模型的性能超过其他主流开源模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 4,
-      output: 16,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 4, output: 16, cachedInput: 1 },
     releasedAt: '2025-07-11',
   },
   {
@@ -91,19 +56,10 @@ const moonshotModels: ChatModelCard[] = [
       'kimi-k2 是一款具备超强代码和 Agent 能力的 MoE 架构基础模型，总参数 1T，激活参数 32B。在通用知识推理、编程、数学、Agent 等主要类别的基准性能测试中，K2 模型的性能超过其他主流开源模型。',
     type: 'chat',
     contextWindowTokens: 262_144,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 8,
-      output: 58,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 8, output: 58, cachedInput: 1 },
     releasedAt: '2025-09-05',
   },
-
-  // Kimi Latest
   {
     id: 'kimi-latest',
     displayName: 'Kimi Latest',
@@ -112,37 +68,19 @@ const moonshotModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 131_072,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-      cachedInput: 1,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 10, output: 30, cachedInput: 1 },
     releasedAt: '2025-02-17',
   },
-
-  // Moonshot V1 Series (Auto)
   {
     id: 'moonshot-v1-auto',
     displayName: 'Moonshot V1 Auto',
     description: 'Moonshot V1 Auto 可以根据当前上下文占用的 Tokens 数量来选择合适的模型。',
     type: 'chat',
     contextWindowTokens: 131_072,
-    abilities: {
-      functionCall: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true },
+    pricing: { currency: 'CNY', input: 10, output: 30 },
   },
-
-  // Moonshot V1 Series (Standard)
   {
     id: 'moonshot-v1-128k',
     displayName: 'Moonshot V1 128K',
@@ -152,15 +90,8 @@ const moonshotModels: ChatModelCard[] = [
     contextWindowTokens: 131_072,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 10,
-      output: 30,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 10, output: 30 },
   },
   {
     id: 'moonshot-v1-32k',
@@ -171,15 +102,8 @@ const moonshotModels: ChatModelCard[] = [
     contextWindowTokens: 32_768,
     maxOutput: 4_096,
     enabled: true,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 5,
-      output: 20,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 5, output: 20 },
   },
   {
     id: 'moonshot-v1-8k',
@@ -189,18 +113,9 @@ const moonshotModels: ChatModelCard[] = [
     type: 'chat',
     contextWindowTokens: 8_192,
     maxOutput: 4_096,
-    abilities: {
-      functionCall: true,
-      structuredOutput: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, structuredOutput: true },
+    pricing: { currency: 'CNY', input: 2, output: 10 },
   },
-
-  // Moonshot V1 Vision Series
   {
     id: 'moonshot-v1-8k-vision-preview',
     displayName: 'Moonshot V1 8K Vision Preview',
@@ -208,15 +123,8 @@ const moonshotModels: ChatModelCard[] = [
       'Kimi 视觉模型能够理解图片内容，包括图片文字、图片颜色和物体形状等内容。8K 上下文版本。',
     type: 'chat',
     contextWindowTokens: 8_192,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 2,
-      output: 10,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 10 },
     releasedAt: '2025-01-14',
   },
   {
@@ -226,15 +134,8 @@ const moonshotModels: ChatModelCard[] = [
       'Kimi 视觉模型能够理解图片内容，包括图片文字、图片颜色和物体形状等内容。32K 上下文版本。',
     type: 'chat',
     contextWindowTokens: 32_768,
-    abilities: {
-      functionCall: true,
-      vision: true,
-    },
-    pricing: {
-      input: 5,
-      output: 20,
-      currency: 'CNY',
-    },
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 5, output: 20 },
     releasedAt: '2025-01-14',
   },
   {
@@ -244,16 +145,46 @@ const moonshotModels: ChatModelCard[] = [
       'Kimi 视觉模型能够理解图片内容，包括图片文字、图片颜色和物体形状等内容。128K 上下文版本。',
     type: 'chat',
     contextWindowTokens: 131_072,
+    abilities: { functionCall: true, vision: true },
+    pricing: { currency: 'CNY', input: 10, output: 30 },
+    releasedAt: '2025-01-14',
+  },
+  {
+    id: 'kimi-k2.6',
+    displayName: 'Kimi K2.6',
+    description:
+      "Kimi K2.6 is Kimi's latest and most capable model, delivering stronger long-horizon coding, instruction following, and self-correction while supporting text, image, and video inputs plus chat and agent tasks.",
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 32_768,
+    enabled: true,
     abilities: {
       functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      video: true,
       vision: true,
     },
-    pricing: {
-      input: 10,
-      output: 30,
-      currency: 'CNY',
+    pricing: { currency: 'CNY', input: 6.5, output: 27, cachedInput: 1.1 },
+    releasedAt: '2026-04-20',
+  },
+  {
+    id: 'kimi-k2.5',
+    displayName: 'Kimi K2.5',
+    description:
+      'Kimi K2.5 is Kimi\'s most versatile model to date, featuring a native multimodal architecture that supports both vision and text inputs, "thinking" and "non-thinking" modes, and both conversational and agent tasks.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 32_768,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
     },
-    releasedAt: '2025-01-14',
+    pricing: { currency: 'CNY', input: 4, output: 21, cachedInput: 0.7 },
+    releasedAt: '2026-01-27',
   },
 ];
 

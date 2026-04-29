@@ -8,10 +8,10 @@
     "./postcss": "./postcss.config.js"
   },
   "dependencies": {
-    "@lmring/theme": "workspace:*"
+    "@lmring/theme": "workspace:*",
+    "@tailwindcss/postcss": "^4.2.4"
   },
   "devDependencies": {
-    "postcss": "^8.5.12",
-    "tailwindcss": "^4.2.4"
+    "postcss": "^8.5.12"
   }
 }
