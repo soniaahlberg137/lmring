@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { Sidebar } from '@/components/sidebar';
-import { auth } from '@/libs/Auth';
-import { StoreProviders } from '@/providers/store-providers';
+import { Suspense } from 'react';
+import { SidebarServer } from '@/components/sidebar-server';
+import { SidebarSkeleton } from '@/components/sidebar-skeleton';
+import { PublicClientProviders } from '@/providers/public-client-providers';
 
 export const metadata: Metadata = {
   title: 'AI Model Leaderboard - Compare LLM Benchmarks',
@@ -13,30 +13,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LeaderboardLayout({ children }: { children: React.ReactNode }) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session) {
-    return children;
-  }
-
-  const user = session.user;
-  const userData = {
-    name: user.name || user.email,
-    email: user.email,
-    image: user.image || 'https://github.com/shadcn.png',
-  };
-
+export default function LeaderboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <StoreProviders>
+    <PublicClientProviders>
       <div className="fixed inset-0 flex bg-background">
-        <Sidebar user={userData} />
+        <Suspense fallback={<SidebarSkeleton />}>
+          <SidebarServer />
+        </Suspense>
         <div className="flex flex-col flex-1 overflow-hidden">
           <main className="flex-1 overflow-auto">{children}</main>
         </div>
       </div>
-    </StoreProviders>
+    </PublicClientProviders>
   );
 }
