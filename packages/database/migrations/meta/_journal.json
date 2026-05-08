@@ -169,6 +169,13 @@
       "when": 1772698098231,
       "tag": "0023_messy_starfox",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1778198400000,
+      "tag": "0024_add_webdev_rls_policies",
+      "breakpoints": true
     }
   ]
 }
