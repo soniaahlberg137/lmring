@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@lmring/theme": "workspace:*",
-    "@tailwindcss/postcss": "^4.2.4"
+    "@tailwindcss/postcss": "^4.3.0"
   },
   "devDependencies": {
     "postcss": "^8.5.14"
