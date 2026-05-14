@@ -59,7 +59,7 @@
     "zustand": "5.0.13"
   },
   "devDependencies": {
-    "@chromatic-com/playwright": "^0.13.4",
+    "@chromatic-com/playwright": "^0.14.0",
     "@lmring/biome-config": "workspace:*",
     "@lmring/tailwind-config": "workspace:*",
     "@lmring/typescript-config": "workspace:*",
@@ -75,7 +75,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/browser-playwright": "^4.1.6",
     "@vitest/coverage-v8": "^4.1.6",
-    "checkly": "^7.14.0",
+    "checkly": "^7.15.0",
     "cross-env": "^10.1.0",
     "happy-dom": "20.9.0",
     "postcss": "^8.5.14",
