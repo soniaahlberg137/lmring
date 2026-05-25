@@ -1,12 +1,17 @@
 import { and, db, eq } from '@lmring/database';
 import { sharedResults, webdevResponses, webdevSessions } from '@lmring/database/schema';
 import { APIError, Sandbox } from '@vercel/sandbox';
+import { nanoid } from 'nanoid';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
 import { webdevSharedSandboxSchema } from '@/libs/webdev-validation';
 
 const MAX_SHARED_SANDBOX_PER_IP_PER_DAY = 10;
 const VITE_CONFIG_PATTERN = /(?:^|[\\/])vite\.config\.(js|ts|mjs|mts)$/;
+
+function generateSandboxName(): string {
+  return `webdev-shared-${nanoid(16)}`;
+}
 
 const ipRateLimitMap = new Map<string, { count: number; resetAt: number }>();
 
@@ -204,6 +209,7 @@ export async function POST(request: Request) {
 
               sandboxInstance = await Sandbox.create({
                 ...getSandboxCredentials(),
+                name: generateSandboxName(),
                 source: { type: 'snapshot', snapshotId },
                 timeout: 5 * 60 * 1000,
                 ports: [5173],
@@ -222,7 +228,7 @@ export async function POST(request: Request) {
               sendEvent({
                 type: 'sandbox-ready',
                 responseId,
-                sandboxId: sandboxInstance.sandboxId,
+                sandboxId: sandboxInstance.name,
                 previewUrl,
               });
 
@@ -243,6 +249,7 @@ export async function POST(request: Request) {
 
           sandboxInstance = await Sandbox.create({
             ...getSandboxCredentials(),
+            name: generateSandboxName(),
             timeout: 5 * 60 * 1000,
             resources: { vcpus: 2 },
             ports: [5173],
@@ -276,7 +283,7 @@ export async function POST(request: Request) {
           sendEvent({
             type: 'sandbox-ready',
             responseId,
-            sandboxId: sandboxInstance.sandboxId,
+            sandboxId: sandboxInstance.name,
             previewUrl,
           });
 

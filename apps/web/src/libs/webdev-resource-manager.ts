@@ -99,9 +99,10 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
   lastExtendedAt.set(sandboxId, now);
 
   try {
-    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
+    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), name: sandboxId });
     await sandbox.extendTimeout(EXTEND_AMOUNT_MS);
-    const newExpiry = new Date(Date.now() + sandbox.timeout);
+    const timeoutMs = sandbox.timeout ?? EXTEND_AMOUNT_MS;
+    const newExpiry = new Date(Date.now() + timeoutMs);
 
     await db
       .update(webdevResponses)
@@ -122,7 +123,7 @@ export async function extendSandboxTimeout(sandboxId: string): Promise<boolean> 
  */
 export async function cleanupSandbox(sandboxId: string): Promise<void> {
   try {
-    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
+    const sandbox = await Sandbox.get({ ...getSandboxCredentials(), name: sandboxId });
     await sandbox.stop();
   } catch {}
 

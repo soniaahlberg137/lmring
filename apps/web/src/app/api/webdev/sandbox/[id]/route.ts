@@ -42,7 +42,7 @@ export async function DELETE(request: Request, { params }: { params: Promise<{ i
     }
 
     try {
-      const sandbox = await Sandbox.get({ ...getSandboxCredentials(), sandboxId });
+      const sandbox = await Sandbox.get({ ...getSandboxCredentials(), name: sandboxId });
       await sandbox.stop();
     } catch (sandboxError) {
       logError('WebDev sandbox stop warning', sandboxError, { sandboxId });

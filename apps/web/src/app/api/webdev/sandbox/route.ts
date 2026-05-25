@@ -2,6 +2,7 @@ import { db, eq } from '@lmring/database';
 import { webdevResponses } from '@lmring/database/schema';
 import { SANDBOX_CONFIG } from '@lmring/env';
 import { APIError, Sandbox, Snapshot } from '@vercel/sandbox';
+import { nanoid } from 'nanoid';
 import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
@@ -9,6 +10,16 @@ import { checkSandboxRateLimit } from '@/libs/webdev-resource-manager';
 import { webdevSandboxCreateSchema } from '@/libs/webdev-validation';
 
 const VITE_CONFIG_PATTERN = /(?:^|[\\/])vite\.config\.(js|ts|mjs|mts)$/;
+
+function generateSandboxName(): string {
+  return `webdev-${nanoid(16)}`;
+}
+
+function getSandboxExpiry(sandbox: Sandbox): string | null {
+  const timeoutMs = sandbox.timeout;
+  if (!timeoutMs || timeoutMs <= 0) return null;
+  return new Date(Date.now() + timeoutMs).toISOString();
+}
 
 async function deleteOldSnapshot(snapshotId: string): Promise<void> {
   try {
@@ -185,6 +196,7 @@ export async function POST(request: Request) {
 
               sandboxInstance = await Sandbox.create({
                 ...getSandboxCredentials(),
+                name: generateSandboxName(),
                 source: { type: 'snapshot', snapshotId },
                 timeout: 5 * 60 * 1000,
                 ports: [5173],
@@ -199,10 +211,8 @@ export async function POST(request: Request) {
               });
 
               const previewUrl = sandboxInstance.domain(5173);
-              const newSandboxId = sandboxInstance.sandboxId;
-              const timeoutMs = sandboxInstance.timeout;
-              const expiresAt =
-                timeoutMs > 0 ? new Date(Date.now() + timeoutMs).toISOString() : null;
+              const newSandboxId = sandboxInstance.name;
+              const expiresAt = getSandboxExpiry(sandboxInstance);
 
               sendEvent({
                 type: 'sandbox-ready',
@@ -262,6 +272,7 @@ export async function POST(request: Request) {
 
           sandboxInstance = await Sandbox.create({
             ...getSandboxCredentials(),
+            name: generateSandboxName(),
             timeout: 5 * 60 * 1000,
             resources: { vcpus: 2 },
             ports: [5173],
@@ -294,9 +305,8 @@ export async function POST(request: Request) {
           });
 
           const previewUrl = sandboxInstance.domain(5173);
-          const sandboxId = sandboxInstance.sandboxId;
-          const timeoutMs = sandboxInstance.timeout;
-          const expiresAt = timeoutMs > 0 ? new Date(Date.now() + timeoutMs).toISOString() : null;
+          const sandboxId = sandboxInstance.name;
+          const expiresAt = getSandboxExpiry(sandboxInstance);
 
           sendEvent({
             type: 'sandbox-ready',
@@ -338,6 +348,7 @@ export async function POST(request: Request) {
 
             sandboxInstance = await Sandbox.create({
               ...getSandboxCredentials(),
+              name: generateSandboxName(),
               source: { type: 'snapshot', snapshotId: newSnapshotId },
               timeout: 5 * 60 * 1000,
               ports: [5173],
@@ -350,10 +361,8 @@ export async function POST(request: Request) {
             });
 
             const newPreviewUrl = sandboxInstance.domain(5173);
-            const newSandboxId = sandboxInstance.sandboxId;
-            const newTimeoutMs = sandboxInstance.timeout;
-            const newExpiresAt =
-              newTimeoutMs > 0 ? new Date(Date.now() + newTimeoutMs).toISOString() : null;
+            const newSandboxId = sandboxInstance.name;
+            const newExpiresAt = getSandboxExpiry(sandboxInstance);
 
             sendEvent({
               type: 'snapshot-ready',
