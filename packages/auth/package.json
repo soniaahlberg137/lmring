@@ -27,6 +27,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@better-auth/core": "^1.6.13",
     "@better-auth/drizzle-adapter": "^1.6.13",
     "@lmring/database": "workspace:*",
     "better-auth": "^1.6.13",

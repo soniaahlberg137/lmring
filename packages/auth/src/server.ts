@@ -2,11 +2,12 @@
  * Server-side authentication instance
  */
 
-import { betterAuth, generateId } from 'better-auth';
+import { generateId } from '@better-auth/core/utils/id';
+import { betterAuth } from 'better-auth/minimal';
 import { createAuthMiddleware } from 'better-auth/api';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
-import { genericOAuth } from 'better-auth/plugins';
-import { emailOTP } from 'better-auth/plugins';
+import { emailOTP } from 'better-auth/plugins/email-otp';
+import { genericOAuth } from 'better-auth/plugins/generic-oauth';
 import {
   db,
   users,

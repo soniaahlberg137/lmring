@@ -1,11 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 
 // Mock external dependencies
-vi.mock('better-auth', () => ({
+vi.mock('better-auth/minimal', () => ({
   betterAuth: vi.fn(() => ({
     api: {},
     handler: vi.fn(),
   })),
+}));
+
+vi.mock('@better-auth/core/utils/id', () => ({
   generateId: vi.fn(() => 'mock-id'),
 }));
 
@@ -27,7 +30,7 @@ vi.mock('@lmring/database', () => ({
 }));
 
 import { createAuth } from './server';
-import { betterAuth } from 'better-auth';
+import { betterAuth } from 'better-auth/minimal';
 import { drizzleAdapter } from '@better-auth/drizzle-adapter';
 
 describe('server', () => {
