@@ -25,10 +25,10 @@
     "@lmring/vitest-config": "workspace:*",
     "@testing-library/react": "^16.3.2",
     "@types/node": "^25.9.1",
-    "@types/react": "^19.2.15",
-    "@vitest/coverage-v8": "^4.1.7",
+    "@types/react": "^19.2.16",
+    "@vitest/coverage-v8": "^4.1.8",
     "happy-dom": "20.9.0",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.7"
+    "vitest": "^4.1.8"
   }
 }
