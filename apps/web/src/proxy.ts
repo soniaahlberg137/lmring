@@ -44,11 +44,42 @@ const aj = arcjet.withRule(
   }),
 );
 
+// When the app sits behind Cloudflare (Cloudflare -> Vercel), Vercel rewrites
+// `x-real-ip` / `x-forwarded-for` to Cloudflare's edge IP, and the real client
+// IP is only present in `cf-connecting-ip`. Arcjet's IP detection is locked to
+// the "vercel" platform branch (because `process.env.VERCEL` is set), so it only
+// reads `x-real-ip` / `x-vercel-forwarded-for` and never `cf-connecting-ip`.
+// The result: every verified bot (Sentry uptime, search engines, etc.) is judged
+// against Cloudflare's IP, fails verification, is flagged spoofed -> UNKNOWN_BOT
+// -> 403. Hoisting the real client IP into the headers Arcjet trusts restores
+// correct verification without disabling protection.
+// See @arcjet/ip findIp() and https://developers.cloudflare.com/fundamentals/reference/http-request-headers/
+function withRealClientIp(request: NextRequest): NextRequest {
+  const cfConnectingIp = request.headers.get('cf-connecting-ip');
+  if (!cfConnectingIp) {
+    return request;
+  }
+
+  const headers = new Headers(request.headers);
+  headers.set('x-real-ip', cfConnectingIp);
+  // Prepend the real client IP so Arcjet resolves it as the closest, non-proxy
+  // address even when iterating the forwarded-for chain.
+  const existingForwardedFor = headers.get('x-forwarded-for');
+  headers.set(
+    'x-forwarded-for',
+    existingForwardedFor ? `${cfConnectingIp}, ${existingForwardedFor}` : cfConnectingIp,
+  );
+
+  return new Request(request, { headers }) as unknown as NextRequest;
+}
+
 export default async function proxy(request: NextRequest, _event: NextFetchEvent) {
   // Verify the request with Arcjet
   // Use process.env instead of Env to reduce bundle size in middleware
   if (process.env.ARCJET_KEY) {
-    const decision = await aj.protect(request);
+    // Normalize the client IP first so Arcjet's bot verification runs against the
+    // real visitor and not the Cloudflare edge IP (avoids false spoofed/UNKNOWN_BOT).
+    const decision = await aj.protect(withRealClientIp(request));
 
     if (decision.isDenied()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
