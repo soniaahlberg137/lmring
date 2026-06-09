@@ -33,7 +33,10 @@ function matchesAnyPath(pathname: string, paths: string[]): boolean {
 // Improve security with Arcjet
 const aj = arcjet.withRule(
   detectBot({
-    mode: 'LIVE',
+    // DRY_RUN: log only, never block. Switched off LIVE because Cloudflare -> Vercel
+    // makes Arcjet resolve the Cloudflare edge IP and falsely flag verified bots as
+    // spoofed -> UNKNOWN_BOT -> 403. Re-enable LIVE once real client IP is resolved.
+    mode: 'DRY_RUN',
     // Block all bots except the following
     allow: [
       // See https://docs.arcjet.com/bot-protection/identifying-bots
