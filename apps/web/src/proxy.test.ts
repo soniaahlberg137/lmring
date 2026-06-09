@@ -112,9 +112,13 @@ describe('proxy', () => {
   });
 
   describe('Arcjet Bot Protection', () => {
-    it('should return 403 when request is denied by Arcjet', async () => {
+    it('should return 403 when a bot is denied from a hosting IP', async () => {
       process.env.ARCJET_KEY = 'test-key';
-      mockProtect.mockResolvedValue({ isDenied: () => true });
+      mockProtect.mockResolvedValue({
+        isDenied: () => true,
+        reason: { isBot: () => true },
+        ip: { isHosting: () => true },
+      });
       mockGetSession.mockResolvedValue(null);
 
       const { default: proxy } = await import('./proxy');
@@ -126,9 +130,29 @@ describe('proxy', () => {
       expect(body).toEqual({ error: 'Forbidden' });
     });
 
+    it('should NOT block a denied bot from a non-hosting (residential) IP', async () => {
+      process.env.ARCJET_KEY = 'test-key';
+      mockProtect.mockResolvedValue({
+        isDenied: () => true,
+        reason: { isBot: () => true },
+        ip: { isHosting: () => false },
+      });
+      mockGetSession.mockResolvedValue(null);
+
+      const { default: proxy } = await import('./proxy');
+      const request = createMockRequest('/');
+      const response = await proxy(request, createMockEvent());
+
+      expect(response.status).not.toBe(403);
+    });
+
     it('should continue when request is allowed by Arcjet', async () => {
       process.env.ARCJET_KEY = 'test-key';
-      mockProtect.mockResolvedValue({ isDenied: () => false });
+      mockProtect.mockResolvedValue({
+        isDenied: () => false,
+        reason: { isBot: () => false },
+        ip: { isHosting: () => false },
+      });
       mockGetSession.mockResolvedValue(null);
 
       const { default: proxy } = await import('./proxy');

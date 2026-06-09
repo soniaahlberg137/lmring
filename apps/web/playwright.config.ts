@@ -13,6 +13,17 @@ const baseURL = process.env.PLAYWRIGHT_BASE_URL || DEFAULT_REMOTE_BASE_URL;
 const localBaseURL = `http://localhost:${PORT}`;
 const shouldStartLocalWebServer = baseURL === localBaseURL;
 
+// Boot the production standalone build for CI e2e runs.
+// `output: 'standalone'` in a monorepo nests the server at
+// `.next/standalone/apps/web/server.js` and ships it WITHOUT `.next/static`
+// or `public/`, so we copy those assets in before starting the server.
+const STANDALONE_DIR = '.next/standalone/apps/web';
+const CI_STANDALONE_COMMAND = [
+  `cp -r .next/static ${STANDALONE_DIR}/.next/static`,
+  `cp -r public ${STANDALONE_DIR}/public`,
+  `node ${STANDALONE_DIR}/server.js`,
+].join(' && ');
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
@@ -38,7 +49,13 @@ export default defineConfig<ChromaticConfig>({
   // https://playwright.dev/docs/test-advanced#launching-a-development-web-server-during-the-tests
   webServer: shouldStartLocalWebServer
     ? {
-        command: process.env.CI ? 'node .next/standalone/server.js' : 'pnpm run dev:next',
+        // In CI we run the production standalone build. With `output: 'standalone'`
+        // in a monorepo, Next emits the server under `.next/standalone/apps/web/`,
+        // and it does NOT bundle `.next/static` or `public/` — those must be copied
+        // in next to the server, otherwise client chunks 404, the page never
+        // hydrates, and `networkidle` / `toHaveTitle` fail with an empty document.
+        // See https://nextjs.org/docs/app/api-reference/config/next-config-js/output
+        command: process.env.CI ? CI_STANDALONE_COMMAND : 'pnpm run dev',
         url: localBaseURL,
         timeout: 2 * 60 * 1000,
         reuseExistingServer: !process.env.CI,

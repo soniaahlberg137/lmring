@@ -46,9 +46,7 @@ export default arcjet({
   rules: [
     // Protect against common attacks with Arcjet Shield
     shield({
-      // DRY_RUN: log only, never block. Same reason as the bot rule in proxy.ts —
-      // Cloudflare -> Vercel breaks client IP resolution and causes false 403s.
-      mode: 'DRY_RUN',
+      mode: 'LIVE', // will block requests. Use "DRY_RUN" to log only
     }),
     // Other rules are added in different routes
   ],

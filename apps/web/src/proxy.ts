@@ -33,10 +33,7 @@ function matchesAnyPath(pathname: string, paths: string[]): boolean {
 // Improve security with Arcjet
 const aj = arcjet.withRule(
   detectBot({
-    // DRY_RUN: log only, never block. Switched off LIVE because Cloudflare -> Vercel
-    // makes Arcjet resolve the Cloudflare edge IP and falsely flag verified bots as
-    // spoofed -> UNKNOWN_BOT -> 403. Re-enable LIVE once real client IP is resolved.
-    mode: 'DRY_RUN',
+    mode: 'LIVE',
     // Block all bots except the following
     allow: [
       // See https://docs.arcjet.com/bot-protection/identifying-bots
@@ -84,7 +81,12 @@ export default async function proxy(request: NextRequest, _event: NextFetchEvent
     // real visitor and not the Cloudflare edge IP (avoids false spoofed/UNKNOWN_BOT).
     const decision = await aj.protect(withRealClientIp(request));
 
-    if (decision.isDenied()) {
+    // Only block bots coming from hosting/data-center IPs. Real users browse from
+    // residential or mobile networks (isHosting() === false), so even if Arcjet
+    // tags them as UNKNOWN_BOT they are never blocked. This is Arcjet's own
+    // recommended guard for middleware to avoid false positives.
+    // https://docs.arcjet.com/bot-protection/reference (Middleware example)
+    if (decision.isDenied() && decision.reason.isBot() && decision.ip.isHosting()) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
   }
