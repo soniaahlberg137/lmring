@@ -38,14 +38,14 @@ describe('Arcjet', () => {
     process.env.ARCJET_KEY = originalEnv;
   });
 
-  it('should configure shield rule in LIVE mode', async () => {
+  it('should configure shield rule in DRY_RUN mode', async () => {
     const originalEnv = process.env.ARCJET_KEY;
     process.env.ARCJET_KEY = 'test-arcjet-key';
 
     vi.resetModules();
     await import('./Arcjet');
 
-    expect(mockShield).toHaveBeenCalledWith({ mode: 'LIVE' });
+    expect(mockShield).toHaveBeenCalledWith({ mode: 'DRY_RUN' });
 
     process.env.ARCJET_KEY = originalEnv;
   });
@@ -92,7 +92,7 @@ describe('Arcjet', () => {
     const callArgs = mockArcjet.mock.calls[0]?.[0];
     expect(callArgs?.rules).toBeDefined();
     expect(callArgs?.rules).toHaveLength(1);
-    expect(callArgs?.rules?.[0]).toEqual({ type: 'shield', config: { mode: 'LIVE' } });
+    expect(callArgs?.rules?.[0]).toEqual({ type: 'shield', config: { mode: 'DRY_RUN' } });
 
     process.env.ARCJET_KEY = originalEnv;
   });
