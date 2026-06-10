@@ -17,8 +17,9 @@ export function selectRandomModel(
     return '';
   }
 
-  // Filter out excluded models
-  const eligibleModels = availableModels.filter((model) => !excludeIds.includes(model.id));
+  // Filter out excluded models (Set keeps this O(n) instead of O(n*m))
+  const excludedIdSet = new Set(excludeIds);
+  const eligibleModels = availableModels.filter((model) => !excludedIdSet.has(model.id));
 
   // If no eligible models, fall back to all available models
   const poolToSelectFrom = eligibleModels.length > 0 ? eligibleModels : availableModels;

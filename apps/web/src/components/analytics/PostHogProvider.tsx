@@ -1,30 +1,33 @@
 'use client';
 
 import { env } from '@lmring/env';
-import posthog from 'posthog-js';
-import { PostHogProvider as PHProvider } from 'posthog-js/react';
-import { useEffect } from 'react';
-import { SuspendedPostHogPageView } from './PostHogPageView';
+import { lazy, Suspense, useEffect, useState } from 'react';
+
+// posthog-js (~60KB gzipped) is non-critical analytics: defer it until after
+// hydration so it never competes with the initial bundle or hydration work.
+const PostHogAnalytics = lazy(() =>
+  import('./PostHogAnalytics').then((mod) => ({ default: mod.PostHogAnalytics })),
+);
 
 export const PostHogProvider = (props: { children: React.ReactNode }) => {
+  const [analyticsReady, setAnalyticsReady] = useState(false);
+
   useEffect(() => {
     if (env.NEXT_PUBLIC_POSTHOG_KEY) {
-      posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
-        api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
-        capture_pageview: false, // Disable automatic pageview capture, as we capture manually
-        capture_pageleave: true, // Enable pageleave capture
-      });
+      setAnalyticsReady(true);
     }
   }, []);
 
-  if (!env.NEXT_PUBLIC_POSTHOG_KEY) {
-    return props.children;
-  }
-
+  // children always render at the same tree position so toggling analytics
+  // on never remounts the app subtree
   return (
-    <PHProvider client={posthog}>
-      <SuspendedPostHogPageView />
+    <>
       {props.children}
-    </PHProvider>
+      {analyticsReady && (
+        <Suspense fallback={null}>
+          <PostHogAnalytics />
+        </Suspense>
+      )}
+    </>
   );
 };

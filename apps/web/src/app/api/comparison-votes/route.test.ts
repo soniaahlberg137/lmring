@@ -236,7 +236,9 @@ describe('Comparison Votes API', () => {
     });
 
     it('should return 404 when message not found', async () => {
-      mockDbInstance.limit.mockResolvedValueOnce([]);
+      // Queries run in parallel: message (limit), participants (where), existing vote (limit)
+      mockDbInstance.limit.mockResolvedValueOnce([]).mockResolvedValueOnce([]);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce([]);
 
       const request = createMockRequest('POST', 'http://localhost:3000/api/comparison-votes', {
         messageId: UUID_MSG,
@@ -254,7 +256,10 @@ describe('Comparison Votes API', () => {
     });
 
     it('should return 404 when message belongs to different user', async () => {
-      mockDbInstance.limit.mockResolvedValueOnce([{ id: UUID_MSG, userId: 'other-user-id' }]);
+      mockDbInstance.limit
+        .mockResolvedValueOnce([{ id: UUID_MSG, userId: 'other-user-id' }])
+        .mockResolvedValueOnce([]);
+      mockDbInstance.where.mockReturnValueOnce(mockDbInstance).mockResolvedValueOnce([]);
 
       const request = createMockRequest('POST', 'http://localhost:3000/api/comparison-votes', {
         messageId: UUID_MSG,
@@ -272,7 +277,9 @@ describe('Comparison Votes API', () => {
     });
 
     it('should return 400 when participant responses not found', async () => {
-      mockDbInstance.limit.mockResolvedValueOnce([{ id: UUID_MSG, userId: 'test-user-id' }]);
+      mockDbInstance.limit
+        .mockResolvedValueOnce([{ id: UUID_MSG, userId: 'test-user-id' }])
+        .mockResolvedValueOnce([]);
       mockDbInstance.where
         .mockReturnValueOnce(mockDbInstance)
         .mockResolvedValueOnce([{ id: UUID_1, messageId: UUID_MSG }]);

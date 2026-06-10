@@ -159,7 +159,8 @@ export function Sidebar({ user }: SidebarProps) {
     setModelsLastLoadedAt(null);
   }, [resetConversation, setModelsLastLoadedAt]);
 
-  const SidebarContent = () => (
+  // JSX variable (not an inline component) so React reconciles instead of remounting on every render
+  const sidebarContent = (
     <>
       <div className="h-16 flex items-center justify-between px-4 border-b border-sidebar-border">
         {collapsed ? (
@@ -420,7 +421,7 @@ export function Sidebar({ user }: SidebarProps) {
               >
                 <XIcon className="h-4 w-4" />
               </button>
-              <SidebarContent />
+              {sidebarContent}
             </motion.div>
           </>
         )}
@@ -432,7 +433,7 @@ export function Sidebar({ user }: SidebarProps) {
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
         className={`hidden lg:flex flex-col h-screen bg-sidebar sidebar-container z-30 ${sidebarWidth}`}
       >
-        <SidebarContent />
+        {sidebarContent}
       </motion.aside>
     </>
   );

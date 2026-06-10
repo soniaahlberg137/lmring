@@ -3,7 +3,7 @@
 import i18next from 'i18next';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
-import { I18nConfig, type Locale, isValidLocale } from './config';
+import { I18nConfig, isValidLocale, type Locale } from './config';
 
 let globalI18nInstance: typeof i18next | null = null;
 
@@ -24,7 +24,7 @@ export function I18nProvider({ children, locale, messages }: I18nProviderProps) 
 
   const validLocale: Locale = useMemo(
     () => (isValidLocale(locale) ? locale : I18nConfig.defaultLocale),
-    [locale]
+    [locale],
   );
 
   useEffect(() => {
@@ -34,13 +34,31 @@ export function I18nProvider({ children, locale, messages }: I18nProviderProps) 
   useEffect(() => {
     if (initializedRef.current && globalI18nInstance) {
       if (globalI18nInstance.language !== validLocale) {
-        globalI18nInstance.addResourceBundle(validLocale, 'translation', messagesRef.current, true, true);
+        globalI18nInstance.addResourceBundle(
+          validLocale,
+          'translation',
+          messagesRef.current,
+          true,
+          true,
+        );
         globalI18nInstance.changeLanguage(validLocale);
       }
       return;
     }
 
     if (globalI18nInstance) {
+      // Re-mounted (e.g. locale-keyed remount): the shared instance may still
+      // be on the previous language — sync resources and language before reuse
+      if (globalI18nInstance.language !== validLocale) {
+        globalI18nInstance.addResourceBundle(
+          validLocale,
+          'translation',
+          messagesRef.current,
+          true,
+          true,
+        );
+        globalI18nInstance.changeLanguage(validLocale);
+      }
       setInstance(globalI18nInstance);
       initializedRef.current = true;
       return;

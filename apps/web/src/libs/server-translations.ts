@@ -9,7 +9,7 @@ export async function getServerTranslations(locale: Locale) {
 
     if (values) {
       for (const [k, v] of Object.entries(values)) {
-        message = message.replace(new RegExp(`\\{${k}\\}`, 'g'), String(v));
+        message = message.replaceAll(`{${k}}`, String(v));
       }
     }
 

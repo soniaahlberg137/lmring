@@ -4,6 +4,7 @@ import { APIError, Sandbox } from '@vercel/sandbox';
 import { nanoid } from 'nanoid';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
+import { waitForPortReady } from '@/libs/webdev-sandbox';
 import { webdevSharedSandboxSchema } from '@/libs/webdev-validation';
 
 const MAX_SHARED_SANDBOX_PER_IP_PER_DAY = 10;
@@ -223,6 +224,8 @@ export async function POST(request: Request) {
                 detached: true,
               });
 
+              await waitForPortReady(sandboxInstance, 5173);
+
               const previewUrl = sandboxInstance.domain(5173);
 
               sendEvent({
@@ -241,6 +244,13 @@ export async function POST(request: Request) {
                 responseId,
                 snapshotId,
               });
+
+              if (sandboxInstance) {
+                try {
+                  await sandboxInstance.stop();
+                } catch {}
+                sandboxInstance = null;
+              }
             }
           }
 
@@ -277,6 +287,8 @@ export async function POST(request: Request) {
             args: ['run', 'dev'],
             detached: true,
           });
+
+          await waitForPortReady(sandboxInstance, 5173);
 
           const previewUrl = sandboxInstance.domain(5173);
 

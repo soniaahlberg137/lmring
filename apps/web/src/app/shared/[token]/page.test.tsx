@@ -1,6 +1,20 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import SharedConversationPage from './page';
+
+// The page uses useQuery, so tests render it inside a QueryClientProvider.
+// retryDelay: 0 keeps the error-path retries instant.
+const renderPage = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retryDelay: 0 } },
+  });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <SharedConversationPage />
+    </QueryClientProvider>,
+  );
+};
 
 const { useParamsMock } = vi.hoisted(() => ({
   useParamsMock: vi.fn(() => ({ token: 'token-123' })),
@@ -39,28 +53,28 @@ describe('SharedConversationPage', () => {
   it('renders loading UI while fetching', () => {
     global.fetch = vi.fn(() => new Promise(() => {})) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
     expect(screen.getAllByTestId('skeleton').length).toBeGreaterThan(0);
   });
 
   it('renders not found state for 404', async () => {
     global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 404 }) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
     expect(await screen.findByText('Conversation Not Found')).toBeInTheDocument();
   });
 
   it('renders expired state for 410', async () => {
     global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 410 }) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
     expect(await screen.findByText('Link Expired')).toBeInTheDocument();
   });
 
   it('renders error state for non-ok response', async () => {
     global.fetch = vi.fn().mockResolvedValue({ ok: false, status: 500 }) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
     expect(await screen.findByText('Something went wrong')).toBeInTheDocument();
   });
 
@@ -104,7 +118,7 @@ describe('SharedConversationPage', () => {
         }),
     }) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
 
     expect(await screen.findByText('My Conversation')).toBeInTheDocument();
     expect(screen.getByText('formatted-date')).toBeInTheDocument();
@@ -142,7 +156,7 @@ describe('SharedConversationPage', () => {
         }),
     }) as unknown as typeof fetch;
 
-    render(<SharedConversationPage />);
+    renderPage();
     await waitFor(() => {
       expect(screen.getByText('No conversation content available')).toBeInTheDocument();
     });

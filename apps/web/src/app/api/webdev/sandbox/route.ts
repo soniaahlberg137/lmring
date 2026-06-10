@@ -7,6 +7,7 @@ import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { getSandboxCredentials, getWebDevConfig } from '@/libs/webdev-config';
 import { checkSandboxRateLimit } from '@/libs/webdev-resource-manager';
+import { waitForPortReady } from '@/libs/webdev-sandbox';
 import { webdevSandboxCreateSchema } from '@/libs/webdev-validation';
 
 const VITE_CONFIG_PATTERN = /(?:^|[\\/])vite\.config\.(js|ts|mjs|mts)$/;
@@ -210,6 +211,8 @@ export async function POST(request: Request) {
                 detached: true,
               });
 
+              await waitForPortReady(sandboxInstance, 5173);
+
               const previewUrl = sandboxInstance.domain(5173);
               const newSandboxId = sandboxInstance.name;
               const expiresAt = getSandboxExpiry(sandboxInstance);
@@ -249,6 +252,13 @@ export async function POST(request: Request) {
                 responseId,
                 snapshotId,
               });
+
+              if (sandboxInstance) {
+                try {
+                  await sandboxInstance.stop();
+                } catch {}
+                sandboxInstance = null;
+              }
 
               try {
                 await db
@@ -303,6 +313,8 @@ export async function POST(request: Request) {
             args: ['run', 'dev'],
             detached: true,
           });
+
+          await waitForPortReady(sandboxInstance, 5173);
 
           const previewUrl = sandboxInstance.domain(5173);
           const sandboxId = sandboxInstance.name;
@@ -359,6 +371,8 @@ export async function POST(request: Request) {
               args: ['run', 'dev'],
               detached: true,
             });
+
+            await waitForPortReady(sandboxInstance, 5173);
 
             const newPreviewUrl = sandboxInstance.domain(5173);
             const newSandboxId = sandboxInstance.name;

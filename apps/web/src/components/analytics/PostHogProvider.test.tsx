@@ -61,7 +61,8 @@ describe('PostHogProvider', () => {
       </PostHogProvider>,
     );
 
-    expect(screen.getByTestId('ph-provider')).toBeInTheDocument();
+    // analytics chunk loads after hydration, so the wrapper appears asynchronously
+    expect(await screen.findByTestId('ph-provider')).toBeInTheDocument();
   });
 
   it('should render SuspendedPostHogPageView when key is present', async () => {
@@ -80,7 +81,7 @@ describe('PostHogProvider', () => {
       </PostHogProvider>,
     );
 
-    expect(screen.getByTestId('page-view')).toBeInTheDocument();
+    expect(await screen.findByTestId('page-view')).toBeInTheDocument();
   });
 
   it('should render children directly when key is not present', async () => {

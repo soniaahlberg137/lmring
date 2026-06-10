@@ -4,7 +4,7 @@ This document serves as a shared guideline for all team members when using Gemin
 
 ## Tech Stack
 
-- **Framework**: Next.js 16, React 19, TypeScript 5.9+
+- **Framework**: Next.js 16, React 19, TypeScript 6.0+
 - **Build System**: Turborepo with pnpm workspaces
 - **UI**: shadcn/ui, Tailwind CSS 4
 - **State**: Zustand
@@ -29,6 +29,7 @@ lmring/
     ├── i18n/         # Internationalization
     ├── model-depot/  # AI model definitions
     ├── storage/      # File storage (S3, Supabase)
+    ├── theme/        # Theme engine, tokens, presets, CSS variable generation
     ├── ui/           # UI components
     └── video-runtime/ # Video generation runtime
 ```

@@ -94,7 +94,7 @@ export async function verifyProfileOTP(
     return { success: false, error: 'Invalid email address' };
   }
 
-  if (!otp || otp.length !== 6) {
+  if (otp?.length !== 6) {
     return { success: false, error: 'Invalid verification code' };
   }
 

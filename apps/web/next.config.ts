@@ -53,6 +53,7 @@ const baseConfig: NextConfig = {
       'recharts',
       'date-fns',
       '@lmring/ui',
+      '@lmring/model-depot',
     ],
   },
   transpilePackages: [

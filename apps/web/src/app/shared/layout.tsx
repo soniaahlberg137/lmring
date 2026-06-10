@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { QueryProvider } from '@/providers/query-provider';
 
 export const metadata: Metadata = {
   title: 'Shared Conversation - LMRing',
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SharedLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <QueryProvider>{children}</QueryProvider>;
 }

@@ -45,7 +45,7 @@ export function CategoryTabs({ activeCategory, onCategoryChange }: CategoryTabsP
 
   useEffect(() => {
     updateIndicator();
-    window.addEventListener('resize', updateIndicator);
+    window.addEventListener('resize', updateIndicator, { passive: true });
     return () => window.removeEventListener('resize', updateIndicator);
   }, [updateIndicator]);
 

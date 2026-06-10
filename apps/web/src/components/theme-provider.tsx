@@ -94,12 +94,19 @@ function ThemeCssBridge(): null {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  // React 19.2 warns on client-rendered executable <script>; the theme init
+  // script only needs to run from the SSR HTML, so neutralize the type on
+  // client re-renders (e.g. locale-change remounts) — see next-themes#387
+  const scriptProps =
+    typeof window === 'undefined' ? undefined : ({ type: 'application/json' } as const);
+
   return (
     <NextThemesProvider
       attribute="class"
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange
+      scriptProps={scriptProps}
     >
       <ThemeCssBridge />
       {children}
