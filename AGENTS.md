@@ -12,7 +12,7 @@ LMRing is a Next.js-based web application that enables users to interact with mu
 
 Built with modern technologies:
 
-- **Frontend**: Next.js 16, React 19, TypeScript
+- **Frontend**: Next.js 16, React 19, TypeScript 6.0+
 - **UI**: shadcn/ui, Tailwind CSS 4
 - **State**: Zustand
 - **Database**: PostgreSQL, DrizzleORM
@@ -35,6 +35,7 @@ Built with modern technologies:
   - `i18n/` - Internationalization
   - `model-depot/` - AI model definitions (60+ providers)
   - `storage/` - File storage (S3, Supabase)
+  - `theme/` - Theme engine, tokens, presets, CSS variable generation
   - `ui/` - UI components
   - `video-runtime/` - Video generation runtime
 

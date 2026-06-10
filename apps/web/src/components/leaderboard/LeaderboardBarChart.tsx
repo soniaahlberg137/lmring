@@ -93,9 +93,15 @@ export function LeaderboardBarChart({ models, metric, maxItems = 15 }: Leaderboa
   const xAxisConfig = useMemo(() => {
     if (chartData.length === 0) return { domain: [0, 1], tickFormatter: (v: number) => String(v) };
 
-    const values = chartData.map((d) => d.value).filter((v) => v > -Infinity);
-    const maxVal = Math.max(...values, 0);
-    const minVal = Math.min(...values, 0);
+    // Single pass for min/max — avoids intermediate arrays and spread on large data
+    let maxVal = 0;
+    let minVal = 0;
+    for (const d of chartData) {
+      if (d.value > Number.NEGATIVE_INFINITY) {
+        if (d.value > maxVal) maxVal = d.value;
+        if (d.value < minVal) minVal = d.value;
+      }
+    }
 
     if (metric.format === 'percentage') {
       // Use dynamic range to show differences better

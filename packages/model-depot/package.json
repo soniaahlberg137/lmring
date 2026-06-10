@@ -5,6 +5,7 @@
   "description": "Model Depot - Centralized AI Model Definitions and Metadata",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
+  "sideEffects": false,
   "scripts": {
     "check:types": "tsc --noEmit",
     "lint": "biome check .",

@@ -119,7 +119,9 @@ export function ProviderDetail({ provider, onToggle, onSave, onDelete }: Provide
 
   const [modelEnabledStates, setModelEnabledStates] = useState<Record<string, boolean>>({});
   const [customModels, setCustomModels] = useState<DefaultModelListItem[]>([]);
-  const [modelOverrides, setModelOverrides] = useState<Map<string, ModelOverrideData>>(new Map());
+  const [modelOverrides, setModelOverrides] = useState<Map<string, ModelOverrideData>>(
+    () => new Map(),
+  );
   const [modelToDelete, setModelToDelete] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);

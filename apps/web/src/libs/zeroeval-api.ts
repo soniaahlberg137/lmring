@@ -637,9 +637,13 @@ export async function getMagiaLeaderboard(arena: string): Promise<MagiaLeaderboa
  * Includes: text-to-website, threejs, text-to-game, p5-animation, text-to-svg, dataviz, tonejs
  */
 export function calculateCodeArenaScore(arenaScores: ArenaScores): number | null {
-  const scores = CODE_ARENA_KEYS.map((key) => arenaScores[key]).filter(
-    (s): s is number => s !== undefined && s !== null,
-  );
+  const scores: number[] = [];
+  for (const key of CODE_ARENA_KEYS) {
+    const score = arenaScores[key];
+    if (score !== undefined && score !== null) {
+      scores.push(score);
+    }
+  }
 
   if (scores.length === 0) return null;
 

@@ -116,29 +116,38 @@ export async function POST(request: Request) {
 
     const body = validationResult.data;
 
-    const [message] = await db
-      .select({
-        id: messages.id,
-        userId: conversations.userId,
-      })
-      .from(messages)
-      .innerJoin(conversations, eq(messages.conversationId, conversations.id))
-      .where(eq(messages.id, body.messageId))
-      .limit(1);
+    // All three queries depend only on body/userId — run them in parallel
+    const [[message], participantResponses, [existingVote]] = await Promise.all([
+      db
+        .select({
+          id: messages.id,
+          userId: conversations.userId,
+        })
+        .from(messages)
+        .innerJoin(conversations, eq(messages.conversationId, conversations.id))
+        .where(eq(messages.id, body.messageId))
+        .limit(1),
+      db
+        .select()
+        .from(modelResponses)
+        .where(
+          and(
+            inArray(modelResponses.id, body.participantIds),
+            eq(modelResponses.messageId, body.messageId),
+          ),
+        ),
+      db
+        .select()
+        .from(comparisonVotes)
+        .where(
+          and(eq(comparisonVotes.userId, userId), eq(comparisonVotes.messageId, body.messageId)),
+        )
+        .limit(1),
+    ]);
 
     if (!message || message.userId !== userId) {
       return NextResponse.json({ error: 'Message not found or unauthorized' }, { status: 404 });
     }
-
-    const participantResponses = await db
-      .select()
-      .from(modelResponses)
-      .where(
-        and(
-          inArray(modelResponses.id, body.participantIds),
-          eq(modelResponses.messageId, body.messageId),
-        ),
-      );
 
     if (participantResponses.length !== body.participantIds.length) {
       return NextResponse.json(
@@ -146,12 +155,6 @@ export async function POST(request: Request) {
         { status: 400 },
       );
     }
-
-    const [existingVote] = await db
-      .select()
-      .from(comparisonVotes)
-      .where(and(eq(comparisonVotes.userId, userId), eq(comparisonVotes.messageId, body.messageId)))
-      .limit(1);
 
     if (existingVote) {
       return NextResponse.json(

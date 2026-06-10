@@ -12,12 +12,12 @@ import {
   ScrollArea,
   Skeleton,
 } from '@lmring/ui';
+import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import { AlertCircleIcon, CalendarIcon, ClockIcon, UserIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import * as React from 'react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import { SharedWebDevView } from '@/components/webdev/shared-webdev-view';
 import type { VoteInfo } from '@/types/vote';
@@ -90,43 +90,56 @@ type SharedConversation = SharedArenaData | SharedWebDevData;
 
 type PageStatus = 'loading' | 'success' | 'not_found' | 'expired' | 'error';
 
+// Typed error so useQuery can map HTTP status to page state and skip retries
+// for terminal responses (404/410)
+class SharedFetchError extends Error {
+  constructor(readonly kind: 'not_found' | 'expired' | 'error') {
+    super(kind);
+    this.name = 'SharedFetchError';
+  }
+}
+
+const fetchSharedConversation = async (token: string): Promise<SharedConversation> => {
+  const response = await fetch(`/api/shared/${token}`);
+
+  if (response.status === 404) {
+    throw new SharedFetchError('not_found');
+  }
+
+  if (response.status === 410) {
+    throw new SharedFetchError('expired');
+  }
+
+  if (!response.ok) {
+    throw new SharedFetchError('error');
+  }
+
+  return response.json();
+};
+
 export default function SharedConversationPage() {
   const params = useParams();
   const token = params.token as string;
 
-  const [status, setStatus] = React.useState<PageStatus>('loading');
-  const [data, setData] = React.useState<SharedConversation | null>(null);
-
-  React.useEffect(() => {
-    const fetchSharedConversation = async () => {
-      try {
-        const response = await fetch(`/api/shared/${token}`);
-
-        if (response.status === 404) {
-          setStatus('not_found');
-          return;
-        }
-
-        if (response.status === 410) {
-          setStatus('expired');
-          return;
-        }
-
-        if (!response.ok) {
-          setStatus('error');
-          return;
-        }
-
-        const result = await response.json();
-        setData(result);
-        setStatus('success');
-      } catch {
-        setStatus('error');
+  const { data, error, isPending } = useQuery({
+    queryKey: ['shared-conversation', token],
+    queryFn: () => fetchSharedConversation(token),
+    staleTime: Number.POSITIVE_INFINITY, // shared snapshots are immutable
+    retry: (failureCount, err) => {
+      if (err instanceof SharedFetchError && err.kind !== 'error') {
+        return false; // 404/410 are terminal — don't retry
       }
-    };
+      return failureCount < 2;
+    },
+  });
 
-    fetchSharedConversation();
-  }, [token]);
+  const status: PageStatus = isPending
+    ? 'loading'
+    : error instanceof SharedFetchError && error.kind !== 'error'
+      ? error.kind
+      : error
+        ? 'error'
+        : 'success';
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

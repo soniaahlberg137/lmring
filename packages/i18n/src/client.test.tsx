@@ -1,9 +1,7 @@
-import React from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, waitFor, act } from '@testing-library/react';
-import type { ReactNode } from 'react';
-import { I18nProvider, getI18nInstance, useTranslation } from './client';
+import { render } from '@testing-library/react';
 import { useTranslation as reactI18nextUseTranslation } from 'react-i18next';
+import { describe, expect, it } from 'vitest';
+import { getI18nInstance, I18nProvider, useTranslation } from './client';
 
 describe('getI18nInstance', () => {
   it('returns null before initialization', () => {
@@ -18,7 +16,7 @@ describe('I18nProvider', () => {
     const { findByText } = render(
       <I18nProvider locale="en" messages={{ hello: 'Hello' }}>
         <div>Test Content</div>
-      </I18nProvider>
+      </I18nProvider>,
     );
 
     const content = await findByText('Test Content');
@@ -36,12 +34,37 @@ describe('I18nProvider', () => {
     const { findByText } = render(
       <I18nProvider locale="invalid" messages={{ hello: 'Hello' }}>
         <div>Content With Invalid Locale</div>
-      </I18nProvider>
+      </I18nProvider>,
     );
 
     const content = await findByText('Content With Invalid Locale');
     expect(content).toBeDefined();
     // The component should fall back to 'en' for invalid locales
+  });
+
+  it('syncs language when remounted with a new locale (locale-keyed remount)', async () => {
+    function ShowGreeting() {
+      const { t } = useTranslation();
+      return <div>{t('greeting')}</div>;
+    }
+
+    // First mount: the shared global instance must switch to fr
+    const { rerender, findByText } = render(
+      <I18nProvider key="fr" locale="fr" messages={{ greeting: 'Bonjour' }}>
+        <ShowGreeting />
+      </I18nProvider>,
+    );
+    expect(await findByText('Bonjour')).toBeDefined();
+
+    // Key change remounts the provider (as language-provider does); the reused
+    // global instance must pick up the new bundle and language
+    rerender(
+      <I18nProvider key="zh" locale="zh" messages={{ greeting: '你好' }}>
+        <ShowGreeting />
+      </I18nProvider>,
+    );
+    expect(await findByText('你好')).toBeDefined();
+    expect(getI18nInstance()?.language).toBe('zh');
   });
 });
 
