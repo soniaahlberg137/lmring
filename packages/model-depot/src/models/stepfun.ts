@@ -146,6 +146,16 @@ const stepfunChatModels: ChatModelCard[] = [
 
 const stepfunImageModels: ImageModelCard[] = [
   {
+    id: 'step-image-edit-2',
+    displayName: 'Step Image Edit 2',
+    description:
+      '阶跃星辰新一代轻量图像编辑模型，单一模型同时支持文生图与图像编辑，单次编辑仅需 1-2 秒，以不足 60 亿参数实现同规模最先进效果。',
+    type: 'image',
+    enabled: true,
+    resolutions: ['1024x1024', '768x1360', '896x1184', '1360x768', '1184x896'],
+    releasedAt: '2026-04-28',
+  },
+  {
     id: 'step-2x-large',
     displayName: 'Step 2X Large',
     description:

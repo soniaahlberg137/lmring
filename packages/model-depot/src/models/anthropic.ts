@@ -2,6 +2,44 @@ import type { ChatModelCard } from '../types';
 
 const anthropicModels: ChatModelCard[] = [
   {
+    id: 'claude-fable-5',
+    displayName: 'Claude Fable 5',
+    description:
+      'Claude Fable 5 是 Anthropic 最强大的模型，定位高于 Opus 的全新层级，面向最苛刻的推理与长程智能体任务。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 10, output: 50, cachedInput: 1 },
+    releasedAt: '2026-06-09',
+  },
+  {
+    id: 'claude-opus-4-8',
+    displayName: 'Claude Opus 4.8',
+    description:
+      'Claude Opus 4.8 是 Anthropic 最强大的 Opus 模型，在 Opus 4.7 基础上全面提升推理、智能体编码与工具调用能力。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 128_000,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      vision: true,
+    },
+    pricing: { input: 5, output: 25, cachedInput: 0.5 },
+    releasedAt: '2026-05-28',
+  },
+  {
     id: 'claude-opus-4-6',
     displayName: 'Claude Opus 4.6',
     description:

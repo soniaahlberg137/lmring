@@ -2,6 +2,18 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const xaiChatModels: ChatModelCard[] = [
   {
+    id: 'grok-4.3',
+    displayName: 'Grok 4.3',
+    description:
+      'xAI 最新旗舰模型，支持 100 万上下文窗口，具备视觉理解、函数调用与结构化输出能力。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    enabled: true,
+    abilities: { functionCall: true, search: true, structuredOutput: true, vision: true },
+    pricing: { input: 1.25, output: 2.5, cachedInput: 0.2 },
+    releasedAt: '2026-05-01',
+  },
+  {
     id: 'grok-4.20-0309-reasoning',
     displayName: 'Grok 4.20',
     description:
@@ -194,6 +206,14 @@ const xaiChatModels: ChatModelCard[] = [
 ];
 
 const xaiImageModels: ImageModelCard[] = [
+  {
+    id: 'grok-imagine-image-quality',
+    displayName: 'Grok Imagine Image Quality',
+    description: 'xAI 高质量图像生成模型，支持文生图、自然语言图像编辑与多轮迭代优化。',
+    type: 'image',
+    enabled: true,
+    releasedAt: '2026-05-06',
+  },
   {
     id: 'grok-imagine-image-pro',
     displayName: 'Grok Imagine Image Pro',

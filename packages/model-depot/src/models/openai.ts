@@ -10,6 +10,17 @@ import type {
 
 const openaiChatModels: ChatModelCard[] = [
   {
+    id: 'chat-latest',
+    displayName: 'Chat Latest',
+    description: 'ChatGPT 当前使用的最新 Instant 模型。',
+    type: 'chat',
+    contextWindowTokens: 400_000,
+    maxOutput: 128_000,
+    abilities: { functionCall: true, search: true, structuredOutput: true, vision: true },
+    pricing: { input: 5, output: 30, cachedInput: 0.5 },
+    releasedAt: '2026-05-05',
+  },
+  {
     id: 'gpt-5.4',
     displayName: 'GPT-5.4',
     description:

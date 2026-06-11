@@ -2,6 +2,80 @@ import type { ChatModelCard } from '../types';
 
 const infiniaiModels: ChatModelCard[] = [
   {
+    id: 'deepseek-v4-pro',
+    displayName: 'DeepSeek V4 Pro',
+    description:
+      'DeepSeek-V4-Pro 是 DeepSeek V4 系列旗舰 MoE 模型，总参数约 1.6T、激活约 49B，支持 1M 上下文，面向复杂推理、代码生成与智能体工作流。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 393_216,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 12, output: 24 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'deepseek-v4-flash',
+    displayName: 'DeepSeek V4 Flash',
+    description:
+      'DeepSeek-V4-Flash 是 DeepSeek V4 系列高吞吐 MoE 模型，总参数约 284B、激活约 13B，支持 1M 上下文，兼顾推理成本、响应速度与部署友好性。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 393_216,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1, output: 2 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'kimi-k2.6',
+    displayName: 'Kimi K2.6',
+    description:
+      'Kimi K2.6 是月之暗面开源原生多模态智能体模型，MoE 架构总参数约 1T、激活 32B，支持 256K 上下文，面向长程编程、代码驱动设计与自主任务执行。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 131_072,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 6.5, output: 27 },
+    releasedAt: '2026-04-17',
+  },
+  {
+    id: 'mimo-v2-pro',
+    displayName: 'MiMo-V2 Pro',
+    description:
+      'MiMo-V2-Pro 是小米旗舰基础模型，万亿参数 MoE 架构、激活 32B，支持 256K 上下文，面向复杂推理、长文档处理与智能体工作流优化。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 262_144,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 7, output: 2.1 },
+    releasedAt: '2026-04-15',
+  },
+  {
+    id: 'glm-5.1',
+    displayName: 'GLM-5.1',
+    description:
+      'GLM-5.1 是智谱新一代面向智能体工程的旗舰文本模型，在代码生成、仓库级工程任务、终端执行与长程智能体交互上进一步增强。',
+    type: 'chat',
+    contextWindowTokens: 198_000,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 8, output: 28 },
+    releasedAt: '2026-04-08',
+  },
+  {
+    id: 'kimi-k2.5',
+    displayName: 'Kimi K2.5',
+    description:
+      'Kimi K2.5 是基于 Kimi-K2-Base 的开源原生多模态智能体模型，融合视觉理解与智能体能力，支持即时与思考两种模式。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 4, output: 21 },
+    releasedAt: '2026-04-02',
+  },
+  {
     id: 'qwen3-8b',
     displayName: 'Qwen3 8B',
     description: 'Qwen3 8B 是通义千问 3 系列的轻量级模型，提供出色的性能表现。',

@@ -2,6 +2,19 @@ import type { ChatModelCard } from '../types';
 
 const sensenovaModels: ChatModelCard[] = [
   {
+    id: 'sensenova-6.7-flash-lite',
+    displayName: 'SenseNova 6.7 Flash Lite',
+    description:
+      '面向真实工作流设计的轻量多模态智能体模型，支持文本对话与图像理解（含 OCR 与图表解析），256K 上下文，在性能、成本与可部署性之间取得平衡，并针对办公与生产力场景增强。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
+    releasedAt: '2026-05-08',
+  },
+  {
     id: 'SenseNova-V6-5-Pro',
     displayName: 'SenseNova V6.5 Pro',
     description:

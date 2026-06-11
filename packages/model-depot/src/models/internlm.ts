@@ -2,6 +2,18 @@ import type { ChatModelCard } from '../types';
 
 const internlmModels: ChatModelCard[] = [
   {
+    id: 'intern-s2-preview',
+    displayName: 'Intern-S2-Preview',
+    description:
+      '书生最新发布的 35B-A3B 科学多模态推理模型，支持 256K 上下文，通过任务扩展与架构优化，专为科学发现与通用智能体能力增强而设计。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 0, output: 0 },
+    releasedAt: '2026-05-22',
+  },
+  {
     id: 'internlm3-latest',
     displayName: 'InternLM3',
     description: '书生浦语最新模型系列，卓越推理性能，领跑同量级开源模型。',

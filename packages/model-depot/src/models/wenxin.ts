@@ -2,6 +2,19 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const wenxinChatModels: ChatModelCard[] = [
   {
+    id: 'ernie-5.1',
+    displayName: 'ERNIE 5.1',
+    description:
+      '文心 5.1 是文心系列最新模型，基础能力全面升级，在智能体、知识处理、推理与深度搜索等方面显著提升，并通过大规模智能体后训练增强复杂任务的稳定性。',
+    type: 'chat',
+    contextWindowTokens: 131_072,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 4, output: 18 },
+    releasedAt: '2026-05-09',
+  },
+  {
     id: 'ernie-5.0-thinking-latest',
     displayName: 'ERNIE 5.0 Thinking',
     description: '文心5.0原生全模态旗舰模型，支持文本、图像、音频、视频统一建模。',

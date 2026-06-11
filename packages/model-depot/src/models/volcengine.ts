@@ -2,6 +2,32 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const volcengineChatModels: ChatModelCard[] = [
   {
+    id: 'deepseek-v4-pro',
+    displayName: 'DeepSeek V4 Pro',
+    description:
+      'DeepSeek-V4-Pro 是火山方舟上的 DeepSeek 旗舰 MoE 模型，支持思考与非思考两种模式，面向高级推理、代码生成与复杂智能体工作流。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 393_216,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 12, output: 24, cachedInput: 1 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'deepseek-v4-flash',
+    displayName: 'DeepSeek V4 Flash',
+    description:
+      'DeepSeek-V4-Flash 是火山方舟上的 DeepSeek 高效 1M 上下文模型，在保持强推理与智能体能力的同时兼顾速度与成本。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    maxOutput: 393_216,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 1, output: 2, cachedInput: 0.2 },
+    releasedAt: '2026-04-24',
+  },
+  {
     id: 'doubao-seed-code',
     displayName: 'Doubao Seed Code',
     description:
