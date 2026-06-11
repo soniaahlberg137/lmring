@@ -59,7 +59,7 @@
     "zustand": "5.0.14"
   },
   "devDependencies": {
-    "@chromatic-com/playwright": "^0.14.7",
+    "@chromatic-com/playwright": "^0.14.8",
     "@lmring/biome-config": "workspace:*",
     "@lmring/tailwind-config": "workspace:*",
     "@lmring/typescript-config": "workspace:*",
