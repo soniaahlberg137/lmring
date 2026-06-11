@@ -2,6 +2,18 @@ import type { ChatModelCard } from '../types';
 
 const mistralModels: ChatModelCard[] = [
   {
+    id: 'mistral-medium-3.5',
+    displayName: 'Mistral Medium 3.5',
+    description:
+      'Mistral Medium 3.5 is a frontier-class multimodal model optimized for agentic and coding use cases, released as open weights under a Modified MIT license.',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { input: 1.5, output: 7.5 },
+    releasedAt: '2026-04-30',
+  },
+  {
     id: 'mistral-large-3-latest',
     displayName: 'Mistral Large 3',
     description:

@@ -2,6 +2,88 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const siliconChatModels: ChatModelCard[] = [
   {
+    id: 'deepseek-ai/DeepSeek-V4-Pro',
+    displayName: 'DeepSeek V4 Pro',
+    description:
+      'DeepSeek-V4-Pro 是 DeepSeek-V4 系列旗舰 MoE 模型，总参数 1.6T、激活 49B，原生支持 1M 上下文，采用 CSA 与 HCA 混合注意力架构，是当前最强的开源模型之一。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    enabled: true,
+    organization: 'DeepSeek',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 3, output: 6, cachedInput: 0.025 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'deepseek-ai/DeepSeek-V4-Flash',
+    displayName: 'DeepSeek V4 Flash',
+    description:
+      'DeepSeek-V4-Flash 是 DeepSeek-V4 系列预览版 MoE 模型，总参数 284B、激活 13B，支持 1M 上下文，长上下文推理效率与整体性能出色。',
+    type: 'chat',
+    contextWindowTokens: 1_048_576,
+    enabled: true,
+    organization: 'DeepSeek',
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 1, output: 2, cachedInput: 0.02 },
+    releasedAt: '2026-04-24',
+  },
+  {
+    id: 'Qwen/Qwen3.6-27B',
+    displayName: 'Qwen3.6 27B',
+    description:
+      'Qwen3.6-27B 是 Qwen3.6 系列首个开源中等规模稠密模型，在前端开发、仓库级推理、工具调用与复杂问题求解上显著提升。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 0.6, output: 4.8 },
+    releasedAt: '2026-04-23',
+  },
+  {
+    id: 'Pro/moonshotai/Kimi-K2.6',
+    displayName: 'Kimi-K2.6 (Pro)',
+    description:
+      'Kimi K2.6 是月之暗面开源原生多模态智能体模型，MoE 架构总参数 1T、激活 32B，支持 256K 上下文，在 HLE、SWE-Bench Pro、BrowseComp 等多项主流基准达到开源最先进水平。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true, reasoning: true, vision: true },
+    pricing: { currency: 'CNY', input: 6.5, output: 27, cachedInput: 1.1 },
+    releasedAt: '2026-04-21',
+  },
+  {
+    id: 'Pro/zai-org/glm-5.1',
+    displayName: 'GLM-5.1 (Pro)',
+    description:
+      'GLM-5.1 是智谱新一代旗舰智能体模型，754B MoE 架构，支持原生工具调用、前缀补全与 FIM，提供 200K 上下文的长程工作流能力。',
+    type: 'chat',
+    contextWindowTokens: 198_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 6, output: 24, cachedInput: 1.3 },
+    releasedAt: '2026-04-08',
+  },
+  {
+    id: 'MiniMaxAI/MiniMax-M2.5',
+    displayName: 'MiniMax-M2.5',
+    description:
+      'MiniMax-M2.5 通过数十万真实环境的大规模强化学习训练，MoE 架构总参数 2290 亿，在编程、智能体工具调用、搜索与办公场景表现行业领先。',
+    type: 'chat',
+    contextWindowTokens: 192_000,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 2.1, output: 8.4, cachedInput: 0.21 },
+    releasedAt: '2026-02-13',
+  },
+  {
+    id: 'stepfun-ai/Step-3.5-Flash',
+    displayName: 'Step 3.5 Flash',
+    description:
+      'Step 3.5 Flash 是阶跃星辰最强开源基础模型，稀疏 MoE 架构总参数 196B、激活 11B，支持 256K 上下文，通过 MTP-3 实现 100-300 tok/s 生成吞吐，编程与智能体任务表现出色。',
+    type: 'chat',
+    contextWindowTokens: 262_144,
+    abilities: { functionCall: true, reasoning: true },
+    pricing: { currency: 'CNY', input: 0, output: 0 },
+    releasedAt: '2026-02-02',
+  },
+  {
     id: 'Qwen/Qwen2.5-72B-Instruct',
     displayName: 'Qwen2.5 72B Instruct',
     description: 'Qwen2.5 72B 是阿里云通义千问系列的大参数版本。',

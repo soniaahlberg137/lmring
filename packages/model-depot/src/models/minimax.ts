@@ -2,6 +2,18 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const minimaxChatModels: ChatModelCard[] = [
   {
+    id: 'MiniMax-M3',
+    displayName: 'MiniMax M3',
+    description: 'MiniMax 前沿编码模型，原生多模态输入，支持 1M 上下文与强大的智能体能力。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 524_288,
+    enabled: true,
+    abilities: { functionCall: true, reasoning: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 4.2, output: 16.8, cachedInput: 0.84 },
+    releasedAt: '2026-06-01',
+  },
+  {
     id: 'MiniMax-M2.5',
     displayName: 'MiniMax M2.5',
     description: 'MiniMax 最新旗舰模型，推理和编码能力全面升级',

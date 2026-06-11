@@ -2,6 +2,46 @@ import type { ChatModelCard, ImageModelCard } from '../types';
 
 const vertexaiChatModels: ChatModelCard[] = [
   {
+    id: 'gemini-3.5-flash',
+    displayName: 'Gemini 3.5 Flash',
+    description:
+      'Gemini 3.5 Flash 是 Gemini 系列为速度打造的最智能模型，兼具前沿智能与卓越的搜索与事实关联能力。',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { input: 1.5, output: 9, cachedInput: 0.15 },
+    releasedAt: '2026-05-19',
+  },
+  {
+    id: 'gemini-3.1-flash-lite',
+    displayName: 'Gemini 3.1 Flash-Lite',
+    description:
+      'Gemini 3.1 Flash-Lite 是 Google 最具性价比的多模态模型，针对高吞吐智能体任务、翻译与数据处理进行优化。',
+    type: 'chat',
+    contextWindowTokens: 1_114_112,
+    maxOutput: 65_536,
+    enabled: true,
+    abilities: {
+      functionCall: true,
+      reasoning: true,
+      search: true,
+      structuredOutput: true,
+      video: true,
+      vision: true,
+    },
+    pricing: { input: 0.25, output: 1.5, cachedInput: 0.025 },
+    releasedAt: '2026-05-07',
+  },
+  {
     id: 'gemini-3-pro-image-preview',
     displayName: 'Nano Banana Pro',
     description:

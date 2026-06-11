@@ -2,6 +2,34 @@ import type { ChatModelCard, ImageModelCard, VideoModelCard } from '../types';
 
 const dashscopeChatModels: ChatModelCard[] = [
   {
+    id: 'qwen3.7-plus',
+    displayName: 'Qwen3.7 Plus',
+    description:
+      'Qwen3.7 Plus 是多模态交互混合智能体模型，在 Qwen3.7 系列文本能力基础上统一视觉与语言，擅长 GUI 操作、视觉编码与复杂智能体工作流。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    enabled: true,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true, video: true, vision: true },
+    pricing: { currency: 'CNY', input: 2, output: 8, cachedInput: 0.4 },
+    releasedAt: '2026-06-01',
+  },
+  {
+    id: 'qwen3.7-max',
+    displayName: 'Qwen3.7 Max',
+    description:
+      'Qwen3.7 Max 是面向智能体时代的旗舰全能模型，具备文本、图像与视频理解综合能力，提供更强的推理、函数调用与智能体任务执行性能。',
+    type: 'chat',
+    contextWindowTokens: 1_000_000,
+    maxOutput: 65_536,
+    enabled: true,
+    organization: 'Qwen',
+    abilities: { functionCall: true, reasoning: true, search: true },
+    pricing: { currency: 'CNY', input: 12, output: 36, cachedInput: 2.4 },
+    releasedAt: '2026-05-20',
+  },
+  {
     id: 'qwen3-vl-plus',
     displayName: 'Qwen3 VL Plus',
     description:
