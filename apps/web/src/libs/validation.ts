@@ -187,10 +187,22 @@ export const agentToolSchema = z.object({
   config: z.record(z.string(), z.unknown()).optional(),
 });
 
+export const AGENT_DOMAINS = [
+  'coding',
+  'customer-support',
+  'research',
+  'finance',
+  'legal',
+  'general',
+] as const;
+
+export type AgentDomain = (typeof AGENT_DOMAINS)[number];
+
 export const agentSubmissionSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100),
   description: z.string().trim().max(500).optional(),
   baseModel: z.string().trim().min(1, 'Base model is required').max(200),
+  domain: z.enum(AGENT_DOMAINS).default('general').optional(),
   systemPrompt: z.string().trim().max(10000).optional(),
   tools: z.array(agentToolSchema).optional(),
   memoryConfig: z
@@ -200,6 +212,7 @@ export const agentSubmissionSchema = z.object({
       config: z.record(z.string(), z.unknown()).optional(),
     })
     .optional(),
+  configContent: z.string().max(100000).optional(),
 });
 
 export const imageAttachmentSchema = z.object({

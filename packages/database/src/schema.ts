@@ -570,6 +570,16 @@ export const verification = pgTable(
   ],
 );
 
+// Agent domain enum
+export const agentDomainEnum = pgEnum('agent_domain', [
+  'coding',
+  'customer-support',
+  'research',
+  'finance',
+  'legal',
+  'general',
+]);
+
 // Agents
 export const agents = pgTable(
   'agents',
@@ -578,9 +588,11 @@ export const agents = pgTable(
     name: text('name').notNull(),
     description: text('description'),
     baseModel: text('base_model').notNull(),
+    domain: agentDomainEnum('domain').default('general').notNull(),
     systemPrompt: text('system_prompt'),
     tools: jsonb('tools').$type<AgentToolJson[]>(),
     memoryConfig: jsonb('memory_config').$type<AgentMemoryConfigJson>(),
+    configContent: text('config_content'),
     submittedBy: uuid('submitted_by').references(() => users.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
@@ -588,6 +600,7 @@ export const agents = pgTable(
   (table) => [
     index('agents_submitted_by_idx').on(table.submittedBy),
     index('agents_base_model_idx').on(table.baseModel),
+    index('agents_domain_idx').on(table.domain),
   ],
 );
 

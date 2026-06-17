@@ -183,6 +183,13 @@
       "when": 1781679839707,
       "tag": "0025_calm_switch",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1781702765224,
+      "tag": "0026_flowery_chameleon",
+      "breakpoints": true
     }
   ]
 }

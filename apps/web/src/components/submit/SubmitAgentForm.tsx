@@ -13,9 +13,10 @@ import {
   SelectValue,
   Textarea,
 } from '@lmring/ui';
-import { CheckCircleIcon } from 'lucide-react';
-import { useState } from 'react';
+import { CheckCircleIcon, PaperclipIcon } from 'lucide-react';
+import { useRef, useState } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
+import { AGENT_DOMAINS, type AgentDomain } from '@/libs/validation';
 
 const BASE_MODELS = [
   { group: 'OpenAI', models: ['gpt-4o', 'gpt-4o-mini', 'o3-mini', 'o1'] },
@@ -28,10 +29,20 @@ const BASE_MODELS = [
   { group: 'Meta', models: ['llama-3.3-70b-instruct', 'llama-3.1-405b-instruct'] },
 ] as const;
 
+const DOMAIN_LABELS: Record<AgentDomain, string> = {
+  coding: 'Coding',
+  'customer-support': 'Customer Support',
+  research: 'Research',
+  finance: 'Finance',
+  legal: 'Legal',
+  general: 'General',
+};
+
 type FormFields = {
   name: string;
   description: string;
   baseModel: string;
+  domain: AgentDomain;
   systemPrompt: string;
   tools: string;
   memoryConfig: string;
@@ -63,17 +74,26 @@ function SuccessCard({ onReset, agentName }: { onReset: () => void; agentName: s
   );
 }
 
+const INITIAL_FORM: FormFields = {
+  name: '',
+  description: '',
+  baseModel: '',
+  domain: 'general',
+  systemPrompt: '',
+  tools: '',
+  memoryConfig: '',
+};
+
 export function SubmitAgentForm() {
   const t = useTranslations();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [form, setForm] = useState<FormFields>({
-    name: '',
-    description: '',
-    baseModel: '',
-    systemPrompt: '',
-    tools: '',
-    memoryConfig: '',
-  });
+  const [form, setForm] = useState<FormFields>(INITIAL_FORM);
+  const [configFile, setConfigFile] = useState<{
+    name: string;
+    sizeKb: number;
+    content: string;
+  } | null>(null);
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
   const [apiError, setApiError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -84,6 +104,23 @@ export function SubmitAgentForm() {
       setForm((prev) => ({ ...prev, [key]: e.target.value }));
       if (fieldErrors[key]) setFieldErrors((prev) => ({ ...prev, [key]: undefined }));
     };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setConfigFile(null);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setConfigFile({
+        name: file.name,
+        sizeKb: Math.round((file.size / 1024) * 10) / 10,
+        content: (ev.target?.result as string) ?? '',
+      });
+    };
+    reader.readAsText(file);
+  };
 
   const validate = (): FieldErrors => {
     const errors: FieldErrors = {};
@@ -121,22 +158,19 @@ export function SubmitAgentForm() {
       const body: Record<string, unknown> = {
         name: form.name.trim(),
         baseModel: form.baseModel,
+        domain: form.domain,
       };
       if (form.description.trim()) body.description = form.description.trim();
       if (form.systemPrompt.trim()) body.systemPrompt = form.systemPrompt.trim();
       if (form.tools.trim()) body.tools = JSON.parse(form.tools);
       if (form.memoryConfig.trim()) body.memoryConfig = JSON.parse(form.memoryConfig);
+      if (configFile?.content) body.configContent = configFile.content;
 
       const res = await fetch('/api/agents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
       });
-
-      if (res.status === 401) {
-        setApiError(t('Submit.error_sign_in'));
-        return;
-      }
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -154,16 +188,11 @@ export function SubmitAgentForm() {
 
   const handleReset = () => {
     setSubmittedName(null);
-    setForm({
-      name: '',
-      description: '',
-      baseModel: '',
-      systemPrompt: '',
-      tools: '',
-      memoryConfig: '',
-    });
+    setForm(INITIAL_FORM);
+    setConfigFile(null);
     setFieldErrors({});
     setApiError('');
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   if (submittedName) {
@@ -180,23 +209,24 @@ export function SubmitAgentForm() {
             </div>
           )}
 
-          {/* Name + Base Model */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label htmlFor="name">
-                {t('Submit.field_name')}
-                <span className="text-destructive ml-1">*</span>
-              </Label>
-              <Input
-                id="name"
-                value={form.name}
-                onChange={setField('name')}
-                placeholder={t('Submit.field_name_placeholder')}
-                aria-invalid={!!fieldErrors.name}
-              />
-              <FieldError message={fieldErrors.name} />
-            </div>
+          {/* Name */}
+          <div className="space-y-1.5">
+            <Label htmlFor="name">
+              {t('Submit.field_name')}
+              <span className="text-destructive ml-1">*</span>
+            </Label>
+            <Input
+              id="name"
+              value={form.name}
+              onChange={setField('name')}
+              placeholder={t('Submit.field_name_placeholder')}
+              aria-invalid={!!fieldErrors.name}
+            />
+            <FieldError message={fieldErrors.name} />
+          </div>
 
+          {/* Base Model + Domain */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="baseModel">
                 {t('Submit.field_base_model')}
@@ -227,6 +257,27 @@ export function SubmitAgentForm() {
                 </SelectContent>
               </Select>
               <FieldError message={fieldErrors.baseModel} />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label htmlFor="domain">{t('Submit.field_domain')}</Label>
+              <Select
+                value={form.domain}
+                onValueChange={(val) =>
+                  setForm((prev) => ({ ...prev, domain: val as AgentDomain }))
+                }
+              >
+                <SelectTrigger id="domain">
+                  <SelectValue placeholder={t('Submit.field_domain_placeholder')} />
+                </SelectTrigger>
+                <SelectContent>
+                  {AGENT_DOMAINS.map((d) => (
+                    <SelectItem key={d} value={d}>
+                      {DOMAIN_LABELS[d]}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -287,6 +338,40 @@ export function SubmitAgentForm() {
               </p>
               <FieldError message={fieldErrors.memoryConfig} />
             </div>
+          </div>
+
+          {/* Config File Upload */}
+          <div className="space-y-1.5">
+            <Label htmlFor="configFile">{t('Submit.field_config_file')}</Label>
+            <div className="flex items-center gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => fileInputRef.current?.click()}
+                className="shrink-0"
+              >
+                <PaperclipIcon className="h-4 w-4 mr-2" />
+                {configFile ? 'Change file' : 'Attach file'}
+              </Button>
+              {configFile && (
+                <span className="text-xs text-muted-foreground truncate">
+                  {t('Submit.field_config_file_selected', {
+                    filename: configFile.name,
+                    size: String(configFile.sizeKb),
+                  })}
+                </span>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              id="configFile"
+              type="file"
+              accept=".json,.yaml,.yml,.txt,.md,.toml"
+              className="sr-only"
+              onChange={handleFileChange}
+            />
+            <p className="text-xs text-muted-foreground">{t('Submit.field_config_file_hint')}</p>
           </div>
 
           <Button type="submit" disabled={submitting} className="w-full sm:w-auto">

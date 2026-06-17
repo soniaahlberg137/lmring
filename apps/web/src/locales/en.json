@@ -613,8 +613,20 @@
   "Submit.success_title": "Agent submitted!",
   "Submit.success_body": "Your agent has been received. We'll benchmark it across multiple model backends and publish the results on the leaderboard.",
   "Submit.success_submit_another": "Submit another agent",
+  "Submit.field_domain": "Domain",
+  "Submit.field_domain_placeholder": "Select a domain",
+  "Submit.field_config_file": "Config File",
+  "Submit.field_config_file_hint": "Optional. Attach a JSON, YAML, or text config file for your agent.",
+  "Submit.field_config_file_selected": "Selected: {filename} ({size} KB)",
   "Submit.error_required": "This field is required.",
   "Submit.error_sign_in": "You must be signed in to submit an agent.",
   "Submit.error_generic": "Something went wrong. Please try again.",
-  "Submit.error_invalid_json": "Must be valid JSON."
+  "Submit.error_invalid_json": "Must be valid JSON.",
+  "Leaderboard.domain_all": "All",
+  "Leaderboard.domain_coding": "Coding",
+  "Leaderboard.domain_customer_support": "Customer Support",
+  "Leaderboard.domain_research": "Research",
+  "Leaderboard.domain_finance": "Finance",
+  "Leaderboard.domain_legal": "Legal",
+  "Leaderboard.domain_general": "General"
 }

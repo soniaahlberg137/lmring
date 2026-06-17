@@ -1,7 +1,6 @@
 import { db, desc } from '@lmring/database';
 import { agents } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
-import { auth } from '@/libs/Auth';
 import { logError } from '@/libs/error-logging';
 import { agentSubmissionSchema } from '@/libs/validation';
 
@@ -27,11 +26,6 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const session = await auth.api.getSession({ headers: request.headers });
-    if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
     const body = await request.json();
     const result = agentSubmissionSchema.safeParse(body);
     if (!result.success) {
@@ -41,7 +35,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const { name, description, baseModel, systemPrompt, tools, memoryConfig } = result.data;
+    const {
+      name,
+      description,
+      baseModel,
+      domain,
+      systemPrompt,
+      tools,
+      memoryConfig,
+      configContent,
+    } = result.data;
 
     const [agent] = await db
       .insert(agents)
@@ -49,10 +52,12 @@ export async function POST(request: Request) {
         name,
         description,
         baseModel,
+        domain: domain ?? 'general',
         systemPrompt,
         tools: tools ?? null,
         memoryConfig: memoryConfig ?? null,
-        submittedBy: session.user.id,
+        configContent: configContent ?? null,
+        submittedBy: null,
       })
       .returning();
 

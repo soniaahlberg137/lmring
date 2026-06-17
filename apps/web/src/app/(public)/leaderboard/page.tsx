@@ -5,11 +5,13 @@ import type { SortingState } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import {
+  type AgentDomainFilter,
   CategoryTabs,
   createBaseColumns,
   createMetricColumns,
   createTrailingColumns,
   DataTable,
+  DomainTabs,
   LazyLeaderboardBarChart,
   LazyLeaderboardScatterPlot,
   LeaderboardContentSkeleton,
@@ -36,6 +38,7 @@ export default function LeaderboardPage() {
   const t = useTranslations();
 
   const [category, setCategory] = useState<LeaderboardCategory>('all');
+  const [domain, setDomain] = useState<AgentDomainFilter>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [selectedMetric, setSelectedMetric] = useState<string>('gpqa');
   const [xAxisMetric, setXAxisMetric] = useState<string>('input_price');
@@ -175,8 +178,8 @@ export default function LeaderboardPage() {
 
         <Card>
           <CardContent className="p-6">
-            {/* Toolbar */}
-            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+            {/* Toolbar - category + view controls */}
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
               <CategoryTabs activeCategory={category} onCategoryChange={handleCategoryChange} />
 
               <div className="flex items-center gap-2">
@@ -210,6 +213,11 @@ export default function LeaderboardPage() {
                 <div className="w-px h-6 bg-border/50 mx-1" />
                 <ViewToggle viewMode={viewMode} onViewModeChange={setViewMode} />
               </div>
+            </div>
+
+            {/* Domain filter */}
+            <div className="mb-4">
+              <DomainTabs activeDomain={domain} onDomainChange={setDomain} />
             </div>
 
             {/* Subheader */}
