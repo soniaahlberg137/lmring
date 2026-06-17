@@ -1,5 +1,6 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
+import { MOCK_BENCHMARK_DATA } from '@/libs/mock-benchmark-data';
 import {
   CATEGORY_ARENA_NAMES,
   calculateChatArenaScore,
@@ -18,6 +19,8 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
   code_arena_score?: number | null;
   chat_arena_score?: number | null;
   arena_raw_scores?: Awaited<ReturnType<typeof getArenaScores>>[string] | null;
+  // Tessera: agent display name when this row represents a submitted agent
+  agent_name?: string | null;
   // Non-LLM arena scores (flattened)
   'text-to-image'?: number | null;
   'image-to-image'?: number | null;
@@ -31,6 +34,10 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
 export async function fetchLeaderboardData(
   category: LeaderboardCategory,
 ): Promise<ModelWithArena[]> {
+  if (process.env.NEXT_PUBLIC_TESSERA_MOCK_BENCHMARKS === 'true') {
+    return MOCK_BENCHMARK_DATA;
+  }
+
   if (category === 'vision') {
     const models = await getModelsFull(true);
     const modelIds = models.map((m) => m.model_id);
