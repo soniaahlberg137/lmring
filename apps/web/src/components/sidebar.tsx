@@ -12,6 +12,7 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   TrophyIcon,
+  UploadIcon,
   XIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -30,7 +31,7 @@ import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } fr
 import { UserMenu } from './user-menu';
 
 interface NavItem {
-  titleKey: 'new_chat' | 'leaderboard' | 'history';
+  titleKey: 'new_chat' | 'leaderboard' | 'submit_agent' | 'history';
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
@@ -46,6 +47,11 @@ const navItemsConfig: NavItem[] = [
     titleKey: 'leaderboard',
     href: '/leaderboard',
     icon: TrophyIcon,
+  },
+  {
+    titleKey: 'submit_agent',
+    href: '/submit',
+    icon: UploadIcon,
   },
   {
     titleKey: 'history',

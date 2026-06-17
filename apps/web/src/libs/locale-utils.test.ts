@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 vi.mock('@lmring/i18n', () => ({
   I18nConfig: {
-    locales: ['en', 'zh', 'fr'] as const,
+    locales: ['en'] as const,
     defaultLocale: 'en' as const,
   },
 }));
@@ -31,12 +31,12 @@ describe('locale-utils', () => {
       expect(isSupportedLocale('en')).toBe(true);
     });
 
-    it('should return true for valid locale zh', () => {
-      expect(isSupportedLocale('zh')).toBe(true);
+    it('should return false for unsupported locale zh', () => {
+      expect(isSupportedLocale('zh')).toBe(false);
     });
 
-    it('should return true for valid locale fr', () => {
-      expect(isSupportedLocale('fr')).toBe(true);
+    it('should return false for unsupported locale fr', () => {
+      expect(isSupportedLocale('fr')).toBe(false);
     });
 
     it('should return false for unsupported locale de', () => {
@@ -65,24 +65,24 @@ describe('locale-utils', () => {
       expect(parseAcceptLanguage('en')).toBe('en');
     });
 
-    it('should parse simple locale zh', () => {
-      expect(parseAcceptLanguage('zh')).toBe('zh');
+    it('should return null for unsupported locale zh', () => {
+      expect(parseAcceptLanguage('zh')).toBe(null);
     });
 
     it('should parse locale with region code en-US', () => {
       expect(parseAcceptLanguage('en-US')).toBe('en');
     });
 
-    it('should parse locale with region code zh-CN', () => {
-      expect(parseAcceptLanguage('zh-CN')).toBe('zh');
+    it('should return null for unsupported locale zh-CN', () => {
+      expect(parseAcceptLanguage('zh-CN')).toBe(null);
     });
 
-    it('should parse complex Accept-Language header with quality values', () => {
+    it('should parse complex Accept-Language header and return first supported', () => {
       expect(parseAcceptLanguage('en-US,fr;q=0.9,zh;q=0.8')).toBe('en');
     });
 
-    it('should return first supported locale from multiple candidates', () => {
-      expect(parseAcceptLanguage('de,fr;q=0.9')).toBe('fr');
+    it('should return null when no supported locale in candidates', () => {
+      expect(parseAcceptLanguage('de,fr;q=0.9')).toBe(null);
     });
 
     it('should return null for unsupported locales', () => {
@@ -103,7 +103,6 @@ describe('locale-utils', () => {
 
     it('should handle locale codes case-insensitively', () => {
       expect(parseAcceptLanguage('EN')).toBe('en');
-      expect(parseAcceptLanguage('ZH')).toBe('zh');
     });
 
     it('should handle whitespace in header', () => {
@@ -112,20 +111,24 @@ describe('locale-utils', () => {
   });
 
   describe('resolveLocale', () => {
-    it('should return headerLocale when it is a supported locale', () => {
-      expect(resolveLocale({ headerLocale: 'fr' })).toBe('fr');
+    it('should return en when headerLocale is en', () => {
+      expect(resolveLocale({ headerLocale: 'en' })).toBe('en');
     });
 
-    it('should return acceptLanguage locale when headerLocale is not supported', () => {
-      expect(resolveLocale({ headerLocale: 'de', acceptLanguage: 'zh' })).toBe('zh');
+    it('should return default locale when headerLocale is unsupported fr', () => {
+      expect(resolveLocale({ headerLocale: 'fr' })).toBe('en');
     });
 
-    it('should return acceptLanguage locale when headerLocale is null', () => {
-      expect(resolveLocale({ headerLocale: null, acceptLanguage: 'zh' })).toBe('zh');
+    it('should return default locale when both are unsupported', () => {
+      expect(resolveLocale({ headerLocale: 'de', acceptLanguage: 'zh' })).toBe('en');
     });
 
-    it('should return acceptLanguage locale when headerLocale is undefined', () => {
-      expect(resolveLocale({ acceptLanguage: 'fr' })).toBe('fr');
+    it('should return default locale when headerLocale is null and acceptLanguage is unsupported', () => {
+      expect(resolveLocale({ headerLocale: null, acceptLanguage: 'zh' })).toBe('en');
+    });
+
+    it('should return default locale when acceptLanguage is unsupported fr', () => {
+      expect(resolveLocale({ acceptLanguage: 'fr' })).toBe('en');
     });
 
     it('should return default locale when both are null', () => {
@@ -140,8 +143,8 @@ describe('locale-utils', () => {
       expect(resolveLocale({ headerLocale: 'de', acceptLanguage: 'es' })).toBe('en');
     });
 
-    it('should parse Accept-Language header format', () => {
-      expect(resolveLocale({ acceptLanguage: 'fr-FR,en;q=0.9' })).toBe('fr');
+    it('should return en when en appears in Accept-Language after unsupported locale', () => {
+      expect(resolveLocale({ acceptLanguage: 'fr-FR,en;q=0.9' })).toBe('en');
     });
   });
 });

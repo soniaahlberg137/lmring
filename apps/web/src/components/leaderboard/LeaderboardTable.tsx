@@ -2,6 +2,7 @@
 
 import { Badge, cn, Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@lmring/ui';
 import {
+  BotIcon,
   CheckIcon,
   ChevronDownIcon,
   ChevronUpIcon,
@@ -20,6 +21,7 @@ import type { LeaderboardModel, SortConfig } from './types';
 const DEFAULT_COLUMN_WIDTHS: Record<string, number> = {
   rank: 60,
   model: 220,
+  agent: 180,
   knowledge_cutoff: 130,
   multimodal: 100,
   license: 110,
@@ -349,6 +351,13 @@ export function LeaderboardTable({
                 {t('Leaderboard.table_model')}
                 <ResizeHandle columnId="model" onResize={handleResize} />
               </th>
+              <th
+                className="group relative px-3 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                style={{ width: getWidth('agent') }}
+              >
+                {t('Leaderboard.table_agent')}
+                <ResizeHandle columnId="agent" onResize={handleResize} />
+              </th>
               {metrics.map((metric) => (
                 <th
                   key={metric.id}
@@ -414,6 +423,16 @@ export function LeaderboardTable({
                       </span>
                     </div>
                   </div>
+                </td>
+                <td className="px-3 py-3">
+                  {model.agent_name ? (
+                    <div className="flex items-center gap-1.5">
+                      <BotIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+                      <span className="text-sm truncate">{model.agent_name}</span>
+                    </div>
+                  ) : (
+                    <span className="text-muted-foreground">—</span>
+                  )}
                 </td>
                 {metrics.map((metric) => {
                   const value = model[metric.field as keyof typeof model] as string | number | null;

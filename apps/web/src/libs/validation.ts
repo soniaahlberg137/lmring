@@ -181,6 +181,27 @@ export const shareSchema = z.object({
   expiresInDays: z.number().int().min(1).max(365).optional(),
 });
 
+export const agentToolSchema = z.object({
+  name: z.string().min(1).max(100),
+  type: z.enum(['mcp', 'function', 'skill']),
+  config: z.record(z.string(), z.unknown()).optional(),
+});
+
+export const agentSubmissionSchema = z.object({
+  name: z.string().trim().min(1, 'Name is required').max(100),
+  description: z.string().trim().max(500).optional(),
+  baseModel: z.string().trim().min(1, 'Base model is required').max(200),
+  systemPrompt: z.string().trim().max(10000).optional(),
+  tools: z.array(agentToolSchema).optional(),
+  memoryConfig: z
+    .object({
+      type: z.enum(['none', 'short_term', 'long_term', 'external']).optional(),
+      provider: z.string().max(100).optional(),
+      config: z.record(z.string(), z.unknown()).optional(),
+    })
+    .optional(),
+});
+
 export const imageAttachmentSchema = z.object({
   type: z.literal('image'),
   data: z.string().min(1),

@@ -52,6 +52,8 @@ export interface LeaderboardModel {
   code_arena_score?: number | null;
   // Raw arena scores for tooltip display
   arena_raw_scores?: ArenaScores | null;
+  // Tessera: populated when this row represents an agent benchmark result
+  agent_name?: string | null;
   // Optional fields from ZeroEvalModelBasic
   model_type?: 'llm' | 'image' | 'video' | 'tts' | 'stt';
   is_open?: boolean;

@@ -1,19 +1,6 @@
 'use client';
 
-import { I18nConfig, type Locale } from '@lmring/i18n';
-import {
-  Button,
-  Card,
-  CardContent,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Separator,
-  Switch,
-} from '@lmring/ui';
+import { Button, Card, CardContent, Label, Separator, Switch } from '@lmring/ui';
 import {
   Ai21,
   AiMass,
@@ -91,9 +78,7 @@ import * as React from 'react';
 import { ThemeCustomizer } from '@/components/theme-customizer';
 import { useProviderMetadata } from '@/hooks/use-provider-metadata';
 import { useTranslations } from '@/hooks/use-translations';
-import { isSupportedLocale } from '@/libs/locale-utils';
 import { maskApiKey } from '@/libs/validation';
-import { languageSelectors, useLanguageStore } from '@/stores/language-store';
 import { settingsSelectors, useSettingsStore } from '@/stores/settings-store';
 import { ProviderLayout } from './_components/provider/ProviderLayout';
 import type { Provider } from './_components/provider/types';
@@ -162,21 +147,11 @@ const ICON_MAP: Record<string, any> = {
 
 type Tab = 'general' | 'provider' | 'system-model' | 'storage' | 'help' | 'about';
 
-// Language display names mapping
-const LANGUAGE_NAMES: Record<Locale, string> = {
-  en: 'English',
-  zh: '中文',
-  fr: 'Français',
-};
-
 export default function SettingsPage() {
   const t = useTranslations();
   const [activeTab, setActiveTab] = React.useState<Tab>('general');
   const [telemetryEnabled, setTelemetryEnabled] = React.useState(false);
   const providerMetadata = useProviderMetadata();
-  const locale = useLanguageStore(languageSelectors.language);
-  const setLanguage = useLanguageStore((state) => state.setLanguage);
-
   // Use SettingsStore for savedApiKeys - shared with arena page
   const savedApiKeys = useSettingsStore(settingsSelectors.savedApiKeys);
   const apiKeysLoaded = useSettingsStore(settingsSelectors.apiKeysLoaded);
@@ -184,13 +159,6 @@ export default function SettingsPage() {
   const updateApiKey = useSettingsStore((state) => state.updateApiKey);
   const addApiKey = useSettingsStore((state) => state.addApiKey);
   const removeApiKey = useSettingsStore((state) => state.removeApiKey);
-
-  const handleLanguageChange = (newLocale: string) => {
-    if (!isSupportedLocale(newLocale)) {
-      return;
-    }
-    setLanguage(newLocale);
-  };
 
   // Load API keys from store (shared with arena page)
   React.useEffect(() => {
@@ -496,25 +464,6 @@ export default function SettingsPage() {
 
                     <div className="space-y-6">
                       <ThemeCustomizer />
-                      <div className="space-y-4">
-                        <Label className="text-base">{t('Settings.general_language')}</Label>
-                        <div className="max-w-md">
-                          <Select value={locale} onValueChange={handleLanguageChange}>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Select language">
-                                {LANGUAGE_NAMES[locale] || locale.toUpperCase()}
-                              </SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                              {I18nConfig.locales.map((loc) => (
-                                <SelectItem key={loc} value={loc}>
-                                  {LANGUAGE_NAMES[loc] || loc.toUpperCase()}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
                     </div>
                   </motion.div>
                 )}
