@@ -604,6 +604,62 @@ export const agents = pgTable(
   ],
 );
 
+// Eval run status enum
+export const evalRunStatusEnum = pgEnum('eval_run_status', [
+  'queued',
+  'running',
+  'scored',
+  'failed',
+  'cancelled',
+]);
+
+// Eval runs (one per assembled-agent cell in the benchmark matrix)
+export const evalRuns = pgTable(
+  'eval_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    agentId: uuid('agent_id').references(() => agents.id, { onDelete: 'set null' }),
+    harness: text('harness').notNull(), // 'oh-my-claudecode' | 'bare-agent.md'
+    modelId: text('model_id').notNull(), // 'ollama/qwen3:8b' | 'kimi-k2-...' etc
+    suite: text('suite').notNull(), // 'legal_contract_review'
+    domain: text('domain').notNull(), // 'legal'
+    status: evalRunStatusEnum('status').notNull().default('queued'),
+    k: integer('k').notNull().default(1), // trials
+    passAt1: real('pass_at_1'),
+    passHatK: real('pass_hat_k'),
+    f1: real('f1'),
+    costUsd: real('cost_usd'),
+    latencyMs: integer('latency_ms'),
+    totalTokens: integer('total_tokens'),
+    runnerImageDigest: text('runner_image_digest'),
+    suiteHash: text('suite_hash'),
+    triggeredBy: uuid('triggered_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    finishedAt: timestamp('finished_at', { withTimezone: true }),
+  },
+  (t) => [
+    index('eval_runs_suite_idx').on(t.suite),
+    index('eval_runs_model_idx').on(t.modelId),
+    index('eval_runs_harness_idx').on(t.harness),
+  ],
+);
+
+// Run scores (per-task / per-trial metric values for an eval run)
+export const runScores = pgTable(
+  'run_scores',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    runId: uuid('run_id')
+      .references(() => evalRuns.id, { onDelete: 'cascade' })
+      .notNull(),
+    taskSlug: text('task_slug').notNull(),
+    metric: text('metric').notNull(), // 'f1' | 'passed' | 'cost_usd' | 'latency_ms'
+    value: real('value').notNull(),
+    trial: integer('trial').notNull().default(0),
+  },
+  (t) => [index('run_scores_run_idx').on(t.runId)],
+);
+
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
   preferences: one(userPreferences),
@@ -780,6 +836,25 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
+export const evalRunsRelations = relations(evalRuns, ({ one, many }) => ({
+  agent: one(agents, {
+    fields: [evalRuns.agentId],
+    references: [agents.id],
+  }),
+  triggeredByUser: one(users, {
+    fields: [evalRuns.triggeredBy],
+    references: [users.id],
+  }),
+  scores: many(runScores),
+}));
+
+export const runScoresRelations = relations(runScores, ({ one }) => ({
+  run: one(evalRuns, {
+    fields: [runScores.runId],
+    references: [evalRuns.id],
+  }),
+}));
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -823,8 +898,13 @@ export type WebDevIteration = typeof webdevIterations.$inferSelect;
 export type NewWebDevIteration = typeof webdevIterations.$inferInsert;
 export type Agent = typeof agents.$inferSelect;
 export type NewAgent = typeof agents.$inferInsert;
+export type EvalRun = typeof evalRuns.$inferSelect;
+export type NewEvalRun = typeof evalRuns.$inferInsert;
+export type RunScore = typeof runScores.$inferSelect;
+export type NewRunScore = typeof runScores.$inferInsert;
 
 // Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
 export type VoteOutcome = (typeof voteOutcomeEnum.enumValues)[number];
 export type WebDevStatus = (typeof webdevStatusEnum.enumValues)[number];
+export type EvalRunStatus = (typeof evalRunStatusEnum.enumValues)[number];
