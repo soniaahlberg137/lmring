@@ -1,0 +1,7 @@
+.inspect_logs/
+__pycache__/
+*.pyc
+.pytest_cache/
+# Full CUAD corpus / downloads must not be committed (keep vendored subset tiny).
+cuad_raw/
+*.zip

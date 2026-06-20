@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "source": "CUAD v1 (Contract Understanding Atticus Dataset), CC-BY-4.0. https://www.atticusprojectai.org/cuad",
+  "note": "Tiny curated subset for offline/deterministic suite runs. Clause text is paraphrased/abridged from public commercial-contract patterns; category labels follow CUAD's 41-category taxonomy. See README.md and download.py to fetch the full CUAD corpus.",
+  "risk_playbook": [
+    "Non-Compete",
+    "Exclusivity",
+    "Most Favored Nation",
+    "Anti-Assignment",
+    "Termination For Convenience",
+    "Uncapped Liability",
+    "Liquidated Damages",
+    "Minimum Commitment",
+    "IP Ownership Assignment",
+    "Audit Rights",
+    "Source Code Escrow",
+    "Change Of Control"
+  ],
+  "playbook_description": "Clause categories considered RISKY to the reviewing party. Flag every category from this list that is present in the contract. Do not flag categories that are absent.",
+  "samples": [
+    {
+      "id": "cuad-0001",
+      "title": "Distribution Agreement",
+      "sections": [
+        {"n": 1, "heading": "Appointment", "text": "Supplier hereby appoints Distributor as its distributor for the Products within the Territory."},
+        {"n": 2, "heading": "Exclusivity", "text": "During the Term, Supplier shall not appoint any other distributor, reseller, or agent for the Products within the Territory, and Distributor's appointment shall be exclusive."},
+        {"n": 3, "heading": "Non-Competition", "text": "During the Term and for two (2) years thereafter, Distributor shall not, directly or indirectly, develop, manufacture, market, or sell any product that competes with the Products anywhere in the Territory."},
+        {"n": 4, "heading": "Governing Law", "text": "This Agreement shall be governed by the laws of the State of New York."}
+      ],
+      "gold": ["Exclusivity", "Non-Compete"]
+    },
+    {
+      "id": "cuad-0002",
+      "title": "Master Services Agreement",
+      "sections": [
+        {"n": 1, "heading": "Services", "text": "Provider shall perform the professional services described in each Statement of Work."},
+        {"n": 2, "heading": "Termination", "text": "Either party may terminate this Agreement for convenience upon thirty (30) days' prior written notice to the other party, without penalty or further obligation."},
+        {"n": 3, "heading": "Audit", "text": "Customer shall have the right, upon reasonable notice, to audit Provider's books, records, and facilities to verify compliance with this Agreement no more than once per calendar year."},
+        {"n": 4, "heading": "Notices", "text": "All notices shall be in writing and delivered to the addresses set forth above."}
+      ],
+      "gold": ["Termination For Convenience", "Audit Rights"]
+    },
+    {
+      "id": "cuad-0003",
+      "title": "Software License Agreement",
+      "sections": [
+        {"n": 1, "heading": "License Grant", "text": "Licensor grants Licensee a non-exclusive, non-transferable license to use the Software for internal business purposes."},
+        {"n": 2, "heading": "Source Code Escrow", "text": "Licensor shall deposit the Software source code with a mutually agreed escrow agent, and the source code shall be released to Licensee upon Licensor's bankruptcy or cessation of support."},
+        {"n": 3, "heading": "Limitation of Liability", "text": "Notwithstanding anything to the contrary, the parties' liability for breach of confidentiality, indemnification obligations, and infringement of intellectual property shall be unlimited and not subject to any cap."},
+        {"n": 4, "heading": "Fees", "text": "Licensee shall pay the annual license fee set forth in Exhibit A."}
+      ],
+      "gold": ["Source Code Escrow", "Uncapped Liability"]
+    },
+    {
+      "id": "cuad-0004",
+      "title": "Supply Agreement",
+      "sections": [
+        {"n": 1, "heading": "Minimum Purchase", "text": "Buyer commits to purchase a minimum of 10,000 units of the Product per calendar quarter during the Term, failing which Buyer shall pay the shortfall amount."},
+        {"n": 2, "heading": "Most Favored Customer", "text": "Seller represents that the prices charged to Buyer shall be no less favorable than the lowest prices offered to any other customer for comparable volumes during the Term."},
+        {"n": 3, "heading": "Delivery", "text": "Seller shall deliver the Products FOB Seller's warehouse."}
+      ],
+      "gold": ["Minimum Commitment", "Most Favored Nation"]
+    },
+    {
+      "id": "cuad-0005",
+      "title": "Consulting Agreement",
+      "sections": [
+        {"n": 1, "heading": "Engagement", "text": "Company engages Consultant to provide advisory services as requested from time to time."},
+        {"n": 2, "heading": "Work Product", "text": "All deliverables, inventions, and work product created by Consultant in connection with the Services shall be the sole and exclusive property of Company, and Consultant hereby assigns all right, title, and interest therein to Company."},
+        {"n": 3, "heading": "Compensation", "text": "Company shall pay Consultant the hourly rate set forth in Schedule 1."},
+        {"n": 4, "heading": "Independent Contractor", "text": "Consultant is an independent contractor and not an employee of Company."}
+      ],
+      "gold": ["IP Ownership Assignment"]
+    },
+    {
+      "id": "cuad-0006",
+      "title": "Reseller Agreement",
+      "sections": [
+        {"n": 1, "heading": "Assignment", "text": "Neither party may assign this Agreement, in whole or in part, without the prior written consent of the other party, and any purported assignment without such consent shall be void."},
+        {"n": 2, "heading": "Change of Control", "text": "In the event of a change of control of Reseller, including any merger, acquisition, or sale of substantially all of its assets, Vendor may terminate this Agreement immediately upon written notice."},
+        {"n": 3, "heading": "Liquidated Damages", "text": "In the event Reseller breaches the confidentiality provisions, Reseller shall pay liquidated damages of USD 250,000 per breach, which the parties agree is a reasonable estimate of harm and not a penalty."},
+        {"n": 4, "heading": "Term", "text": "This Agreement shall commence on the Effective Date and continue for three (3) years."}
+      ],
+      "gold": ["Anti-Assignment", "Change Of Control", "Liquidated Damages"]
+    },
+    {
+      "id": "cuad-0007",
+      "title": "Mutual Non-Disclosure Agreement",
+      "sections": [
+        {"n": 1, "heading": "Confidential Information", "text": "Each party agrees to protect the Confidential Information of the other party using the same degree of care it uses for its own confidential information."},
+        {"n": 2, "heading": "Term", "text": "This Agreement shall remain in effect for five (5) years from the Effective Date."},
+        {"n": 3, "heading": "Return of Materials", "text": "Upon termination, each party shall return or destroy all Confidential Information of the other party."},
+        {"n": 4, "heading": "Governing Law", "text": "This Agreement shall be governed by the laws of England and Wales."}
+      ],
+      "gold": []
+    },
+    {
+      "id": "cuad-0008",
+      "title": "Manufacturing & Supply Agreement",
+      "sections": [
+        {"n": 1, "heading": "Exclusive Supply", "text": "Manufacturer shall supply the Components exclusively to Customer and shall not sell the Components to any third party during the Term."},
+        {"n": 2, "heading": "Minimum Order", "text": "Customer shall order no fewer than 50,000 Components annually; orders below this threshold shall trigger a true-up payment equal to the shortfall."},
+        {"n": 3, "heading": "Audit Rights", "text": "Customer's representatives may inspect and audit Manufacturer's production facilities and quality records upon five (5) business days' notice."},
+        {"n": 4, "heading": "Liability Cap", "text": "Each party's aggregate liability under this Agreement shall not exceed the total fees paid in the twelve (12) months preceding the claim."}
+      ],
+      "gold": ["Exclusivity", "Minimum Commitment", "Audit Rights"]
+    },
+    {
+      "id": "cuad-0009",
+      "title": "Technology Development Agreement",
+      "sections": [
+        {"n": 1, "heading": "Development", "text": "Developer shall design and build the custom platform described in the Specifications."},
+        {"n": 2, "heading": "Ownership of Deliverables", "text": "All intellectual property in the Deliverables shall vest in and be assigned to Client upon creation, and Developer waives any moral rights therein."},
+        {"n": 3, "heading": "Non-Compete", "text": "For a period of eighteen (18) months following termination, Developer shall not provide substantially similar development services to any direct competitor of Client identified in Exhibit C."},
+        {"n": 4, "heading": "Escrow", "text": "Developer shall maintain the platform source code in escrow with Iron Mountain, releasable to Client upon a defined release event."},
+        {"n": 5, "heading": "Payment", "text": "Client shall pay milestone fees as set forth in the payment schedule."}
+      ],
+      "gold": ["IP Ownership Assignment", "Non-Compete", "Source Code Escrow"]
+    },
+    {
+      "id": "cuad-0010",
+      "title": "SaaS Subscription Agreement",
+      "sections": [
+        {"n": 1, "heading": "Subscription", "text": "Provider grants Customer a subscription to access the hosted Service during the Subscription Term."},
+        {"n": 2, "heading": "Termination for Convenience", "text": "Customer may terminate this Agreement at any time for any reason upon sixty (60) days' written notice, with a pro-rata refund of prepaid fees."},
+        {"n": 3, "heading": "Unlimited Liability for Data Breach", "text": "Provider's liability arising from any breach of its data-security obligations shall be unlimited and shall not be subject to the limitation of liability set forth elsewhere in this Agreement."},
+        {"n": 4, "heading": "Support", "text": "Provider shall provide support in accordance with the SLA."}
+      ],
+      "gold": ["Termination For Convenience", "Uncapped Liability"]
+    },
+    {
+      "id": "cuad-0011",
+      "title": "Joint Marketing Agreement",
+      "sections": [
+        {"n": 1, "heading": "Cooperation", "text": "The parties shall cooperate to jointly market their complementary products."},
+        {"n": 2, "heading": "Costs", "text": "Each party shall bear its own costs in connection with the marketing activities."},
+        {"n": 3, "heading": "Term and Termination", "text": "This Agreement continues for one (1) year and renews automatically unless either party gives notice of non-renewal."},
+        {"n": 4, "heading": "Publicity", "text": "Neither party shall issue press releases without the other party's prior approval."}
+      ],
+      "gold": []
+    },
+    {
+      "id": "cuad-0012",
+      "title": "OEM Agreement",
+      "sections": [
+        {"n": 1, "heading": "Most Favored Nation", "text": "OEM shall ensure that the pricing and terms offered to Reseller are at least as favorable as those offered to any other reseller of comparable standing."},
+        {"n": 2, "heading": "Anti-Assignment", "text": "This Agreement may not be assigned or transferred by either party without the prior written consent of the other party."},
+        {"n": 3, "heading": "Change of Control", "text": "Either party may terminate this Agreement if the other party undergoes a change of control to a competitor of the terminating party."},
+        {"n": 4, "heading": "Liquidated Damages", "text": "Late delivery shall entitle Reseller to liquidated damages of 1% of the order value per week of delay, up to a maximum of 10%."},
+        {"n": 5, "heading": "Audit", "text": "OEM may audit Reseller's sales records once annually to verify royalty calculations."}
+      ],
+      "gold": ["Most Favored Nation", "Anti-Assignment", "Change Of Control", "Liquidated Damages", "Audit Rights"]
+    }
+  ]
+}
