@@ -1,0 +1,30 @@
+[project]
+name = "tessera-engine"
+version = "0.0.1"
+description = "Tessera v0 benchmark engine — fans an assembled agent (harness x model) over the legal_contract_review Inspect suite and emits the contract ingestion JSON."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "inspect-ai>=0.3.50",
+    "litellm>=1.40",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[tool.uv]
+# Keep resolution self-contained; this project is intentionally OUTSIDE the
+# pnpm/JS workspace (see pnpm-workspace.yaml excludes apps/engine implicitly —
+# it only globs apps/* for JS packages, and apps/engine has no package.json).
+
+[tool.pytest.ini_options]
+# The committed suite tests import via the repo-root-anchored package path
+# `apps.engine.suites.legal_contract_review...`, so the repo root (two levels
+# up from this file) must be importable. `.` lets engine modules (runner, cost,
+# models, assemblies) import bare. importlib mode supports the PEP-420 namespace
+# packages `apps` / `apps.engine` (neither has an __init__.py).
+pythonpath = [".", "../.."]
+testpaths = ["suites", "tests"]
+addopts = "--import-mode=importlib -q"

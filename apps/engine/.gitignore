@@ -1,0 +1,11 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+
+# Generated run artifacts
+logs/
+runs/
+*.eval
