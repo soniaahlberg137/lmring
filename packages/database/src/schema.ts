@@ -770,3 +770,8 @@ export type NewWebDevIteration = typeof webdevIterations.$inferInsert;
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
 export type VoteOutcome = (typeof voteOutcomeEnum.enumValues)[number];
 export type WebDevStatus = (typeof webdevStatusEnum.enumValues)[number];
+
+// Tessera eval schema (harnesses, models, tasks, runs, leaderboard).
+// Re-exported so drizzle-kit picks up these tables from the configured
+// schema entrypoint and consumers can import everything from '@lmring/database'.
+export * from './eval';

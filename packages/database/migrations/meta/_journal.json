@@ -176,6 +176,13 @@
       "when": 1778198400000,
       "tag": "0024_add_webdev_rls_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1781653315231,
+      "tag": "0025_lame_loki",
+      "breakpoints": true
     }
   ]
 }
