@@ -1,5 +1,11 @@
 export { CategoryTabs } from './CategoryTabs';
-export { createBaseColumns, createMetricColumns, createTrailingColumns } from './columns';
+export {
+  createBaseColumns,
+  createLegalColumns,
+  createMetricColumns,
+  createTrailingColumns,
+  type LegalLeaderboardRow,
+} from './columns';
 export { DataTable } from './DataTable';
 export type { AgentDomainFilter } from './DomainTabs';
 export { DomainTabs } from './DomainTabs';

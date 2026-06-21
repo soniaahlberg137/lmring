@@ -68,12 +68,13 @@ describe('createBaseColumns', () => {
     cleanup();
   });
 
-  it('should create rank and name columns', async () => {
+  it('should create rank, name, and agent columns', async () => {
     const { createBaseColumns } = await import('./columns');
     const columns = createBaseColumns(mockT) as ColumnWithAccessorKey[];
-    expect(columns).toHaveLength(2);
+    expect(columns).toHaveLength(3);
     expect(columns[0]?.accessorKey).toBe('rank');
     expect(columns[1]?.accessorKey).toBe('name');
+    expect(columns[2]?.accessorKey).toBe('agent_name');
   });
 
   it('should render rank cell with gold styling for rank 1', async () => {

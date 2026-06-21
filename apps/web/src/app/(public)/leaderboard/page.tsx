@@ -8,6 +8,7 @@ import {
   type AgentDomainFilter,
   CategoryTabs,
   createBaseColumns,
+  createLegalColumns,
   createMetricColumns,
   createTrailingColumns,
   DataTable,
@@ -21,7 +22,7 @@ import {
   type ViewMode,
   ViewToggle,
 } from '@/components/leaderboard';
-import { useLeaderboardData } from '@/hooks/use-leaderboard-query';
+import { useLeaderboardData, useLegalLeaderboardQuery } from '@/hooks/use-leaderboard-query';
 import { useTranslations } from '@/hooks/use-translations';
 import {
   CATEGORY_CONFIGS,
@@ -33,6 +34,29 @@ import {
 } from '@/libs/zeroeval-api';
 
 const PAGE_SIZE = 20;
+
+// Tessera: axis metrics for the legal assembled-agent perf-vs-cost view.
+const LEGAL_F1_METRIC: MetricConfig = {
+  id: 'f1',
+  label: 'F1',
+  field: 'f1',
+  format: 'percentage',
+  higherIsBetter: true,
+};
+const LEGAL_COST_METRIC: MetricConfig = {
+  id: 'cost_usd',
+  label: 'Cost ($)',
+  field: 'cost_usd',
+  format: 'currency',
+  higherIsBetter: false,
+};
+const LEGAL_LATENCY_METRIC: MetricConfig = {
+  id: 'latency_ms',
+  label: 'Latency (ms)',
+  field: 'latency_ms',
+  format: 'number',
+  higherIsBetter: false,
+};
 
 export default function LeaderboardPage() {
   const t = useTranslations();
@@ -48,6 +72,14 @@ export default function LeaderboardPage() {
 
   // Fetch data using TanStack Query
   const { data: rawModels, isPending, error, isInitialLoading } = useLeaderboardData(category);
+
+  // Tessera: legal assembled-agent (harness × model) matrix, fixture-backed via the API.
+  const isLegal = domain === 'legal';
+  const {
+    data: legalRows,
+    isPending: legalIsPending,
+    error: legalError,
+  } = useLegalLeaderboardQuery(isLegal);
 
   const categoryConfig = useMemo(() => {
     const config = CATEGORY_CONFIGS.find((c) => c.id === category);
@@ -109,6 +141,45 @@ export default function LeaderboardPage() {
     })) as LeaderboardModel[];
   }, [rawModels, yAxisMetric, categoryConfig.metrics]);
 
+  // Tessera: legal leaderboard derived state (ranked by F1).
+  const legalColumns = useMemo(() => createLegalColumns(t), [t]);
+
+  const legalRanked = useMemo(
+    () => (legalRows ? sortAndRankModels(legalRows, 'f1', 'desc') : []),
+    [legalRows],
+  );
+
+  // Fall back to latency on the x-axis when every cell has zero/absent cost (local models).
+  const legalUsesLatency = useMemo(
+    () => !!legalRows?.length && legalRows.every((r) => !r.costUsd),
+    [legalRows],
+  );
+
+  const legalScatterModels: LeaderboardModel[] = useMemo(
+    () =>
+      legalRanked.map((r) => ({
+        model_id: r.runId,
+        name: `${r.agentName} · ${r.baseModel}`,
+        organization: r.organization ?? '',
+        organization_id: (r.organization ?? '').toLowerCase().replace(/\s+/g, '-'),
+        release_date: null,
+        announcement_date: r.createdAt,
+        multimodal: false,
+        license: '',
+        rank: r.rank,
+        isNew: false,
+        agent_name: r.agentName,
+        f1: r.f1,
+        cost_usd: r.costUsd,
+        latency_ms: r.latencyMs,
+      })),
+    [legalRanked],
+  );
+
+  const legalXMetric = legalUsesLatency ? LEGAL_LATENCY_METRIC : LEGAL_COST_METRIC;
+  // Legal has no bar view; fall back to the table when 'bar' is selected.
+  const legalViewMode = viewMode === 'bar' ? 'table' : viewMode;
+
   const handleCategoryChange = useCallback((newCategory: LeaderboardCategory) => {
     setCategory(newCategory);
     setSorting([]);
@@ -139,7 +210,7 @@ export default function LeaderboardPage() {
     [categoryConfig],
   );
 
-  if (isInitialLoading) {
+  if (!isLegal && isInitialLoading) {
     return (
       <div className="p-6 space-y-6">
         <div className="mb-6">
@@ -151,7 +222,7 @@ export default function LeaderboardPage() {
     );
   }
 
-  if (error) {
+  if (!isLegal && error) {
     return (
       <div className="p-6 space-y-6">
         <div className="mb-6">
@@ -183,7 +254,7 @@ export default function LeaderboardPage() {
               <CategoryTabs activeCategory={category} onCategoryChange={handleCategoryChange} />
 
               <div className="flex items-center gap-2">
-                {viewMode === 'bar' && (
+                {!isLegal && viewMode === 'bar' && (
                   <MetricSelector
                     metrics={categoryConfig.metrics}
                     selectedMetric={selectedMetric}
@@ -192,7 +263,7 @@ export default function LeaderboardPage() {
                   />
                 )}
 
-                {viewMode === 'scatter' && (
+                {!isLegal && viewMode === 'scatter' && (
                   <>
                     <MetricSelector
                       metrics={categoryConfig.metrics}
@@ -223,12 +294,41 @@ export default function LeaderboardPage() {
             {/* Subheader */}
             <div className="flex items-center mb-4">
               <span className="text-xs tabular-nums text-muted-foreground/60 tracking-tight">
-                {isPending ? '—' : t('Leaderboard.models_count', { count: rankedModels.length })}
+                {isLegal
+                  ? legalIsPending
+                    ? '—'
+                    : t('Leaderboard.models_count', { count: legalRanked.length })
+                  : isPending
+                    ? '—'
+                    : t('Leaderboard.models_count', { count: rankedModels.length })}
               </span>
             </div>
 
             <div className="min-h-[500px]">
-              {isPending ? (
+              {isLegal ? (
+                legalIsPending ? (
+                  <LeaderboardContentSkeleton rows={PAGE_SIZE} metricColumns={5} />
+                ) : legalError ? (
+                  <div className="flex items-center justify-center h-[400px] text-destructive">
+                    {legalError.message}
+                  </div>
+                ) : (
+                  <>
+                    {legalViewMode === 'table' && (
+                      <DataTable columns={legalColumns} data={legalRanked} pageSize={PAGE_SIZE} />
+                    )}
+
+                    {legalViewMode === 'scatter' && (
+                      <LazyLeaderboardScatterPlot
+                        models={legalScatterModels}
+                        xMetric={legalXMetric}
+                        yMetric={LEGAL_F1_METRIC}
+                        showFrontier
+                      />
+                    )}
+                  </>
+                )
+              ) : isPending ? (
                 <LeaderboardContentSkeleton
                   rows={PAGE_SIZE}
                   metricColumns={categoryConfig.metrics.length}

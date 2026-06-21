@@ -14,6 +14,26 @@ import {
   type ZeroEvalModelFull,
 } from '@/libs/zeroeval-api';
 
+// Tessera: assembled-agent (harness × model) leaderboard row.
+// Mirrors the v0 contract (§2) for `GET /api/leaderboard?domain=legal`.
+export type AssembledAgentRow = {
+  runId: string;
+  agentName: string; // agents.name (display name of the assembled agent)
+  harness: string; // 'oh-my-claudecode' | 'bare-agent.md'
+  baseModel: string; // eval_runs.modelId
+  organization: string | null;
+  domain: string;
+  suite: string;
+  f1: number | null;
+  passAt1: number | null;
+  passHatK: number | null;
+  k: number;
+  costUsd: number | null;
+  latencyMs: number | null;
+  totalTokens: number | null;
+  createdAt: string; // ISO
+};
+
 // Model type with optional arena scores
 export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
   code_arena_score?: number | null;
@@ -161,6 +181,40 @@ export function useLeaderboardData(category: LeaderboardCategory) {
     isInitialLoading: query.isPending && query.isFetching,
     isRefetching: !query.isPending && query.isFetching,
   };
+}
+
+// ============================================================================
+// Tessera: legal assembled-agent leaderboard (fixture-backed via API)
+// ============================================================================
+
+const LEGAL_SUITE = 'legal_contract_review';
+
+export const legalLeaderboardKeys = {
+  all: ['leaderboard', 'legal'] as const,
+  suite: (suite: string) => ['leaderboard', 'legal', suite] as const,
+};
+
+export async function fetchLegalLeaderboard(
+  suite: string = LEGAL_SUITE,
+): Promise<AssembledAgentRow[]> {
+  const params = new URLSearchParams({ domain: 'legal', suite });
+  const response = await fetch(`/api/leaderboard?${params}`);
+  if (!response.ok) {
+    throw new Error(`Failed to fetch legal leaderboard: ${response.status}`);
+  }
+  const json = (await response.json()) as { rows?: AssembledAgentRow[] };
+  return json.rows ?? [];
+}
+
+export function useLegalLeaderboardQuery(enabled: boolean, suite: string = LEGAL_SUITE) {
+  return useQuery({
+    queryKey: legalLeaderboardKeys.suite(suite),
+    queryFn: () => fetchLegalLeaderboard(suite),
+    enabled,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
 }
 
 /**
