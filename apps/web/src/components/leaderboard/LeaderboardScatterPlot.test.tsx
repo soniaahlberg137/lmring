@@ -176,4 +176,25 @@ describe('LeaderboardScatterPlot', () => {
     const labels = screen.getAllByTestId('label');
     expect(labels.length).toBeGreaterThanOrEqual(1);
   });
+
+  it('should not render a frontier overlay by default', async () => {
+    const { LeaderboardScatterPlot } = await import('./LeaderboardScatterPlot');
+    render(<LeaderboardScatterPlot models={mockModels} xMetric={xMetric} yMetric={yMetric} />);
+    // Only the main data scatter is rendered.
+    expect(screen.getAllByTestId('scatter')).toHaveLength(1);
+  });
+
+  it('should render a frontier overlay when showFrontier is set', async () => {
+    const { LeaderboardScatterPlot } = await import('./LeaderboardScatterPlot');
+    render(
+      <LeaderboardScatterPlot
+        models={mockModels}
+        xMetric={xMetric}
+        yMetric={yMetric}
+        showFrontier
+      />,
+    );
+    // Main data scatter + Pareto frontier scatter.
+    expect(screen.getAllByTestId('scatter')).toHaveLength(2);
+  });
 });

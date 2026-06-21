@@ -12,6 +12,7 @@ import {
   XIcon,
 } from 'lucide-react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
+import type { AssembledAgentRow } from '@/hooks/use-leaderboard-query';
 import type { TranslationFunction } from '@/hooks/use-translations';
 import { formatMetricValue, getNumericValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel } from './types';
@@ -245,6 +246,123 @@ export function createMetricColumns(
       return a - b;
     },
   }));
+}
+
+// ============================================================================
+// Tessera: legal assembled-agent (harness × model) matrix columns
+// ============================================================================
+
+// Row type for the legal leaderboard table (fixture/API rows + a display rank).
+export type LegalLeaderboardRow = AssembledAgentRow & { rank: number };
+
+// Format a latency value (ms) with thousands separators and a unit suffix.
+function LatencyCell({ value }: { value: number | null }) {
+  if (value === null || value === undefined) {
+    return <span className="text-muted-foreground tabular-nums text-sm">—</span>;
+  }
+  return <span className="tabular-nums text-sm">{value.toLocaleString()} ms</span>;
+}
+
+// Build a right-aligned, sortable numeric column for a legal metric field.
+function legalMetricColumn(
+  field: keyof LegalLeaderboardRow,
+  label: string,
+  format: MetricConfig['format'] | 'latency',
+  t: TranslationFunction,
+  highlight = false,
+): ColumnDef<LegalLeaderboardRow> {
+  return {
+    accessorKey: field,
+    header: ({ column }) => (
+      <div className="text-right">
+        <SortableHeader column={column} label={label} t={t} />
+      </div>
+    ),
+    cell: ({ row }) => {
+      const value = row.original[field] as number | null;
+      return (
+        <div className="text-right">
+          {format === 'latency' ? (
+            <LatencyCell value={value} />
+          ) : (
+            <ScoreCell value={value} format={format} highlight={highlight} />
+          )}
+        </div>
+      );
+    },
+    size: 110,
+    minSize: 80,
+    sortingFn: (rowA, rowB) => {
+      const a = getNumericValue(rowA.original[field] as number | null);
+      const b = getNumericValue(rowB.original[field] as number | null);
+      if (a === -Infinity && b === -Infinity) return 0;
+      if (a === -Infinity) return 1;
+      if (b === -Infinity) return -1;
+      return a - b;
+    },
+  };
+}
+
+// Create the legal assembled-agent column set (conditionally used by the Legal tab).
+export function createLegalColumns(t: TranslationFunction): ColumnDef<LegalLeaderboardRow>[] {
+  return [
+    {
+      accessorKey: 'rank',
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_rank')}</span>
+      ),
+      cell: ({ row }) => <RankCell rank={row.original.rank} />,
+      size: 70,
+      enableSorting: false,
+      enableResizing: false,
+    },
+    {
+      accessorKey: 'agentName',
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_agent')}</span>
+      ),
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1.5">
+          <BotIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+          <span className="font-medium text-foreground text-sm truncate">
+            {row.original.agentName}
+          </span>
+        </div>
+      ),
+      size: 180,
+      minSize: 120,
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'harness',
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_harness')}</span>
+      ),
+      cell: ({ row }) => (
+        <span className="text-sm text-muted-foreground truncate">{row.original.harness}</span>
+      ),
+      size: 170,
+      minSize: 120,
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'baseModel',
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_base_model')}</span>
+      ),
+      cell: ({ row }) => (
+        <span className="text-sm text-muted-foreground truncate">{row.original.baseModel}</span>
+      ),
+      size: 160,
+      minSize: 120,
+      enableSorting: false,
+    },
+    legalMetricColumn('f1', t('Leaderboard.table_f1'), 'percentage', t, true),
+    legalMetricColumn('passAt1', t('Leaderboard.table_pass_at_1'), 'percentage', t),
+    legalMetricColumn('passHatK', t('Leaderboard.table_pass_hat_k'), 'percentage', t),
+    legalMetricColumn('costUsd', t('Leaderboard.table_cost'), 'currency', t),
+    legalMetricColumn('latencyMs', t('Leaderboard.table_latency'), 'latency', t),
+  ];
 }
 
 // Create trailing columns

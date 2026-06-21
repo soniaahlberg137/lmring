@@ -54,6 +54,10 @@ export interface LeaderboardModel {
   arena_raw_scores?: ArenaScores | null;
   // Tessera: populated when this row represents an agent benchmark result
   agent_name?: string | null;
+  // Tessera: assembled-agent (harness × model) metrics for the legal domain
+  f1?: number | null;
+  cost_usd?: number | null;
+  latency_ms?: number | null;
   // Optional fields from ZeroEvalModelBasic
   model_type?: 'llm' | 'image' | 'video' | 'tts' | 'stt';
   is_open?: boolean;
@@ -82,6 +86,8 @@ export interface LeaderboardScatterPlotProps {
   models: LeaderboardModel[];
   xMetric: MetricConfig;
   yMetric: MetricConfig;
+  // Tessera: overlay the perf-vs-cost Pareto frontier (higher y + lower x dominates).
+  showFrontier?: boolean;
 }
 
 export interface CategoryTabsProps {

@@ -14,6 +14,7 @@ import {
   YAxis,
   ZAxis,
 } from 'recharts';
+import { computeParetoFrontier } from '@/libs/pareto-frontier';
 import { formatMetricValue, getNumericValue, type MetricConfig } from '@/libs/zeroeval-api';
 import type { LeaderboardModel } from './types';
 
@@ -21,6 +22,8 @@ interface LeaderboardScatterPlotProps {
   models: LeaderboardModel[];
   xMetric: MetricConfig;
   yMetric: MetricConfig;
+  // Tessera: overlay the perf-vs-cost Pareto frontier (higher y + lower x dominates).
+  showFrontier?: boolean;
 }
 
 interface ScatterDataPoint {
@@ -54,7 +57,12 @@ function getScatterColor(index: number): string {
   return SCATTER_COLORS[index % SCATTER_COLORS.length] ?? '#5BB8CC';
 }
 
-export function LeaderboardScatterPlot({ models, xMetric, yMetric }: LeaderboardScatterPlotProps) {
+export function LeaderboardScatterPlot({
+  models,
+  xMetric,
+  yMetric,
+  showFrontier = false,
+}: LeaderboardScatterPlotProps) {
   const { scatterData, xDomain, yDomain } = useMemo(() => {
     const validModels = models.filter((m) => {
       const xVal = m[xMetric.field as keyof typeof m];
@@ -116,6 +124,12 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
 
     return { scatterData, xDomain, yDomain };
   }, [models, xMetric, yMetric]);
+
+  // Tessera: non-dominated (Pareto) frontier — higher y (perf) + lower x (cost/latency) wins.
+  const frontierData = useMemo(
+    () => (showFrontier ? computeParetoFrontier(scatterData) : []),
+    [showFrontier, scatterData],
+  );
 
   const getTickFormatter = (metric: MetricConfig) => {
     return (value: number) => {
@@ -245,6 +259,17 @@ export function LeaderboardScatterPlot({ models, xMetric, yMetric }: Leaderboard
               style={{ fontSize: 9, fontWeight: 400 }}
             />
           </Scatter>
+          {/* Pareto frontier overlay: connect the non-dominated points. */}
+          {frontierData.length > 1 && (
+            <Scatter
+              data={frontierData}
+              line={{ stroke: '#5BB8CC', strokeWidth: 2, strokeDasharray: '5 4' }}
+              lineJointType="linear"
+              shape={() => <g />}
+              legendType="none"
+              isAnimationActive={false}
+            />
+          )}
         </ScatterChart>
       </ResponsiveContainer>
     </div>
