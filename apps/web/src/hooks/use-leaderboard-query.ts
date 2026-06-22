@@ -21,6 +21,10 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
   arena_raw_scores?: Awaited<ReturnType<typeof getArenaScores>>[string] | null;
   // Tessera: agent display name when this row represents a submitted agent
   agent_name?: string | null;
+  domain?: 'coding' | 'customer-support' | 'research' | 'finance' | 'legal' | 'general' | null;
+  description?: string | null;
+  system_prompt?: string | null;
+  mcp_tools?: string[] | null;
   // Non-LLM arena scores (flattened)
   'text-to-image'?: number | null;
   'image-to-image'?: number | null;

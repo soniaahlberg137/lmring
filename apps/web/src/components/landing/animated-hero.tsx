@@ -1,15 +1,14 @@
 'use client';
 
-import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion';
-import type { MouseEvent, ReactNode } from 'react';
-import { useCallback, useRef } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import type { ReactNode } from 'react';
+import { useRef } from 'react';
 
 type AnimatedHeroProps = {
   title: ReactNode;
   description: ReactNode;
   actions: ReactNode;
   badge?: ReactNode;
-  logo?: ReactNode;
 };
 
 const containerVariants = {
@@ -38,67 +37,7 @@ const itemVariants = {
   },
 };
 
-const titleVariants = {
-  hidden: {
-    opacity: 0,
-    y: 50,
-    scale: 0.95,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 1.2,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  },
-};
-
-function InteractiveOrbs() {
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent<HTMLDivElement>) => {
-      const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
-      const x = (e.clientX - left - width / 2) / 20;
-      const y = (e.clientY - top - height / 2) / 20;
-      mouseX.set(x);
-      mouseY.set(y);
-    },
-    [mouseX, mouseY],
-  );
-
-  return (
-    // biome-ignore lint/a11y/noStaticElementInteractions: Visual effect only
-    <div className="absolute inset-0 overflow-hidden" onMouseMove={handleMouseMove}>
-      <motion.div
-        className="absolute left-1/4 top-1/4 h-[400px] w-[400px] rounded-full bg-indigo-500/10 blur-[100px]"
-        style={{
-          x: useTransform(mouseX, (x) => x * 2),
-          y: useTransform(mouseY, (y) => y * 2),
-        }}
-      />
-      <motion.div
-        className="absolute right-1/4 top-1/3 h-[350px] w-[350px] rounded-full bg-slate-400/10 blur-[80px]"
-        style={{
-          x: useTransform(mouseX, (x) => x * -1.5),
-          y: useTransform(mouseY, (y) => y * -1.5),
-        }}
-      />
-      <motion.div
-        className="absolute bottom-1/4 left-1/3 h-[300px] w-[300px] rounded-full bg-blue-400/8 blur-[90px]"
-        style={{
-          x: useTransform(mouseX, (x) => x * 1),
-          y: useTransform(mouseY, (y) => y * 1),
-        }}
-      />
-    </div>
-  );
-}
-
-export function AnimatedHero({ title, description, actions, badge, logo }: AnimatedHeroProps) {
+export function AnimatedHero({ title, description, actions, badge }: AnimatedHeroProps) {
   const containerRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -109,8 +48,10 @@ export function AnimatedHero({ title, description, actions, badge, logo }: Anima
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
 
   return (
-    <section ref={containerRef} className="relative flex min-h-screen w-full flex-col">
-      <InteractiveOrbs />
+    <section
+      ref={containerRef}
+      className="relative flex min-h-screen w-full flex-col bg-background"
+    >
       <motion.div
         className="relative z-10 flex flex-1 flex-col items-center justify-center px-4"
         style={{ y, opacity }}
@@ -127,35 +68,7 @@ export function AnimatedHero({ title, description, actions, badge, logo }: Anima
             </motion.div>
           )}
 
-          <motion.div variants={titleVariants} className="relative">
-            {logo ? (
-              <>
-                <div className="relative flex items-center justify-center">
-                  <span className="absolute inset-0 flex items-center justify-center opacity-50 blur-2xl">
-                    {logo}
-                  </span>
-                  <span className="relative">{logo}</span>
-                </div>
-                <h1 className="sr-only">{title}</h1>
-              </>
-            ) : (
-              <h1 className="relative text-5xl font-bold tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-                <span className="absolute inset-0 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent opacity-50 blur-2xl">
-                  {title}
-                </span>
-                <span className="relative bg-gradient-to-b from-slate-100 via-slate-200 to-slate-300 bg-clip-text text-transparent">
-                  {title}
-                </span>
-              </h1>
-            )}
-
-            <motion.div
-              className="absolute -bottom-4 left-1/2 h-0.5 -translate-x-1/2 rounded-full bg-gradient-to-r from-indigo-400/50 via-blue-400/50 to-indigo-400/50"
-              initial={{ width: 0, opacity: 0 }}
-              animate={{ width: '60%', opacity: 1 }}
-              transition={{ delay: 1.2, duration: 1, ease: 'easeOut' }}
-            />
-          </motion.div>
+          <h1 className="sr-only">{title}</h1>
 
           <motion.div variants={itemVariants} className="mt-10 max-w-2xl leading-relaxed">
             {description}

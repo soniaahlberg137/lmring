@@ -5,6 +5,7 @@ import {
   type ColumnDef,
   flexRender,
   getCoreRowModel,
+  getExpandedRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   type OnChangeFn,
@@ -13,7 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { useEventListener, useMemoizedFn, useRafState, useResetState } from 'ahooks';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Fragment, type ReactNode, useEffect, useRef, useState } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
 
 interface DataTableProps<TData> {
@@ -23,6 +24,7 @@ interface DataTableProps<TData> {
   sorting?: SortingState;
   onSortingChange?: OnChangeFn<SortingState>;
   manualSorting?: boolean;
+  renderExpandedRow?: (row: TData) => ReactNode;
 }
 
 export function DataTable<TData>({
@@ -32,6 +34,7 @@ export function DataTable<TData>({
   sorting: controlledSorting,
   onSortingChange,
   manualSorting = false,
+  renderExpandedRow,
 }: DataTableProps<TData>) {
   const t = useTranslations();
   const [uncontrolledSorting, setUncontrolledSorting] = useState<SortingState>([]);
@@ -48,6 +51,7 @@ export function DataTable<TData>({
     columns,
     columnResizeMode: 'onChange',
     getCoreRowModel: getCoreRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     getSortedRowModel: manualSorting ? undefined : getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: handleSortingChange,
@@ -179,32 +183,50 @@ export function DataTable<TData>({
           </thead>
           <tbody>
             {table.getRowModel().rows.map((row, idx) => (
-              <tr
-                key={row.id}
-                className={cn(
-                  'border-b border-border/30 transition-colors hover:bg-muted/50',
-                  idx % 2 === 0 ? 'bg-background' : 'bg-muted/10',
-                )}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  const isColumnResizing = resizingColumnId === cell.column.id;
-                  const anyResizing = resizingColumnId !== null;
+              <Fragment key={row.id}>
+                <tr
+                  className={cn(
+                    'border-b border-border/30 transition-colors',
+                    idx % 2 === 0 ? 'bg-background' : 'bg-muted/10',
+                    renderExpandedRow
+                      ? 'cursor-pointer hover:bg-muted/50 select-none'
+                      : 'hover:bg-muted/50',
+                    renderExpandedRow && row.getIsExpanded() && 'bg-muted/20 border-border/50',
+                  )}
+                  onClick={
+                    renderExpandedRow && !resizingColumnId ? () => row.toggleExpanded() : undefined
+                  }
+                >
+                  {row.getVisibleCells().map((cell) => {
+                    const isColumnResizing = resizingColumnId === cell.column.id;
+                    const anyResizing = resizingColumnId !== null;
 
-                  return (
+                    return (
+                      <td
+                        key={cell.id}
+                        className={cn(
+                          'px-4 py-3',
+                          !anyResizing && 'transition-[width] duration-150 ease-out',
+                          isColumnResizing && 'bg-primary/5',
+                        )}
+                        style={{ width: cell.column.getSize() }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    );
+                  })}
+                </tr>
+                {row.getIsExpanded() && renderExpandedRow && (
+                  <tr className={idx % 2 === 0 ? 'bg-background' : 'bg-muted/10'}>
                     <td
-                      key={cell.id}
-                      className={cn(
-                        'px-4 py-3',
-                        !anyResizing && 'transition-[width] duration-150 ease-out',
-                        isColumnResizing && 'bg-primary/5',
-                      )}
-                      style={{ width: cell.column.getSize() }}
+                      colSpan={row.getVisibleCells().length}
+                      className="px-6 py-5 border-b border-border/30"
                     >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {renderExpandedRow(row.original)}
                     </td>
-                  );
-                })}
-              </tr>
+                  </tr>
+                )}
+              </Fragment>
             ))}
           </tbody>
         </table>

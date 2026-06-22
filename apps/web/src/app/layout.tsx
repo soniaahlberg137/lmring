@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Inter, Playfair_Display } from 'next/font/google';
 import { Toaster } from 'sonner';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -7,6 +8,19 @@ import { getRequestLocale } from '@/libs/request-locale';
 import { LanguageProvider } from '@/providers/language-provider';
 import '@/styles/global.css';
 import '@/styles/arena.css';
+
+const playfair = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-serif',
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+});
+
+const inter = Inter({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://lmring.com'),
@@ -64,7 +78,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   return (
     <html
       lang={locale}
-      className="scroll-smooth"
+      className={`${playfair.variable} ${inter.variable} scroll-smooth`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >

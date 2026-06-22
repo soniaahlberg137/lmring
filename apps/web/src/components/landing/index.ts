@@ -16,7 +16,6 @@ export {
   CTASection,
   FeaturesSection,
   HowItWorksSection,
-  ProvidersSection,
 } from './landing-sections';
 export { Spotlight, SpotlightCard } from './spotlight';
 export {

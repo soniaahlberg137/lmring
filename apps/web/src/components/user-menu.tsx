@@ -11,13 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@lmring/ui';
-import { LayoutDashboardIcon, LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
+import { LogOutIcon, SettingsIcon, UserIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useContext } from 'react';
 import { useTranslations } from '@/hooks/use-translations';
 import { authClient } from '@/libs/AuthClient';
-import { ArenaStoreContext } from '@/stores/arena-store';
-import { WorkflowStoreContext } from '@/stores/workflow-store';
 
 interface UserMenuProps {
   user?: {
@@ -31,14 +28,6 @@ interface UserMenuProps {
 export function UserMenu({ user, collapsed = false }: UserMenuProps) {
   const t = useTranslations();
   const router = useRouter();
-  const workflowStore = useContext(WorkflowStoreContext);
-  const arenaStore = useContext(ArenaStoreContext);
-
-  const handleGoToArena = () => {
-    workflowStore?.getState().resetConversation();
-    arenaStore?.getState().setModelsLastLoadedAt(null);
-    router.push('/arena');
-  };
 
   const handleLogout = async () => {
     try {
@@ -94,11 +83,6 @@ export function UserMenu({ user, collapsed = false }: UserMenuProps) {
         <DropdownMenuItem onClick={() => router.push('/account')} className="apple-transition">
           <UserIcon className="mr-2 h-4 w-4" />
           <span className="font-medium">{t('Sidebar.user_menu_account')}</span>
-        </DropdownMenuItem>
-
-        <DropdownMenuItem onClick={handleGoToArena} className="apple-transition">
-          <LayoutDashboardIcon className="mr-2 h-4 w-4" />
-          <span className="font-medium">{t('Sidebar.user_menu_arena')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem onClick={() => router.push('/settings')} className="apple-transition">
