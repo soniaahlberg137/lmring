@@ -34,6 +34,9 @@ const mockModelFull: zeroEvalApi.ZeroEvalModelFull = {
   gpqa_score: 0.75,
   swe_bench_verified_score: 0.65,
   mmmu_score: 0.7,
+  gaia_score: null,
+  tau_bench_score: null,
+  core_bench_score: null,
 };
 
 function createWrapper() {

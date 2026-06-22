@@ -97,3 +97,7 @@ settings.local.json
 *.pen
 CLAUDE.local.md
 node-compile-cache
+.omc/
+
+# IDE
+.idea/

@@ -47,11 +47,19 @@ export interface LeaderboardModel {
   gpqa_score?: number | null;
   swe_bench_verified_score?: number | null;
   mmmu_score?: number | null;
+  gaia_score?: number | null;
+  tau_bench_score?: number | null;
+  core_bench_score?: number | null;
   // Arena scores (display values, already × 100)
   chat_arena_score?: number | null;
   code_arena_score?: number | null;
   // Raw arena scores for tooltip display
   arena_raw_scores?: ArenaScores | null;
+  // Tessera: populated when this row represents an agent benchmark result
+  agent_name?: string | null;
+  description?: string | null;
+  system_prompt?: string | null;
+  mcp_tools?: string[] | null;
   // Optional fields from ZeroEvalModelBasic
   model_type?: 'llm' | 'image' | 'video' | 'tts' | 'stt';
   is_open?: boolean;

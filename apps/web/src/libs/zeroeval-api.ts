@@ -68,12 +68,16 @@ export interface ZeroEvalModelFull {
   output_price: string | null;
   throughput: string | null;
   latency: string | null;
-  // Benchmark scores
+  // Benchmark scores (ZeroEval)
   aime_2025_score: number | null;
   hle_score: number | null;
   gpqa_score: number | null;
   swe_bench_verified_score: number | null;
   mmmu_score: number | null;
+  // Tessera agent benchmarks
+  gaia_score: number | null;
+  tau_bench_score: number | null;
+  core_bench_score: number | null;
 }
 
 export interface ZeroEvalBenchmark {
@@ -243,9 +247,9 @@ export const CATEGORY_CONFIGS: CategoryConfig[] = [
     apiParams: {},
     metrics: [
       {
-        id: 'gpqa',
-        label: 'GPQA',
-        field: 'gpqa_score',
+        id: 'gaia',
+        label: 'GAIA',
+        field: 'gaia_score',
         format: 'percentage',
         higherIsBetter: true,
       },
@@ -257,30 +261,16 @@ export const CATEGORY_CONFIGS: CategoryConfig[] = [
         higherIsBetter: true,
       },
       {
-        id: 'code_arena',
-        label: 'Code Arena',
-        field: 'code_arena_score',
-        format: 'number',
-        higherIsBetter: true,
-      },
-      {
-        id: 'chat_arena',
-        label: 'Chat Arena',
-        field: 'chat_arena_score',
-        format: 'number',
-        higherIsBetter: true,
-      },
-      {
-        id: 'mmmu',
-        label: 'MMMU',
-        field: 'mmmu_score',
+        id: 'tau_bench',
+        label: 'tau-bench',
+        field: 'tau_bench_score',
         format: 'percentage',
         higherIsBetter: true,
       },
       {
-        id: 'aime',
-        label: 'AIME 2025',
-        field: 'aime_2025_score',
+        id: 'core_bench',
+        label: 'CORE-bench',
+        field: 'core_bench_score',
         format: 'percentage',
         higherIsBetter: true,
       },

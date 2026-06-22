@@ -57,6 +57,20 @@ export interface ThemeConfigJson {
   presetName: string | null;
 }
 
+// Agent tools JSON
+export interface AgentToolJson {
+  name: string;
+  type: 'mcp' | 'function' | 'skill';
+  config?: Record<string, unknown>;
+}
+
+// Agent memory config JSON
+export interface AgentMemoryConfigJson {
+  type?: 'none' | 'short_term' | 'long_term' | 'external';
+  provider?: string;
+  config?: Record<string, unknown>;
+}
+
 // Enums
 export const configSourceEnum = pgEnum('config_source', ['manual', 'cherry-studio', 'newapi']);
 export const roleEnum = pgEnum('message_role', ['user', 'assistant', 'system']);
@@ -556,6 +570,40 @@ export const verification = pgTable(
   ],
 );
 
+// Agent domain enum
+export const agentDomainEnum = pgEnum('agent_domain', [
+  'coding',
+  'customer-support',
+  'research',
+  'finance',
+  'legal',
+  'general',
+]);
+
+// Agents
+export const agents = pgTable(
+  'agents',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    name: text('name').notNull(),
+    description: text('description'),
+    baseModel: text('base_model').notNull(),
+    domain: agentDomainEnum('domain').default('general').notNull(),
+    systemPrompt: text('system_prompt'),
+    tools: jsonb('tools').$type<AgentToolJson[]>(),
+    memoryConfig: jsonb('memory_config').$type<AgentMemoryConfigJson>(),
+    configContent: text('config_content'),
+    submittedBy: uuid('submitted_by').references(() => users.id, { onDelete: 'set null' }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('agents_submitted_by_idx').on(table.submittedBy),
+    index('agents_base_model_idx').on(table.baseModel),
+    index('agents_domain_idx').on(table.domain),
+  ],
+);
+
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
   preferences: one(userPreferences),
@@ -569,6 +617,14 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   sessions: many(session),
   accounts: many(account),
   webdevSessions: many(webdevSessions),
+  submittedAgents: many(agents),
+}));
+
+export const agentsRelations = relations(agents, ({ one }) => ({
+  submitter: one(users, {
+    fields: [agents.submittedBy],
+    references: [users.id],
+  }),
 }));
 
 export const userPreferencesRelations = relations(userPreferences, ({ one }) => ({
@@ -765,6 +821,8 @@ export type WebDevResponse = typeof webdevResponses.$inferSelect;
 export type NewWebDevResponse = typeof webdevResponses.$inferInsert;
 export type WebDevIteration = typeof webdevIterations.$inferSelect;
 export type NewWebDevIteration = typeof webdevIterations.$inferInsert;
+export type Agent = typeof agents.$inferSelect;
+export type NewAgent = typeof agents.$inferInsert;
 
 // Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];

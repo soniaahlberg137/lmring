@@ -1,36 +1,24 @@
 'use client';
 
-import { ScrollArea, SidebarConversationSkeleton } from '@lmring/ui';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ClockIcon,
-  ListXIcon,
+  Columns2Icon,
   MenuIcon,
-  MessageSquareIcon,
-  MessageSquarePlusIcon,
   PanelLeftClose,
   PanelLeftOpen,
   TrophyIcon,
+  UploadIcon,
   XIcon,
 } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import type { ConversationData } from '@/hooks/use-conversation';
-import {
-  conversationsKeys,
-  usePrefetchConversations,
-  useRecentConversations,
-} from '@/hooks/use-conversations-query';
 import { usePrefetchLeaderboard } from '@/hooks/use-leaderboard-query';
 import { useTranslations } from '@/hooks/use-translations';
-import { arenaSelectors, useArenaStore, useWorkflowStore, workflowSelectors } from '@/stores';
 import { UserMenu } from './user-menu';
 
 interface NavItem {
-  titleKey: 'new_chat' | 'leaderboard' | 'history';
+  titleKey: 'leaderboard' | 'compare' | 'submit_agent';
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
@@ -38,19 +26,19 @@ interface NavItem {
 
 const navItemsConfig: NavItem[] = [
   {
-    titleKey: 'new_chat',
-    href: '/arena',
-    icon: MessageSquarePlusIcon,
-  },
-  {
     titleKey: 'leaderboard',
     href: '/leaderboard',
     icon: TrophyIcon,
   },
   {
-    titleKey: 'history',
-    href: '/history',
-    icon: ClockIcon,
+    titleKey: 'compare',
+    href: '/compare',
+    icon: Columns2Icon,
+  },
+  {
+    titleKey: 'submit_agent',
+    href: '/submit',
+    icon: UploadIcon,
   },
 ];
 
@@ -66,19 +54,7 @@ export function Sidebar({ user }: SidebarProps) {
   const t = useTranslations();
   const [collapsed, setCollapsed] = React.useState(false);
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isLogoHovered, setIsLogoHovered] = React.useState(false);
   const pathname = usePathname();
-
-  const { data: recentConversations = [], isLoading: conversationsLoading } =
-    useRecentConversations(10);
-  const queryClient = useQueryClient();
-
-  const clearTodayMutation = useMutation({
-    mutationFn: () => fetch('/api/conversations/clear-today', { method: 'POST' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: conversationsKeys.recent(10) });
-    },
-  });
 
   // Track actual browser pathname — usePathname() doesn't update on replaceState
   const [browserPath, setBrowserPath] = React.useState('');
@@ -93,16 +69,7 @@ export function Sidebar({ user }: SidebarProps) {
     return () => window.removeEventListener('url-replaced', handler);
   }, []);
 
-  const newConversation = useWorkflowStore(workflowSelectors.newConversation);
-  const clearNewConversation = useWorkflowStore((state) => state.clearNewConversation);
-  const resetConversation = useWorkflowStore((state) => state.resetConversation);
-
-  const mainContentReady = useArenaStore(arenaSelectors.mainContentReady);
-  const setModelsLastLoadedAt = useArenaStore((state) => state.setModelsLastLoadedAt);
-
-  // Prefetch hooks for navigation optimization
   const { prefetchLeaderboard } = usePrefetchLeaderboard();
-  const { prefetchHistoryConversations } = usePrefetchConversations();
 
   const currentPath = browserPath || pathname;
 
@@ -114,50 +81,16 @@ export function Sidebar({ user }: SidebarProps) {
     }
   }, [isSettingsPage]);
 
-  React.useEffect(() => {
-    if (newConversation) {
-      const exists = recentConversations.some((conv) => conv.id === newConversation.id);
-      if (!exists) {
-        queryClient.setQueryData<ConversationData[]>(conversationsKeys.recent(10), (old = []) => [
-          {
-            id: newConversation.id,
-            userId: '',
-            title: newConversation.title,
-            firstMessage: newConversation.title,
-            createdAt: newConversation.updatedAt,
-            updatedAt: newConversation.updatedAt,
-          },
-          ...old.slice(0, 9),
-        ]);
-      }
-      clearNewConversation();
-    }
-  }, [newConversation, recentConversations, clearNewConversation, queryClient]);
-
   const sidebarWidth = collapsed ? 'w-16' : 'w-64';
 
-  const truncateText = (text: string, maxLength: number) => {
-    if (text.length <= maxLength) return text;
-    return `${text.slice(0, maxLength)}...`;
-  };
-
-  // Handle prefetch on hover for navigation items
   const handleNavItemMouseEnter = React.useCallback(
     (href: string) => {
       if (href === '/leaderboard') {
         void prefetchLeaderboard('all');
-      } else if (href === '/history') {
-        void prefetchHistoryConversations(50, 0);
       }
     },
-    [prefetchLeaderboard, prefetchHistoryConversations],
+    [prefetchLeaderboard],
   );
-
-  // Handle new chat click to reset state
-  const handleNewChatClick = React.useCallback(() => {
-    resetConversation();
-    setModelsLastLoadedAt(null);
-  }, [resetConversation, setModelsLastLoadedAt]);
 
   // JSX variable (not an inline component) so React reconciles instead of remounting on every render
   const sidebarContent = (
@@ -168,64 +101,11 @@ export function Sidebar({ user }: SidebarProps) {
             type="button"
             className="flex items-center justify-center w-full h-full hover:bg-sidebar-accent transition-colors rounded-lg"
             onClick={() => setCollapsed(false)}
-            onMouseEnter={() => setIsLogoHovered(true)}
-            onMouseLeave={() => setIsLogoHovered(false)}
           >
-            {isLogoHovered ? (
-              <PanelLeftOpen className="h-6 w-6 text-primary" />
-            ) : (
-              <>
-                <Image
-                  src="/athena-black.svg"
-                  alt="lmring"
-                  width={24}
-                  height={24}
-                  className="dark:hidden"
-                  style={{ width: 24, height: 24, flexShrink: 0 }}
-                />
-                <Image
-                  src="/athena-white.svg"
-                  alt="lmring"
-                  width={24}
-                  height={24}
-                  className="hidden dark:block"
-                  style={{ width: 24, height: 24, flexShrink: 0 }}
-                />
-              </>
-            )}
+            <PanelLeftOpen className="h-6 w-6 text-primary" />
           </button>
         ) : (
-          <div className="flex items-center gap-2 px-2 py-1.5">
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.div
-                  initial={{ opacity: 0, width: 0 }}
-                  animate={{ opacity: 1, width: 'auto' }}
-                  exit={{ opacity: 0, width: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="flex items-center gap-2 whitespace-nowrap overflow-hidden"
-                >
-                  <Image
-                    src="/athena-black.svg"
-                    alt="lmring"
-                    width={24}
-                    height={24}
-                    className="dark:hidden"
-                    style={{ width: 24, height: 24, flexShrink: 0 }}
-                  />
-                  <Image
-                    src="/athena-white.svg"
-                    alt="lmring"
-                    width={24}
-                    height={24}
-                    className="hidden dark:block"
-                    style={{ width: 24, height: 24, flexShrink: 0 }}
-                  />
-                  <span className="text-lg font-semibold">lmring</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
+          <div className="flex items-center gap-2 px-2 py-1.5" />
         )}
 
         {!collapsed && (
@@ -242,10 +122,7 @@ export function Sidebar({ user }: SidebarProps) {
 
       <nav className="flex-1 p-3 space-y-1 overflow-hidden flex flex-col">
         {navItemsConfig.map((item) => {
-          const isNewChat = item.href === '/arena';
-          const isActive = isNewChat
-            ? currentPath === '/arena'
-            : currentPath === item.href || currentPath.startsWith(`${item.href}/`);
+          const isActive = currentPath === item.href || currentPath.startsWith(`${item.href}/`);
           const Icon = item.icon;
 
           return (
@@ -255,12 +132,7 @@ export function Sidebar({ user }: SidebarProps) {
               prefetch={true}
               className="block"
               onMouseEnter={() => handleNavItemMouseEnter(item.href)}
-              onClick={() => {
-                if (isNewChat) {
-                  handleNewChatClick();
-                }
-                setMobileOpen(false);
-              }}
+              onClick={() => setMobileOpen(false)}
             >
               <motion.div
                 whileHover={{ x: 2 }}
@@ -307,76 +179,6 @@ export function Sidebar({ user }: SidebarProps) {
             </Link>
           );
         })}
-
-        {!collapsed && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between px-3 py-2">
-              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                {t('Sidebar.today')}
-              </span>
-              {recentConversations.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => clearTodayMutation.mutate()}
-                  disabled={clearTodayMutation.isPending}
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors rounded px-1.5 py-0.5 hover:bg-sidebar-accent/50"
-                >
-                  <ListXIcon className="h-3 w-3" />
-                  {t('Sidebar.clear_today')}
-                </button>
-              )}
-            </div>
-            <ScrollArea className="max-h-[300px]">
-              {conversationsLoading || (currentPath.startsWith('/arena') && !mainContentReady) ? (
-                <SidebarConversationSkeleton count={5} />
-              ) : recentConversations.length > 0 ? (
-                <div className="space-y-0.5">
-                  {recentConversations.map((conv) => {
-                    const convHref = conv.webdevSessionId
-                      ? `/webdev/${conv.webdevSessionId}`
-                      : `/arena/${conv.id}`;
-                    const isConvActive = currentPath === convHref;
-                    const displayText = conv.firstMessage
-                      ? truncateText(conv.firstMessage, 20)
-                      : truncateText(conv.title, 20);
-
-                    return (
-                      <Link key={conv.id} href={convHref} prefetch={false} className="block">
-                        <motion.div
-                          whileHover={{ x: 2 }}
-                          whileTap={{ scale: 0.98 }}
-                          className={`
-                            relative flex items-center gap-2 px-3 py-1.5 rounded-md text-sm
-                            transition-colors apple-transition
-                            ${
-                              isConvActive
-                                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
-                                : 'hover:bg-sidebar-accent/30 text-sidebar-foreground/70'
-                            }
-                          `}
-                        >
-                          {isConvActive && (
-                            <motion.div
-                              layoutId="conversationIndicator"
-                              className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-primary rounded-r-full"
-                              initial={{ opacity: 0 }}
-                              animate={{ opacity: 1 }}
-                              exit={{ opacity: 0 }}
-                            />
-                          )}
-                          <MessageSquareIcon
-                            className={`h-4 w-4 flex-shrink-0 ${isConvActive ? 'text-primary' : 'opacity-60'}`}
-                          />
-                          <span className="truncate">{displayText}</span>
-                        </motion.div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </ScrollArea>
-          </div>
-        )}
       </nav>
 
       <div className="p-3 mt-auto">

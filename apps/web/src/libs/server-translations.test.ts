@@ -51,16 +51,6 @@ describe('server-translations', () => {
       expect(t('nonexistent.key')).toBe('nonexistent.key');
     });
 
-    it('should work with different locales', async () => {
-      const t = await getServerTranslations('zh');
-      expect(t('greeting')).toBe('你好');
-    });
-
-    it('should interpolate in different locales', async () => {
-      const t = await getServerTranslations('zh');
-      expect(t('welcome', { name: '张三' })).toBe('欢迎，张三！');
-    });
-
     it('should replace all occurrences of same placeholder', async () => {
       await getServerTranslations('en');
       const mockMessages = { repeat: '{name} and {name}' };

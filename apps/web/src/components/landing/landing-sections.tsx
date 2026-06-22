@@ -1,62 +1,10 @@
 'use client';
 
 import { cn } from '@lmring/ui';
-import {
-  AlibabaCloud,
-  Anthropic,
-  Aws,
-  Azure,
-  Cohere,
-  DeepSeek,
-  Google,
-  Groq,
-  HuggingFace,
-  Meta,
-  Mistral,
-  OpenAI,
-  TencentCloud,
-  Wenxin,
-} from '@lobehub/icons';
 import { motion, useInView } from 'framer-motion';
 import { Brain, Clock, Code2, Globe, Layers, MessageSquare, Sparkles, Zap } from 'lucide-react';
 import type { ReactNode } from 'react';
 import { useRef } from 'react';
-
-// Provider with icons from @lobehub/icons
-const providers = [
-  { name: 'OpenAI', Icon: OpenAI },
-  { name: 'Anthropic', Icon: Anthropic },
-  { name: 'Google', Icon: Google },
-  { name: 'Meta', Icon: Meta },
-  { name: 'Mistral', Icon: Mistral },
-  { name: 'Cohere', Icon: Cohere },
-  { name: 'Groq', Icon: Groq },
-  { name: 'Azure', Icon: Azure },
-  { name: 'AWS', Icon: Aws },
-  { name: 'Alibaba', Icon: AlibabaCloud },
-  { name: 'Baidu', Icon: Wenxin },
-  { name: 'Tencent', Icon: TencentCloud },
-  { name: 'DeepSeek', Icon: DeepSeek },
-  { name: 'HuggingFace', Icon: HuggingFace },
-];
-
-// Animated provider badge with real icons
-// biome-ignore lint/suspicious/noExplicitAny: @lobehub/icons CompoundedIcon types
-function ProviderBadge({ name, Icon, delay }: { name: string; Icon: any; delay: number }) {
-  return (
-    <motion.div
-      className="group relative flex items-center gap-2 rounded-full border border-slate-600/40 bg-slate-800/50 px-4 py-2 backdrop-blur-sm transition-all hover:border-slate-500/50 hover:bg-slate-700/50"
-      initial={{ opacity: 0, scale: 0.8 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true }}
-      transition={{ delay, duration: 0.5 }}
-      whileHover={{ scale: 1.05 }}
-    >
-      {Icon.Avatar ? <Icon.Avatar size={18} /> : <Icon size={18} />}
-      <span className="text-sm font-medium text-slate-300 group-hover:text-slate-100">{name}</span>
-    </motion.div>
-  );
-}
 
 // Section wrapper with animation
 function AnimatedSection({ children, className }: { children: ReactNode; className?: string }) {
@@ -76,97 +24,36 @@ function AnimatedSection({ children, className }: { children: ReactNode; classNa
   );
 }
 
-// Providers Section
-export function ProvidersSection() {
-  return (
-    <AnimatedSection className="relative overflow-hidden bg-slate-900 py-24">
-      {/* Soft background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800/30 to-slate-900" />
-      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-indigo-500/5 blur-[150px]" />
-
-      <div className="relative mx-auto max-w-7xl px-4">
-        <div className="text-center">
-          <motion.span
-            className="inline-block rounded-full border border-indigo-400/30 bg-indigo-500/10 px-4 py-1 text-sm font-medium text-indigo-300"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-          >
-            Integrations
-          </motion.span>
-          <motion.h2
-            className="mt-6 text-4xl font-bold text-slate-100 md:text-5xl lg:text-6xl"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            50+ AI Providers
-          </motion.h2>
-          <motion.p
-            className="mx-auto mt-4 max-w-2xl text-lg text-slate-400"
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.2 }}
-          >
-            Connect to all major AI providers including OpenAI, Anthropic, Google, Meta, and dozens
-            more. One platform, unlimited possibilities.
-          </motion.p>
-        </div>
-
-        {/* Provider badges grid */}
-        <div className="mt-16 flex flex-wrap justify-center gap-3">
-          {providers.map((provider, i) => (
-            <ProviderBadge
-              key={provider.name}
-              name={provider.name}
-              Icon={provider.Icon}
-              delay={0.3 + i * 0.05}
-            />
-          ))}
-          <motion.div
-            className="flex items-center gap-2 rounded-full border border-dashed border-slate-600/50 px-4 py-2"
-            initial={{ opacity: 0, scale: 0.8 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.9 }}
-          >
-            <span className="text-sm text-slate-500">+38 more</span>
-          </motion.div>
-        </div>
-      </div>
-    </AnimatedSection>
-  );
-}
-
 // How It Works Section
 const steps = [
   {
     icon: Layers,
-    title: 'Select Models',
-    description: 'Choose up to 4 AI models from 50+ providers to compare side-by-side.',
-  },
-  {
-    icon: MessageSquare,
-    title: 'Enter Prompt',
-    description: 'Write your prompt once and send it to all selected models simultaneously.',
+    title: 'Submit Your Agent',
+    description:
+      'Describe your agent — base model, system prompt, tools, memory config — and submit it to the registry.',
   },
   {
     icon: Zap,
-    title: 'Compare Results',
-    description: 'See real-time streaming responses from all models in a unified interface.',
+    title: 'We Run the Benchmarks',
+    description:
+      'Your agent gets tested across benchmarks like GAIA, SWE-bench, tau-bench, and CORE-bench.',
+  },
+  {
+    icon: MessageSquare,
+    title: 'See Real Results',
+    description: 'View transparent, verified scores on the leaderboard — no self-reported numbers.',
   },
   {
     icon: Brain,
-    title: 'Analyze & Decide',
-    description: 'Evaluate responses, track performance, and find the best model for your needs.',
+    title: 'Compare & Choose',
+    description:
+      'See how your agent stacks up against others on performance and cost to find the right one for your use case.',
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <AnimatedSection className="relative overflow-hidden bg-slate-900 py-24">
+    <AnimatedSection className="relative overflow-hidden bg-muted py-24">
       {/* Soft background grid */}
       <div
         className="pointer-events-none absolute inset-0 opacity-20"
@@ -180,7 +67,7 @@ export function HowItWorksSection() {
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="text-center">
           <motion.span
-            className="inline-block rounded-full border border-blue-400/30 bg-blue-500/10 px-4 py-1 text-sm font-medium text-blue-300"
+            className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-medium text-primary"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -188,20 +75,20 @@ export function HowItWorksSection() {
             How It Works
           </motion.span>
           <motion.h2
-            className="mt-6 text-4xl font-bold text-slate-100 md:text-5xl lg:text-6xl"
+            className="mt-6 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
           >
-            Simple Yet Powerful
+            From Submission to Score
           </motion.h2>
         </div>
 
         {/* Steps */}
         <div className="relative mt-20">
-          {/* Connecting line - softer */}
-          <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-indigo-400/30 to-transparent lg:block" />
+          {/* Connecting line */}
+          <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-primary/30 to-transparent lg:block" />
 
           <div className="grid gap-12 lg:grid-cols-4">
             {steps.map((step, i) => (
@@ -215,17 +102,17 @@ export function HowItWorksSection() {
               >
                 {/* Step icon container */}
                 <div className="relative mx-auto mb-6 flex h-20 w-20 items-center justify-center">
-                  <div className="absolute inset-0 rounded-2xl bg-indigo-500/10 blur-xl" />
-                  <div className="relative flex h-full w-full items-center justify-center rounded-2xl border border-slate-700/50 bg-slate-800/80">
-                    <step.icon className="h-8 w-8 text-indigo-400" />
+                  <div className="absolute inset-0 rounded-2xl bg-primary/10 blur-xl" />
+                  <div className="relative flex h-full w-full items-center justify-center rounded-2xl border border-border bg-card">
+                    <step.icon className="h-8 w-8 text-primary" />
                   </div>
-                  <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white">
+                  <span className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
                     {i + 1}
                   </span>
                 </div>
 
-                <h3 className="mb-2 text-xl font-semibold text-slate-100">{step.title}</h3>
-                <p className="text-slate-400">{step.description}</p>
+                <h3 className="mb-2 text-xl font-semibold text-foreground">{step.title}</h3>
+                <p className="text-muted-foreground">{step.description}</p>
               </motion.div>
             ))}
           </div>
@@ -235,57 +122,62 @@ export function HowItWorksSection() {
   );
 }
 
-// Features Section - softer gradients
+// Features Section
 const features = [
   {
-    icon: Zap,
-    title: 'Real-time Streaming',
-    description: 'Watch responses generate live from multiple models simultaneously.',
+    icon: Globe,
+    title: 'Domain-Specific Benchmarks',
+    description:
+      'Compare agents across Coding, Customer Support, Research, Finance, Legal, and General domains.',
     gradient: 'from-amber-400 to-orange-500',
   },
   {
-    icon: Globe,
-    title: 'Multi-language',
-    description: 'Support for English, Chinese, French and more languages.',
+    icon: Brain,
+    title: 'Full Agent Evaluation',
+    description:
+      'We benchmark complete agents — model + system prompt + tools + memory — not just base models.',
     gradient: 'from-emerald-400 to-teal-500',
   },
   {
-    icon: Code2,
-    title: 'API Integration',
-    description: 'Bring your own API keys for complete control and privacy.',
+    icon: Zap,
+    title: 'Performance vs Cost',
+    description:
+      'See exactly how agents trade off accuracy against API cost, so you can choose what fits your budget.',
     gradient: 'from-blue-400 to-indigo-500',
   },
   {
-    icon: Clock,
-    title: 'History & Sharing',
-    description: 'Save conversations and share comparison results with your team.',
+    icon: Sparkles,
+    title: 'Verified Results',
+    description: 'Scores come from real benchmark runs, not self-reported numbers.',
     gradient: 'from-pink-400 to-rose-500',
   },
   {
-    icon: Sparkles,
-    title: 'Custom Models',
-    description: 'Add custom OpenAI-compatible endpoints and local models.',
+    icon: Code2,
+    title: 'Open Registry',
+    description:
+      "Every agent's configuration is permanent and verifiable, building real reputation over time.",
     gradient: 'from-violet-400 to-purple-500',
   },
   {
-    icon: Brain,
-    title: 'Smart Analysis',
-    description: 'Track model performance with ELO-based leaderboards.',
+    icon: Clock,
+    title: 'Multiple Backends',
+    description:
+      'Test the same agent design across different model backends to see what actually performs best.',
     gradient: 'from-cyan-400 to-blue-500',
   },
 ];
 
 export function FeaturesSection({ title }: { title: string }) {
   return (
-    <AnimatedSection className="relative overflow-hidden bg-slate-900 py-24">
-      {/* Soft background accents */}
-      <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] translate-x-1/2 rounded-full bg-indigo-500/5 blur-[150px]" />
-      <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-blue-500/5 blur-[150px]" />
+    <AnimatedSection className="relative overflow-hidden bg-background py-24">
+      {/* Warm accent orbs */}
+      <div className="pointer-events-none absolute right-0 top-0 h-[500px] w-[500px] translate-x-1/2 rounded-full bg-primary/5 blur-[150px]" />
+      <div className="pointer-events-none absolute bottom-0 left-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-primary/5 blur-[150px]" />
 
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="text-center">
           <motion.span
-            className="inline-block rounded-full border border-emerald-400/30 bg-emerald-500/10 px-4 py-1 text-sm font-medium text-emerald-300"
+            className="inline-block rounded-full border border-primary/30 bg-primary/10 px-4 py-1 text-sm font-medium text-primary"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -293,7 +185,7 @@ export function FeaturesSection({ title }: { title: string }) {
             Features
           </motion.span>
           <motion.h2
-            className="mt-6 text-4xl font-bold text-slate-100 md:text-5xl lg:text-6xl"
+            className="mt-6 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -307,7 +199,7 @@ export function FeaturesSection({ title }: { title: string }) {
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}
-              className="group relative overflow-hidden rounded-2xl border border-slate-700/50 bg-slate-800/40 p-6 transition-all hover:border-slate-600/50 hover:bg-slate-800/60"
+              className="group relative overflow-hidden rounded-2xl border border-border bg-card p-6 transition-all hover:border-border/80 hover:bg-muted"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -331,8 +223,8 @@ export function FeaturesSection({ title }: { title: string }) {
                 <feature.icon className="h-6 w-6 text-white" />
               </div>
 
-              <h3 className="mb-2 text-xl font-semibold text-slate-100">{feature.title}</h3>
-              <p className="text-slate-400">{feature.description}</p>
+              <h3 className="mb-2 text-xl font-semibold text-foreground">{feature.title}</h3>
+              <p className="text-muted-foreground">{feature.description}</p>
             </motion.div>
           ))}
         </div>
@@ -341,7 +233,7 @@ export function FeaturesSection({ title }: { title: string }) {
   );
 }
 
-// CTA Section - softer
+// CTA Section
 export function CTASection({
   title,
   description,
@@ -354,10 +246,10 @@ export function CTASection({
   secondaryAction?: ReactNode;
 }) {
   return (
-    <AnimatedSection className="relative overflow-hidden bg-slate-900 py-24">
-      {/* Soft gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-t from-indigo-950/30 via-slate-900 to-slate-900" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b from-indigo-500/15 via-blue-500/10 to-transparent blur-[120px]" />
+    <AnimatedSection className="relative overflow-hidden bg-muted py-24">
+      {/* Warm gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary/5 via-background/50 to-transparent" />
+      <div className="pointer-events-none absolute left-1/2 top-0 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b from-primary/10 via-primary/5 to-transparent blur-[120px]" />
 
       {/* Soft dot pattern */}
       <div
@@ -370,7 +262,7 @@ export function CTASection({
 
       <div className="relative mx-auto max-w-4xl px-4 text-center">
         <motion.h2
-          className="text-4xl font-bold text-slate-100 md:text-5xl lg:text-6xl"
+          className="text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -378,7 +270,7 @@ export function CTASection({
           {title}
         </motion.h2>
         <motion.p
-          className="mx-auto mt-6 max-w-2xl text-xl text-slate-400"
+          className="mx-auto mt-6 max-w-2xl text-xl text-muted-foreground"
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

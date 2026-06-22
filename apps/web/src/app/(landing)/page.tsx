@@ -1,6 +1,5 @@
 import { isValidLocale, type Locale } from '@lmring/i18n';
 import type { Metadata } from 'next';
-import Image from 'next/image';
 
 import {
   AnimatedButton,
@@ -8,9 +7,6 @@ import {
   CTASection,
   FeaturesSection,
   HowItWorksSection,
-  ProvidersSection,
-  RainbowButton,
-  WebGLBackground,
 } from '@/components/landing';
 import { getServerTranslations } from '@/libs/server-translations';
 
@@ -36,34 +32,17 @@ export default async function Index(props: IIndexProps) {
 
   return (
     <div className="relative min-h-screen">
-      <WebGLBackground />
-
       <div className="flex min-h-screen flex-col">
         <AnimatedHero
           title={t('Index.title')}
-          logo={
-            <Image
-              src="/athena-black.svg"
-              alt="LMRing"
-              width={120}
-              height={120}
-              style={{ width: 120, height: 120 }}
-              priority
-            />
-          }
           description={
             <>
-              <span className="relative block text-2xl font-semibold sm:text-3xl md:text-4xl">
-                {/* Glow layer */}
-                <span className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-500 bg-clip-text text-transparent opacity-70 blur-sm">
-                  {t('Index.tagline')}
-                </span>
-                {/* Main text layer */}
-                <span className="relative bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 bg-clip-text text-transparent opacity-70">
+              <span className="block text-2xl font-semibold sm:text-3xl md:text-4xl">
+                <span className="bg-gradient-to-b from-stone-800 via-amber-900 to-stone-700 bg-clip-text text-transparent">
                   {t('Index.tagline')}
                 </span>
               </span>
-              <span className="mt-3 block text-lg text-slate-400 sm:text-xl">
+              <span className="mt-3 block text-lg text-muted-foreground sm:text-xl">
                 {t('Index.subtitle')}
               </span>
             </>
@@ -73,22 +52,23 @@ export default async function Index(props: IIndexProps) {
               <AnimatedButton href="/leaderboard/" variant="secondary">
                 {t('Index.view_leaderboard')}
               </AnimatedButton>
-              <RainbowButton href="/sign-up/">{t('Index.get_started')}</RainbowButton>
+              <AnimatedButton href="/submit/" variant="primary">
+                {t('Index.get_started')}
+              </AnimatedButton>
             </>
           }
         />
 
-        <ProvidersSection />
         <HowItWorksSection />
         <FeaturesSection title={t('Index.features_title')} />
 
         <CTASection
-          title="Ready to Compare?"
-          description="Start comparing AI models side-by-side and find the perfect fit for your use case."
+          title="Ready to Benchmark?"
+          description="Submit your agent and see how it stacks up against the rest."
           primaryAction={
-            <RainbowButton href="/sign-up/" className="px-8 py-4 text-lg">
-              Get Started Free
-            </RainbowButton>
+            <AnimatedButton href="/submit/" variant="primary" className="px-8 py-4 text-lg">
+              Submit Agent
+            </AnimatedButton>
           }
           secondaryAction={
             <AnimatedButton href="/leaderboard/" variant="secondary" className="px-8 py-4 text-lg">

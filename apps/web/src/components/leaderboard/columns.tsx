@@ -2,7 +2,15 @@
 
 import { cn } from '@lmring/ui';
 import type { ColumnDef } from '@tanstack/react-table';
-import { CheckIcon, ChevronDown, ChevronUp, LockIcon, UnlockIcon, XIcon } from 'lucide-react';
+import {
+  BotIcon,
+  CheckIcon,
+  ChevronDown,
+  ChevronUp,
+  LockIcon,
+  UnlockIcon,
+  XIcon,
+} from 'lucide-react';
 import { ProviderIcon } from '@/components/arena/provider-icon';
 import type { TranslationFunction } from '@/hooks/use-translations';
 import { formatMetricValue, getNumericValue, type MetricConfig } from '@/libs/zeroeval-api';
@@ -177,6 +185,26 @@ export function createBaseColumns(t: TranslationFunction): ColumnDef<Leaderboard
       cell: ({ row }) => <ModelCell model={row.original} t={t} />,
       size: 280,
       minSize: 200,
+      enableSorting: false,
+    },
+    {
+      accessorKey: 'agent_name',
+      header: () => (
+        <span className="text-xs uppercase tracking-wide">{t('Leaderboard.table_agent')}</span>
+      ),
+      cell: ({ row }) => {
+        const agentName = row.original.agent_name;
+        return agentName ? (
+          <div className="flex items-center gap-1.5">
+            <BotIcon className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+            <span className="text-sm truncate">{agentName}</span>
+          </div>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        );
+      },
+      size: 180,
+      minSize: 120,
       enableSorting: false,
     },
   ];

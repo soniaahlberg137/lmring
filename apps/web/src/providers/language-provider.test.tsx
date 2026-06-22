@@ -37,6 +37,8 @@ import * as loadLocaleMessagesModule from '@/libs/load-locale-messages';
 import { useLanguageStore } from '@/stores/language-store';
 import { LanguageProvider } from './language-provider';
 
+type Locale = 'en';
+
 describe('LanguageProvider', () => {
   const mockPostMessage = vi.fn();
   const mockRegister = vi.fn();
@@ -97,13 +99,13 @@ describe('LanguageProvider', () => {
 
     it('renders with initial language and messages', () => {
       const { getByTestId } = render(
-        <LanguageProvider initialLanguage="fr" initialMessages={{ greeting: 'Bonjour' }}>
+        <LanguageProvider initialLanguage="en" initialMessages={{ greeting: 'Hello' }}>
           <div>Content</div>
         </LanguageProvider>,
       );
 
       const provider = getByTestId('i18n-provider');
-      expect(provider.getAttribute('data-locale')).toBe('fr');
+      expect(provider.getAttribute('data-locale')).toBe('en');
     });
   });
 
@@ -218,7 +220,11 @@ describe('LanguageProvider', () => {
       const TestComponent = () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
-          <button type="button" data-testid="change-lang" onClick={() => setLanguage('fr')}>
+          <button
+            type="button"
+            data-testid="change-lang"
+            onClick={() => setLanguage('fr' as Locale)}
+          >
             Change
           </button>
         );
@@ -309,7 +315,11 @@ describe('LanguageProvider', () => {
       const TestComponent = () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
-          <button type="button" data-testid="change-lang" onClick={() => setLanguage('fr')}>
+          <button
+            type="button"
+            data-testid="change-lang"
+            onClick={() => setLanguage('fr' as Locale)}
+          >
             Change
           </button>
         );
@@ -357,7 +367,11 @@ describe('LanguageProvider', () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
           <>
-            <button type="button" data-testid="change-to-zh" onClick={() => setLanguage('zh')}>
+            <button
+              type="button"
+              data-testid="change-to-zh"
+              onClick={() => setLanguage('zh' as Locale)}
+            >
               Change to zh
             </button>
             <button type="button" data-testid="back-to-en" onClick={() => setLanguage('en')}>
@@ -406,7 +420,7 @@ describe('LanguageProvider', () => {
         .spyOn(loadLocaleMessagesModule, 'loadLocaleMessages')
         .mockImplementation(async (locale) => {
           callCount++;
-          if (locale === 'zh' && callCount === 1) {
+          if ((locale as string) === 'zh' && callCount === 1) {
             throw new Error('First attempt failed');
           }
           return { key: 'value' };
@@ -418,7 +432,11 @@ describe('LanguageProvider', () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
           <>
-            <button type="button" data-testid="change-to-zh" onClick={() => setLanguage('zh')}>
+            <button
+              type="button"
+              data-testid="change-to-zh"
+              onClick={() => setLanguage('zh' as Locale)}
+            >
               Change to zh
             </button>
             <button type="button" data-testid="back-to-en" onClick={() => setLanguage('en')}>
@@ -452,7 +470,7 @@ describe('LanguageProvider', () => {
       const loadLocaleSpy = vi
         .spyOn(loadLocaleMessagesModule, 'loadLocaleMessages')
         .mockImplementation(async (locale) => {
-          if (locale === 'zh') {
+          if ((locale as string) === 'zh') {
             throw new Error('Load failed');
           }
           return { fallback: 'messages' };
@@ -463,14 +481,18 @@ describe('LanguageProvider', () => {
       const TestComponent = () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
-          <button type="button" data-testid="change-to-zh" onClick={() => setLanguage('zh')}>
+          <button
+            type="button"
+            data-testid="change-to-zh"
+            onClick={() => setLanguage('zh' as Locale)}
+          >
             Change
           </button>
         );
       };
 
       const { getByTestId } = render(
-        <LanguageProvider initialLanguage="fr" initialMessages={{ initial: 'value' }}>
+        <LanguageProvider initialLanguage={'fr' as Locale} initialMessages={{ initial: 'value' }}>
           <TestComponent />
         </LanguageProvider>,
       );
@@ -497,10 +519,10 @@ describe('LanguageProvider', () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
           <>
-            <button type="button" data-testid="to-zh" onClick={() => setLanguage('zh')}>
+            <button type="button" data-testid="to-zh" onClick={() => setLanguage('zh' as Locale)}>
               To zh
             </button>
-            <button type="button" data-testid="to-fr" onClick={() => setLanguage('fr')}>
+            <button type="button" data-testid="to-fr" onClick={() => setLanguage('fr' as Locale)}>
               To fr
             </button>
           </>
@@ -521,7 +543,7 @@ describe('LanguageProvider', () => {
         expect(loadLocaleSpy).toHaveBeenCalledWith('zh');
       });
 
-      const _zhCallCount = loadLocaleSpy.mock.calls.filter((c) => c[0] === 'zh').length;
+      const _zhCallCount = loadLocaleSpy.mock.calls.filter((c) => (c[0] as string) === 'zh').length;
 
       loadLocaleSpy.mockClear();
 
@@ -537,7 +559,7 @@ describe('LanguageProvider', () => {
 
       await new Promise((r) => setTimeout(r, 50));
 
-      expect(loadLocaleSpy.mock.calls.filter((c) => c[0] === 'zh').length).toBe(0);
+      expect(loadLocaleSpy.mock.calls.filter((c) => (c[0] as string) === 'zh').length).toBe(0);
 
       consoleErrorSpy.mockRestore();
     });
@@ -552,14 +574,14 @@ describe('LanguageProvider', () => {
       const TestComponent = () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
-          <button type="button" data-testid="change" onClick={() => setLanguage('zh')}>
+          <button type="button" data-testid="change" onClick={() => setLanguage('zh' as Locale)}>
             Change
           </button>
         );
       };
 
       const { getByTestId } = render(
-        <LanguageProvider initialLanguage="fr" initialMessages={{ key: 'value' }}>
+        <LanguageProvider initialLanguage={'fr' as Locale} initialMessages={{ key: 'value' }}>
           <TestComponent />
         </LanguageProvider>,
       );
@@ -601,7 +623,7 @@ describe('LanguageProvider', () => {
       const TestComponent = () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
-          <button type="button" data-testid="change" onClick={() => setLanguage('fr')}>
+          <button type="button" data-testid="change" onClick={() => setLanguage('fr' as Locale)}>
             Change
           </button>
         );
@@ -638,10 +660,10 @@ describe('LanguageProvider', () => {
         const setLanguage = useLanguageStore((s) => s.setLanguage);
         return (
           <>
-            <button type="button" data-testid="to-fr" onClick={() => setLanguage('fr')}>
+            <button type="button" data-testid="to-fr" onClick={() => setLanguage('fr' as Locale)}>
               Fr
             </button>
-            <button type="button" data-testid="to-zh" onClick={() => setLanguage('zh')}>
+            <button type="button" data-testid="to-zh" onClick={() => setLanguage('zh' as Locale)}>
               Zh
             </button>
           </>

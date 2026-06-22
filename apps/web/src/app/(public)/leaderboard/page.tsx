@@ -1,15 +1,23 @@
 'use client';
 
-import { Card, CardContent, Collapsible, CollapsibleContent, CollapsibleTrigger } from '@lmring/ui';
+import {
+  Card,
+  CardContent,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  cn,
+} from '@lmring/ui';
 import type { SortingState } from '@tanstack/react-table';
 import { ChevronDown } from 'lucide-react';
 import { useCallback, useMemo, useState } from 'react';
 import {
-  CategoryTabs,
+  type AgentDomainFilter,
   createBaseColumns,
   createMetricColumns,
   createTrailingColumns,
   DataTable,
+  DomainTabs,
   LazyLeaderboardBarChart,
   LazyLeaderboardScatterPlot,
   LeaderboardContentSkeleton,
@@ -31,12 +39,57 @@ import {
 } from '@/libs/zeroeval-api';
 
 const PAGE_SIZE = 20;
+const BENCHMARK_METRIC_IDS = new Set(['gaia', 'swe_bench', 'tau_bench', 'core_bench']);
+
+function AgentDetailRow({ model }: { model: LeaderboardModel }) {
+  return (
+    <div className="grid gap-6 sm:grid-cols-3 text-sm">
+      {model.description && (
+        <div>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            Description
+          </p>
+          <p className="text-foreground leading-relaxed">{model.description}</p>
+        </div>
+      )}
+      {model.system_prompt && (
+        <div>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            System Prompt
+          </p>
+          <pre className="text-xs text-foreground bg-muted rounded-md p-3 font-mono whitespace-pre-wrap leading-relaxed overflow-auto max-h-36">
+            {model.system_prompt}
+          </pre>
+        </div>
+      )}
+      {model.mcp_tools && model.mcp_tools.length > 0 && (
+        <div>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+            MCP Tools
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {model.mcp_tools.map((tool) => (
+              <span
+                key={tool}
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-muted border border-border text-muted-foreground font-mono"
+              >
+                {tool}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function LeaderboardPage() {
   const t = useTranslations();
 
-  const [category, setCategory] = useState<LeaderboardCategory>('all');
+  const [category] = useState<LeaderboardCategory>('all');
+  const [domain, setDomain] = useState<AgentDomainFilter>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
+  const [columnView, setColumnView] = useState<'benchmarks' | 'specs'>('benchmarks');
   const [selectedMetric, setSelectedMetric] = useState<string>('gpqa');
   const [xAxisMetric, setXAxisMetric] = useState<string>('input_price');
   const [yAxisMetric, setYAxisMetric] = useState<string>('gpqa');
@@ -56,14 +109,19 @@ export default function LeaderboardPage() {
   }, [category]);
 
   // Memoize columns for performance
-  const columns = useMemo(
-    () => [
+  const columns = useMemo(() => {
+    if (columnView === 'benchmarks') {
+      const benchmarkMetrics = categoryConfig.metrics.filter((m) => BENCHMARK_METRIC_IDS.has(m.id));
+      return [...createBaseColumns(t), ...createMetricColumns(benchmarkMetrics, t)];
+    }
+    // specs view
+    const specMetrics = categoryConfig.metrics.filter((m) => !BENCHMARK_METRIC_IDS.has(m.id));
+    return [
       ...createBaseColumns(t),
-      ...createMetricColumns(categoryConfig.metrics, t),
+      ...createMetricColumns(specMetrics, t),
       ...createTrailingColumns(t),
-    ],
-    [categoryConfig.metrics, t],
-  );
+    ];
+  }, [categoryConfig.metrics, t, columnView]);
 
   // Memoize ranked models with sorting handled by DataTable
   const rankedModels: LeaderboardModel[] = useMemo(() => {
@@ -105,24 +163,6 @@ export default function LeaderboardPage() {
       isNew: isNewModel(model.release_date, model.announcement_date),
     })) as LeaderboardModel[];
   }, [rawModels, yAxisMetric, categoryConfig.metrics]);
-
-  const handleCategoryChange = useCallback((newCategory: LeaderboardCategory) => {
-    setCategory(newCategory);
-    setSorting([]);
-    const config = CATEGORY_CONFIGS.find((c) => c.id === newCategory);
-    if (config && config.metrics.length > 0) {
-      const firstMetric = config.metrics[0];
-      if (firstMetric) {
-        setSelectedMetric(firstMetric.id);
-      }
-      if (config.metrics.length >= 2) {
-        const firstM = config.metrics[0];
-        const secondLastM = config.metrics[config.metrics.length - 2];
-        if (firstM) setYAxisMetric(firstM.id);
-        if (secondLastM) setXAxisMetric(secondLastM.id);
-      }
-    }
-  }, []);
 
   const getMetricConfig = useCallback(
     (metricId: string): MetricConfig => {
@@ -175,9 +215,9 @@ export default function LeaderboardPage() {
 
         <Card>
           <CardContent className="p-6">
-            {/* Toolbar */}
+            {/* Toolbar - domain filter + view controls */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-              <CategoryTabs activeCategory={category} onCategoryChange={handleCategoryChange} />
+              <DomainTabs activeDomain={domain} onDomainChange={setDomain} />
 
               <div className="flex items-center gap-2">
                 {viewMode === 'bar' && (
@@ -205,6 +245,35 @@ export default function LeaderboardPage() {
                       label={t('Leaderboard.axis_y')}
                     />
                   </>
+                )}
+
+                {viewMode === 'table' && (
+                  <div className="flex items-center rounded-md border border-border overflow-hidden text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setColumnView('benchmarks')}
+                      className={cn(
+                        'px-3 py-1.5 transition-colors',
+                        columnView === 'benchmarks'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-muted text-muted-foreground',
+                      )}
+                    >
+                      Benchmarks
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setColumnView('specs')}
+                      className={cn(
+                        'px-3 py-1.5 transition-colors border-l border-border',
+                        columnView === 'specs'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'hover:bg-muted text-muted-foreground',
+                      )}
+                    >
+                      Model Specs
+                    </button>
+                  </div>
                 )}
 
                 <div className="w-px h-6 bg-border/50 mx-1" />
@@ -235,6 +304,7 @@ export default function LeaderboardPage() {
                       sorting={sorting}
                       onSortingChange={setSorting}
                       manualSorting
+                      renderExpandedRow={(model) => <AgentDetailRow model={model} />}
                     />
                   )}
 
@@ -272,131 +342,72 @@ export default function LeaderboardPage() {
               </CollapsibleTrigger>
 
               <CollapsibleContent className="px-4 py-6 space-y-6">
-                {/* Infrastructure Section */}
+                {/* Infrastructure */}
                 <section>
-                  <h3 className="text-base font-semibold mb-2">
-                    {t('Leaderboard.methodology_infrastructure_title')}
-                  </h3>
+                  <h3 className="text-base font-semibold mb-2">Infrastructure</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">
-                    {t('Leaderboard.methodology_infrastructure_description')}
+                    Tessera runs benchmarks through{' '}
+                    <a
+                      href="https://github.com/benediktstroebl/hal-harness"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      HAL (Holistic Agent Leaderboard)
+                    </a>
+                    , an open-source evaluation framework. Each agent is tested by actually
+                    executing it against real benchmark tasks — not self-reported scores.
                   </p>
                 </section>
 
-                {/* Ranking System Section */}
+                {/* Benchmarks */}
                 <section>
-                  <h3 className="text-base font-semibold mb-2">
-                    {t('Leaderboard.methodology_ranking_title')}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                    {t('Leaderboard.methodology_ranking_description')}
-                  </p>
-
-                  {/* Initial State */}
-                  <div className="ml-4 mb-3">
-                    <h4 className="text-sm font-medium mb-1">
-                      {t('Leaderboard.methodology_ranking_initial_state_title')}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {t('Leaderboard.methodology_ranking_initial_state_description')}
-                    </p>
-                  </div>
-
-                  {/* Rating Updates */}
-                  <div className="ml-4 mb-3">
-                    <h4 className="text-sm font-medium mb-1">
-                      {t('Leaderboard.methodology_ranking_rating_updates_title')}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {t('Leaderboard.methodology_ranking_rating_updates_description')}
-                    </p>
-                  </div>
-
-                  {/* Leaderboard Ranking */}
-                  <div className="ml-4">
-                    <h4 className="text-sm font-medium mb-1">
-                      {t('Leaderboard.methodology_ranking_leaderboard_ranking_title')}
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {t('Leaderboard.methodology_ranking_leaderboard_ranking_description')}
-                    </p>
-                  </div>
-                </section>
-
-                {/* Parameters Section */}
-                <section>
-                  <h3 className="text-base font-semibold mb-3">
-                    {t('Leaderboard.methodology_parameters_title')}
-                  </h3>
-                  <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* mu */}
-                    <div className="flex flex-col">
-                      <dt className="text-sm font-medium mb-1">
-                        {t('Leaderboard.methodology_parameters_mu_label')}
-                      </dt>
+                  <h3 className="text-base font-semibold mb-3">Benchmarks</h3>
+                  <dl className="space-y-3">
+                    <div>
+                      <dt className="text-sm font-medium">GAIA</dt>
                       <dd className="text-sm text-muted-foreground">
-                        {t('Leaderboard.methodology_parameters_mu_description')}
-                      </dd>
-                      <dd className="text-xs text-muted-foreground mt-1">
-                        Default: {t('Leaderboard.methodology_parameters_mu_default')}
+                        General knowledge and reasoning tasks, often requiring web search and
+                        multi-step problem solving.
                       </dd>
                     </div>
-
-                    {/* sigma */}
-                    <div className="flex flex-col">
-                      <dt className="text-sm font-medium mb-1">
-                        {t('Leaderboard.methodology_parameters_sigma_label')}
-                      </dt>
+                    <div>
+                      <dt className="text-sm font-medium">SWE-bench</dt>
                       <dd className="text-sm text-muted-foreground">
-                        {t('Leaderboard.methodology_parameters_sigma_description')}
-                      </dd>
-                      <dd className="text-xs text-muted-foreground mt-1">
-                        Default: {t('Leaderboard.methodology_parameters_sigma_default')}
+                        Real-world software engineering tasks — fixing actual GitHub issues in
+                        open-source repositories.
                       </dd>
                     </div>
-
-                    {/* beta */}
-                    <div className="flex flex-col">
-                      <dt className="text-sm font-medium mb-1">
-                        {t('Leaderboard.methodology_parameters_beta_label')}
-                      </dt>
+                    <div>
+                      <dt className="text-sm font-medium">tau-bench</dt>
                       <dd className="text-sm text-muted-foreground">
-                        {t('Leaderboard.methodology_parameters_beta_description')}
-                      </dd>
-                      <dd className="text-xs text-muted-foreground mt-1">
-                        Default: {t('Leaderboard.methodology_parameters_beta_default')}
+                        Customer service scenarios testing tool use and policy compliance across
+                        realistic support interactions.
                       </dd>
                     </div>
-
-                    {/* tau */}
-                    <div className="flex flex-col">
-                      <dt className="text-sm font-medium mb-1">
-                        {t('Leaderboard.methodology_parameters_tau_label')}
-                      </dt>
+                    <div>
+                      <dt className="text-sm font-medium">CORE-bench</dt>
                       <dd className="text-sm text-muted-foreground">
-                        {t('Leaderboard.methodology_parameters_tau_description')}
-                      </dd>
-                      <dd className="text-xs text-muted-foreground mt-1">
-                        Default: {t('Leaderboard.methodology_parameters_tau_default')}
+                        Reproducing results from real scientific papers, testing agents on
+                        computational research tasks.
                       </dd>
                     </div>
                   </dl>
                 </section>
+
+                {/* Scoring */}
+                <section>
+                  <h3 className="text-base font-semibold mb-2">Scoring</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Each agent is run against a benchmark&apos;s task set and scored on task success
+                    rate — the percentage of tasks completed correctly. Scores are
+                    benchmark-specific and not combined into a single universal rating. An agent can
+                    excel at coding tasks while struggling at customer service tasks, and the
+                    leaderboard reflects that honestly.
+                  </p>
+                </section>
               </CollapsibleContent>
             </Collapsible>
-
-            <div className="mt-6 pt-4 border-t border-border text-center">
-              <p className="text-xs text-muted-foreground">
-                {t('Leaderboard.data_source')}{' '}
-                <a
-                  href="https://github.com/WildEval/ZeroEval"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  ZeroEval
-                </a>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>

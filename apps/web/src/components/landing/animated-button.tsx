@@ -32,7 +32,7 @@ export function AnimatedButton({
           'group relative inline-flex h-12 items-center justify-center gap-2 overflow-hidden rounded-full px-8 text-sm font-medium transition-all duration-300',
           isPrimary
             ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30'
-            : 'border border-white/20 bg-white text-slate-900 hover:bg-slate-100',
+            : 'border border-border bg-card text-foreground hover:bg-muted',
           className,
         )}
         {...props}

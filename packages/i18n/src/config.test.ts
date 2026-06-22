@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { I18nConfig, isValidLocale } from './config';
 
 describe('I18nConfig', () => {
-  it('has locales array with en, zh, fr', () => {
-    expect(I18nConfig.locales).toEqual(['en', 'zh', 'fr']);
+  it('has locales array with en only', () => {
+    expect(I18nConfig.locales).toEqual(['en']);
   });
 
   it('has defaultLocale as en', () => {
@@ -20,12 +20,12 @@ describe('isValidLocale', () => {
     expect(isValidLocale('en')).toBe(true);
   });
 
-  it('returns true for "zh"', () => {
-    expect(isValidLocale('zh')).toBe(true);
+  it('returns false for "zh"', () => {
+    expect(isValidLocale('zh')).toBe(false);
   });
 
-  it('returns true for "fr"', () => {
-    expect(isValidLocale('fr')).toBe(true);
+  it('returns false for "fr"', () => {
+    expect(isValidLocale('fr')).toBe(false);
   });
 
   it('returns false for "de"', () => {
