@@ -19,15 +19,46 @@ import { useTranslations } from '@/hooks/use-translations';
 import { AGENT_DOMAINS, type AgentDomain } from '@/libs/validation';
 
 const BASE_MODELS = [
-  { group: 'OpenAI', models: ['gpt-4o', 'gpt-4o-mini', 'o3-mini', 'o1'] },
+  {
+    group: 'OpenAI',
+    models: [
+      { value: 'openai/gpt-4o', label: 'GPT-4o' },
+      { value: 'openai/gpt-4o-mini', label: 'GPT-4o mini' },
+      { value: 'openai/o3-mini', label: 'o3-mini' },
+      { value: 'openai/o1', label: 'o1' },
+    ],
+  },
   {
     group: 'Anthropic',
-    models: ['claude-sonnet-4-6', 'claude-opus-4-8', 'claude-haiku-4-5-20251001'],
+    models: [
+      { value: 'anthropic/claude-sonnet-4-6', label: 'Claude Sonnet 4.6' },
+      { value: 'anthropic/claude-opus-4-8', label: 'Claude Opus 4.8' },
+      { value: 'anthropic/claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5' },
+    ],
   },
-  { group: 'Google', models: ['gemini-2.0-flash', 'gemini-1.5-pro', 'gemini-2.5-pro'] },
-  { group: 'DeepSeek', models: ['deepseek-v3', 'deepseek-r1'] },
-  { group: 'Meta', models: ['llama-3.3-70b-instruct', 'llama-3.1-405b-instruct'] },
-] as const;
+  {
+    group: 'Google',
+    models: [
+      { value: 'gemini/gemini-2.0-flash', label: 'Gemini 2.0 Flash' },
+      { value: 'gemini/gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
+      { value: 'gemini/gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+    ],
+  },
+  {
+    group: 'DeepSeek',
+    models: [
+      { value: 'deepseek/deepseek-chat', label: 'DeepSeek V3' },
+      { value: 'deepseek/deepseek-reasoner', label: 'DeepSeek R1' },
+    ],
+  },
+  {
+    group: 'Meta (via Groq)',
+    models: [
+      { value: 'groq/llama-3.3-70b-versatile', label: 'LLaMA 3.3 70B' },
+      { value: 'groq/llama-3.1-405b-instruct', label: 'LLaMA 3.1 405B' },
+    ],
+  },
+];
 
 const DOMAIN_LABELS: Record<AgentDomain, string> = {
   coding: 'Coding',
@@ -248,8 +279,8 @@ export function SubmitAgentForm() {
                     <div key={group}>
                       <p className="px-2 py-1 text-xs text-muted-foreground font-medium">{group}</p>
                       {models.map((m) => (
-                        <SelectItem key={m} value={m}>
-                          {m}
+                        <SelectItem key={m.value} value={m.value}>
+                          {m.label}
                         </SelectItem>
                       ))}
                     </div>

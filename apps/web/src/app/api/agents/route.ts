@@ -1,5 +1,5 @@
 import { db, desc } from '@lmring/database';
-import { agents } from '@lmring/database/schema';
+import { agents, benchmarkRuns } from '@lmring/database/schema';
 import { NextResponse } from 'next/server';
 import { logError } from '@/libs/error-logging';
 import { agentSubmissionSchema } from '@/libs/validation';
@@ -61,9 +61,51 @@ export async function POST(request: Request) {
       })
       .returning();
 
+    if (!agent) {
+      throw new Error('Insert returned no rows');
+    }
+
+    // HAL integration — runs after agent is saved; errors here don't fail the request
+    try {
+      const benchmarkName = process.env.HAL_DEFAULT_BENCHMARK ?? 'gaia';
+      await db.insert(benchmarkRuns).values({
+        agentId: agent.id,
+        benchmarkName,
+        status: 'pending',
+      });
+
+      const sidecarUrl = process.env.HAL_SIDECAR_URL;
+      const sidecarSecret = process.env.TESSERA_SIDECAR_SECRET;
+      if (sidecarUrl && sidecarSecret) {
+        fetch(`${sidecarUrl}/run`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-sidecar-secret': sidecarSecret,
+          },
+          body: JSON.stringify({
+            agentId: agent.id,
+            agentName: agent.name,
+            baseModel: agent.baseModel,
+            systemPrompt: agent.systemPrompt ?? null,
+            benchmark: benchmarkName,
+          }),
+        }).catch((err: Error) => {
+          console.warn('[tessera] sidecar notification failed:', err.message);
+        });
+      }
+    } catch (halError) {
+      // Log but don't surface — agent was created successfully
+      console.error('[tessera] HAL integration error (agent saved):', halError);
+    }
+
     return NextResponse.json(agent, { status: 201 });
   } catch (error) {
     logError('POST /api/agents error', error);
-    return NextResponse.json({ error: 'Failed to create agent' }, { status: 500 });
+    const message =
+      process.env.NODE_ENV === 'development' && error instanceof Error
+        ? error.message
+        : 'Failed to create agent';
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

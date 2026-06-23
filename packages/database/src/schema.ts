@@ -580,6 +580,14 @@ export const agentDomainEnum = pgEnum('agent_domain', [
   'general',
 ]);
 
+// Benchmark run status enum
+export const benchmarkRunStatusEnum = pgEnum('benchmark_run_status', [
+  'pending',
+  'running',
+  'completed',
+  'failed',
+]);
+
 // Agents
 export const agents = pgTable(
   'agents',
@@ -604,6 +612,32 @@ export const agents = pgTable(
   ],
 );
 
+// Benchmark runs — one row per (agent, benchmark) run, created when an agent is submitted
+export const benchmarkRuns = pgTable(
+  'benchmark_runs',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    agentId: uuid('agent_id')
+      .references(() => agents.id, { onDelete: 'cascade' })
+      .notNull(),
+    benchmarkName: text('benchmark_name').notNull(),
+    status: benchmarkRunStatusEnum('status').default('pending').notNull(),
+    halRunId: text('hal_run_id'),
+    score: real('score'),
+    error: text('error'),
+    rawResults: jsonb('raw_results'),
+    startedAt: timestamp('started_at', { withTimezone: true }),
+    completedAt: timestamp('completed_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('benchmark_runs_agent_id_idx').on(table.agentId),
+    index('benchmark_runs_status_idx').on(table.status),
+    index('benchmark_runs_benchmark_name_idx').on(table.benchmarkName),
+  ],
+);
+
 // Relations
 export const usersRelations = relations(users, ({ one, many }) => ({
   preferences: one(userPreferences),
@@ -620,10 +654,18 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   submittedAgents: many(agents),
 }));
 
-export const agentsRelations = relations(agents, ({ one }) => ({
+export const agentsRelations = relations(agents, ({ one, many }) => ({
   submitter: one(users, {
     fields: [agents.submittedBy],
     references: [users.id],
+  }),
+  benchmarkRuns: many(benchmarkRuns),
+}));
+
+export const benchmarkRunsRelations = relations(benchmarkRuns, ({ one }) => ({
+  agent: one(agents, {
+    fields: [benchmarkRuns.agentId],
+    references: [agents.id],
   }),
 }));
 
@@ -823,6 +865,9 @@ export type WebDevIteration = typeof webdevIterations.$inferSelect;
 export type NewWebDevIteration = typeof webdevIterations.$inferInsert;
 export type Agent = typeof agents.$inferSelect;
 export type NewAgent = typeof agents.$inferInsert;
+export type BenchmarkRun = typeof benchmarkRuns.$inferSelect;
+export type NewBenchmarkRun = typeof benchmarkRuns.$inferInsert;
+export type BenchmarkRunStatus = (typeof benchmarkRunStatusEnum.enumValues)[number];
 
 // Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];

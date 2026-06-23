@@ -25,6 +25,7 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
   description?: string | null;
   system_prompt?: string | null;
   mcp_tools?: string[] | null;
+  is_evaluating?: boolean;
   // Non-LLM arena scores (flattened)
   'text-to-image'?: number | null;
   'image-to-image'?: number | null;
@@ -34,6 +35,17 @@ export type ModelWithArena = (ZeroEvalModelFull | ZeroEvalModelBasic) & {
   'text-to-speech'?: number | null;
   'speech-to-text'?: number | null;
 };
+
+async function fetchAgentsWithScores(): Promise<ModelWithArena[]> {
+  try {
+    const res = await fetch('/api/leaderboard?type=agents');
+    if (!res.ok) return [];
+    const json = await res.json();
+    return (json.data ?? []) as ModelWithArena[];
+  } catch {
+    return [];
+  }
+}
 
 export async function fetchLeaderboardData(
   category: LeaderboardCategory,
@@ -64,7 +76,10 @@ export async function fetchLeaderboardData(
   }
 
   if (category === 'all') {
-    const models = await getModelsFull(false);
+    const [models, submittedAgents] = await Promise.all([
+      getModelsFull(false),
+      fetchAgentsWithScores(),
+    ]);
     const modelIds = models.map((m) => m.model_id);
     let arenaData: Awaited<ReturnType<typeof getArenaScores>> = {};
     try {
@@ -73,7 +88,7 @@ export async function fetchLeaderboardData(
       console.warn('Failed to fetch arena scores, continuing without them');
     }
 
-    return models.map((model) => {
+    const zeroEvalModels = models.map((model) => {
       const arenaScores = arenaData[model.model_id];
       return {
         ...model,
@@ -82,6 +97,8 @@ export async function fetchLeaderboardData(
         arena_raw_scores: arenaScores || null,
       };
     });
+
+    return [...zeroEvalModels, ...submittedAgents];
   }
 
   // Non-LLM categories: use magia leaderboard API

@@ -1,0 +1,3 @@
+[submodule "hal-harness"]
+	path = hal-harness
+	url = https://github.com/soniaahlberg137/hal-harness
