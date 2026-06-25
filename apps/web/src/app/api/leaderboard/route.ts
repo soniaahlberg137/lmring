@@ -23,6 +23,7 @@ export async function GET(request: Request) {
       const BENCHMARK_TO_SCORE_FIELD: Record<string, string> = {
         gaia: 'gaia_score',
         mmlu: 'mmlu_score',
+        pubmedqa: 'pubmedqa_score',
         swebench_verified: 'swe_bench_verified_score',
         swebench_verified_mini: 'swe_bench_verified_score',
         taubench_retail: 'tau_bench_score',
@@ -92,6 +93,7 @@ export async function GET(request: Request) {
           swe_bench_verified_score: scores['swe_bench_verified_score'] ?? null,
           gaia_score: scores['gaia_score'] ?? null,
           mmlu_score: scores['mmlu_score'] ?? null,
+          pubmedqa_score: scores['pubmedqa_score'] ?? null,
           tau_bench_score: scores['tau_bench_score'] ?? null,
           core_bench_score: scores['core_bench_score'] ?? null,
           code_arena_score: null,

@@ -40,6 +40,7 @@ HAL_TEST_MAX_TASKS: str | None = os.environ.get("HAL_TEST_MAX_TASKS")
 SCORE_KEYS: dict[str, str] = {
     "gaia": "average",
     "mmlu": "accuracy",
+    "pubmedqa": "accuracy",
     "swebench_verified": "resolved",
     "swebench_verified_mini": "resolved",
     "taubench_retail": "average",

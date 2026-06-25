@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     // HAL integration — runs after agent is saved; errors here don't fail the request
     try {
-      const benchmarks = ['gaia', 'mmlu'];
+      const benchmarks = ['gaia', 'mmlu', 'pubmedqa'];
 
       await db.insert(benchmarkRuns).values(
         benchmarks.map((benchmarkName) => ({

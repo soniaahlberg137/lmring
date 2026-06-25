@@ -261,6 +261,13 @@ export const CATEGORY_CONFIGS: CategoryConfig[] = [
         higherIsBetter: true,
       },
       {
+        id: 'pubmedqa',
+        label: 'PubMedQA',
+        field: 'pubmedqa_score',
+        format: 'percentage',
+        higherIsBetter: true,
+      },
+      {
         id: 'swe_bench',
         label: 'SWE-bench',
         field: 'swe_bench_verified_score',
