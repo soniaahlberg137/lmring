@@ -39,7 +39,7 @@ import {
 } from '@/libs/zeroeval-api';
 
 const PAGE_SIZE = 20;
-const BENCHMARK_METRIC_IDS = new Set(['gaia', 'swe_bench', 'tau_bench', 'core_bench']);
+const BENCHMARK_METRIC_IDS = new Set(['gaia', 'mmlu', 'swe_bench', 'tau_bench', 'core_bench']);
 
 function AgentDetailRow({ model }: { model: LeaderboardModel }) {
   return (
