@@ -344,12 +344,33 @@ export function SubmitAgentForm() {
                 id="tools"
                 value={form.tools}
                 onChange={setField('tools')}
-                placeholder={'[{"name": "filesystem", "type": "mcp"}]'}
-                rows={5}
+                placeholder={`[
+  {
+    "name": "filesystem",
+    "type": "mcp",
+    "transport": "stdio",
+    "command": "npx",
+    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/tmp"]
+  },
+  {
+    "name": "my-server",
+    "type": "mcp",
+    "transport": "sse",
+    "url": "http://localhost:8766/sse"
+  }
+]`}
+                rows={8}
                 className="font-mono text-sm resize-y"
                 aria-invalid={!!fieldErrors.tools}
               />
-              <p className="text-xs text-muted-foreground">{t('Submit.field_tools_hint')}</p>
+              <p className="text-xs text-muted-foreground">
+                {t('Submit.field_tools_hint')} Use{' '}
+                <code className="font-mono">transport: &quot;stdio&quot;</code> with{' '}
+                <code className="font-mono">command</code>/<code className="font-mono">args</code>{' '}
+                to spawn a local MCP server, or{' '}
+                <code className="font-mono">transport: &quot;sse&quot;</code> with a{' '}
+                <code className="font-mono">url</code> to connect to a running one.
+              </p>
               <FieldError message={fieldErrors.tools} />
             </div>
 

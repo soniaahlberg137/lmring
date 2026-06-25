@@ -181,11 +181,35 @@ export const shareSchema = z.object({
   expiresInDays: z.number().int().min(1).max(365).optional(),
 });
 
-export const agentToolSchema = z.object({
-  name: z.string().min(1).max(100),
-  type: z.enum(['mcp', 'function', 'skill']),
-  config: z.record(z.string(), z.unknown()).optional(),
-});
+export const agentToolSchema = z
+  .object({
+    name: z.string().min(1).max(100),
+    type: z.enum(['mcp', 'function', 'skill']),
+    // MCP connection fields
+    transport: z.enum(['sse', 'stdio']).optional(),
+    url: z.string().url().optional(),
+    command: z.string().min(1).max(500).optional(),
+    args: z.array(z.string().max(200)).max(20).optional(),
+    config: z.record(z.string(), z.unknown()).optional(),
+  })
+  .superRefine((tool, ctx) => {
+    if (tool.type !== 'mcp') return;
+    const transport = tool.transport ?? 'sse';
+    if (transport === 'sse' && !tool.url) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'url is required for sse transport',
+        path: ['url'],
+      });
+    }
+    if (transport === 'stdio' && !tool.command) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'command is required for stdio transport',
+        path: ['command'],
+      });
+    }
+  });
 
 export const AGENT_DOMAINS = [
   'coding',
