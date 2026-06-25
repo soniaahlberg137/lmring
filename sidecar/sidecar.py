@@ -37,6 +37,7 @@ HAL_EVAL_CMD = os.environ.get("HAL_EVAL_CMD", "hal-eval")
 # Maps HAL benchmark name → the key inside results{} that holds the primary score (0–1 range)
 SCORE_KEYS: dict[str, str] = {
     "gaia": "average",
+    "mmlu": "accuracy",
     "swebench_verified": "resolved",
     "swebench_verified_mini": "resolved",
     "taubench_retail": "average",
