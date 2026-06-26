@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import type { ReactNode } from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import * as zeroEvalApi from '@/libs/zeroeval-api';
+import type { ZeroEvalModelFull } from '@/libs/zeroeval-api';
 import {
   fetchLeaderboardData,
   leaderboardKeys,
@@ -11,15 +11,17 @@ import {
   usePrefetchLeaderboard,
 } from './use-leaderboard-query';
 
-const mockModelFull: zeroEvalApi.ZeroEvalModelFull = {
+const mockModelFull: ZeroEvalModelFull = {
   model_id: 'test-model',
   name: 'Test Model',
   organization: 'Test Org',
   organization_id: 'test-org',
   organization_country: 'US',
   params: 7000000000,
+  training_tokens: null,
   context: 128000,
   canonical_model_id: null,
+  is_moe: null,
   announcement_date: '2025-01-01',
   release_date: '2025-01-01',
   multimodal: false,
@@ -34,9 +36,50 @@ const mockModelFull: zeroEvalApi.ZeroEvalModelFull = {
   gpqa_score: 0.75,
   swe_bench_verified_score: 0.65,
   mmmu_score: 0.7,
-  gaia_score: null,
-  tau_bench_score: null,
-  core_bench_score: null,
+  simpleqa_score: null,
+  osworld_score: null,
+  browsecomp_score: null,
+  toolathlon_score: null,
+  terminal_bench_score: null,
+  tau_bench_retail_score: null,
+  arc_agi_v2_score: null,
+  mmmlu_score: null,
+  charxiv_r_score: null,
+  mmmu_pro_score: null,
+  screenspot_pro_score: null,
+  mcp_atlas_score: null,
+  frontiermath_score: null,
+  mrcr_v2_score: null,
+  scicode_score: null,
+  apex_agents_score: null,
+  swe_bench_pro_score: null,
+};
+
+const mockModelWithArena = {
+  ...mockModelFull,
+  code_arena_score: 15.0,
+  chat_arena_score: 20.5,
+  arena_raw_scores: { 'chat-arena': 20.5 },
+};
+
+const mockMagiaItem = {
+  variant_id: 'v1',
+  variant_key: 'k1',
+  model_id: 'basic-model',
+  model_name: 'Basic Model',
+  organization: 'Basic Org',
+  mu: 25.0,
+  sigma: 2.0,
+  conservative_rating: 21.0,
+  matches_played: 50,
+  wins: 30,
+  win_rate: 60.0,
+  input_price: null,
+  output_price: null,
+  avg_generation_price: null,
+  announcement_date: '2025-01-01',
+  license: 'Apache-2.0',
+  is_open_source: true,
 };
 
 function createWrapper() {
@@ -46,6 +89,22 @@ function createWrapper() {
   return function Wrapper({ children }: { children: ReactNode }) {
     return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
   };
+}
+
+function mockFetch(responses: Record<string, unknown>) {
+  const mockFn = vi.fn((url: string) => {
+    for (const [pattern, body] of Object.entries(responses)) {
+      if (url.includes(pattern)) {
+        return Promise.resolve({
+          ok: true,
+          json: () => Promise.resolve(body),
+        });
+      }
+    }
+    return Promise.resolve({ ok: false, json: () => Promise.resolve({}) });
+  });
+  vi.stubGlobal('fetch', mockFn);
+  return mockFn;
 }
 
 describe('leaderboardKeys', () => {
@@ -69,27 +128,17 @@ describe('fetchLeaderboardData', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
-  it('fetches "all" category data with arena scores', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({
-      'test-model': {
-        'chat-arena': 0.85,
-        'text-to-website': 0.9,
-        threejs: 0.8,
-        'text-to-game': 0.75,
-        'p5-animation': 0.7,
-        'text-to-svg': 0.85,
-        dataviz: 0.8,
-        tonejs: 0.65,
-      },
+  it('fetches "all" category — base models + agents', async () => {
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
     });
 
     const result = await fetchLeaderboardData('all');
 
-    expect(zeroEvalApi.getModelsFull).toHaveBeenCalledWith(false);
     expect(result).toHaveLength(1);
     expect(result[0]?.model_id).toBe('test-model');
     expect(result[0]?.chat_arena_score).toBeDefined();
@@ -97,99 +146,54 @@ describe('fetchLeaderboardData', () => {
     expect(result[0]?.arena_raw_scores).toBeDefined();
   });
 
-  it('fetches "vision" category with multimodal parameter', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([
-      { ...mockModelFull, multimodal: true },
-    ]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+  it('fetches "vision" category — base models only, no agent call', async () => {
+    const fetchSpy = mockFetch({
+      '/api/base-models': [{ ...mockModelFull, multimodal: true }],
+    });
 
     const result = await fetchLeaderboardData('vision');
 
-    expect(zeroEvalApi.getModelsFull).toHaveBeenCalledWith(true);
     expect(result).toHaveLength(1);
     expect(result[0]?.multimodal).toBe(true);
+    // Should only call /api/base-models, not /api/leaderboard
+    const urls = fetchSpy.mock.calls.map((c) => c[0] as string);
+    expect(urls.some((u) => u.includes('/api/leaderboard'))).toBe(false);
   });
 
-  it('fetches other categories using getMagiaLeaderboard', async () => {
-    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockResolvedValue({
-      leaderboard: [
-        {
-          variant_id: 'v1',
-          variant_key: 'k1',
-          model_id: 'basic-model',
-          model_name: 'Basic Model',
-          organization: 'Basic Org',
-          mu: 25.0,
-          sigma: 2.0,
-          conservative_rating: 21.0,
-          matches_played: 50,
-          wins: 30,
-          win_rate: 60.0,
-          input_price: null,
-          output_price: null,
-          avg_generation_price: null,
-          announcement_date: '2025-01-01',
-          license: 'Apache-2.0',
-          is_open_source: true,
-        },
-      ],
-      total_count: 1,
-      limit: 200,
-      offset: 0,
+  it('fetches non-LLM categories via /api/arena-entries', async () => {
+    mockFetch({
+      '/api/arena-entries': {
+        'text-to-video': { leaderboard: [mockMagiaItem], total_count: 1, limit: 1, offset: 0 },
+        'image-to-video': { leaderboard: [], total_count: 0, limit: 0, offset: 0 },
+        'video-editing': { leaderboard: [], total_count: 0, limit: 0, offset: 0 },
+      },
     });
 
     const result = await fetchLeaderboardData('video-generation');
 
-    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledTimes(3);
-    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('text-to-video');
-    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('image-to-video');
-    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalledWith('video-editing');
     expect(result).toHaveLength(1);
     expect(result[0]?.model_id).toBe('basic-model');
+    expect((result[0] as unknown as Record<string, unknown>)['text-to-video']).toBeDefined();
   });
 
-  it('handles arena score failure gracefully for "all" category', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockRejectedValue(new Error('Arena API error'));
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+  it('returns empty array when /api/base-models fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.resolve({ ok: false, json: () => Promise.resolve([]) })),
+    );
 
     const result = await fetchLeaderboardData('all');
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.arena_raw_scores).toBeNull();
-    expect(result[0]?.code_arena_score).toBeNull();
-    expect(result[0]?.chat_arena_score).toBeNull();
-    expect(warnSpy).toHaveBeenCalledWith('Failed to fetch arena scores, continuing without them');
-
-    warnSpy.mockRestore();
-  });
-
-  it('handles magia leaderboard failure gracefully for other categories', async () => {
-    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockRejectedValue(new Error('Magia API error'));
-
-    await expect(fetchLeaderboardData('video-generation')).rejects.toThrow();
-  });
-
-  it('returns empty array when no models', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
-
-    const result = await fetchLeaderboardData('all');
-
     expect(result).toEqual([]);
   });
 
-  it('handles models without matching arena scores', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({
-      'other-model': { 'chat-arena': 0.9 },
-    });
+  it('returns empty array when fetch throws', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => Promise.reject(new Error('Network error'))),
+    );
 
     const result = await fetchLeaderboardData('all');
-
-    expect(result[0]?.arena_raw_scores).toBeNull();
-    expect(result[0]?.code_arena_score).toBeNull();
-    expect(result[0]?.chat_arena_score).toBeNull();
+    expect(result).toEqual([]);
   });
 });
 
@@ -199,12 +203,14 @@ describe('useLeaderboardQuery', () => {
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('fetches leaderboard data for "all" category', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
+    });
 
     const { result } = renderHook(() => useLeaderboardQuery('all'), {
       wrapper: createWrapper(),
@@ -221,10 +227,10 @@ describe('useLeaderboardQuery', () => {
     expect(result.current.data?.[0]?.model_id).toBe('test-model');
   });
 
-  it('fetches leaderboard data for "vision" category with multimodal models', async () => {
-    const visionModel = { ...mockModelFull, multimodal: true };
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([visionModel]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+  it('fetches leaderboard data for "vision" category', async () => {
+    mockFetch({
+      '/api/base-models': [{ ...mockModelFull, multimodal: true }],
+    });
 
     const { result } = renderHook(() => useLeaderboardQuery('vision'), {
       wrapper: createWrapper(),
@@ -234,35 +240,14 @@ describe('useLeaderboardQuery', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toBeDefined();
     expect(result.current.data?.[0]?.multimodal).toBe(true);
-    expect(zeroEvalApi.getModelsFull).toHaveBeenCalledWith(true);
   });
 
-  it('handles arena score fetch failure gracefully', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockRejectedValue(new Error('Arena API error'));
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    const { result } = renderHook(() => useLeaderboardQuery('all'), {
-      wrapper: createWrapper(),
+  it('returns empty array when API returns no data', async () => {
+    mockFetch({
+      '/api/base-models': [],
+      '/api/leaderboard': { data: [] },
     });
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toBeDefined();
-    expect(result.current.data?.length).toBe(1);
-    expect(result.current.data?.[0]?.arena_raw_scores).toBeNull();
-    expect(warnSpy).toHaveBeenCalledWith('Failed to fetch arena scores, continuing without them');
-
-    warnSpy.mockRestore();
-  });
-
-  it('returns empty array when API returns empty data', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
 
     const { result } = renderHook(() => useLeaderboardQuery('all'), {
       wrapper: createWrapper(),
@@ -275,47 +260,13 @@ describe('useLeaderboardQuery', () => {
     expect(result.current.data).toEqual([]);
   });
 
-  it('handles API error correctly', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockRejectedValue(new Error('API Error'));
-
-    const { result } = renderHook(() => useLeaderboardQuery('all'), {
-      wrapper: createWrapper(),
-    });
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(result.current.error).toBeDefined();
-    expect(result.current.error?.message).toBe('API Error');
-  });
-
-  it('fetches other categories using getMagiaLeaderboard hook', async () => {
-    vi.spyOn(zeroEvalApi, 'getMagiaLeaderboard').mockResolvedValue({
-      leaderboard: [
-        {
-          variant_id: 'v1',
-          variant_key: 'k1',
-          model_id: 'basic-model',
-          model_name: 'Basic Model',
-          organization: 'Basic Org',
-          mu: 25.0,
-          sigma: 2.0,
-          conservative_rating: 21.0,
-          matches_played: 50,
-          wins: 30,
-          win_rate: 60.0,
-          input_price: null,
-          output_price: null,
-          avg_generation_price: null,
-          announcement_date: '2025-01-01',
-          license: 'Apache-2.0',
-          is_open_source: true,
-        },
-      ],
-      total_count: 1,
-      limit: 200,
-      offset: 0,
+  it('fetches non-LLM categories via arena entries', async () => {
+    mockFetch({
+      '/api/arena-entries': {
+        'text-to-video': { leaderboard: [mockMagiaItem], total_count: 1, limit: 1, offset: 0 },
+        'image-to-video': { leaderboard: [], total_count: 0, limit: 0, offset: 0 },
+        'video-editing': { leaderboard: [], total_count: 0, limit: 0, offset: 0 },
+      },
     });
 
     const { result } = renderHook(() => useLeaderboardQuery('video-generation'), {
@@ -327,18 +278,20 @@ describe('useLeaderboardQuery', () => {
     });
 
     expect(result.current.data).toBeDefined();
-    expect(zeroEvalApi.getMagiaLeaderboard).toHaveBeenCalled();
+    expect(result.current.data?.length).toBe(1);
   });
 });
 
 describe('useLeaderboardData', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('provides derived loading states', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
+    });
 
     const { result } = renderHook(() => useLeaderboardData('all'), {
       wrapper: createWrapper(),
@@ -355,8 +308,10 @@ describe('useLeaderboardData', () => {
   });
 
   it('returns data after successful fetch', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
+    });
 
     const { result } = renderHook(() => useLeaderboardData('all'), {
       wrapper: createWrapper(),
@@ -366,64 +321,49 @@ describe('useLeaderboardData', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toBeDefined();
     expect(result.current.data?.length).toBe(1);
   });
 });
 
 describe('usePrefetchLeaderboard', () => {
-  beforeEach(() => {
-    vi.restoreAllMocks();
-  });
-
   afterEach(() => {
-    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it('prefetches leaderboard data for a category', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
     });
 
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const wrapper = ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
 
     const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
-
-    // Prefetch should return a function
     expect(typeof result.current.prefetchLeaderboard).toBe('function');
 
-    // Call prefetch
     await result.current.prefetchLeaderboard('all');
 
-    // Check that data is now in cache
     const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
-    expect(cachedData).toBeDefined();
     expect(Array.isArray(cachedData)).toBe(true);
   });
 
-  it('uses default category "all" when no category is provided', async () => {
-    vi.spyOn(zeroEvalApi, 'getModelsFull').mockResolvedValue([mockModelFull]);
-    vi.spyOn(zeroEvalApi, 'getArenaScores').mockResolvedValue({});
-
-    const queryClient = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
+  it('defaults to "all" category when none provided', async () => {
+    mockFetch({
+      '/api/base-models': [mockModelWithArena],
+      '/api/leaderboard': { data: [] },
     });
 
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const wrapper = ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
 
     const { result } = renderHook(() => usePrefetchLeaderboard(), { wrapper });
-
-    // Call prefetch without category (should default to 'all')
     await result.current.prefetchLeaderboard();
 
-    // Check that data is cached under 'all' key
     const cachedData = queryClient.getQueryData(['leaderboard', 'all']);
     expect(cachedData).toBeDefined();
   });

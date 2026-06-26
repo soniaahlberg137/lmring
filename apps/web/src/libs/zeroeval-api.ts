@@ -4,8 +4,6 @@
  *
  */
 
-const ZEROEVAL_BASE_URL = '/api/zeroeval';
-
 // Arena names for Code Arena calculation (includes all code-related arenas)
 const CODE_ARENA_KEYS = [
   'text-to-website',
@@ -55,29 +53,44 @@ export interface ZeroEvalModelFull {
   name: string;
   organization: string;
   organization_id: string;
-  organization_country: string;
+  organization_country: string | null;
   params: number | null;
+  training_tokens: number | null;
   context: number | null;
   canonical_model_id: string | null;
+  is_moe: boolean | null;
   release_date: string | null;
   announcement_date: string;
   multimodal: boolean;
-  license: string;
+  license: string | null;
   knowledge_cutoff: string | null;
   input_price: string | null;
   output_price: string | null;
   throughput: string | null;
   latency: string | null;
-  // Benchmark scores (ZeroEval)
+  // Benchmark scores — real ZeroEval fields only
   aime_2025_score: number | null;
   hle_score: number | null;
   gpqa_score: number | null;
   swe_bench_verified_score: number | null;
   mmmu_score: number | null;
-  // Tessera agent benchmarks
-  gaia_score: number | null;
-  tau_bench_score: number | null;
-  core_bench_score: number | null;
+  simpleqa_score: number | null;
+  osworld_score: number | null;
+  browsecomp_score: number | null;
+  toolathlon_score: number | null;
+  terminal_bench_score: number | null;
+  tau_bench_retail_score: number | null;
+  arc_agi_v2_score: number | null;
+  mmmlu_score: number | null;
+  charxiv_r_score: number | null;
+  mmmu_pro_score: number | null;
+  screenspot_pro_score: number | null;
+  mcp_atlas_score: number | null;
+  frontiermath_score: number | null;
+  mrcr_v2_score: number | null;
+  scicode_score: number | null;
+  apex_agents_score: number | null;
+  swe_bench_pro_score: number | null;
 }
 
 export interface ZeroEvalBenchmark {
@@ -492,203 +505,6 @@ export const CATEGORY_CONFIGS: CategoryConfig[] = [
     ],
   },
 ];
-
-// ============================================================================
-// API Fetch Functions
-// ============================================================================
-
-async function fetchWithRetry<T>(url: string, options: RequestInit = {}, retries = 3): Promise<T> {
-  let lastError: Error | null = null;
-
-  for (let i = 0; i < retries; i++) {
-    try {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      return await response.json();
-    } catch (error) {
-      lastError = error instanceof Error ? error : new Error(String(error));
-      if (i < retries - 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1000 * (i + 1)));
-      }
-    }
-  }
-
-  throw lastError || new Error('Failed to fetch');
-}
-
-/**
- * Get all models with basic info
- */
-export async function getModelsAll(params?: ModelsAllParams): Promise<ZeroEvalModelBasic[]> {
-  const searchParams = new URLSearchParams();
-
-  if (params?.model_type) {
-    searchParams.set('model_type', params.model_type);
-  }
-  if (params?.input_modality) {
-    searchParams.set('input_modality', params.input_modality);
-  }
-  if (params?.output_modality) {
-    searchParams.set('output_modality', params.output_modality);
-  }
-
-  const queryString = searchParams.toString();
-  const url = `${ZEROEVAL_BASE_URL}/models/all${queryString ? `?${queryString}` : ''}`;
-
-  return fetchWithRetry<ZeroEvalModelBasic[]>(url);
-}
-
-/**
- * Get all models with full benchmark scores
- * @param justCanonicals - If true, returns only canonical models. Defaults to true.
- */
-export async function getModelsFull(justCanonicals = true): Promise<ZeroEvalModelFull[]> {
-  const params = new URLSearchParams();
-  if (!justCanonicals) {
-    params.set('justCanonicals', 'false');
-  }
-  const queryString = params.toString();
-  const url = `${ZEROEVAL_BASE_URL}/models/full${queryString ? `?${queryString}` : ''}`;
-  return fetchWithRetry<ZeroEvalModelFull[]>(url);
-}
-
-/**
- * Get detailed information for a specific model
- */
-export async function getModelDetail(modelId: string): Promise<ZeroEvalModelDetail> {
-  return fetchWithRetry<ZeroEvalModelDetail>(
-    `${ZEROEVAL_BASE_URL}/models/${encodeURIComponent(modelId)}`,
-  );
-}
-
-/**
- * Get all benchmarks
- */
-export async function getBenchmarks(): Promise<ZeroEvalBenchmark[]> {
-  return fetchWithRetry<ZeroEvalBenchmark[]>(`${ZEROEVAL_BASE_URL}/benchmarks`);
-}
-
-/**
- * Get arena scores for multiple models
- * @param modelIds - Array of model IDs to fetch arena scores for
- */
-export async function getArenaScores(modelIds: string[]): Promise<ArenaScoresResponse> {
-  if (modelIds.length === 0) {
-    return {};
-  }
-
-  const params = new URLSearchParams();
-  params.set('model_ids', modelIds.join(','));
-  params.set('arena_names', ALL_ARENA_NAMES.join(','));
-
-  return fetchWithRetry<ArenaScoresResponse>(`${ZEROEVAL_BASE_URL}/arena-scores?${params}`);
-}
-
-/**
- * Get arena scores for multiple models by category
- * @param modelIds - Array of model IDs to fetch arena scores for
- * @param category - The leaderboard category to get arena scores for
- */
-export async function getArenaScoresForCategory(
-  modelIds: string[],
-  category: LeaderboardCategory,
-): Promise<ArenaScoresResponse> {
-  if (modelIds.length === 0) {
-    return {};
-  }
-
-  const arenaNames = CATEGORY_ARENA_NAMES[category];
-
-  const params = new URLSearchParams();
-  params.set('model_ids', modelIds.join(','));
-  params.set('arena_names', arenaNames.join(','));
-
-  return fetchWithRetry<ArenaScoresResponse>(`${ZEROEVAL_BASE_URL}/arena-scores?${params}`);
-}
-
-/**
- * Get magia leaderboard for a specific arena
- * @param arena - Arena name (e.g., 'text-to-image', 'text-to-video')
- */
-export async function getMagiaLeaderboard(arena: string): Promise<MagiaLeaderboardResponse> {
-  const params = new URLSearchParams();
-  params.set('arena', arena);
-  params.set('limit', '200');
-  params.set('offset', '0');
-
-  return fetchWithRetry<MagiaLeaderboardResponse>(
-    `${ZEROEVAL_BASE_URL}/magia/leaderboard?${params}`,
-  );
-}
-
-// ============================================================================
-// Arena Score Calculation Functions
-// ============================================================================
-
-/**
- * Calculate Code Arena score (display value)
- * Code Arena = average of 7 code-related arena scores × 100
- * Includes: text-to-website, threejs, text-to-game, p5-animation, text-to-svg, dataviz, tonejs
- */
-export function calculateCodeArenaScore(arenaScores: ArenaScores): number | null {
-  const scores: number[] = [];
-  for (const key of CODE_ARENA_KEYS) {
-    const score = arenaScores[key];
-    if (score !== undefined && score !== null) {
-      scores.push(score);
-    }
-  }
-
-  if (scores.length === 0) return null;
-
-  const average = scores.reduce((a, b) => a + b, 0) / scores.length;
-  // Keep 2 decimal places for display
-  return Math.round(average * 100 * 100) / 100;
-}
-
-/**
- * Calculate Chat Arena score (display value, × 100)
- * Chat Arena = chat-arena raw score × 100
- */
-export function calculateChatArenaScore(arenaScores: ArenaScores): number | null {
-  const score = arenaScores['chat-arena'];
-  // Keep 2 decimal places for display
-  return score != null ? Math.round(score * 100 * 100) / 100 : null;
-}
-
-/**
- * Convert arena scores to display values (× 100) for non-LLM categories
- * @param arenaScores - Raw arena scores from API
- * @param category - The leaderboard category
- * @returns Object with converted arena scores
- */
-export function calculateCategoryArenaScores(
-  arenaScores: ArenaScores,
-  category: LeaderboardCategory,
-): Partial<ArenaScores> {
-  const arenaKeys = CATEGORY_ARENA_NAMES[category];
-  const result: Partial<ArenaScores> = {};
-
-  for (const key of arenaKeys) {
-    const rawScore = arenaScores[key as keyof ArenaScores];
-    if (rawScore != null) {
-      // Convert to display value: × 100, keep 2 decimal places
-      result[key as keyof ArenaScores] = Math.round(rawScore * 100 * 100) / 100;
-    }
-  }
-
-  return result;
-}
 
 // ============================================================================
 // Data Processing Utilities
