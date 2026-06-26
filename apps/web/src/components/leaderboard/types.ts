@@ -50,6 +50,7 @@ export interface LeaderboardModel {
   gaia_score?: number | null;
   mmlu_score?: number | null;
   pubmedqa_score?: number | null;
+  gsm8k_score?: number | null;
   tau_bench_score?: number | null;
   core_bench_score?: number | null;
   // Arena scores (display values, already × 100)

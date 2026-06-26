@@ -43,6 +43,7 @@ const BENCHMARK_METRIC_IDS = new Set([
   'gaia',
   'mmlu',
   'pubmedqa',
+  'gsm8k',
   'swe_bench',
   'tau_bench',
   'core_bench',
