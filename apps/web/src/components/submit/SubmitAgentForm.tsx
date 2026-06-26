@@ -196,7 +196,10 @@ export function SubmitAgentForm() {
       if (form.systemPrompt.trim()) body.systemPrompt = form.systemPrompt.trim();
       if (form.tools.trim()) body.tools = JSON.parse(form.tools);
       if (form.memoryConfig.trim()) body.memoryConfig = JSON.parse(form.memoryConfig);
-      if (configFile?.content) body.configContent = configFile.content;
+      if (configFile?.content) {
+        body.configContent = configFile.content;
+        body.configFileName = configFile.name;
+      }
 
       const res = await fetch('/api/agents', {
         method: 'POST',

@@ -44,6 +44,7 @@ export async function POST(request: Request) {
       tools,
       memoryConfig,
       configContent,
+      configFileName,
     } = result.data;
 
     const [agent] = await db
@@ -57,6 +58,7 @@ export async function POST(request: Request) {
         tools: tools ?? null,
         memoryConfig: memoryConfig ?? null,
         configContent: configContent ?? null,
+        configFileName: configFileName ?? null,
         submittedBy: null,
       })
       .returning();
@@ -94,6 +96,8 @@ export async function POST(request: Request) {
               systemPrompt: agent.systemPrompt ?? null,
               tools: agent.tools ?? null,
               benchmark: benchmarkName,
+              configContent: agent.configContent ?? null,
+              configFileName: agent.configFileName ?? null,
             }),
           }).catch((err: Error) => {
             console.warn(`[tessera] sidecar notification failed (${benchmarkName}):`, err.message);
