@@ -267,6 +267,13 @@ export const CATEGORY_CONFIGS: CategoryConfig[] = [
         higherIsBetter: true,
       },
       {
+        id: 'gsm8k',
+        label: 'GSM8K',
+        field: 'gsm8k_score',
+        format: 'percentage',
+        higherIsBetter: true,
+      },
+      {
         id: 'mmlu',
         label: 'MMLU',
         field: 'mmlu_score',

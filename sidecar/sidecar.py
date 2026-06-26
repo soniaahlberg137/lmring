@@ -41,6 +41,7 @@ SCORE_KEYS: dict[str, str] = {
     "gaia": "average",
     "mmlu": "accuracy",
     "pubmedqa": "accuracy",
+    "gsm8k": "accuracy",
     "swebench_verified": "resolved",
     "swebench_verified_mini": "resolved",
     "taubench_retail": "average",
