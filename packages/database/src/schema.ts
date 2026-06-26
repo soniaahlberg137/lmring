@@ -606,6 +606,7 @@ export const agents = pgTable(
     tools: jsonb('tools').$type<AgentToolJson[]>(),
     memoryConfig: jsonb('memory_config').$type<AgentMemoryConfigJson>(),
     configContent: text('config_content'),
+    configFileName: text('config_file_name'),
     submittedBy: uuid('submitted_by').references(() => users.id, { onDelete: 'set null' }),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),

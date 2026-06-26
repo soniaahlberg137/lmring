@@ -237,6 +237,7 @@ export const agentSubmissionSchema = z.object({
     })
     .optional(),
   configContent: z.string().max(100000).optional(),
+  configFileName: z.string().max(255).optional(),
 });
 
 export const imageAttachmentSchema = z.object({

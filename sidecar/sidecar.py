@@ -61,6 +61,8 @@ class RunJob(BaseModel):
     systemPrompt: str | None = None
     tools: list | None = None
     benchmark: str = "gaia"
+    configContent: str | None = None
+    configFileName: str | None = None
 
 
 def _extract_score(raw: dict, benchmark: str) -> float | None:
@@ -120,6 +122,8 @@ async def _run_benchmark(job: RunJob) -> None:
             "base_model": job.baseModel,
             "system_prompt": job.systemPrompt or "",
             "tools": job.tools or [],
+            "config_file_name": job.configFileName or "",
+            "config_file_content": job.configContent or "",
         }),
         encoding="utf-8",
     )
