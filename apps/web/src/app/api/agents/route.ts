@@ -88,6 +88,7 @@ export async function POST(request: Request) {
             agentName: agent.name,
             baseModel: agent.baseModel,
             systemPrompt: agent.systemPrompt ?? null,
+            tools: agent.tools ?? null,
             benchmark: benchmarkName,
           }),
         }).catch((err: Error) => {
