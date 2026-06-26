@@ -54,6 +54,7 @@ class RunJob(BaseModel):
     agentName: str
     baseModel: str
     systemPrompt: str | None = None
+    tools: list | None = None
     benchmark: str = "gaia"
 
 
@@ -113,6 +114,7 @@ async def _run_benchmark(job: RunJob) -> None:
             "agent_name": job.agentName,
             "base_model": job.baseModel,
             "system_prompt": job.systemPrompt or "",
+            "tools": job.tools or [],
         }),
         encoding="utf-8",
     )
