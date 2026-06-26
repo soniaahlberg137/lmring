@@ -4,7 +4,7 @@ import { Card, CardContent, cn } from '@lmring/ui';
 import { CheckIcon } from 'lucide-react';
 import { useState } from 'react';
 import { type AgentDomainFilter, DomainTabs } from '@/components/leaderboard/DomainTabs';
-import { MOCK_BENCHMARK_DATA } from '@/libs/mock-benchmark-data';
+import { type ModelWithArena, useLeaderboardData } from '@/hooks/use-leaderboard-query';
 
 const MAX_COMPARE = 3;
 
@@ -78,13 +78,7 @@ function getBestIndex(values: unknown[], higherIsBetter: boolean): number | null
   return nums.indexOf(best);
 }
 
-function MetricRows({
-  metrics,
-  selected,
-}: {
-  metrics: MetricDef[];
-  selected: (typeof MOCK_BENCHMARK_DATA)[0][];
-}) {
+function MetricRows({ metrics, selected }: { metrics: MetricDef[]; selected: ModelWithArena[] }) {
   return metrics.map((metric) => {
     const values = selected.map((a) => (a as unknown as Record<string, unknown>)[metric.field]);
     const bestIdx = getBestIndex(values, metric.higherIsBetter);
@@ -124,7 +118,10 @@ function MetricRows({
 }
 
 export default function ComparePage() {
-  const agents = MOCK_BENCHMARK_DATA;
+  const { data: allModels = [] } = useLeaderboardData('all');
+  // Only show agent rows (submitted Tessera agents have an agent_name)
+  const agents = allModels.filter((m) => m.agent_name);
+
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [domain, setDomain] = useState<AgentDomainFilter>('all');
 
@@ -138,7 +135,7 @@ export default function ComparePage() {
 
   const selected = selectedIds
     .map((id) => agents.find((a) => a.model_id === id))
-    .filter((a): a is (typeof MOCK_BENCHMARK_DATA)[0] => a !== undefined);
+    .filter((a): a is ModelWithArena => a !== undefined);
 
   const remaining = 2 - selected.length;
 

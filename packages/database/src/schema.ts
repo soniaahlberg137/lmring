@@ -962,6 +962,104 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
+// ZeroEval snapshot tables
+export const zevalArenaEntries = pgTable(
+  'zeval_arena_entries',
+  {
+    id: uuid('id').primaryKey().defaultRandom().notNull(),
+    arena: text('arena').notNull(),
+    variantId: text('variant_id').notNull(),
+    variantKey: text('variant_key').notNull(),
+    variantMetadata: jsonb('variant_metadata'),
+    modelId: text('model_id').notNull(),
+    modelName: text('model_name').notNull(),
+    organization: text('organization').notNull(),
+    license: text('license'),
+    isOpenSource: boolean('is_open_source').default(false).notNull(),
+    announcementDate: text('announcement_date'),
+    mu: real('mu').notNull(),
+    sigma: real('sigma').notNull(),
+    conservativeRating: real('conservative_rating').notNull(),
+    ratingChange7d: real('rating_change_7d'),
+    matchesPlayed: integer('matches_played').notNull(),
+    wins: integer('wins').notNull(),
+    winRate: real('win_rate').notNull(),
+    inputPrice: real('input_price'),
+    outputPrice: real('output_price'),
+    avgGenerationPrice: real('avg_generation_price'),
+    pricedGenerations: integer('priced_generations'),
+    throughputCps: real('throughput_cps'),
+    avgTtfb: real('avg_ttfb'),
+    zevalCreatedAt: text('zeval_created_at'),
+    zevalUpdatedAt: text('zeval_updated_at'),
+    snapshottedAt: timestamp('snapshotted_at', { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    unique('zeval_arena_entries_arena_variant_unique').on(t.arena, t.variantId),
+    index('zeval_arena_entries_arena_idx').on(t.arena),
+    index('zeval_arena_entries_model_id_idx').on(t.modelId),
+  ],
+);
+
+export const zevalBaseModels = pgTable(
+  'zeval_base_models',
+  {
+    modelId: text('model_id').primaryKey().notNull(),
+    name: text('name').notNull(),
+    organization: text('organization').notNull(),
+    organizationId: text('organization_id').notNull(),
+    organizationCountry: text('organization_country'),
+    params: real('params'),
+    trainingTokens: real('training_tokens'),
+    context: integer('context'),
+    canonicalModelId: text('canonical_model_id'),
+    isMoe: boolean('is_moe'),
+    multimodal: boolean('multimodal').default(false).notNull(),
+    releaseDate: text('release_date'),
+    announcementDate: text('announcement_date').notNull(),
+    license: text('license').notNull(),
+    knowledgeCutoff: text('knowledge_cutoff'),
+    inputPrice: text('input_price'),
+    outputPrice: text('output_price'),
+    throughput: text('throughput'),
+    latency: text('latency'),
+    aime2025Score: real('aime_2025_score'),
+    hleScore: real('hle_score'),
+    gpqaScore: real('gpqa_score'),
+    sweBenchVerifiedScore: real('swe_bench_verified_score'),
+    mmmuScore: real('mmmu_score'),
+    simpleqaScore: real('simpleqa_score'),
+    osworldScore: real('osworld_score'),
+    browsecompScore: real('browsecomp_score'),
+    toolathlonScore: real('toolathlon_score'),
+    terminalBenchScore: real('terminal_bench_score'),
+    tauBenchRetailScore: real('tau_bench_retail_score'),
+    arcAgiV2Score: real('arc_agi_v2_score'),
+    mmmluScore: real('mmmlu_score'),
+    charxivRScore: real('charxiv_r_score'),
+    mmmuProScore: real('mmmu_pro_score'),
+    screenspotProScore: real('screenspot_pro_score'),
+    mcpAtlasScore: real('mcp_atlas_score'),
+    frontiermathScore: real('frontiermath_score'),
+    mrcrV2Score: real('mrcr_v2_score'),
+    scicodeScore: real('scicode_score'),
+    apexAgentsScore: real('apex_agents_score'),
+    sweBenchProScore: real('swe_bench_pro_score'),
+    chatArenaScore: real('chat_arena_score'),
+    textToWebsiteScore: real('text_to_website_score'),
+    threejsScore: real('threejs_score'),
+    textToGameScore: real('text_to_game_score'),
+    p5AnimationScore: real('p5_animation_score'),
+    textToSvgScore: real('text_to_svg_score'),
+    datavizScore: real('dataviz_score'),
+    toneJsScore: real('tonejs_score'),
+    snapshottedAt: timestamp('snapshotted_at', { withTimezone: true }).notNull(),
+  },
+  (t) => [
+    index('zeval_base_models_org_id_idx').on(t.organizationId),
+  ],
+);
+
 // Type exports
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
@@ -1008,10 +1106,10 @@ export type NewAgent = typeof agents.$inferInsert;
 export type BenchmarkRun = typeof benchmarkRuns.$inferSelect;
 export type NewBenchmarkRun = typeof benchmarkRuns.$inferInsert;
 export type BenchmarkRunStatus = (typeof benchmarkRunStatusEnum.enumValues)[number];
-export type ZevalBaseModel = typeof zevalBaseModels.$inferSelect;
-export type NewZevalBaseModel = typeof zevalBaseModels.$inferInsert;
 export type ZevalArenaEntry = typeof zevalArenaEntries.$inferSelect;
 export type NewZevalArenaEntry = typeof zevalArenaEntries.$inferInsert;
+export type ZevalBaseModel = typeof zevalBaseModels.$inferSelect;
+export type NewZevalBaseModel = typeof zevalBaseModels.$inferInsert;
 
 // Enum types
 export type ComparisonType = (typeof comparisonTypeEnum.enumValues)[number];
