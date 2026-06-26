@@ -33,10 +33,14 @@ LMRING_CALLBACK_URL = os.environ["LMRING_CALLBACK_URL"]
 SIDECAR_SECRET = os.environ["TESSERA_SIDECAR_SECRET"]
 # Allow override for non-PATH installations (e.g. inside a venv)
 HAL_EVAL_CMD = os.environ.get("HAL_EVAL_CMD", "hal-eval")
+# TEST ONLY — limits tasks per benchmark run. Never set in production.
+HAL_TEST_MAX_TASKS: str | None = os.environ.get("HAL_TEST_MAX_TASKS")
 
 # Maps HAL benchmark name → the key inside results{} that holds the primary score (0–1 range)
 SCORE_KEYS: dict[str, str] = {
     "gaia": "average",
+    "mmlu": "accuracy",
+    "pubmedqa": "accuracy",
     "swebench_verified": "resolved",
     "swebench_verified_mini": "resolved",
     "taubench_retail": "average",
@@ -128,6 +132,9 @@ async def _run_benchmark(job: RunJob) -> None:
         "--run_id", hal_run_id,
         "-A", f"config_path={config_file}",
     ]
+    if HAL_TEST_MAX_TASKS is not None:
+        log.warning("TEST MODE: --max_tasks=%s (HAL_TEST_MAX_TASKS is set — not a full evaluation)", HAL_TEST_MAX_TASKS)
+        cmd += ["--max_tasks", HAL_TEST_MAX_TASKS]
 
     log.info("Starting benchmark run: %s", hal_run_id)
     log.info("Command: %s", " ".join(cmd))

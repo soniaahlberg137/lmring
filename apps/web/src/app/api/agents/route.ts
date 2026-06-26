@@ -67,33 +67,38 @@ export async function POST(request: Request) {
 
     // HAL integration — runs after agent is saved; errors here don't fail the request
     try {
-      const benchmarkName = process.env.HAL_DEFAULT_BENCHMARK ?? 'gaia';
-      await db.insert(benchmarkRuns).values({
-        agentId: agent.id,
-        benchmarkName,
-        status: 'pending',
-      });
+      const benchmarks = ['gaia', 'mmlu', 'pubmedqa'];
+
+      await db.insert(benchmarkRuns).values(
+        benchmarks.map((benchmarkName) => ({
+          agentId: agent.id,
+          benchmarkName,
+          status: 'pending' as const,
+        })),
+      );
 
       const sidecarUrl = process.env.HAL_SIDECAR_URL;
       const sidecarSecret = process.env.TESSERA_SIDECAR_SECRET;
       if (sidecarUrl && sidecarSecret) {
-        fetch(`${sidecarUrl}/run`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-sidecar-secret': sidecarSecret,
-          },
-          body: JSON.stringify({
-            agentId: agent.id,
-            agentName: agent.name,
-            baseModel: agent.baseModel,
-            systemPrompt: agent.systemPrompt ?? null,
-            tools: agent.tools ?? null,
-            benchmark: benchmarkName,
-          }),
-        }).catch((err: Error) => {
-          console.warn('[tessera] sidecar notification failed:', err.message);
-        });
+        for (const benchmarkName of benchmarks) {
+          fetch(`${sidecarUrl}/run`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-sidecar-secret': sidecarSecret,
+            },
+            body: JSON.stringify({
+              agentId: agent.id,
+              agentName: agent.name,
+              baseModel: agent.baseModel,
+              systemPrompt: agent.systemPrompt ?? null,
+              tools: agent.tools ?? null,
+              benchmark: benchmarkName,
+            }),
+          }).catch((err: Error) => {
+            console.warn(`[tessera] sidecar notification failed (${benchmarkName}):`, err.message);
+          });
+        }
       }
     } catch (halError) {
       // Log but don't surface — agent was created successfully

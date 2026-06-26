@@ -120,6 +120,7 @@ export function SubmitAgentForm() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState<FormFields>(INITIAL_FORM);
+  const [useCustomModel, setUseCustomModel] = useState(false);
   const [configFile, setConfigFile] = useState<{
     name: string;
     sizeKb: number;
@@ -220,6 +221,7 @@ export function SubmitAgentForm() {
   const handleReset = () => {
     setSubmittedName(null);
     setForm(INITIAL_FORM);
+    setUseCustomModel(false);
     setConfigFile(null);
     setFieldErrors({});
     setApiError('');
@@ -264,9 +266,15 @@ export function SubmitAgentForm() {
                 <span className="text-destructive ml-1">*</span>
               </Label>
               <Select
-                value={form.baseModel}
+                value={useCustomModel ? '__custom__' : form.baseModel}
                 onValueChange={(val) => {
-                  setForm((prev) => ({ ...prev, baseModel: val }));
+                  if (val === '__custom__') {
+                    setUseCustomModel(true);
+                    setForm((prev) => ({ ...prev, baseModel: '' }));
+                  } else {
+                    setUseCustomModel(false);
+                    setForm((prev) => ({ ...prev, baseModel: val }));
+                  }
                   if (fieldErrors.baseModel)
                     setFieldErrors((prev) => ({ ...prev, baseModel: undefined }));
                 }}
@@ -285,8 +293,26 @@ export function SubmitAgentForm() {
                       ))}
                     </div>
                   ))}
+                  <div>
+                    <p className="px-2 py-1 text-xs text-muted-foreground font-medium">Other</p>
+                    <SelectItem value="__custom__">Custom / self-hosted</SelectItem>
+                  </div>
                 </SelectContent>
               </Select>
+              {useCustomModel && (
+                <Input
+                  id="customModel"
+                  value={form.baseModel}
+                  onChange={(e) => {
+                    setForm((prev) => ({ ...prev, baseModel: e.target.value }));
+                    if (fieldErrors.baseModel)
+                      setFieldErrors((prev) => ({ ...prev, baseModel: undefined }));
+                  }}
+                  placeholder="e.g. ollama/qwen2.5-coder:7b"
+                  className="font-mono text-sm mt-2"
+                  aria-label="Custom model string"
+                />
+              )}
               <FieldError message={fieldErrors.baseModel} />
             </div>
 
